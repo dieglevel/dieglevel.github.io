@@ -1,18 +1,5 @@
-/* .ant-table-wrapper .ant-table-thead>tr>th {
-  border: 1px solid #f0f0f0;
-} */
 
-/* .ant-table-wrapper .ant-table-thead>tr>th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+
+.custom-table .ant-table-cell::before {
   display: none;
-} */
-
-:where(.css-dev-only-do-not-override-1daqxe2).ant-table-wrapper
-  .ant-table.ant-table-bordered
-  > .ant-table-container
-  > .ant-table-content
-  > table
-  > tbody
-  > tr
-  > td {
-  /* border-inline-end:  */
 }

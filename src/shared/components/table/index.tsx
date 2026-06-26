@@ -17,6 +17,7 @@ export default function Table<T>(props: TableProps<T>) {
 
   return (
     <AntdTable<T>
+      className="custom-table"
       rowKey={'id'}
       columns={props.columns}
       dataSource={props.dataSource}

@@ -15,7 +15,9 @@
     "watch-routes": "tsr watch",
     "watch:vite": "vite --port 3001",
     "watch:tsc": "tsc --watch",
-    "watch": "concurrently -n ROUTES,VITE,TSC \"npm run watch-routes\" \"npm run watch:vite\" \"npm run watch:tsc\""
+    "watch": "concurrently -n ROUTES,VITE,TSC \"npm run watch-routes\" \"npm run watch:vite\" \"npm run watch:tsc\"",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@tanstack/react-devtools": "^0.7.0",
@@ -47,6 +49,7 @@
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.0.4",
     "concurrently": "^9.2.1",
+    "gh-pages": "^6.3.0",
     "jsdom": "^27.0.0",
     "orval": "^7.17.2",
     "prettier": "^3.5.3",

@@ -14,14 +14,14 @@ import { Route as R401RouteImport } from './routes/401'
 import { Route as publicRouteRouteImport } from './routes/(public)/route'
 import { Route as protectedRouteRouteImport } from './routes/(protected)/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as publicTaskRouteImport } from './routes/(public)/task'
 import { Route as publicLoginRouteImport } from './routes/(public)/login'
-import { Route as publicIconRouteImport } from './routes/(public)/icon'
-import { Route as publicHashIdRouteImport } from './routes/(public)/hashId'
-import { Route as publicDemoComponentRouteImport } from './routes/(public)/demoComponent'
+import { Route as protectedIconRouteImport } from './routes/(protected)/icon'
+import { Route as protectedHashIdRouteImport } from './routes/(protected)/hashId'
+import { Route as protectedHanbiroTaskRouteImport } from './routes/(protected)/hanbiroTask'
+import { Route as protectedDemoComponentRouteImport } from './routes/(protected)/demoComponent'
 import { Route as protectedDashboardRouteRouteImport } from './routes/(protected)/dashboard/route'
-import { Route as publicDemoTableRouteImport } from './routes/(public)/demo/table'
-import { Route as publicDemoButtonRouteImport } from './routes/(public)/demo/button'
+import { Route as protectedDemoTableRouteImport } from './routes/(protected)/demo/table'
+import { Route as protectedDemoButtonRouteImport } from './routes/(protected)/demo/button'
 
 const R404Route = R404RouteImport.update({
   id: '/404',
@@ -46,45 +46,45 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const publicTaskRoute = publicTaskRouteImport.update({
-  id: '/task',
-  path: '/task',
-  getParentRoute: () => publicRouteRoute,
-} as any)
 const publicLoginRoute = publicLoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => publicRouteRoute,
 } as any)
-const publicIconRoute = publicIconRouteImport.update({
+const protectedIconRoute = protectedIconRouteImport.update({
   id: '/icon',
   path: '/icon',
-  getParentRoute: () => publicRouteRoute,
+  getParentRoute: () => protectedRouteRoute,
 } as any)
-const publicHashIdRoute = publicHashIdRouteImport.update({
+const protectedHashIdRoute = protectedHashIdRouteImport.update({
   id: '/hashId',
   path: '/hashId',
-  getParentRoute: () => publicRouteRoute,
+  getParentRoute: () => protectedRouteRoute,
 } as any)
-const publicDemoComponentRoute = publicDemoComponentRouteImport.update({
+const protectedHanbiroTaskRoute = protectedHanbiroTaskRouteImport.update({
+  id: '/hanbiroTask',
+  path: '/hanbiroTask',
+  getParentRoute: () => protectedRouteRoute,
+} as any)
+const protectedDemoComponentRoute = protectedDemoComponentRouteImport.update({
   id: '/demoComponent',
   path: '/demoComponent',
-  getParentRoute: () => publicRouteRoute,
+  getParentRoute: () => protectedRouteRoute,
 } as any)
 const protectedDashboardRouteRoute = protectedDashboardRouteRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => protectedRouteRoute,
 } as any)
-const publicDemoTableRoute = publicDemoTableRouteImport.update({
+const protectedDemoTableRoute = protectedDemoTableRouteImport.update({
   id: '/demo/table',
   path: '/demo/table',
-  getParentRoute: () => publicRouteRoute,
+  getParentRoute: () => protectedRouteRoute,
 } as any)
-const publicDemoButtonRoute = publicDemoButtonRouteImport.update({
+const protectedDemoButtonRoute = protectedDemoButtonRouteImport.update({
   id: '/demo/button',
   path: '/demo/button',
-  getParentRoute: () => publicRouteRoute,
+  getParentRoute: () => protectedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -92,26 +92,26 @@ export interface FileRoutesByFullPath {
   '/401': typeof R401Route
   '/404': typeof R404Route
   '/dashboard': typeof protectedDashboardRouteRoute
-  '/demoComponent': typeof publicDemoComponentRoute
-  '/hashId': typeof publicHashIdRoute
-  '/icon': typeof publicIconRoute
+  '/demoComponent': typeof protectedDemoComponentRoute
+  '/hanbiroTask': typeof protectedHanbiroTaskRoute
+  '/hashId': typeof protectedHashIdRoute
+  '/icon': typeof protectedIconRoute
   '/login': typeof publicLoginRoute
-  '/task': typeof publicTaskRoute
-  '/demo/button': typeof publicDemoButtonRoute
-  '/demo/table': typeof publicDemoTableRoute
+  '/demo/button': typeof protectedDemoButtonRoute
+  '/demo/table': typeof protectedDemoTableRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/401': typeof R401Route
   '/404': typeof R404Route
   '/dashboard': typeof protectedDashboardRouteRoute
-  '/demoComponent': typeof publicDemoComponentRoute
-  '/hashId': typeof publicHashIdRoute
-  '/icon': typeof publicIconRoute
+  '/demoComponent': typeof protectedDemoComponentRoute
+  '/hanbiroTask': typeof protectedHanbiroTaskRoute
+  '/hashId': typeof protectedHashIdRoute
+  '/icon': typeof protectedIconRoute
   '/login': typeof publicLoginRoute
-  '/task': typeof publicTaskRoute
-  '/demo/button': typeof publicDemoButtonRoute
-  '/demo/table': typeof publicDemoTableRoute
+  '/demo/button': typeof protectedDemoButtonRoute
+  '/demo/table': typeof protectedDemoTableRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -121,13 +121,13 @@ export interface FileRoutesById {
   '/401': typeof R401Route
   '/404': typeof R404Route
   '/(protected)/dashboard': typeof protectedDashboardRouteRoute
-  '/(public)/demoComponent': typeof publicDemoComponentRoute
-  '/(public)/hashId': typeof publicHashIdRoute
-  '/(public)/icon': typeof publicIconRoute
+  '/(protected)/demoComponent': typeof protectedDemoComponentRoute
+  '/(protected)/hanbiroTask': typeof protectedHanbiroTaskRoute
+  '/(protected)/hashId': typeof protectedHashIdRoute
+  '/(protected)/icon': typeof protectedIconRoute
   '/(public)/login': typeof publicLoginRoute
-  '/(public)/task': typeof publicTaskRoute
-  '/(public)/demo/button': typeof publicDemoButtonRoute
-  '/(public)/demo/table': typeof publicDemoTableRoute
+  '/(protected)/demo/button': typeof protectedDemoButtonRoute
+  '/(protected)/demo/table': typeof protectedDemoTableRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -137,10 +137,10 @@ export interface FileRouteTypes {
     | '/404'
     | '/dashboard'
     | '/demoComponent'
+    | '/hanbiroTask'
     | '/hashId'
     | '/icon'
     | '/login'
-    | '/task'
     | '/demo/button'
     | '/demo/table'
   fileRoutesByTo: FileRoutesByTo
@@ -150,10 +150,10 @@ export interface FileRouteTypes {
     | '/404'
     | '/dashboard'
     | '/demoComponent'
+    | '/hanbiroTask'
     | '/hashId'
     | '/icon'
     | '/login'
-    | '/task'
     | '/demo/button'
     | '/demo/table'
   id:
@@ -164,13 +164,13 @@ export interface FileRouteTypes {
     | '/401'
     | '/404'
     | '/(protected)/dashboard'
-    | '/(public)/demoComponent'
-    | '/(public)/hashId'
-    | '/(public)/icon'
+    | '/(protected)/demoComponent'
+    | '/(protected)/hanbiroTask'
+    | '/(protected)/hashId'
+    | '/(protected)/icon'
     | '/(public)/login'
-    | '/(public)/task'
-    | '/(public)/demo/button'
-    | '/(public)/demo/table'
+    | '/(protected)/demo/button'
+    | '/(protected)/demo/table'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -218,13 +218,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(public)/task': {
-      id: '/(public)/task'
-      path: '/task'
-      fullPath: '/task'
-      preLoaderRoute: typeof publicTaskRouteImport
-      parentRoute: typeof publicRouteRoute
-    }
     '/(public)/login': {
       id: '/(public)/login'
       path: '/login'
@@ -232,26 +225,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicLoginRouteImport
       parentRoute: typeof publicRouteRoute
     }
-    '/(public)/icon': {
-      id: '/(public)/icon'
+    '/(protected)/icon': {
+      id: '/(protected)/icon'
       path: '/icon'
       fullPath: '/icon'
-      preLoaderRoute: typeof publicIconRouteImport
-      parentRoute: typeof publicRouteRoute
+      preLoaderRoute: typeof protectedIconRouteImport
+      parentRoute: typeof protectedRouteRoute
     }
-    '/(public)/hashId': {
-      id: '/(public)/hashId'
+    '/(protected)/hashId': {
+      id: '/(protected)/hashId'
       path: '/hashId'
       fullPath: '/hashId'
-      preLoaderRoute: typeof publicHashIdRouteImport
-      parentRoute: typeof publicRouteRoute
+      preLoaderRoute: typeof protectedHashIdRouteImport
+      parentRoute: typeof protectedRouteRoute
     }
-    '/(public)/demoComponent': {
-      id: '/(public)/demoComponent'
+    '/(protected)/hanbiroTask': {
+      id: '/(protected)/hanbiroTask'
+      path: '/hanbiroTask'
+      fullPath: '/hanbiroTask'
+      preLoaderRoute: typeof protectedHanbiroTaskRouteImport
+      parentRoute: typeof protectedRouteRoute
+    }
+    '/(protected)/demoComponent': {
+      id: '/(protected)/demoComponent'
       path: '/demoComponent'
       fullPath: '/demoComponent'
-      preLoaderRoute: typeof publicDemoComponentRouteImport
-      parentRoute: typeof publicRouteRoute
+      preLoaderRoute: typeof protectedDemoComponentRouteImport
+      parentRoute: typeof protectedRouteRoute
     }
     '/(protected)/dashboard': {
       id: '/(protected)/dashboard'
@@ -260,29 +260,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedDashboardRouteRouteImport
       parentRoute: typeof protectedRouteRoute
     }
-    '/(public)/demo/table': {
-      id: '/(public)/demo/table'
+    '/(protected)/demo/table': {
+      id: '/(protected)/demo/table'
       path: '/demo/table'
       fullPath: '/demo/table'
-      preLoaderRoute: typeof publicDemoTableRouteImport
-      parentRoute: typeof publicRouteRoute
+      preLoaderRoute: typeof protectedDemoTableRouteImport
+      parentRoute: typeof protectedRouteRoute
     }
-    '/(public)/demo/button': {
-      id: '/(public)/demo/button'
+    '/(protected)/demo/button': {
+      id: '/(protected)/demo/button'
       path: '/demo/button'
       fullPath: '/demo/button'
-      preLoaderRoute: typeof publicDemoButtonRouteImport
-      parentRoute: typeof publicRouteRoute
+      preLoaderRoute: typeof protectedDemoButtonRouteImport
+      parentRoute: typeof protectedRouteRoute
     }
   }
 }
 
 interface protectedRouteRouteChildren {
   protectedDashboardRouteRoute: typeof protectedDashboardRouteRoute
+  protectedDemoComponentRoute: typeof protectedDemoComponentRoute
+  protectedHanbiroTaskRoute: typeof protectedHanbiroTaskRoute
+  protectedHashIdRoute: typeof protectedHashIdRoute
+  protectedIconRoute: typeof protectedIconRoute
+  protectedDemoButtonRoute: typeof protectedDemoButtonRoute
+  protectedDemoTableRoute: typeof protectedDemoTableRoute
 }
 
 const protectedRouteRouteChildren: protectedRouteRouteChildren = {
   protectedDashboardRouteRoute: protectedDashboardRouteRoute,
+  protectedDemoComponentRoute: protectedDemoComponentRoute,
+  protectedHanbiroTaskRoute: protectedHanbiroTaskRoute,
+  protectedHashIdRoute: protectedHashIdRoute,
+  protectedIconRoute: protectedIconRoute,
+  protectedDemoButtonRoute: protectedDemoButtonRoute,
+  protectedDemoTableRoute: protectedDemoTableRoute,
 }
 
 const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(
@@ -290,23 +302,11 @@ const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(
 )
 
 interface publicRouteRouteChildren {
-  publicDemoComponentRoute: typeof publicDemoComponentRoute
-  publicHashIdRoute: typeof publicHashIdRoute
-  publicIconRoute: typeof publicIconRoute
   publicLoginRoute: typeof publicLoginRoute
-  publicTaskRoute: typeof publicTaskRoute
-  publicDemoButtonRoute: typeof publicDemoButtonRoute
-  publicDemoTableRoute: typeof publicDemoTableRoute
 }
 
 const publicRouteRouteChildren: publicRouteRouteChildren = {
-  publicDemoComponentRoute: publicDemoComponentRoute,
-  publicHashIdRoute: publicHashIdRoute,
-  publicIconRoute: publicIconRoute,
   publicLoginRoute: publicLoginRoute,
-  publicTaskRoute: publicTaskRoute,
-  publicDemoButtonRoute: publicDemoButtonRoute,
-  publicDemoTableRoute: publicDemoTableRoute,
 }
 
 const publicRouteRouteWithChildren = publicRouteRoute._addFileChildren(
