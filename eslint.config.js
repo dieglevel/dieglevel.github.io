@@ -20,6 +20,7 @@ export default [
       // 🔥 Remove unused imports
       'unused-imports/no-unused-imports': 'error',
 
+      'un'
       // Optional: warn unused vars
       'unused-imports/no-unused-vars': [
         'warn',
