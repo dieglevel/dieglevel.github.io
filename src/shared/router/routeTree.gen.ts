@@ -14,6 +14,7 @@ import { Route as R401RouteImport } from './../../routes/401'
 import { Route as publicRouteRouteImport } from './../../routes/(public)/route'
 import { Route as protectedRouteRouteImport } from './../../routes/(protected)/route'
 import { Route as IndexRouteImport } from './../../routes/index'
+import { Route as publicSignUpRouteImport } from './../../routes/(public)/sign-up'
 import { Route as publicLoginRouteImport } from './../../routes/(public)/login'
 import { Route as protectedIconRouteImport } from './../../routes/(protected)/icon'
 import { Route as protectedHashIdRouteImport } from './../../routes/(protected)/hashId'
@@ -45,6 +46,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const publicSignUpRoute = publicSignUpRouteImport.update({
+  id: '/sign-up',
+  path: '/sign-up',
+  getParentRoute: () => publicRouteRoute,
 } as any)
 const publicLoginRoute = publicLoginRouteImport.update({
   id: '/login',
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/hashId': typeof protectedHashIdRoute
   '/icon': typeof protectedIconRoute
   '/login': typeof publicLoginRoute
+  '/sign-up': typeof publicSignUpRoute
   '/demo/button': typeof protectedDemoButtonRoute
   '/demo/table': typeof protectedDemoTableRoute
 }
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/hashId': typeof protectedHashIdRoute
   '/icon': typeof protectedIconRoute
   '/login': typeof publicLoginRoute
+  '/sign-up': typeof publicSignUpRoute
   '/demo/button': typeof protectedDemoButtonRoute
   '/demo/table': typeof protectedDemoTableRoute
 }
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/(protected)/hashId': typeof protectedHashIdRoute
   '/(protected)/icon': typeof protectedIconRoute
   '/(public)/login': typeof publicLoginRoute
+  '/(public)/sign-up': typeof publicSignUpRoute
   '/(protected)/demo/button': typeof protectedDemoButtonRoute
   '/(protected)/demo/table': typeof protectedDemoTableRoute
 }
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/hashId'
     | '/icon'
     | '/login'
+    | '/sign-up'
     | '/demo/button'
     | '/demo/table'
   fileRoutesByTo: FileRoutesByTo
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/hashId'
     | '/icon'
     | '/login'
+    | '/sign-up'
     | '/demo/button'
     | '/demo/table'
   id:
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/(protected)/hashId'
     | '/(protected)/icon'
     | '/(public)/login'
+    | '/(public)/sign-up'
     | '/(protected)/demo/button'
     | '/(protected)/demo/table'
   fileRoutesById: FileRoutesById
@@ -217,6 +229,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/(public)/sign-up': {
+      id: '/(public)/sign-up'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof publicSignUpRouteImport
+      parentRoute: typeof publicRouteRoute
     }
     '/(public)/login': {
       id: '/(public)/login'
@@ -303,10 +322,12 @@ const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(
 
 interface publicRouteRouteChildren {
   publicLoginRoute: typeof publicLoginRoute
+  publicSignUpRoute: typeof publicSignUpRoute
 }
 
 const publicRouteRouteChildren: publicRouteRouteChildren = {
   publicLoginRoute: publicLoginRoute,
+  publicSignUpRoute: publicSignUpRoute,
 }
 
 const publicRouteRouteWithChildren = publicRouteRoute._addFileChildren(

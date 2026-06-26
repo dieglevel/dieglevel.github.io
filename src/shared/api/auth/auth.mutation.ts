@@ -2,19 +2,21 @@ import type { ApiBaseResponse } from '../../types/base-response'
 import type {
   Request_Login,
   Request_Logout,
+  Request_SignUp,
   Response_Login,
   Response_Logout,
+  Response_SignUp,
 } from './auth.dto'
 import { useMutationPost } from '@/shared/lib/api/mutation/useMutation'
 
 export const useMutationAuth = () => {
   const mLogin = useMutationPost<
-    ApiBaseResponse<Response_Login>,
+    Response_Login,
     Request_Login,
-    '/auth/login'
+    '/auth/v1/token?grant_type=password'
   >({
-    endPoint: '/auth/login',
-    queryKey: ['auth', 'login'],
+    endPoint: '/auth/v1/token?grant_type=password',
+    queryKey: ['login'],
   })
 
   const mLogout = useMutationPost<
@@ -27,11 +29,11 @@ export const useMutationAuth = () => {
   })
 
   const mSignup = useMutationPost<
-    ApiBaseResponse<Response_Login>,
-    Request_Login,
-    '/auth/signup'
+    Response_SignUp,
+    Request_SignUp,
+    '/auth/v1/signup'
   >({
-    endPoint: '/auth/signup',
+    endPoint: '/auth/v1/signup',
     queryKey: ['auth', 'signup'],
   })
 

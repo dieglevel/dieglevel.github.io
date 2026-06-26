@@ -6,11 +6,29 @@ export interface Request_Login {
 }
 
 export interface Response_Login {
-  accessToken: string
-  refreshToken: string
+  access_token: string
+  token_type: string
+  expires_in: number
+  expires_at: number
+  refresh_token: string
   user: User
+  weak_password: any
 }
 
 export interface Request_Logout {}
 
 export interface Response_Logout {}
+
+export interface Request_SignUp {
+  email: string
+  password: string
+}
+
+export interface Response_SignUp {
+  access_token: string
+  token_type: string
+  expires_in: number
+  expires_at: number
+  refresh_token: string
+  user: User
+}
