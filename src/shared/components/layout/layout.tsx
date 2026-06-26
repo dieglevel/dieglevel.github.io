@@ -1,7 +1,8 @@
 import React from 'react'
 
 import { Layout } from 'antd'
-import Sidebar from './sidebar'
+import Menu from './menu/menu'
+import { background } from '@/shared/common/design-token'
 
 const { Content } = Layout
 
@@ -17,7 +18,7 @@ const MainLayout: React.FC<Props> = ({ children }) => {
         height: '100%',
       }}
     >
-      <Sidebar />
+      <Menu />
       <Layout
         className="hide-scrollbar
       "
@@ -29,6 +30,7 @@ const MainLayout: React.FC<Props> = ({ children }) => {
         <Content
           style={{
             overflow: 'initial',
+            background: background.layout,
           }}
         >
           {children}

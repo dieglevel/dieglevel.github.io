@@ -1,1 +1,1 @@
-export { default as Brand } from './brand.png'
+export { default as Brand } from './brand.webp'

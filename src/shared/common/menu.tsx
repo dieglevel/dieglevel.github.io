@@ -1,11 +1,4 @@
-import {
-  AppstoreOutlined,
-  BarChartOutlined,
-  DatabaseOutlined,
-  FileImageOutlined,
-  SettingOutlined,
-  TruckOutlined,
-} from '@ant-design/icons'
+import { AppstoreOutlined } from '@ant-design/icons'
 
 import type { AppPath } from '../utils/url-path'
 import type { MenuItemType } from 'antd/es/menu/interface'
@@ -37,45 +30,15 @@ export const menuItems: Array<MenuItem> = [
     path: '/dashboard',
   },
   {
-    key: 'product',
+    key: 'hashId',
     icon: <AppstoreOutlined />,
-    label: 'Quản lý sản phẩm',
-    path: '/product/list/$subList',
+    label: 'HashId',
+    path: '/hashId',
   },
   {
-    key: 'photobooth',
-    icon: <FileImageOutlined />,
-    label: 'Quản lý theme',
-    path: '/photobooth',
-  },
-  {
-    key: 'order',
-    icon: <TruckOutlined />,
-    label: 'Xử lý đơn hàng',
-    path: '/order/list',
-  },
-  {
-    key: 'uploads',
-    icon: <TruckOutlined />,
-    label: 'Quản lý hình ảnh',
-    path: '/order',
-  },
-  {
-    key: 'inventory',
-    icon: <DatabaseOutlined />,
-    label: 'Kho',
-    path: '/user',
-  },
-  {
-    key: 'reports',
-    icon: <BarChartOutlined />,
-    label: 'Báo cáo doanh thu',
-    path: '/user',
-  },
-  {
-    key: 'settings',
-    icon: <SettingOutlined />,
-    label: 'Cấu hình hệ thống',
-    path: '/user',
+    key: 'hanbiroTask',
+    icon: <AppstoreOutlined />,
+    label: 'Hanbiro Task',
+    path: '/hanbiroTask',
   },
 ]

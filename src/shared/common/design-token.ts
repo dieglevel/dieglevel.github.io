@@ -5,86 +5,107 @@
 export const colors = {
   /* ================= PRIMARY ================= */
   primary: {
-    50: '#fdf2f2',
-    100: '#fde6e6',
-    200: '#f9caca',
-    300: '#f29e9f',
-    400: '#e66b6e',
-    500: '#73080e', // base
-    600: '#8e0a11',
-    700: '#a3151c',
-    800: '#5c060b',
-    900: '#3f0407',
+    50: '#FFF5F0',
+    100: '#FEE8DE',
+    200: '#FDD0BE',
+    300: '#FBB79E',
+    400: '#F89A76',
+    500: '#F27A4E',
+    600: '#E45A2B',
+    700: '#C9471C',
+    800: '#A73A18',
+    900: '#7A2A12',
 
-    base: '#73080e',
-    hover: '#8e0a11',
-    active: '#a3151c',
-    light: '#ffffff',
-    dark: '#5c060b',
-    rgb: '115, 8, 14',
+    base: '#E45A2B',
+    hover: '#F27A4E',
+    active: '#C9471C',
+    light: '#FFF5F0',
+    dark: '#7A2A12',
+    rgb: '228, 90, 43',
   },
 
   /* ================= SECONDARY ================= */
   secondary: {
-    50: '#fafafa',
-    100: '#f5f5f5',
-    200: '#e8e8e8',
-    300: '#d9d9d9',
-    400: '#bfbfbf',
-    500: '#8c8c8c',
-    600: '#595959',
-    700: '#434343',
-    800: '#262626',
-    900: '#1f1f1f',
+    50: '#FCFAF8',
+    100: '#F8F4F1',
+    200: '#EFE3DC',
+    300: '#E0CFC4',
+    400: '#C6B0A2',
+    500: '#9E8678',
+    600: '#735A4C',
+    700: '#4B2415',
+    800: '#34180E',
+    900: '#2F1A10',
 
-    base: '#8c8c8c',
-    hover: '#595959',
-    active: '#434343',
-    light: '#f5f5f5',
-    dark: '#262626',
-    rgb: '140, 140, 140',
+    base: '#4B2415',
+    hover: '#34180E',
+    active: '#2F1A10',
+    light: '#F8F4F1',
+    dark: '#2F1A10',
+    rgb: '75, 36, 21',
   },
 
   /* ================= SUCCESS ================= */
   success: {
-    50: '#f6ffed',
-    100: '#d9f7be',
-    200: '#b7eb8f',
-    300: '#95de64',
-    400: '#73d13d',
-    500: '#52c41a',
-    600: '#389e0d',
-    700: '#237804',
-    800: '#135200',
-    900: '#092b00',
+    50: '#F0FDF4',
+    100: '#DCFCE7',
+    200: '#BBF7D0',
+    300: '#86EFAC',
+    400: '#4ADE80',
+    500: '#22C55E',
+    600: '#16A34A',
+    700: '#15803D',
+    800: '#166534',
+    900: '#14532D',
 
-    base: '#52c41a',
-    hover: '#389e0d',
-    active: '#237804',
-    light: '#d9f7be',
-    dark: '#135200',
-    rgb: '82, 196, 26',
+    base: '#22C55E',
+    hover: '#16A34A',
+    active: '#15803D',
+    light: '#DCFCE7',
+    dark: '#14532D',
+    rgb: '34, 197, 94',
   },
 
   /* ================= ERROR ================= */
   error: {
-    50: '#fff2f0',
-    100: '#ffccc7',
-    200: '#ffa39e',
-    300: '#ff7875',
-    400: '#ff4d4f',
-    500: '#f5222d',
-    600: '#cf1322',
-    700: '#a8071a',
-    800: '#820014',
-    900: '#5c0011',
+    50: '#FEF2F2',
+    100: '#FEE2E2',
+    200: '#FECACA',
+    300: '#FCA5A5',
+    400: '#F87171',
+    500: '#EF4444',
+    600: '#DC2626',
+    700: '#B91C1C',
+    800: '#991B1B',
+    900: '#7F1D1D',
 
-    base: '#f5222d',
-    hover: '#cf1322',
-    active: '#a8071a',
-    light: '#ffccc7',
-    dark: '#820014',
-    rgb: '245, 34, 45',
+    base: '#EF4444',
+    hover: '#DC2626',
+    active: '#B91C1C',
+    light: '#FEE2E2',
+    dark: '#7F1D1D',
+    rgb: '239, 68, 68',
+  },
+
+  /* ================= WARNING ================= */
+  warning: {
+    50: '#FFFBEB',
+    100: '#FEF3C7',
+    200: '#FDE68A',
+    300: '#FCD34D',
+    400: '#FBBF24',
+    500: '#F59E0B',
+    600: '#D97706',
+    700: '#B45309',
+    800: '#92400E',
+    900: '#78350F',
+
+    base: '#F59E0B',
+    hover: '#D97706',
+    active: '#B45309',
+    light: '#FEF3C7',
+    dark: '#78350F',
+    rgb: '245, 158, 11',
   },
 }
 
@@ -94,24 +115,32 @@ export const textColors = {
   primary: colors.secondary[900],
   secondary: colors.secondary[600],
   disabled: colors.secondary[400],
-  inverse: '#ffffff',
+  inverse: '#FFFFFF',
 }
 
 /* ================= BACKGROUND ================= */
 
 export const background = {
-  base: '#ffffff',
-  layout: colors.secondary[100],
-  elevated: '#ffffff',
+  base: '#FFFFFF',
+  layout: '#fffbf5',
+  elevated: '#FFFFFF',
   spotlight: `rgba(${colors.primary.rgb}, 0.08)`,
 }
 
 /* ================= BORDER ================= */
 
 export const border = {
-  base: colors.secondary[300],
-  light: colors.secondary[200],
+  base: '#EFD7CC',
+  light: '#F5E6DF',
   focus: colors.primary.base,
+}
+
+/* ================= STATE ================= */
+
+export const state = {
+  selected: '#FCE8DF',
+  hover: '#FAF1EC',
+  click: '#F6DED3',
 }
 
 /* ================= SHADOW ================= */

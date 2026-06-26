@@ -3,7 +3,7 @@ import { useMemo } from 'react'
 import type { ColumnsType } from 'antd/es/table'
 import Table from '@/shared/components/table'
 
-export const Route = createFileRoute('/(public)/demo/table')({
+export const Route = createFileRoute('/(protected)/demo/table')({
   component: RouteComponent,
 })
 

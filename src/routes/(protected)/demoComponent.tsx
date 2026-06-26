@@ -12,7 +12,7 @@ import {
 } from '@/shared/utils/helper/other'
 import FormUpload from '@/shared/components/form/upload'
 
-export const Route = createFileRoute('/(public)/demoComponent')({
+export const Route = createFileRoute('/(protected)/demoComponent')({
   component: RouteComponent,
 })
 

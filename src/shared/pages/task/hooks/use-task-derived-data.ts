@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { useCallback, useMemo } from 'react'
 import type { Root } from '../type'
 
@@ -19,7 +20,7 @@ export const useTaskDerivedData = ({
 
     try {
       const jsonData = JSON.parse(data) as Root
-      return jsonData.rows
+      return jsonData.rows ?? []
     } catch (error) {
       console.error('Invalid JSON:', error)
       return []
@@ -28,7 +29,7 @@ export const useTaskDerivedData = ({
 
   const statusOptions = useMemo(() => {
     const options = new Set<string>()
-    dataResult.forEach((item) => {
+    dataResult?.forEach((item) => {
       if (item.status_msg) options.add(item.status_msg)
     })
 

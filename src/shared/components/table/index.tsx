@@ -4,12 +4,6 @@ import Pagination from '../pagination'
 import { LIST_PAGE_SIZE_OPTIONS } from '@/shared/common/paginate'
 import './index.css'
 
-interface Data {
-  id: number
-  name: string
-  age: number
-}
-
 export interface TableProps<T> extends React.ComponentProps<
   typeof AntdTable<T>
 > {}
@@ -28,6 +22,9 @@ export default function Table<T>(props: TableProps<T>) {
       dataSource={props.dataSource}
       size="small"
       styles={{
+        root: {
+          flex: 1,
+        },
         pagination: {
           root: {
             justifyContent: 'space-between',

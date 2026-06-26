@@ -1,5 +1,5 @@
-import { Flex } from 'antd'
-import { Brand } from '@/shared/assets/images'
+import { Flex, Typography } from 'antd'
+import { IconBrand } from '@/shared/assets/icons/iconComponent/Brand'
 
 export default function SidebarHeader() {
   return (
@@ -12,17 +12,10 @@ export default function SidebarHeader() {
           margin: '12px 0px',
         }}
       >
-        {/* <DeploymentUnitOutlined
-          style={{
-            color: colors.primary.light,
-            fontSize: 48,
-            padding: 8,
-            borderRadius: 6,
-            cursor: 'pointer',
-            background: colors.primary.base,
-          }}
-        /> */}
-        <img src={Brand} style={{ width: '80%' }} />
+        <IconBrand style={{ fontSize: 40 }} />
+        <Typography.Title level={4} style={{ margin: 0 }}>
+          Dieglevel
+        </Typography.Title>
       </Flex>
     </Flex>
   )

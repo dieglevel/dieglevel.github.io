@@ -21,6 +21,7 @@ import { Route as publicHashIdRouteImport } from './routes/(public)/hashId'
 import { Route as publicDemoComponentRouteImport } from './routes/(public)/demoComponent'
 import { Route as protectedDashboardRouteRouteImport } from './routes/(protected)/dashboard/route'
 import { Route as publicDemoTableRouteImport } from './routes/(public)/demo/table'
+import { Route as publicDemoButtonRouteImport } from './routes/(public)/demo/button'
 
 const R404Route = R404RouteImport.update({
   id: '/404',
@@ -80,6 +81,11 @@ const publicDemoTableRoute = publicDemoTableRouteImport.update({
   path: '/demo/table',
   getParentRoute: () => publicRouteRoute,
 } as any)
+const publicDemoButtonRoute = publicDemoButtonRouteImport.update({
+  id: '/demo/button',
+  path: '/demo/button',
+  getParentRoute: () => publicRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/icon': typeof publicIconRoute
   '/login': typeof publicLoginRoute
   '/task': typeof publicTaskRoute
+  '/demo/button': typeof publicDemoButtonRoute
   '/demo/table': typeof publicDemoTableRoute
 }
 export interface FileRoutesByTo {
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/icon': typeof publicIconRoute
   '/login': typeof publicLoginRoute
   '/task': typeof publicTaskRoute
+  '/demo/button': typeof publicDemoButtonRoute
   '/demo/table': typeof publicDemoTableRoute
 }
 export interface FileRoutesById {
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/(public)/icon': typeof publicIconRoute
   '/(public)/login': typeof publicLoginRoute
   '/(public)/task': typeof publicTaskRoute
+  '/(public)/demo/button': typeof publicDemoButtonRoute
   '/(public)/demo/table': typeof publicDemoTableRoute
 }
 export interface FileRouteTypes {
@@ -132,6 +141,7 @@ export interface FileRouteTypes {
     | '/icon'
     | '/login'
     | '/task'
+    | '/demo/button'
     | '/demo/table'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
     | '/icon'
     | '/login'
     | '/task'
+    | '/demo/button'
     | '/demo/table'
   id:
     | '__root__'
@@ -158,6 +169,7 @@ export interface FileRouteTypes {
     | '/(public)/icon'
     | '/(public)/login'
     | '/(public)/task'
+    | '/(public)/demo/button'
     | '/(public)/demo/table'
   fileRoutesById: FileRoutesById
 }
@@ -255,6 +267,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicDemoTableRouteImport
       parentRoute: typeof publicRouteRoute
     }
+    '/(public)/demo/button': {
+      id: '/(public)/demo/button'
+      path: '/demo/button'
+      fullPath: '/demo/button'
+      preLoaderRoute: typeof publicDemoButtonRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
   }
 }
 
@@ -276,6 +295,7 @@ interface publicRouteRouteChildren {
   publicIconRoute: typeof publicIconRoute
   publicLoginRoute: typeof publicLoginRoute
   publicTaskRoute: typeof publicTaskRoute
+  publicDemoButtonRoute: typeof publicDemoButtonRoute
   publicDemoTableRoute: typeof publicDemoTableRoute
 }
 
@@ -285,6 +305,7 @@ const publicRouteRouteChildren: publicRouteRouteChildren = {
   publicIconRoute: publicIconRoute,
   publicLoginRoute: publicLoginRoute,
   publicTaskRoute: publicTaskRoute,
+  publicDemoButtonRoute: publicDemoButtonRoute,
   publicDemoTableRoute: publicDemoTableRoute,
 }
 

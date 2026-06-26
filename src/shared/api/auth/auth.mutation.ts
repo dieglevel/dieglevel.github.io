@@ -26,5 +26,14 @@ export const useMutationAuth = () => {
     queryKey: ['auth', 'logout'],
   })
 
-  return { mLogin, mLogout }
+  const mSignup = useMutationPost<
+    ApiBaseResponse<Response_Login>,
+    Request_Login,
+    '/auth/signup'
+  >({
+    endPoint: '/auth/signup',
+    queryKey: ['auth', 'signup'],
+  })
+
+  return { mLogin, mLogout, mSignup }
 }

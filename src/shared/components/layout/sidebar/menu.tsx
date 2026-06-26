@@ -4,7 +4,6 @@ import { useCallback, useMemo } from 'react'
 import type { MenuItem } from '@/shared/common/menu'
 import { menuItems } from '@/shared/common/menu'
 import { background, colors } from '@/shared/common/design-token'
-import { ProductSubListEnum } from '@/routes/(protected)/product/list/$subList/route'
 import './menu.css'
 
 export default function Body() {
@@ -16,14 +15,6 @@ export default function Body() {
   const handleNavigate = useCallback(
     (path?: string) => {
       if (!path) return
-
-      if (path === '/product/list/$subList') {
-        navigate({
-          to: '/product/list/$subList',
-          params: { subList: ProductSubListEnum.ALL },
-        })
-        return
-      }
 
       navigate({ to: path })
     },
@@ -80,6 +71,7 @@ export default function Body() {
           textTransform: 'uppercase',
           overflowY: 'auto', // nếu menu dài thì scroll ở đây
           minHeight: 0, // QUAN TRỌNG khi dùng flex + overflow
+          borderInline: 'none',
         }}
       />
     </ConfigProvider>

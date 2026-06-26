@@ -1,4 +1,4 @@
-import { Card, Spin, Table } from 'antd'
+import { Card, Flex, Spin, Table } from 'antd'
 import { useCallback, useRef, useState } from 'react'
 import { ExpandedRowForm } from './components/expanded-row-form'
 import { TaskFilterPanel } from './components/task-filter-panel'
@@ -298,7 +298,7 @@ export default function TaskPage() {
   )
 
   return (
-    <div style={{ padding: '16px', background: '#f5f5f5', minHeight: '100vh' }}>
+    <Flex vertical flex={1} style={{ padding: '16px', minHeight: '100vh' }}>
       <TaskFilterPanel
         data={data}
         onDataChange={setData}
@@ -330,6 +330,6 @@ export default function TaskPage() {
           />
         </Card>
       </Spin>
-    </div>
+    </Flex>
   )
 }
