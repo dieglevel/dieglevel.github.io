@@ -12,7 +12,7 @@ import { UserRoleEnum } from '@/shared/auth/auth.type'
 import { useAuthStore } from '@/shared/auth/auth.store'
 
 export const Route = createFileRoute('/(public)/login')({
-  component: RouteComponent,
+  component: LoginComponent,
   beforeLoad: () => {
     const loadToken = AuthTokenService.loadTokens()
 
@@ -35,7 +35,7 @@ export const Route = createFileRoute('/(public)/login')({
 
 type LoginField = WriteItemProps<React.ElementType, Request_Login>
 
-function RouteComponent() {
+export function LoginComponent() {
   const router = useRouter()
   const [form] = useForm<Request_Login>()
   const [isLoading, setIsLoading] = useState(false)
@@ -114,6 +114,7 @@ function RouteComponent() {
     <Flex
       justify="center"
       align="center"
+      flex={1}
       style={{ minHeight: '100vh', backgroundColor: '#f0f2f5' }}
     >
       <Card title="Login" style={{ width: 400 }}>
@@ -122,24 +123,26 @@ function RouteComponent() {
             <WriteItem key={item.form.name} {...item} />
           ))}
           <Form.Item>
-            <Button
-              htmlType="submit"
-              type="primary"
-              style={{
-                width: '100%',
-              }}
-              loading={isLoading}
-            >
-              Login
-            </Button>
-            <Button
-              style={{
-                width: '100%',
-              }}
-              onClick={() => router.navigate({ to: '/sign-up' })}
-            >
-              Sign Up
-            </Button>
+            <Flex style={{ gap: 8 }} vertical>
+              <Button
+                htmlType="submit"
+                type="primary"
+                style={{
+                  width: '100%',
+                }}
+                loading={isLoading}
+              >
+                Login
+              </Button>
+              <Button
+                style={{
+                  width: '100%',
+                }}
+                onClick={() => router.navigate({ to: '/sign-up' })}
+              >
+                Sign Up
+              </Button>
+            </Flex>
           </Form.Item>
         </Form>
       </Card>

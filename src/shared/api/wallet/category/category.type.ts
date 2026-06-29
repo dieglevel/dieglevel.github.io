@@ -5,4 +5,5 @@ export interface IWallet_Category {
   name: string
   icon: string | null
   color: string | null
+  user_id: string
 }

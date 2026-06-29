@@ -11,9 +11,14 @@ export type RefreshTokenResponse = ApiBaseResponse<{
 
 const refreshClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  headers: {
+    apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || '',
+  },
 })
 
 export const refreshTokenRequest = (
-  refreshToken: string,
+  refresh_token: string,
 ): Promise<AxiosResponse<RefreshTokenResponse>> =>
-  refreshClient.post('auth/refresh-token', { refreshToken })
+  refreshClient.post('auth/v1/token?grant_type=refresh_token', {
+    refresh_token,
+  })

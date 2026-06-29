@@ -1,49 +1,43 @@
+import type { IWallet_Category } from './category.type'
 import {
+  useMutationDelete,
   useMutationPatch,
   useMutationPost,
 } from '@/shared/lib/api/mutation/useMutation'
 
-// useMutation<Entity>
-export const useMutationExample = () => {
-  const mExample_CreateProduct = useMutationPost<
+export const useMutationCategory = () => {
+  const mCategory_Create = useMutationPost<
     void,
-    FormData,
-    '/admin/products/custom',
-    {
-      product: string
-    }
+    Omit<IWallet_Category, 'id' | 'created_at'>,
+    'rest/v1/wallet_category'
   >({
-    endPoint: '/admin/products/custom',
-    queryKey: ['createProduct'],
+    endPoint: 'rest/v1/wallet_category',
+    queryKey: ['getWalletCategoryList'],
   })
 
-  const mExample_UpdateMainInformationProduct = useMutationPatch<
+  const mCategory_Update = useMutationPatch<
     void,
-    FormData,
-    '/admin/products/custom/:id',
-    {
-      id: string
-    }
+    Partial<Omit<IWallet_Category, 'id' | 'created_at'>>,
+    'rest/v1/wallet_category',
+    { id: string }
   >({
-    endPoint: '/admin/products/custom/:id',
-    queryKey: ['updateMainInformationProduct'],
+    endPoint: 'rest/v1/wallet_category',
+    queryKey: ['getWalletCategoryList'],
   })
 
-  const mExample_UpdateConfigProduct = useMutationPatch<
+  const mCategory_Delete = useMutationDelete<
     void,
-    FormData,
-    '/admin/products/custom/configs/:id',
-    {
-      id: string
-    }
+    void, // DELETE không cần body
+    'rest/v1/wallet_category',
+    { id: string }
   >({
-    endPoint: '/admin/products/custom/configs/:id',
-    queryKey: ['updateConfigProduct'],
+    endPoint: 'rest/v1/wallet_category',
+    queryKey: ['getWalletCategoryList'],
   })
 
   return {
-    mExample_CreateProduct,
-    mExample_UpdateMainInformationProduct,
-    mExample_UpdateConfigProduct,
+    mCategory_Create,
+    mCategory_Update,
+    mCategory_Delete,
   }
 }

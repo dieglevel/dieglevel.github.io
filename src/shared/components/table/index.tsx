@@ -22,16 +22,6 @@ export default function Table<T>(props: TableProps<T>) {
       columns={props.columns}
       dataSource={props.dataSource}
       size="small"
-      styles={{
-        root: {
-          flex: 1,
-        },
-        pagination: {
-          root: {
-            justifyContent: 'space-between',
-          },
-        },
-      }}
       pagination={false}
       footer={() => (
         <Pagination
@@ -59,6 +49,18 @@ export default function Table<T>(props: TableProps<T>) {
       // }}
 
       {...props}
+      styles={{
+        root: {
+          flex: 1,
+          borderRadius: 8,
+        },
+        pagination: {
+          root: {
+            justifyContent: 'space-between',
+          },
+        },
+      }}
+      style={{ borderRadius: 8, ...props.style }}
     />
   )
 }

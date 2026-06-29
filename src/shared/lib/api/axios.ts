@@ -6,7 +6,7 @@ import { refreshTokenRequest } from '@/shared/api/auth/refreshToken'
 import { AuthTokenService } from '@/shared/auth/authToken.service'
 import { useAuthStore } from '@/shared/auth/auth.store'
 
-const refreshPromise: Promise<AxiosResponse<RefreshTokenResponse>> | null = null
+let refreshPromise: Promise<AxiosResponse<RefreshTokenResponse>> | null = null
 
 export const customAxios = <T = unknown>(
   config: AxiosRequestConfig,

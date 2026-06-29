@@ -34,6 +34,9 @@ export const ConfigAntd: ConfigProviderProps = {
         fontSize: 14,
         fontWeight: 600,
         fontSizeIcon: 14,
+        boxShadow: '0px 2px 0px rgba(0, 0, 0, 0.04)',
+        defaultShadow: 'none',
+        primaryShadow: 'none',
       },
       Pagination: {
         itemActiveBg: colors.primary.base,
@@ -50,6 +53,9 @@ export const ConfigAntd: ConfigProviderProps = {
         colorText: colors.primary.base,
         colorTextPlaceholder: colors.primary[300],
         colorBgTextActive: hoverColor(colors.primary.base),
+      },
+      Select: {
+        colorText: colors.primary.base,
       },
     },
   },

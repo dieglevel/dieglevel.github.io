@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { customAxios } from '../axios'
 import { buildUrl, invalidate } from './helper'
 import type { BaseMutationProps, MutatePayload } from './helper'
+import { useLoadingStore } from '@/shared/store/loading.store'
 
 function createMutationHook(method: 'POST' | 'PUT' | 'PATCH' | 'DELETE') {
   return function useCustomMutation<
@@ -19,6 +20,9 @@ function createMutationHook(method: 'POST' | 'PUT' | 'PATCH' | 'DELETE') {
   }: BaseMutationProps<TResponse, TBody, TEndPoint, TQueryParams>) {
     const queryClient = useQueryClient()
     const userOnSuccess = options?.onSuccess
+    const userOnSettled = options?.onSettled
+
+    const setLoading = useLoadingStore((state) => state.setLoading)
 
     return useMutation<
       TResponse,
@@ -26,6 +30,13 @@ function createMutationHook(method: 'POST' | 'PUT' | 'PATCH' | 'DELETE') {
       MutatePayload<TBody, TEndPoint, TQueryParams>
     >({
       ...options,
+
+      onMutate: (variables, context) => {
+        setLoading(true)
+        if (options?.onMutate) {
+          return options.onMutate(variables, context)
+        }
+      },
 
       mutationFn: async (payload) => {
         const finalUrl = buildUrl(endPoint, payload.pathParams ?? pathParams)
@@ -45,6 +56,12 @@ function createMutationHook(method: 'POST' | 'PUT' | 'PATCH' | 'DELETE') {
       onSuccess: (data, variables, context, mutation) => {
         invalidate(queryClient, queryKey)
         userOnSuccess?.(data, variables, context, mutation)
+      },
+
+      // 2. Khi mutation KẾT THÚC (Dù Thành công hay Thất bại) -> Tắt loading
+      onSettled(data, error, variables, onMutateResult, context) {
+        setLoading(false)
+        userOnSettled?.(data, error, variables, onMutateResult, context)
       },
     })
   }

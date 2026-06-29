@@ -19,6 +19,6 @@ export const useGetWallet_Category_List = (
 ) =>
   useQueryGet<Array<IWallet_Category>, 'rest/v1/wallet_category'>({
     endPoint: `rest/v1/wallet_category`,
-    queryKey: ['wallet-category'],
+    queryKey: ['getWalletCategoryList'],
     ...props,
   })

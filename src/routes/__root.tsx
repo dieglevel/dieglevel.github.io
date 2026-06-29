@@ -8,6 +8,7 @@ import { Spin } from 'antd'
 import type { QueryClient } from '@tanstack/react-query'
 import { SpinGlobal } from '@/shared/components/spin-global'
 import NotFound from '@/shared/pages/_global/notFound'
+import GlobalLoading from '@/shared/components/loading/global-loading'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -19,6 +20,7 @@ Spin.setDefaultIndicator(SpinGlobal)
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
     <>
+      <GlobalLoading />
       <Outlet />
       <TanStackDevtools
         config={{
