@@ -95,7 +95,7 @@ export default function Footer() {
                     color: colors.primary.light,
                   }}
                 >
-                  {user?.fullName || '-'}
+                  {user?.email || '-'}
                 </Typography.Text>
 
                 <Typography.Text
