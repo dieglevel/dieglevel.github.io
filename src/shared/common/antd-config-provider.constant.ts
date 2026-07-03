@@ -16,7 +16,7 @@ export const ConfigAntd: ConfigProviderProps = {
     token: {
       colorTextBase: colors.primary.light,
       colorPrimary: colors.primary.base,
-      colorBgContainer: 'var(--background-content, #240101)',
+      // colorBgContainer: 'var(--background-content, #240101)',
       colorBgSolidHover: hoverColor(colors.primary.base),
       colorBgSolidActive: activeColor(colors.primary.base),
       colorPrimaryBgHover: hoverColor(colors.primary.base),
@@ -44,7 +44,6 @@ export const ConfigAntd: ConfigProviderProps = {
         itemBg: 'transparent',
       },
       Card: {
-        colorBgContainer: 'var(--background-content, #240101)',
         colorBorderSecondary: 'var(--border-color, #4B1010)',
       },
       Input: {

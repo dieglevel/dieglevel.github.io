@@ -19,7 +19,7 @@ export const colors = {
     base: '#E45A2B',
     hover: '#F27A4E',
     active: '#C9471C',
-    light: '#FFF5F0',
+    light: '#7A2A12',
     dark: '#7A2A12',
     rgb: '228, 90, 43',
   },
