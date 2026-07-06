@@ -1,0 +1,7 @@
+.button:hover {
+  background: var(--primary-200);
+}
+
+.mainButton:hover {
+  background: var(--primary-200);
+}

@@ -20,7 +20,11 @@ import { Route as protectedIconRouteImport } from './routes/(protected)/icon'
 import { Route as protectedHashIdRouteImport } from './routes/(protected)/hashId'
 import { Route as protectedHanbiroTaskRouteImport } from './routes/(protected)/hanbiroTask'
 import { Route as protectedDemoComponentRouteImport } from './routes/(protected)/demoComponent'
-import { Route as protectedDashboardRouteRouteImport } from './routes/(protected)/dashboard/route'
+import { Route as protectedFinancialRouteRouteImport } from './routes/(protected)/financial/route'
+import { Route as protectedFinancialIndexRouteImport } from './routes/(protected)/financial/index'
+import { Route as protectedDashboardIndexRouteImport } from './routes/(protected)/dashboard/index'
+import { Route as protectedFinancialSettingRouteImport } from './routes/(protected)/financial/setting'
+import { Route as protectedFinancialCategoryRouteImport } from './routes/(protected)/financial/category'
 import { Route as protectedDemoTableRouteImport } from './routes/(protected)/demo/table'
 import { Route as protectedDemoButtonRouteImport } from './routes/(protected)/demo/button'
 
@@ -77,11 +81,33 @@ const protectedDemoComponentRoute = protectedDemoComponentRouteImport.update({
   path: '/demoComponent',
   getParentRoute: () => protectedRouteRoute,
 } as any)
-const protectedDashboardRouteRoute = protectedDashboardRouteRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const protectedFinancialRouteRoute = protectedFinancialRouteRouteImport.update({
+  id: '/financial',
+  path: '/financial',
   getParentRoute: () => protectedRouteRoute,
 } as any)
+const protectedFinancialIndexRoute = protectedFinancialIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => protectedFinancialRouteRoute,
+} as any)
+const protectedDashboardIndexRoute = protectedDashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => protectedRouteRoute,
+} as any)
+const protectedFinancialSettingRoute =
+  protectedFinancialSettingRouteImport.update({
+    id: '/setting',
+    path: '/setting',
+    getParentRoute: () => protectedFinancialRouteRoute,
+  } as any)
+const protectedFinancialCategoryRoute =
+  protectedFinancialCategoryRouteImport.update({
+    id: '/category',
+    path: '/category',
+    getParentRoute: () => protectedFinancialRouteRoute,
+  } as any)
 const protectedDemoTableRoute = protectedDemoTableRouteImport.update({
   id: '/demo/table',
   path: '/demo/table',
@@ -97,7 +123,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/401': typeof R401Route
   '/404': typeof R404Route
-  '/dashboard': typeof protectedDashboardRouteRoute
+  '/financial': typeof protectedFinancialRouteRouteWithChildren
   '/demoComponent': typeof protectedDemoComponentRoute
   '/hanbiroTask': typeof protectedHanbiroTaskRoute
   '/hashId': typeof protectedHashIdRoute
@@ -106,12 +132,15 @@ export interface FileRoutesByFullPath {
   '/sign-up': typeof publicSignUpRoute
   '/demo/button': typeof protectedDemoButtonRoute
   '/demo/table': typeof protectedDemoTableRoute
+  '/financial/category': typeof protectedFinancialCategoryRoute
+  '/financial/setting': typeof protectedFinancialSettingRoute
+  '/dashboard/': typeof protectedDashboardIndexRoute
+  '/financial/': typeof protectedFinancialIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/401': typeof R401Route
   '/404': typeof R404Route
-  '/dashboard': typeof protectedDashboardRouteRoute
   '/demoComponent': typeof protectedDemoComponentRoute
   '/hanbiroTask': typeof protectedHanbiroTaskRoute
   '/hashId': typeof protectedHashIdRoute
@@ -120,6 +149,10 @@ export interface FileRoutesByTo {
   '/sign-up': typeof publicSignUpRoute
   '/demo/button': typeof protectedDemoButtonRoute
   '/demo/table': typeof protectedDemoTableRoute
+  '/financial/category': typeof protectedFinancialCategoryRoute
+  '/financial/setting': typeof protectedFinancialSettingRoute
+  '/dashboard': typeof protectedDashboardIndexRoute
+  '/financial': typeof protectedFinancialIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -128,7 +161,7 @@ export interface FileRoutesById {
   '/(public)': typeof publicRouteRouteWithChildren
   '/401': typeof R401Route
   '/404': typeof R404Route
-  '/(protected)/dashboard': typeof protectedDashboardRouteRoute
+  '/(protected)/financial': typeof protectedFinancialRouteRouteWithChildren
   '/(protected)/demoComponent': typeof protectedDemoComponentRoute
   '/(protected)/hanbiroTask': typeof protectedHanbiroTaskRoute
   '/(protected)/hashId': typeof protectedHashIdRoute
@@ -137,6 +170,10 @@ export interface FileRoutesById {
   '/(public)/sign-up': typeof publicSignUpRoute
   '/(protected)/demo/button': typeof protectedDemoButtonRoute
   '/(protected)/demo/table': typeof protectedDemoTableRoute
+  '/(protected)/financial/category': typeof protectedFinancialCategoryRoute
+  '/(protected)/financial/setting': typeof protectedFinancialSettingRoute
+  '/(protected)/dashboard/': typeof protectedDashboardIndexRoute
+  '/(protected)/financial/': typeof protectedFinancialIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -144,7 +181,7 @@ export interface FileRouteTypes {
     | '/'
     | '/401'
     | '/404'
-    | '/dashboard'
+    | '/financial'
     | '/demoComponent'
     | '/hanbiroTask'
     | '/hashId'
@@ -153,12 +190,15 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/demo/button'
     | '/demo/table'
+    | '/financial/category'
+    | '/financial/setting'
+    | '/dashboard/'
+    | '/financial/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/401'
     | '/404'
-    | '/dashboard'
     | '/demoComponent'
     | '/hanbiroTask'
     | '/hashId'
@@ -167,6 +207,10 @@ export interface FileRouteTypes {
     | '/sign-up'
     | '/demo/button'
     | '/demo/table'
+    | '/financial/category'
+    | '/financial/setting'
+    | '/dashboard'
+    | '/financial'
   id:
     | '__root__'
     | '/'
@@ -174,7 +218,7 @@ export interface FileRouteTypes {
     | '/(public)'
     | '/401'
     | '/404'
-    | '/(protected)/dashboard'
+    | '/(protected)/financial'
     | '/(protected)/demoComponent'
     | '/(protected)/hanbiroTask'
     | '/(protected)/hashId'
@@ -183,6 +227,10 @@ export interface FileRouteTypes {
     | '/(public)/sign-up'
     | '/(protected)/demo/button'
     | '/(protected)/demo/table'
+    | '/(protected)/financial/category'
+    | '/(protected)/financial/setting'
+    | '/(protected)/dashboard/'
+    | '/(protected)/financial/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -272,12 +320,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedDemoComponentRouteImport
       parentRoute: typeof protectedRouteRoute
     }
-    '/(protected)/dashboard': {
-      id: '/(protected)/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof protectedDashboardRouteRouteImport
+    '/(protected)/financial': {
+      id: '/(protected)/financial'
+      path: '/financial'
+      fullPath: '/financial'
+      preLoaderRoute: typeof protectedFinancialRouteRouteImport
       parentRoute: typeof protectedRouteRoute
+    }
+    '/(protected)/financial/': {
+      id: '/(protected)/financial/'
+      path: '/'
+      fullPath: '/financial/'
+      preLoaderRoute: typeof protectedFinancialIndexRouteImport
+      parentRoute: typeof protectedFinancialRouteRoute
+    }
+    '/(protected)/dashboard/': {
+      id: '/(protected)/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof protectedDashboardIndexRouteImport
+      parentRoute: typeof protectedRouteRoute
+    }
+    '/(protected)/financial/setting': {
+      id: '/(protected)/financial/setting'
+      path: '/setting'
+      fullPath: '/financial/setting'
+      preLoaderRoute: typeof protectedFinancialSettingRouteImport
+      parentRoute: typeof protectedFinancialRouteRoute
+    }
+    '/(protected)/financial/category': {
+      id: '/(protected)/financial/category'
+      path: '/category'
+      fullPath: '/financial/category'
+      preLoaderRoute: typeof protectedFinancialCategoryRouteImport
+      parentRoute: typeof protectedFinancialRouteRoute
     }
     '/(protected)/demo/table': {
       id: '/(protected)/demo/table'
@@ -296,24 +372,44 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface protectedFinancialRouteRouteChildren {
+  protectedFinancialCategoryRoute: typeof protectedFinancialCategoryRoute
+  protectedFinancialSettingRoute: typeof protectedFinancialSettingRoute
+  protectedFinancialIndexRoute: typeof protectedFinancialIndexRoute
+}
+
+const protectedFinancialRouteRouteChildren: protectedFinancialRouteRouteChildren =
+  {
+    protectedFinancialCategoryRoute: protectedFinancialCategoryRoute,
+    protectedFinancialSettingRoute: protectedFinancialSettingRoute,
+    protectedFinancialIndexRoute: protectedFinancialIndexRoute,
+  }
+
+const protectedFinancialRouteRouteWithChildren =
+  protectedFinancialRouteRoute._addFileChildren(
+    protectedFinancialRouteRouteChildren,
+  )
+
 interface protectedRouteRouteChildren {
-  protectedDashboardRouteRoute: typeof protectedDashboardRouteRoute
+  protectedFinancialRouteRoute: typeof protectedFinancialRouteRouteWithChildren
   protectedDemoComponentRoute: typeof protectedDemoComponentRoute
   protectedHanbiroTaskRoute: typeof protectedHanbiroTaskRoute
   protectedHashIdRoute: typeof protectedHashIdRoute
   protectedIconRoute: typeof protectedIconRoute
   protectedDemoButtonRoute: typeof protectedDemoButtonRoute
   protectedDemoTableRoute: typeof protectedDemoTableRoute
+  protectedDashboardIndexRoute: typeof protectedDashboardIndexRoute
 }
 
 const protectedRouteRouteChildren: protectedRouteRouteChildren = {
-  protectedDashboardRouteRoute: protectedDashboardRouteRoute,
+  protectedFinancialRouteRoute: protectedFinancialRouteRouteWithChildren,
   protectedDemoComponentRoute: protectedDemoComponentRoute,
   protectedHanbiroTaskRoute: protectedHanbiroTaskRoute,
   protectedHashIdRoute: protectedHashIdRoute,
   protectedIconRoute: protectedIconRoute,
   protectedDemoButtonRoute: protectedDemoButtonRoute,
   protectedDemoTableRoute: protectedDemoTableRoute,
+  protectedDashboardIndexRoute: protectedDashboardIndexRoute,
 }
 
 const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(

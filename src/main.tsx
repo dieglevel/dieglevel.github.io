@@ -1,10 +1,6 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
-import {
-  RouterProvider,
-  createHashHistory,
-  createRouter,
-} from '@tanstack/react-router'
+import { RouterProvider, createRouter } from '@tanstack/react-router'
 import * as AppProvider from './root-provider.tsx'
 
 // Import the generated route tree
@@ -19,7 +15,7 @@ import { routeTree } from './shared/router/routeTree.gen.ts'
 
 // Create a new router instance
 
-const router = createRouter({
+export const router = createRouter({
   routeTree,
   context: {
     queryClient: queryClient,
@@ -28,7 +24,7 @@ const router = createRouter({
   scrollRestoration: true,
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
-  history: createHashHistory(),
+  // history: createHashHistory(),
 })
 
 // Register the router instance for type safety
