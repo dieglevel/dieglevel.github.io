@@ -1,41 +1,75 @@
-import { Button, Flex } from 'antd'
+import { Button, ColorPicker as ColorPickerAntd, Flex } from 'antd'
+import { border } from '@/shared/common/design-token'
+import { IconPlus } from '@/shared/assets/icons'
 
-interface IconPickerProps {
-  icons: Array<string>
+interface ColorPickerProps {
   value: string
-  color: string
-  onChange: (icon: string) => void
+  color: Array<string>
+  onChange: (color: string) => void
 }
 
-export default function IconPicker({
-  icons,
+export default function ColorPicker({
   value,
   color,
   onChange,
-}: IconPickerProps) {
+}: ColorPickerProps) {
   return (
     <Flex wrap gap={8}>
-      {icons.map((icon) => {
-        const selected = value === icon
+      {color.map((c) => {
+        const selected = value === c
 
         return (
           <Button
-            key={icon}
+            key={c}
             type={selected ? 'primary' : 'default'}
-            onClick={() => onChange(icon)}
+            shape="circle"
+            onClick={() => onChange(c)}
             style={{
-              width: 42,
-              height: 42,
-              padding: 0,
-              fontSize: 22,
-              background: selected ? color : undefined,
-              borderColor: selected ? color : undefined,
+              width: 20,
+              minWidth: 20,
+              height: 20,
+              minHeight: 20,
+              background: c,
+              border: 'none',
+              outline: selected ? `4px solid ${c}` : 'none',
+              outlineOffset: selected ? '2px' : '0',
+              transition: 'outline 0.2s ease-in-out',
             }}
-          >
-            {icon}
-          </Button>
+          ></Button>
         )
       })}
+      <ColorPickerAntd
+        value={value}
+        defaultFormat="hex"
+        onChangeComplete={(valueColor) => onChange(valueColor.toHexString())}
+        style={{
+          width: 20,
+          minWidth: 20,
+          height: 20,
+          minHeight: 20,
+        }}
+        allowClear
+      >
+        <div
+          style={{
+            width: 20,
+            height: 20,
+            background: !color.includes(value) ? value : undefined,
+            borderRadius: 9999,
+            outline: !color.includes(value) ? `4px solid ${value}` : 'none',
+            outlineOffset: '2px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            transition: 'outline 0.2s ease-in-out',
+            borderWidth: 1,
+            borderStyle: 'solid',
+            borderColor: border.base,
+          }}
+        >
+          {color.includes(value) && <IconPlus style={{ fontSize: 20 }} />}
+        </div>
+      </ColorPickerAntd>
     </Flex>
   )
 }

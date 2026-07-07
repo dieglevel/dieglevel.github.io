@@ -23,32 +23,7 @@ export const COLORS: Array<string> = [
   '#db2777',
 ]
 
-export const ICONS = [
-  '🍔',
-  '☕',
-  '💧',
-  '🚗',
-  '🏠',
-  '💡',
-  '🛒',
-  '🎮',
-  '💻',
-  '❤️',
-  '📚',
-  '✈️',
-  '🎁',
-  '💰',
-  '🍕',
-  '🍜',
-  '🎵',
-  '🏋️',
-  '🎨',
-  '📱',
-  '🏪',
-  '⚽',
-  '🎪',
-  '🌮',
-]
+export const ICONS: Array<string> = ['🍔']
 
 export const EMPTY_CATEGORY: Omit<Category, 'id'> = {
   name: '',

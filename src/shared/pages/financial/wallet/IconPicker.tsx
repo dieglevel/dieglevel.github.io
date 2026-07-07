@@ -1,4 +1,5 @@
 import { Button, Flex } from 'antd'
+import { border } from '@/shared/common/design-token'
 
 interface IconPickerProps {
   icons: Array<string>
@@ -24,12 +25,14 @@ export default function IconPicker({
             type={selected ? 'primary' : 'default'}
             onClick={() => onChange(icon)}
             style={{
-              width: 42,
-              height: 42,
-              padding: 0,
-              fontSize: 22,
+              width: 35,
+              height: 35,
+              fontSize: 20,
               background: selected ? color : undefined,
-              borderColor: selected ? color : undefined,
+              backgroundColor: selected ? `${color}20` : undefined,
+              borderColor: border.base,
+              outline: selected ? `4px solid ${color}` : 'none',
+              outlineOffset: selected ? '2px' : '0',
             }}
           >
             {icon}

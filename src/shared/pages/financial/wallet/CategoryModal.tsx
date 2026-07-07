@@ -3,7 +3,7 @@ import { Form, Input, InputNumber, Modal, Typography } from 'antd'
 
 import ColorPicker from './ColorPicker'
 import IconPicker from './IconPicker'
-import { EMPTY_CATEGORY, ICONS } from './constants'
+import { COLORS, EMPTY_CATEGORY, ICONS } from './constants'
 import type { Category } from './constants'
 
 const { Text } = Typography
@@ -30,6 +30,7 @@ export default function CategoryModal({
 
     form.setFieldsValue(category ?? EMPTY_CATEGORY)
   }, [category, open, form])
+  console.log(form.getFieldsValue())
 
   function handleOk() {
     form
@@ -90,7 +91,7 @@ export default function CategoryModal({
           {() => (
             <Form.Item noStyle name="color">
               <ColorPicker
-                color={'#233323'}
+                color={COLORS}
                 value={form.getFieldValue('color')}
                 onChange={(color) => form.setFieldValue('color', color)}
               />
