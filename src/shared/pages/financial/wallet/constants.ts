@@ -1,12 +1,5 @@
-export interface Category {
-  id: string
-  name: string
-  icon: string
-  color: string
-  monthlyBudget: number
-  totalSpent: number
-  archived: boolean
-}
+import type { IWallet_Category } from '@/shared/api/wallet/category/category.type'
+
 export const COLORS: Array<string> = [
   '#5b5fef',
   '#10b981',
@@ -25,7 +18,9 @@ export const COLORS: Array<string> = [
 
 export const ICONS: Array<string> = ['🍔']
 
-export const EMPTY_CATEGORY: Omit<Category, 'id'> = {
+export const EMPTY_CATEGORY: Omit<IWallet_Category, 'id'> = {
+  created_at: '',
+  user_id: '',
   name: '',
   icon: '🍔',
   color: '#5b5fef',

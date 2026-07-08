@@ -17,8 +17,8 @@ interface GetWallet_Category_List_Params {
 export const useGetWallet_Category_List = (
   props: GetWallet_Category_List_Params,
 ) =>
-  useQueryGet<Array<IWallet_Category>, 'rest/v1/wallet_category'>({
-    endPoint: `rest/v1/wallet_category`,
-    queryKey: ['getWalletCategoryList'],
+  useQueryGet<Array<IWallet_Category>, 'rest/v1/financial_category'>({
+    endPoint: `rest/v1/financial_category`,
+    queryKey: ['getFinancialCategoryList'],
     ...props,
   })

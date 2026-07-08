@@ -9,31 +9,26 @@ import {
 import CategoryCard from './CategoryCard'
 import CategoryModal from './CategoryModal'
 import SummaryCards from './SummaryCards'
-import { EMPTY_CATEGORY } from './constants'
-import type { Category } from './constants'
+import type { IWallet_Category } from '@/shared/api/wallet/category/category.type'
+import { useMutationCategory } from '@/shared/api/wallet/category/category.mutation'
+import { useGetWallet_Category_List } from '@/shared/api/wallet/category/useGetWallet_Category_List'
 
 const { Title, Text } = Typography
 
 export default function Categories() {
-  const [categories, setCategories] = useState<Array<Category>>([
-    {
-      ...EMPTY_CATEGORY,
-      id: 'c1',
-      name: 'Food',
-      color: '#FF4D4F',
-      icon: '🍔',
-      monthlyBudget: 500,
-      totalSpent: 300,
-    },
-  ])
+  // 1. Lấy dữ liệu từ API (mặc định fallback về mảng rỗng nếu chưa có data)
+  const { data: apiResponse } = useGetWallet_Category_List({})
+  const categories: Array<IWallet_Category> = apiResponse || []
+
+  // 2. Lấy các hàm mutation để thay đổi dữ liệu phía Server
+  const { mCategory_Update, mCategory_Create } = useMutationCategory()
+
   const [showArchived, setShowArchived] = useState(false)
-
   const [open, setOpen] = useState(false)
-
   const [mode, setMode] = useState<'add' | 'edit'>('add')
+  const [editing, setEditing] = useState<IWallet_Category | null>(null)
 
-  const [editing, setEditing] = useState<Category | null>(null)
-
+  // Tính toán danh mục Active và Archived từ biến `categories` hợp lệ
   const active = useMemo(
     () => categories.filter((x) => !x.archived),
     [categories],
@@ -47,7 +42,6 @@ export default function Categories() {
   const shown = showArchived ? categories : active
 
   const totalBudget = active.reduce((s, c) => s + c.monthlyBudget, 0)
-
   const totalSpent = active.reduce((s, c) => s + c.totalSpent, 0)
 
   function openAdd() {
@@ -56,50 +50,51 @@ export default function Categories() {
     setOpen(true)
   }
 
-  function openEdit(category: Category) {
+  function openEdit(category: IWallet_Category) {
     setMode('edit')
     setEditing(category)
     setOpen(true)
   }
 
-  function archive(id: string) {
-    setCategories((prev) =>
-      prev.map((c) =>
-        c.id === id
-          ? {
-              ...c,
-              archived: !c.archived,
-            }
-          : c,
-      ),
-    )
+  // 3. Gọi API Update để Toggle trạng thái Archive thay vì set state ảo
+  function archive(id: number) {
+    const target = categories.find((c) => c.id === id)
+    if (target) {
+      mCategory_Update.mutate({
+        body: {
+          archived: !target.archived,
+        },
+      })
+    }
   }
 
-  function save(data: Omit<Category, 'id'>) {
+  // 4. Gửi dữ liệu lên Server qua Mutation API thay vì cập nhật State local không tồn tại
+  function save(formData: Omit<IWallet_Category, 'id'>) {
     if (mode === 'add') {
-      setCategories((prev) => [
-        ...prev,
+      mCategory_Create.mutate(
+        { body: formData },
         {
-          ...EMPTY_CATEGORY,
-          ...data,
-          id: `c${Date.now()}`,
+          onSuccess: () => {
+            setOpen(false)
+          },
         },
-      ])
+      )
     } else if (editing) {
-      setCategories((prev) =>
-        prev.map((c) =>
-          c.id === editing.id
-            ? {
-                ...c,
-                ...data,
-              }
-            : c,
-        ),
+      mCategory_Update.mutate(
+        {
+          body: {
+            id: editing.id,
+            ...formData,
+          },
+        },
+        {
+          onSuccess: () => {
+            setOpen(false)
+            setEditing(null)
+          },
+        },
       )
     }
-
-    setOpen(false)
-    setEditing(null)
   }
 
   return (
@@ -107,7 +102,6 @@ export default function Categories() {
       <Flex justify="space-between" align="center">
         <div>
           <Title level={2}>Categories</Title>
-
           <Text type="secondary">
             {active.length} Active · {archived.length} Archived
           </Text>

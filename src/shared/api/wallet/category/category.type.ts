@@ -6,4 +6,7 @@ export interface IWallet_Category {
   icon: string | null
   color: string | null
   user_id: string
+  monthlyBudget: number
+  totalSpent: number
+  archived: boolean
 }

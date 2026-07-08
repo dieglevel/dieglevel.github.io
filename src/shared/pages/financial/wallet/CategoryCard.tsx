@@ -1,13 +1,13 @@
 import { Button, Card, Flex, Progress, Space, Tag, Typography } from 'antd'
 import { EditOutlined, InboxOutlined } from '@ant-design/icons'
-import type { Category } from './constants'
+import type { IWallet_Category } from '@/shared/api/wallet/category/category.type'
 
 const { Text } = Typography
 
 interface CategoryCardProps {
-  category: Category
-  onEdit: (category: Category) => void
-  onArchive: (id: string) => void
+  category: IWallet_Category
+  onEdit: (category: IWallet_Category) => void
+  onArchive: (id: number) => void
 }
 
 export default function CategoryCard({
