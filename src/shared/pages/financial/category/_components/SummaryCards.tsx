@@ -1,4 +1,5 @@
 import { Card, Col, Row, Statistic } from 'antd'
+import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 interface SummaryCardsProps {
   totalBudget: number
@@ -14,12 +15,11 @@ export default function SummaryCards({
   return (
     <Row gutter={[16, 16]}>
       <Col xs={24} md={8}>
-        <Card bordered={false}>
+        <Card variant="borderless">
           <Statistic
             title="Total Budget"
-            value={totalBudget}
+            value={convertCurrency(totalBudget)}
             precision={2}
-            prefix="$"
             valueStyle={{
               color: '#1677ff',
             }}
@@ -28,12 +28,11 @@ export default function SummaryCards({
       </Col>
 
       <Col xs={24} md={8}>
-        <Card bordered={false}>
+        <Card variant="borderless">
           <Statistic
             title="Total Spent"
-            value={totalSpent}
+            value={convertCurrency(totalSpent)}
             precision={2}
-            prefix="$"
             valueStyle={{
               color: '#ff4d4f',
             }}
@@ -42,12 +41,11 @@ export default function SummaryCards({
       </Col>
 
       <Col xs={24} md={8}>
-        <Card bordered={false}>
+        <Card variant="borderless">
           <Statistic
             title="Remaining"
-            value={remaining}
+            value={convertCurrency(remaining)}
             precision={2}
-            prefix="$"
             valueStyle={{
               color: remaining >= 0 ? '#52c41a' : '#ff4d4f',
             }}

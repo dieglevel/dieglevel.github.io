@@ -1,19 +1,19 @@
 import { useEffect } from 'react'
-import { Form, Input, InputNumber, Modal, Typography } from 'antd'
+import { Flex, Form, Input, InputNumber, Modal, Typography } from 'antd'
 
+import { COLORS } from '../_constants/colors'
 import ColorPicker from './ColorPicker'
-import IconPicker from './IconPicker'
-import { COLORS, EMPTY_CATEGORY, ICONS } from './constants'
-import type { Category } from './constants'
+import type { IWallet_Category } from '@/shared/api/wallet/category/category.type'
+import { IconPicker } from '@/shared/components/icon-picker'
 
 const { Text } = Typography
 
 interface CategoryModalProps {
   open: boolean
   mode: 'add' | 'edit'
-  category?: Category | null
+  category?: IWallet_Category | null
   onCancel: () => void
-  onSubmit: (data: Omit<Category, 'id'>) => void
+  onSubmit: (data: Omit<IWallet_Category, 'id'>) => void
 }
 
 export default function CategoryModal({
@@ -27,19 +27,12 @@ export default function CategoryModal({
 
   useEffect(() => {
     if (!open) return
-
-    form.setFieldsValue(category ?? EMPTY_CATEGORY)
+    form.setFieldsValue(category)
   }, [category, open, form])
-  console.log(form.getFieldsValue())
 
-  function handleOk() {
-    form
-      .validateFields()
-      .then((values) => {
-        onSubmit(values)
-        form.resetFields()
-      })
-      .catch(() => {})
+  const handleOk = async () => {
+    const values = await form.validateFields()
+    onSubmit(values)
   }
 
   return (
@@ -50,7 +43,6 @@ export default function CategoryModal({
       cancelText="Cancel"
       onCancel={onCancel}
       onOk={handleOk}
-      destroyOnClose
     >
       <Form form={form} layout="vertical">
         <Form.Item
@@ -63,28 +55,36 @@ export default function CategoryModal({
             },
           ]}
         >
-          <Input placeholder="Food" />
+          <Input placeholder="Enter category name" />
         </Form.Item>
 
-        <Form.Item label="Monthly Budget" name="monthlyBudget">
-          <InputNumber min={0} style={{ width: '100%' }} addonBefore="$" />
-        </Form.Item>
+        <Flex gap={16} align="center">
+          <Form.Item
+            label="Monthly Budget"
+            name="monthlyBudget"
+            style={{ flex: 1 }}
+          >
+            <InputNumber
+              min={0}
+              style={{ width: '100%', flex: 1 }}
+              step={1000}
+              formatter={(value) =>
+                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+              }
+              parser={
+                ((value?: string) =>
+                  Number(value?.replace(/\./g, '')) || 0) as any
+              }
+              suffix={'VND'}
+            />
+          </Form.Item>
+          <Form.Item label="Icon" name="icon" shouldUpdate>
+            <IconPicker />
+          </Form.Item>
+        </Flex>
 
         <Form.Item hidden name="totalSpent">
           <InputNumber />
-        </Form.Item>
-
-        <Form.Item label="Icon" shouldUpdate>
-          {() => (
-            <Form.Item noStyle name="icon">
-              <IconPicker
-                icons={ICONS}
-                value={form.getFieldValue('icon')}
-                color={form.getFieldValue('color')}
-                onChange={(icon) => form.setFieldValue('icon', icon)}
-              />
-            </Form.Item>
-          )}
         </Form.Item>
 
         <Form.Item label="Color" shouldUpdate>

@@ -1,5 +1,5 @@
 import { theme } from 'antd'
-import { colors } from './design-token'
+import { border, colors } from './design-token'
 import type { ConfigProviderProps } from 'antd'
 
 const hoverColor = (colorValue: string) => {
@@ -44,7 +44,8 @@ export const ConfigAntd: ConfigProviderProps = {
         itemBg: 'transparent',
       },
       Card: {
-        colorBorderSecondary: 'var(--border-color, #4B1010)',
+        colorBorderSecondary: border.base,
+        colorBorder: border.base,
       },
       Input: {
         colorBgContainer: '#FAF6F2',

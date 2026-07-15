@@ -27,7 +27,7 @@ export const Route = createFileRoute('/(public)/login')({
 
     if (isAuthenticated) {
       throw redirect({
-        to: '/dashboard',
+        to: '/',
       })
     }
   },
@@ -45,13 +45,13 @@ export function LoginComponent() {
   const field: Array<LoginField> = [
     {
       form: {
-        label: 'Email',
-        name: 'email',
-        rules: [{ required: true, message: 'Please input your email!' }],
+        label: 'Identifier',
+        name: 'identifier',
+        rules: [{ required: true, message: 'Please input your identifier!' }],
       },
       component: Input,
       componentProps: {
-        placeholder: 'Email',
+        placeholder: 'Identifier',
         autoComplete: 'username',
       },
     } as WriteItemProps<typeof Input, Request_Login>,
@@ -75,7 +75,7 @@ export function LoginComponent() {
       mLogin.mutate(
         {
           body: {
-            email: values.email,
+            identifier: values.identifier,
             password: values.password,
           },
         },
@@ -83,7 +83,7 @@ export function LoginComponent() {
           onSuccess(data) {
             const response = data
 
-            if (response.user.role === UserRoleEnum.CUSTOMER) {
+            if (response.data.user.role === UserRoleEnum.CUSTOMER) {
               message.error(
                 'You do not have permission to access this application.',
               )
@@ -93,9 +93,9 @@ export function LoginComponent() {
             message.success('Login successful')
 
             AuthTokenService.setTokens(
-              response.access_token,
-              response.refresh_token,
-              response.user,
+              response.data.accessToken,
+              response.data.refreshToken,
+              response.data.user,
             )
 
             router.navigate({

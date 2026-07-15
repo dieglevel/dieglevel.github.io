@@ -1,27 +1,35 @@
 import { Button, Card, Flex, Progress, Space, Tag, Typography } from 'antd'
-import { EditOutlined, InboxOutlined } from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, InboxOutlined } from '@ant-design/icons'
 import type { IWallet_Category } from '@/shared/api/wallet/category/category.type'
+import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
+import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const { Text } = Typography
 
 interface CategoryCardProps {
   category: IWallet_Category
   onEdit: (category: IWallet_Category) => void
-  onArchive: (id: number) => void
+  onArchive: (id: string) => void
+  onDelete: (id: string) => void
 }
 
 export default function CategoryCard({
   category,
   onEdit,
   onArchive,
+  onDelete,
 }: CategoryCardProps) {
   const percent =
     category.monthlyBudget > 0
-      ? Math.min((category.totalSpent / category.monthlyBudget) * 100, 100)
+      ? Math.min(
+          ((category.totalAmount ?? 0) / category.monthlyBudget) * 100,
+          100,
+        )
       : 0
 
   const overBudget =
-    category.monthlyBudget > 0 && category.totalSpent > category.monthlyBudget
+    category.monthlyBudget > 0 &&
+    (category.totalAmount ?? 0) > category.monthlyBudget
 
   return (
     <Card
@@ -45,7 +53,11 @@ export default function CategoryCard({
                 fontSize: 24,
               }}
             >
-              {category.icon}
+              <IconRenderer
+                iconName={category.icon || 'Circle'}
+                size={24}
+                color={category.color || '#000'}
+              />
             </div>
 
             <div>
@@ -73,6 +85,13 @@ export default function CategoryCard({
               icon={<InboxOutlined />}
               onClick={() => onArchive(category.id)}
             />
+
+            <Button
+              type="default"
+              size="small"
+              icon={<DeleteOutlined />}
+              onClick={() => onDelete(category.id)}
+            />
           </Space>
         </Flex>
 
@@ -80,28 +99,32 @@ export default function CategoryCard({
           <>
             <Flex justify="space-between">
               <Text type="secondary">
-                ${category.totalSpent.toFixed(0)} spent
+                {convertCurrency(category.totalAmount ?? 0)}
               </Text>
 
-              <Text strong>${category.monthlyBudget}</Text>
+              <Text strong>{convertCurrency(category.monthlyBudget)}</Text>
             </Flex>
 
             <Progress
               percent={percent}
               showInfo={false}
-              strokeColor={overBudget ? '#ff4d4f' : category.color}
+              strokeColor={overBudget ? '#ff4d4f' : category.color || '#1890ff'}
             />
 
             {overBudget ? (
               <Tag color="error">
                 Over Budget $
-                {(category.totalSpent - category.monthlyBudget).toFixed(0)}
+                {(category.totalAmount ?? 0 - category.monthlyBudget).toFixed(
+                  0,
+                )}
               </Tag>
             ) : (
               <Tag color="success">
-                {percent.toFixed(0)}% Used · $
-                {(category.monthlyBudget - category.totalSpent).toFixed(0)}{' '}
-                Remaining
+                {percent.toFixed(0)}% -{' '}
+                {convertCurrency(
+                  category.monthlyBudget - (category.totalAmount ?? 0),
+                )}{' '}
+                {'left'}
               </Tag>
             )}
           </>

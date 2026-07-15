@@ -14,7 +14,7 @@ export default function GlobalLoading() {
         width: '100%',
         height: '100%',
         backgroundColor: 'rgba(255, 255, 255, 0.7)',
-        zIndex: 100,
+        zIndex: 10000,
       }}
       justify="center"
       align="center"

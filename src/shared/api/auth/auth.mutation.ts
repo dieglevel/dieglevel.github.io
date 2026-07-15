@@ -11,11 +11,11 @@ import { useMutationPost } from '@/shared/lib/api/mutation/useMutation'
 
 export const useMutationAuth = () => {
   const mLogin = useMutationPost<
-    Response_Login,
+    ApiBaseResponse<Response_Login>,
     Request_Login,
-    '/auth/v1/token?grant_type=password'
+    '/auth/sign-in'
   >({
-    endPoint: '/auth/v1/token?grant_type=password',
+    endPoint: '/auth/sign-in',
     queryKey: ['login'],
   })
 

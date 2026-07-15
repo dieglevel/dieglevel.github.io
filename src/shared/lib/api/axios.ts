@@ -13,9 +13,6 @@ export const customAxios = <T = unknown>(
 ): Promise<T> => {
   const instance = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
-    headers: {
-      apikey: import.meta.env.VITE_SUPABASE_ANON_KEY || '',
-    },
   })
 
   // Request interceptor to add authorization header
@@ -42,7 +39,7 @@ export const customAxios = <T = unknown>(
         const originalRequest = error.config
 
         if (
-          originalRequest?.url?.includes('auth/login') ||
+          originalRequest?.url?.includes('auth/sign-in') ||
           originalRequest?.url?.includes('auth/resident-login') ||
           originalRequest?.url?.includes('auth/refresh-token')
         ) {

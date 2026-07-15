@@ -1,12 +1,11 @@
-// I<Entity>
-export interface IWallet_Category {
-  id: number
-  created_at: string
+import type { IBaseEntity } from '@/shared/types/base-entity'
+
+export interface IWallet_Category extends IBaseEntity {
   name: string
   icon: string | null
   color: string | null
-  user_id: string
   monthlyBudget: number
-  totalSpent: number
   archived: boolean
+
+  totalAmount?: number
 }

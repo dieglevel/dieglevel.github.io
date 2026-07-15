@@ -1,7 +1,6 @@
 import type { IWallet_Category } from './category.type'
 import {
   useMutationDelete,
-  useMutationPatch,
   useMutationPost,
 } from '@/shared/lib/api/mutation/useMutation'
 
@@ -9,29 +8,29 @@ export const useMutationCategory = () => {
   const mCategory_Create = useMutationPost<
     void,
     Omit<IWallet_Category, 'id' | 'created_at'>,
-    'rest/v1/financial_category'
+    'financial-category/create'
   >({
-    endPoint: 'rest/v1/financial_category',
+    endPoint: 'financial-category/create',
     queryKey: ['getFinancialCategoryList'],
   })
 
-  const mCategory_Update = useMutationPatch<
+  const mCategory_Update = useMutationPost<
     void,
     Partial<Omit<IWallet_Category, 'id' | 'created_at'>>,
-    'rest/v1/financial_category',
+    'financial-category/update/:id',
     { id: string }
   >({
-    endPoint: 'rest/v1/financial_category',
+    endPoint: 'financial-category/update/:id',
     queryKey: ['getFinancialCategoryList'],
   })
 
   const mCategory_Delete = useMutationDelete<
     void,
     void, // DELETE không cần body
-    'rest/v1/financial_category',
+    'financial-category/delete/:id',
     { id: string }
   >({
-    endPoint: 'rest/v1/financial_category',
+    endPoint: 'financial-category/delete/:id',
     queryKey: ['getFinancialCategoryList'],
   })
 
