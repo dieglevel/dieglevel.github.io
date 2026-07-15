@@ -125,12 +125,12 @@ export function LoginComponent() {
           <Form.Item>
             <Flex style={{ gap: 8 }} vertical>
               <Button
-                htmlType="submit"
                 type="primary"
                 style={{
                   width: '100%',
                 }}
                 loading={isLoading}
+                onClick={() => form.submit()}
               >
                 Login
               </Button>

@@ -1,6 +1,7 @@
 import React from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Col, Flex, Row, Spin } from 'antd'
+import type { Variants } from 'framer-motion'
 
 // Định nghĩa props cho Component
 interface AnimatedGridProps<T> {
@@ -23,7 +24,7 @@ const containerVariants = {
   },
 }
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { y: 20, opacity: 0 },
   visible: {
     y: 0,

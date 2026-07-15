@@ -13,7 +13,7 @@ interface CategoryModalProps {
   mode: 'add' | 'edit'
   category?: IWallet_Category | null
   onCancel: () => void
-  onSubmit: (data: Omit<IWallet_Category, 'id'>) => void
+  onSubmit: (data: Omit<IWallet_Category, 'id'>) => Promise<void>
 }
 
 export default function CategoryModal({
@@ -32,7 +32,8 @@ export default function CategoryModal({
 
   const handleOk = async () => {
     const values = await form.validateFields()
-    onSubmit(values)
+    await onSubmit(values)
+    form.resetFields()
   }
 
   return (

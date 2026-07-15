@@ -3,6 +3,7 @@ import { DeleteOutlined, EditOutlined, InboxOutlined } from '@ant-design/icons'
 import type { IWallet_Category } from '@/shared/api/wallet/category/category.type'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
+import useConfirm from '@/shared/hooks/use-confirm'
 
 const { Text } = Typography
 
@@ -19,6 +20,8 @@ export default function CategoryCard({
   onArchive,
   onDelete,
 }: CategoryCardProps) {
+  const { confirm, ConfirmModal } = useConfirm()
+
   const percent =
     category.monthlyBudget > 0
       ? Math.min(
@@ -38,6 +41,7 @@ export default function CategoryCard({
         opacity: category.archived ? 0.6 : 1,
       }}
     >
+      <ConfirmModal />
       <Flex vertical gap={16}>
         <Flex justify="space-between" align="center">
           <Space>
@@ -90,7 +94,12 @@ export default function CategoryCard({
               type="default"
               size="small"
               icon={<DeleteOutlined />}
-              onClick={() => onDelete(category.id)}
+              onClick={async () => {
+                const isConfirmed = await confirm({})
+                if (isConfirmed) {
+                  onDelete(category.id)
+                }
+              }}
             />
           </Space>
         </Flex>
