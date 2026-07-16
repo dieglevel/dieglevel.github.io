@@ -1,21 +1,17 @@
 import { Button, ColorPicker as ColorPickerAntd, Flex } from 'antd'
+import { COLORS as DEFAULT_COLORS } from './colors'
 import { border } from '@/shared/common/design-token'
 import { IconPlus } from '@/shared/assets/icons'
 
 interface ColorPickerProps {
   value: string
-  color: Array<string>
   onChange: (color: string) => void
 }
 
-export default function ColorPicker({
-  value,
-  color,
-  onChange,
-}: ColorPickerProps) {
+export default function ColorPicker({ value, onChange }: ColorPickerProps) {
   return (
     <Flex wrap gap={8}>
-      {color.map((c) => {
+      {DEFAULT_COLORS.map((c) => {
         const selected = value === c
 
         return (
@@ -54,9 +50,11 @@ export default function ColorPicker({
           style={{
             width: 20,
             height: 20,
-            background: !color.includes(value) ? value : undefined,
+            background: !DEFAULT_COLORS.includes(value) ? value : undefined,
             borderRadius: 9999,
-            outline: !color.includes(value) ? `4px solid ${value}` : 'none',
+            outline: !DEFAULT_COLORS.includes(value)
+              ? `4px solid ${value}`
+              : 'none',
             outlineOffset: '2px',
             display: 'flex',
             justifyContent: 'center',
@@ -67,7 +65,9 @@ export default function ColorPicker({
             borderColor: border.base,
           }}
         >
-          {color.includes(value) && <IconPlus style={{ fontSize: 20 }} />}
+          {DEFAULT_COLORS.includes(value) && (
+            <IconPlus style={{ fontSize: 20 }} />
+          )}
         </div>
       </ColorPickerAntd>
     </Flex>

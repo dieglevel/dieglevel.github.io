@@ -1,27 +1,32 @@
 import { useMemo, useState } from 'react'
-import { Button, Flex, Typography } from 'antd'
+import { Button, DatePicker, Flex, Typography } from 'antd'
 import {
   EyeInvisibleOutlined,
   EyeOutlined,
   PlusOutlined,
 } from '@ant-design/icons'
 
+import dayjs from 'dayjs'
+import SummaryCards from '../_components/SummaryCards'
 import CategoryCard from './_components/animation-card/CategoryCard'
 import CategoryModal from './_components/CategoryModal'
-import SummaryCards from './_components/SummaryCards'
 import { AnimatedGrid } from './_components/animation-card'
-import type { IWallet_Category } from '@/shared/api/wallet/category/category.type'
-import { useMutationCategory } from '@/shared/api/wallet/category/category.mutation'
-import { useGetWallet_Category_List } from '@/shared/api/wallet/category/useGetWallet_Category_List'
+import type { IWallet_Category } from '@/shared/api/financial/category/category.type'
+import { useMutationCategory } from '@/shared/api/financial/category/category.mutation'
+import { useGetWallet_Category_List } from '@/shared/api/financial/category/useGetWallet_Category_List'
 
 const { Title, Text } = Typography
 
 export default function Categories() {
-  // 1. Lấy dữ liệu từ API (mặc định fallback về mảng rỗng nếu chưa có data)
-  const { data: apiResponse, isPending } = useGetWallet_Category_List({})
+  const [selectedMonth, setSelectedMonth] = useState<dayjs.Dayjs>(dayjs())
+
+  const { data: apiResponse, isFetching } = useGetWallet_Category_List({
+    queryParams: {
+      date: dayjs(selectedMonth).format('YYYY-MM-DD'),
+    },
+  })
   const categories: Array<IWallet_Category> = apiResponse?.data || []
 
-  // 2. Lấy các hàm mutation để thay đổi dữ liệu phía Server
   const { mCategory_Update, mCategory_Create, mCategory_Delete } =
     useMutationCategory()
 
@@ -30,7 +35,6 @@ export default function Categories() {
   const [mode, setMode] = useState<'add' | 'edit'>('add')
   const [editing, setEditing] = useState<IWallet_Category | null>(null)
 
-  // Tính toán danh mục Active và Archived từ biến `categories` hợp lệ
   const active = useMemo(
     () => categories.filter((x) => !x.archived),
     [categories],
@@ -135,12 +139,21 @@ export default function Categories() {
           </Button>
         </Flex>
       </Flex>
-
+      <Flex justify="end" align="center">
+        <DatePicker
+          style={{ width: 'fit-content' }}
+          picker="month"
+          value={selectedMonth}
+          onChange={(date) => {
+            setSelectedMonth(date ?? dayjs())
+          }}
+        />
+      </Flex>
       <SummaryCards totalBudget={totalBudget} totalSpent={totalSpent} />
 
       <AnimatedGrid
         items={shown}
-        isPending={isPending}
+        isPending={isFetching}
         getKey={(category) => category.id} // Truyền cách lấy ID
         renderItem={(category) => (
           <CategoryCard

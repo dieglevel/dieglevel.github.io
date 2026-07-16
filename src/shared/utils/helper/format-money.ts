@@ -12,21 +12,31 @@ const exchangeRates = {
 
 type Currency = keyof typeof exchangeRates
 
-export function convertCurrency(amountVND: number, locale = 'vi-VN'): string {
+export function convertCurrency(
+  amountVND: number,
+  locale = 'vi-VN',
+  showSymbol = true,
+): string {
   const to = (LocalStorageService.get(LOCAL_STORAGE_KEY.CURRENCY, 'VND') ||
     'VND') as Currency
 
   const converted = amountVND / exchangeRates[to]
 
   if (to === 'VND') {
-    return `${new Intl.NumberFormat('vi-VN', {
+    const value = new Intl.NumberFormat('vi-VN', {
       maximumFractionDigits: 0,
-    }).format(converted)} Đ`
+    }).format(converted)
+
+    return showSymbol ? `${value} Đ` : value
   }
 
   return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency: to,
+    ...(showSymbol
+      ? {
+          style: 'currency' as const,
+          currency: to,
+        }
+      : {}),
     maximumFractionDigits: 2,
   }).format(converted)
 }

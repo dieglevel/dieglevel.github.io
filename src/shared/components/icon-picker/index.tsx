@@ -15,13 +15,13 @@ const ITEMS_PER_PAGE = 50 // Mỗi lần cuộn xuống sẽ load thêm 50 icon
 interface IconPickerProps {
   value?: string
   onChange?: (iconName: string) => void
-  placeholder?: string
+  color?: string
 }
 
 export const IconPicker: React.FC<IconPickerProps> = ({
   value,
   onChange,
-  placeholder = 'Chọn icon...',
+  color,
 }) => {
   const [visible, setVisible] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
@@ -186,9 +186,11 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           justifyContent: 'center',
           textAlign: 'left',
           padding: 0,
+          borderColor: color ? `${color}20` : token.colorBgContainer,
+          backgroundColor: color ? `${color}10` : token.colorBgContainer,
         }}
       >
-        <SelectedIcon size={16} style={{ flexShrink: 0 }} />
+        <SelectedIcon size={16} style={{ flexShrink: 0, color }} />
       </Button>
     </Popover>
   )

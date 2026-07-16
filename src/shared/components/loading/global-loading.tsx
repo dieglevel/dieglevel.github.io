@@ -15,6 +15,7 @@ export default function GlobalLoading() {
         height: '100%',
         backgroundColor: 'rgba(255, 255, 255, 0.7)',
         zIndex: 10000,
+        cursor: 'wait',
       }}
       justify="center"
       align="center"

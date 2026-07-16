@@ -1,6 +1,6 @@
 import { Button, Card, Flex, Progress, Space, Tag, Typography } from 'antd'
 import { DeleteOutlined, EditOutlined, InboxOutlined } from '@ant-design/icons'
-import type { IWallet_Category } from '@/shared/api/wallet/category/category.type'
+import type { IWallet_Category } from '@/shared/api/financial/category/category.type'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import useConfirm from '@/shared/hooks/use-confirm'

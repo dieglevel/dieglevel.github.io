@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import { Flex, Form, Input, InputNumber, Modal, Typography } from 'antd'
 
-import { COLORS } from '../_constants/colors'
-import ColorPicker from './ColorPicker'
-import type { IWallet_Category } from '@/shared/api/wallet/category/category.type'
+import type { IWallet_Category } from '@/shared/api/financial/category/category.type'
+import { InputWithComma } from '@/shared/components/input/utils'
 import { IconPicker } from '@/shared/components/icon-picker'
+import ColorPicker from '@/shared/components/color-picker'
 
 const { Text } = Typography
 
@@ -24,6 +24,7 @@ export default function CategoryModal({
   onSubmit,
 }: CategoryModalProps) {
   const [form] = Form.useForm()
+  const watchColor = Form.useWatch('color', form)
 
   useEffect(() => {
     if (!open) return
@@ -68,19 +69,12 @@ export default function CategoryModal({
             <InputNumber
               min={0}
               style={{ width: '100%', flex: 1 }}
-              step={1000}
-              formatter={(value) =>
-                `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-              }
-              parser={
-                ((value?: string) =>
-                  Number(value?.replace(/\./g, '')) || 0) as any
-              }
+              {...InputWithComma}
               suffix={'VND'}
             />
           </Form.Item>
           <Form.Item label="Icon" name="icon" shouldUpdate>
-            <IconPicker />
+            <IconPicker color={watchColor} />
           </Form.Item>
         </Flex>
 
@@ -89,15 +83,12 @@ export default function CategoryModal({
         </Form.Item>
 
         <Form.Item label="Color" shouldUpdate>
-          {() => (
-            <Form.Item noStyle name="color">
-              <ColorPicker
-                color={COLORS}
-                value={form.getFieldValue('color')}
-                onChange={(color) => form.setFieldValue('color', color)}
-              />
-            </Form.Item>
-          )}
+          <Form.Item noStyle name="color">
+            <ColorPicker
+              value={form.getFieldValue('color')}
+              onChange={(color) => form.setFieldValue('color', color)}
+            />
+          </Form.Item>
         </Form.Item>
 
         <Form.Item name="archived" hidden>
