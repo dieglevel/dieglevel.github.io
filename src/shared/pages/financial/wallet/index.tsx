@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button, Col, Flex, Modal, Row, Space, Typography } from 'antd'
-import { PlusOutlined, SwapOutlined } from '@ant-design/icons'
+import { HistoryOutlined, PlusOutlined, SwapOutlined } from '@ant-design/icons'
 import SummaryCards from '../_components/SummaryCards'
 import { WalletCard } from './_components/WalletCard'
 import { TransferForm } from './_components/TransferForm'
@@ -114,6 +114,7 @@ export function Wallets() {
           <Text type="secondary">Manage your accounts &amp; balances</Text>
         </div>
         <Space size={8}>
+          <Button icon={<HistoryOutlined />}>Transfer History</Button>
           <Button
             icon={<SwapOutlined />}
             onClick={() => handleOpenModal('transfer')}
