@@ -1,27 +1,44 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Table as AntdTable } from 'antd'
 import Pagination from '../pagination'
 import { LIST_PAGE_SIZE_OPTIONS } from '@/shared/common/paginate'
 import './index.css'
 
-export interface TableProps<T> extends React.ComponentProps<
-  typeof AntdTable<T>
+export interface TableProps<T> extends Omit<
+  React.ComponentProps<typeof AntdTable<T>>,
+  'pagination'
 > {}
 
-export default function Table<T>(props: TableProps<T>) {
+const TableComponent = <T extends object>({
+  dataSource = [],
+  ...props
+}: TableProps<T>) => {
   const [paginate, setPaginate] = useState({
     current: 1,
     pageSize: 10,
     total: 0,
   })
 
+  useEffect(() => {
+    setPaginate((prev) => ({
+      ...prev,
+      total: dataSource.length,
+    }))
+  }, [dataSource])
+
+  const pageData = useMemo(() => {
+    const start = (paginate.current - 1) * paginate.pageSize
+    const end = start + paginate.pageSize
+
+    return dataSource.slice(start, end)
+  }, [dataSource, paginate.current, paginate.pageSize])
+
   return (
     <AntdTable<T>
+      {...props}
       className="custom-table"
-      rowKey={'id'}
-      columns={props.columns}
-      dataSource={props.dataSource}
-      size="small"
+      rowKey="id"
+      dataSource={pageData}
       pagination={false}
       footer={() => (
         <Pagination
@@ -36,31 +53,27 @@ export default function Table<T>(props: TableProps<T>) {
             setPaginate((prev) => ({
               ...prev,
               current: page,
-              pageSize: pageSize || prev.pageSize,
+              pageSize: pageSize ? pageSize : prev.pageSize,
             }))
           }}
         />
       )}
-      // onRow={(row) => {
-      //   return {
-      //     onClick: () => handleOnRow(row),
-      //     style: { cursor: 'pointer' },
-      //   }
-      // }}
-
-      {...props}
       styles={{
         root: {
           flex: 1,
           borderRadius: 8,
         },
-        pagination: {
-          root: {
-            justifyContent: 'space-between',
-          },
-        },
       }}
-      style={{ borderRadius: 8, ...props.style }}
+      style={{
+        borderRadius: 8,
+        ...props.style,
+      }}
     />
   )
 }
+
+const Table = Object.assign(TableComponent, {
+  Summary: AntdTable.Summary,
+})
+
+export default Table

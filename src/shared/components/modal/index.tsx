@@ -7,6 +7,9 @@ interface BaseModalProps {
   onOk?: () => void
   title?: React.ReactNode
   children?: React.ReactNode
+  showButtonOk?: boolean
+  showButtonCancel?: boolean
+  width?: number | string
 }
 
 export default function BaseModal({
@@ -15,6 +18,9 @@ export default function BaseModal({
   onOk,
   title,
   children,
+  showButtonOk = true,
+  showButtonCancel = true,
+  width = 900,
 }: BaseModalProps) {
   return (
     <Modal
@@ -22,23 +28,30 @@ export default function BaseModal({
       onCancel={onClose}
       onOk={onOk}
       title={title}
+      width={width}
       footer={
         <Flex gap={8} justify="center">
-          <Button
-            style={{
-              minWidth: 70,
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            style={{
-              minWidth: 70,
-            }}
-            type="primary"
-          >
-            Accept
-          </Button>
+          {showButtonCancel && (
+            <Button
+              style={{
+                minWidth: 70,
+              }}
+              onClick={onClose}
+            >
+              Cancel
+            </Button>
+          )}
+          {showButtonOk && (
+            <Button
+              type="primary"
+              style={{
+                minWidth: 70,
+              }}
+              onClick={onOk}
+            >
+              OK
+            </Button>
+          )}
         </Flex>
       }
       rootStyle={{

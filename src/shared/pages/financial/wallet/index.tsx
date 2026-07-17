@@ -5,6 +5,7 @@ import SummaryCards from '../_components/SummaryCards'
 import { WalletCard } from './_components/WalletCard'
 import { TransferForm } from './_components/TransferForm'
 import { WalletModal } from './_components/WalletForm'
+import TransferHistory from './_components/TransferHistory'
 import type { IWallet_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { useGetWallet_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 import { useMutationWallet } from '@/shared/api/financial/wallet/wallet.mutation'
@@ -17,6 +18,7 @@ export function Wallets() {
   const [mode, setMode] = useState<'add' | 'edit' | 'transfer' | null>(null)
   const [editTarget, setEditTarget] = useState<IWallet_Wallet | null>(null)
   const [open, setOpen] = useState(false)
+  const [transferHistoryOpen, setTransferHistoryOpen] = useState(false)
 
   const { mWallet_Create, mWallet_Delete, mWallet_Update, mWallet_Transfer } =
     useMutationWallet()
@@ -99,6 +101,10 @@ export function Wallets() {
 
   return (
     <Flex vertical gap={24} flex={1} style={{ padding: 24 }}>
+      <TransferHistory
+        open={transferHistoryOpen}
+        onClose={() => setTransferHistoryOpen(false)}
+      />
       {/* Header */}
       <div
         style={{
@@ -114,7 +120,12 @@ export function Wallets() {
           <Text type="secondary">Manage your accounts &amp; balances</Text>
         </div>
         <Space size={8}>
-          <Button icon={<HistoryOutlined />}>Transfer History</Button>
+          <Button
+            icon={<HistoryOutlined />}
+            onClick={() => setTransferHistoryOpen(!transferHistoryOpen)}
+          >
+            Transfer History
+          </Button>
           <Button
             icon={<SwapOutlined />}
             onClick={() => handleOpenModal('transfer')}

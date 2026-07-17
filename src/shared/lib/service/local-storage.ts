@@ -1,6 +1,8 @@
 export enum LOCAL_STORAGE_KEY {
   CURRENCY = 'currency',
   THEME = 'theme',
+  LANGUAGE = 'language',
+  CURRENT_PAGE = 'currentPage',
 }
 
 export const LocalStorageService = {
