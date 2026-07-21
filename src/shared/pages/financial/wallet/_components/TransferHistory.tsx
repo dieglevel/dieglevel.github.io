@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { MoveRight } from 'lucide-react'
 import { Typography } from 'antd'
+import dayjs from 'dayjs'
 import type { IWallet_WalletTransfer } from '@/shared/api/financial/wallet-transfer/wallet-transfer.type'
 import type { ColumnsType } from 'antd/es/table'
 import { useGetWallet_WalletTransfer_List } from '@/shared/api/financial/wallet-transfer/useGetFinancial_WalletTransfer_List'
@@ -11,13 +12,19 @@ import { convertCurrency } from '@/shared/utils/helper/format-money'
 interface TransferHistoryProps {
   open: boolean
   onClose: () => void
+  selectedMonth: dayjs.Dayjs | string | Date
 }
 
 export default function TransferHistory({
   open,
   onClose,
+  selectedMonth,
 }: TransferHistoryProps) {
-  const { data, isFetching } = useGetWallet_WalletTransfer_List({})
+  const { data, isFetching } = useGetWallet_WalletTransfer_List({
+    queryParams: {
+      date: dayjs(selectedMonth).format('YYYY-MM-DD'),
+    },
+  })
 
   const columns: ColumnsType<IWallet_WalletTransfer> = useMemo(() => {
     const cols: ColumnsType<IWallet_WalletTransfer> = [
@@ -93,8 +100,12 @@ export default function TransferHistory({
         dataSource={data?.data}
         columns={columns}
         styles={{
-          content: {
-            maxHeight: 200,
+          body: {
+            cell: {
+              height: 40,
+              paddingTop: 0,
+              paddingBottom: 0,
+            },
           },
         }}
         loading={isFetching}

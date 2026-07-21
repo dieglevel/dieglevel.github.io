@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3001",
+    "dev": "vite --port 5173",
     "build": "npm run generate-routes && vite build && tsc",
     "preview": "vite preview --port 3001",
     "test": "vitest run",
@@ -13,7 +13,7 @@
     "orval": "orval",
     "generate-routes": "tsr generate",
     "watch-routes": "tsr watch",
-    "watch:vite": "vite --port 3001",
+    "watch:vite": "vite --port 5173",
     "watch:tsc": "tsc --watch",
     "watch": "concurrently -n ROUTES,VITE,TSC \"npm run watch-routes\" \"npm run watch:vite\" \"npm run watch:tsc\"",
     "predeploy": "npm run build",

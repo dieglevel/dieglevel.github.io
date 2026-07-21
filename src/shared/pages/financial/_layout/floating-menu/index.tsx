@@ -19,6 +19,13 @@ interface MenuItem {
 
 const menus: Array<MenuItem> = [
   {
+    label: 'Transaction',
+    icon: (
+      <IconCategory style={{ fontSize: 'auto', color: colors.primary.base }} />
+    ),
+    link: '/financial/transaction',
+  },
+  {
     label: 'Category',
     icon: (
       <IconCategory style={{ fontSize: 'auto', color: colors.primary.base }} />

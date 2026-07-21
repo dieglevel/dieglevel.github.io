@@ -2,9 +2,9 @@ import React from 'react'
 import * as LucideIcons from 'lucide-react'
 
 interface IconRendererProps {
-  iconName: string
+  iconName: string | null
   size?: number
-  color?: string
+  color?: string | null
 }
 
 export const IconRenderer: React.FC<IconRendererProps> = ({
@@ -12,7 +12,7 @@ export const IconRenderer: React.FC<IconRendererProps> = ({
   size = 20,
   color = 'currentColor',
 }) => {
-  const IconComponent = (LucideIcons as any)[iconName]
+  const IconComponent = (LucideIcons as any)[iconName || 'X']
 
   if (!IconComponent) {
     return null

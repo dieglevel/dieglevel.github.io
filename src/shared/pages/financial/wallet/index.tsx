@@ -1,6 +1,16 @@
 import { useState } from 'react'
-import { Button, Col, Flex, Modal, Row, Space, Typography } from 'antd'
+import {
+  Button,
+  Col,
+  DatePicker,
+  Flex,
+  Modal,
+  Row,
+  Space,
+  Typography,
+} from 'antd'
 import { HistoryOutlined, PlusOutlined, SwapOutlined } from '@ant-design/icons'
+import dayjs from 'dayjs'
 import SummaryCards from '../_components/SummaryCards'
 import { WalletCard } from './_components/WalletCard'
 import { TransferForm } from './_components/TransferForm'
@@ -13,7 +23,13 @@ import { useMutationWallet } from '@/shared/api/financial/wallet/wallet.mutation
 const { Title, Text } = Typography
 
 export function Wallets() {
-  const { data } = useGetWallet_Wallet_List({})
+  const [selectedMonth, setSelectedMonth] = useState<dayjs.Dayjs>(dayjs())
+
+  const { data } = useGetWallet_Wallet_List({
+    queryParams: {
+      date: dayjs(selectedMonth).format('YYYY-MM-DD'),
+    },
+  })
   const wallets: Array<IWallet_Wallet> = data?.data || []
   const [mode, setMode] = useState<'add' | 'edit' | 'transfer' | null>(null)
   const [editTarget, setEditTarget] = useState<IWallet_Wallet | null>(null)
@@ -102,6 +118,7 @@ export function Wallets() {
   return (
     <Flex vertical gap={24} flex={1} style={{ padding: 24 }}>
       <TransferHistory
+        selectedMonth={selectedMonth}
         open={transferHistoryOpen}
         onClose={() => setTransferHistoryOpen(false)}
       />
@@ -141,6 +158,17 @@ export function Wallets() {
           </Button>
         </Space>
       </div>
+
+      <Flex justify="end" align="center">
+        <DatePicker
+          style={{ width: 'fit-content' }}
+          picker="month"
+          value={selectedMonth}
+          onChange={(date) => {
+            setSelectedMonth(date ?? dayjs())
+          }}
+        />
+      </Flex>
 
       <SummaryCards totalBudget={totalBalance} totalSpent={0} />
 

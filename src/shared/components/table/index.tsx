@@ -63,6 +63,8 @@ const TableComponent = <T extends object>({
           flex: 1,
           borderRadius: 8,
         },
+
+        ...props.styles,
       }}
       style={{
         borderRadius: 8,
