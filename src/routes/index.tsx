@@ -9,7 +9,7 @@ export const Route = createFileRoute('/')({
         to: '/login',
       })
     }
-    redirect({
+    throw redirect({
       to: '/financial',
     })
   },
