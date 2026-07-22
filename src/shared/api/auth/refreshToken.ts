@@ -14,8 +14,8 @@ const refreshClient = axios.create({
 })
 
 export const refreshTokenRequest = (
-  refresh_token: string,
+  refreshToken: string,
 ): Promise<AxiosResponse<RefreshTokenResponse>> =>
-  refreshClient.post('auth/v1/token?grant_type=refresh_token', {
-    refresh_token,
+  refreshClient.post('/auth/refresh-token', {
+    refreshToken,
   })

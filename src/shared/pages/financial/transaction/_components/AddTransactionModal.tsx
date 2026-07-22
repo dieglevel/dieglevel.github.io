@@ -17,7 +17,10 @@ import Text from 'antd/es/typography/Text'
 import { useGetWallet_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 import { useGetWallet_Category_List } from '@/shared/api/financial/category/useGetWallet_Category_List'
 import { useMutationTransaction } from '@/shared/api/financial/transaction/transaction.mutation'
-import { FINANCIAL_TRANSACTION_STATUS, FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
+import {
+  FINANCIAL_TRANSACTION_STATUS,
+  FINANCIAL_TRANSACTION_TYPE,
+} from '@/shared/api/financial/transaction/transaction.enum'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 
 interface AddTransactionModalProps {
@@ -146,7 +149,10 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
         <Form.Item label="Status" name="status" rules={[{ required: true }]}>
           <Select
             options={[
-              { value: FINANCIAL_TRANSACTION_STATUS.COMPLETED, label: '✅ Completed' },
+              {
+                value: FINANCIAL_TRANSACTION_STATUS.COMPLETED,
+                label: '✅ Completed',
+              },
               { value: 'pending', label: '⏳ Pending' },
               { value: 'failed', label: '❌ Failed' },
             ]}
