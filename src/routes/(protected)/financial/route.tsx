@@ -16,10 +16,8 @@ export const Route = createFileRoute('/(protected)/financial')({
 
 export function RouteComponent() {
   return (
-    <>
-      <WalletLayout>
-        <Outlet />
-      </WalletLayout>
-    </>
+    <WalletLayout>
+      <Outlet />
+    </WalletLayout>
   )
 }

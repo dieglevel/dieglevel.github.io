@@ -22,7 +22,6 @@ import { Route as protectedHanbiroTaskRouteImport } from './../../routes/(protec
 import { Route as protectedDemoComponentRouteImport } from './../../routes/(protected)/demoComponent'
 import { Route as protectedFinancialRouteRouteImport } from './../../routes/(protected)/financial/route'
 import { Route as protectedFinancialIndexRouteImport } from './../../routes/(protected)/financial/index'
-import { Route as protectedDashboardIndexRouteImport } from './../../routes/(protected)/dashboard/index'
 import { Route as protectedFinancialWalletRouteImport } from './../../routes/(protected)/financial/wallet'
 import { Route as protectedFinancialTransactionRouteImport } from './../../routes/(protected)/financial/transaction'
 import { Route as protectedFinancialSettingRouteImport } from './../../routes/(protected)/financial/setting'
@@ -93,11 +92,6 @@ const protectedFinancialIndexRoute = protectedFinancialIndexRouteImport.update({
   path: '/',
   getParentRoute: () => protectedFinancialRouteRoute,
 } as any)
-const protectedDashboardIndexRoute = protectedDashboardIndexRouteImport.update({
-  id: '/dashboard/',
-  path: '/dashboard/',
-  getParentRoute: () => protectedRouteRoute,
-} as any)
 const protectedFinancialWalletRoute =
   protectedFinancialWalletRouteImport.update({
     id: '/wallet',
@@ -150,7 +144,6 @@ export interface FileRoutesByFullPath {
   '/financial/setting': typeof protectedFinancialSettingRoute
   '/financial/transaction': typeof protectedFinancialTransactionRoute
   '/financial/wallet': typeof protectedFinancialWalletRoute
-  '/dashboard/': typeof protectedDashboardIndexRoute
   '/financial/': typeof protectedFinancialIndexRoute
 }
 export interface FileRoutesByTo {
@@ -169,7 +162,6 @@ export interface FileRoutesByTo {
   '/financial/setting': typeof protectedFinancialSettingRoute
   '/financial/transaction': typeof protectedFinancialTransactionRoute
   '/financial/wallet': typeof protectedFinancialWalletRoute
-  '/dashboard': typeof protectedDashboardIndexRoute
   '/financial': typeof protectedFinancialIndexRoute
 }
 export interface FileRoutesById {
@@ -192,7 +184,6 @@ export interface FileRoutesById {
   '/(protected)/financial/setting': typeof protectedFinancialSettingRoute
   '/(protected)/financial/transaction': typeof protectedFinancialTransactionRoute
   '/(protected)/financial/wallet': typeof protectedFinancialWalletRoute
-  '/(protected)/dashboard/': typeof protectedDashboardIndexRoute
   '/(protected)/financial/': typeof protectedFinancialIndexRoute
 }
 export interface FileRouteTypes {
@@ -214,7 +205,6 @@ export interface FileRouteTypes {
     | '/financial/setting'
     | '/financial/transaction'
     | '/financial/wallet'
-    | '/dashboard/'
     | '/financial/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -233,7 +223,6 @@ export interface FileRouteTypes {
     | '/financial/setting'
     | '/financial/transaction'
     | '/financial/wallet'
-    | '/dashboard'
     | '/financial'
   id:
     | '__root__'
@@ -255,7 +244,6 @@ export interface FileRouteTypes {
     | '/(protected)/financial/setting'
     | '/(protected)/financial/transaction'
     | '/(protected)/financial/wallet'
-    | '/(protected)/dashboard/'
     | '/(protected)/financial/'
   fileRoutesById: FileRoutesById
 }
@@ -360,13 +348,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedFinancialIndexRouteImport
       parentRoute: typeof protectedFinancialRouteRoute
     }
-    '/(protected)/dashboard/': {
-      id: '/(protected)/dashboard/'
-      path: '/dashboard'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof protectedDashboardIndexRouteImport
-      parentRoute: typeof protectedRouteRoute
-    }
     '/(protected)/financial/wallet': {
       id: '/(protected)/financial/wallet'
       path: '/wallet'
@@ -442,7 +423,6 @@ interface protectedRouteRouteChildren {
   protectedIconRoute: typeof protectedIconRoute
   protectedDemoButtonRoute: typeof protectedDemoButtonRoute
   protectedDemoTableRoute: typeof protectedDemoTableRoute
-  protectedDashboardIndexRoute: typeof protectedDashboardIndexRoute
 }
 
 const protectedRouteRouteChildren: protectedRouteRouteChildren = {
@@ -453,7 +433,6 @@ const protectedRouteRouteChildren: protectedRouteRouteChildren = {
   protectedIconRoute: protectedIconRoute,
   protectedDemoButtonRoute: protectedDemoButtonRoute,
   protectedDemoTableRoute: protectedDemoTableRoute,
-  protectedDashboardIndexRoute: protectedDashboardIndexRoute,
 }
 
 const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(

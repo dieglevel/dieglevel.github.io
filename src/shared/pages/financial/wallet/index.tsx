@@ -1,21 +1,13 @@
 import { useState } from 'react'
-import {
-  Button,
-  Col,
-  DatePicker,
-  Flex,
-  Modal,
-  Row,
-  Space,
-  Typography,
-} from 'antd'
+import { Button, DatePicker, Flex, Modal, Space, Typography } from 'antd'
 import { HistoryOutlined, PlusOutlined, SwapOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import SummaryCards from '../_components/SummaryCards'
-import { WalletCard } from './_components/WalletCard'
+import { AnimatedGrid } from '../category/_components/animation-card'
 import { TransferForm } from './_components/TransferForm'
 import { WalletModal } from './_components/WalletForm'
 import TransferHistory from './_components/TransferHistory'
+import { WalletCard } from './_components/WalletCard'
 import type { IWallet_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { useGetWallet_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 import { useMutationWallet } from '@/shared/api/financial/wallet/wallet.mutation'
@@ -25,7 +17,7 @@ const { Title, Text } = Typography
 export function Wallets() {
   const [selectedMonth, setSelectedMonth] = useState<dayjs.Dayjs>(dayjs())
 
-  const { data } = useGetWallet_Wallet_List({
+  const { data, isFetching } = useGetWallet_Wallet_List({
     queryParams: {
       date: dayjs(selectedMonth).format('YYYY-MM-DD'),
     },
@@ -84,6 +76,7 @@ export function Wallets() {
       )
     }
   }
+
   async function deleteWallet(id: string) {
     await mWallet_Delete.mutateAsync(
       {
@@ -99,6 +92,7 @@ export function Wallets() {
       },
     )
   }
+
   async function transfer(
     fromId: number,
     toId: number,
@@ -116,27 +110,36 @@ export function Wallets() {
   }
 
   return (
-    <Flex vertical gap={24} flex={1} style={{ padding: 24 }}>
+    <Flex
+      vertical
+      gap={24}
+      flex={1}
+      style={{
+        padding: '16px',
+        maxWidth: '100%',
+        boxSizing: 'border-box',
+      }}
+    >
       <TransferHistory
         selectedMonth={selectedMonth}
         open={transferHistoryOpen}
         onClose={() => setTransferHistoryOpen(false)}
       />
+
       {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-        }}
-      >
+      <Flex justify="space-between" align="flex-start" wrap="wrap" gap={16}>
         <div>
           <Title level={3} style={{ margin: 0 }}>
             Wallets
           </Title>
           <Text type="secondary">Manage your accounts &amp; balances</Text>
         </div>
-        <Space size={8}>
+
+        <Space
+          size={8}
+          wrap
+          style={{ width: '100%', justifyContent: 'flex-end' }}
+        >
           <Button
             icon={<HistoryOutlined />}
             onClick={() => setTransferHistoryOpen(!transferHistoryOpen)}
@@ -157,11 +160,12 @@ export function Wallets() {
             Add Wallet
           </Button>
         </Space>
-      </div>
+      </Flex>
 
-      <Flex justify="end" align="center">
+      {/* Filter / Controls Bar */}
+      <Flex justify="end" align="center" wrap="wrap" gap={12}>
         <DatePicker
-          style={{ width: 'fit-content' }}
+          style={{ width: '100%', maxWidth: '200px' }}
           picker="month"
           value={selectedMonth}
           onChange={(date) => {
@@ -170,12 +174,16 @@ export function Wallets() {
         />
       </Flex>
 
+      {/* Summary Cards */}
       <SummaryCards totalBudget={totalBalance} totalSpent={0} />
 
       {/* Wallet Cards Grid */}
-      <Row gutter={[16, 16]}>
-        {wallets.map((w) => (
-          <Col xs={24} md={12} xl={8} key={w.id}>
+      <div style={{ width: '100%' }}>
+        <AnimatedGrid
+          items={wallets}
+          isPending={isFetching}
+          getKey={(wallet) => wallet.id}
+          renderItem={(w) => (
             <WalletCard
               wallet={w}
               onEdit={() => {
@@ -184,9 +192,9 @@ export function Wallets() {
               }}
               onDelete={() => deleteWallet(w.id)}
             />
-          </Col>
-        ))}
-      </Row>
+          )}
+        />
+      </div>
 
       {/* Modals */}
       <WalletModal
@@ -201,6 +209,7 @@ export function Wallets() {
         open={mode === 'transfer'}
         onCancel={() => setMode(null)}
         footer={null}
+        destroyOnClose
       >
         <TransferForm
           wallets={wallets}

@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Col, Flex, Row, Spin } from 'antd'
 import type { Variants } from 'framer-motion'
 
-// Định nghĩa props cho Component
 interface AnimatedGridProps<T> {
   items: Array<T>
   isPending: boolean
@@ -11,16 +10,14 @@ interface AnimatedGridProps<T> {
   getKey: (item: T) => string | number
 }
 
-// 1. Khởi tạo motion components từ Ant Design
 const MotionRow = motion.create(Row)
 const MotionCol = motion.create(Col)
 
-// 2. Định nghĩa cấu hình Animation Variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.08 }, // Hiệu ứng thác nước cách nhau 0.08s
+    transition: { staggerChildren: 0.06 },
   },
 }
 
@@ -58,30 +55,36 @@ export const AnimatedGrid = <T,>({
           <Spin size="large" />
         </Flex>
       ) : (
-        <MotionRow
-          key="content"
-          gutter={[16, 16]}
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          style={{ width: '100%' }}
-        >
-          <AnimatePresence>
-            {items.map((item) => (
-              <MotionCol
-                key={getKey(item)} // Lấy key động thông qua hàm getKey
-                xs={24}
-                sm={12}
-                xl={8}
-                variants={itemVariants}
-                layout // Tự động gom mượt các card còn lại khi có 1 card bị xóa
-                exit="exit"
-              >
-                {renderItem(item)}
-              </MotionCol>
-            ))}
-          </AnimatePresence>
-        </MotionRow>
+        /* Container bọc ngoài triệt tiêu scrollbar ngang do gutter âm của Row */
+        <div style={{ width: '100%', overflowX: 'hidden' }}>
+          <MotionRow
+            key="content"
+            gutter={[
+              { xs: 12, sm: 16, md: 16, lg: 20 }, // Gap ngang linh hoạt
+              { xs: 12, sm: 16, md: 16, lg: 20 }, // Gap dọc linh hoạt
+            ]}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <AnimatePresence>
+              {items.map((item) => (
+                <MotionCol
+                  key={getKey(item)}
+                  xs={24} // Mobile: 1 cột
+                  sm={12} // Tablet: 2 cột
+                  lg={8} // Desktop: 3 cột
+                  xxl={6} // Màn lớn: 4 cột
+                  variants={itemVariants}
+                  layout="position"
+                  exit="exit"
+                >
+                  {renderItem(item)}
+                </MotionCol>
+              ))}
+            </AnimatePresence>
+          </MotionRow>
+        </div>
       )}
     </AnimatePresence>
   )

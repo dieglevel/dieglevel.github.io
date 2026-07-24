@@ -39,6 +39,7 @@ export default function CategoryCard({
       hoverable
       style={{
         opacity: category.archived ? 0.6 : 1,
+        width: '100%',
       }}
     >
       <ConfirmModal />

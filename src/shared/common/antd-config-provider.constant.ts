@@ -46,6 +46,7 @@ export const ConfigAntd: ConfigProviderProps = {
       Card: {
         colorBorderSecondary: border.base,
         colorBorder: border.base,
+        boxShadow: 'none',
       },
       Input: {
         colorBgContainer: '#FAF6F2',

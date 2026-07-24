@@ -28,7 +28,7 @@ export function WalletCard({
       style={{
         background: `linear-gradient(135deg, ${wallet.color}e0, ${wallet.color}90)`,
         borderRadius: 16,
-        aspectRatio: '20/9',
+        width: '100%',
         minHeight: 180,
         overflow: 'hidden',
         position: 'relative',
@@ -36,12 +36,14 @@ export function WalletCard({
       }}
       styles={{
         body: {
-          padding: 20,
+          padding: '16px 20px',
           height: '100%',
+          minHeight: 180,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
           position: 'relative',
+          boxSizing: 'border-box',
         },
       }}
     >
@@ -55,6 +57,7 @@ export function WalletCard({
           height: 128,
           borderRadius: '50%',
           backgroundColor: 'rgba(255,255,255,0.08)',
+          pointerEvents: 'none',
         }}
       />
       <div
@@ -66,6 +69,7 @@ export function WalletCard({
           height: 96,
           borderRadius: '50%',
           backgroundColor: 'rgba(255,255,255,0.05)',
+          pointerEvents: 'none',
         }}
       />
 
@@ -77,9 +81,10 @@ export function WalletCard({
           justifyContent: 'space-between',
           position: 'relative',
           zIndex: 1,
+          gap: 8,
         }}
       >
-        <div>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
               backgroundColor: `${wallet.color}ff`,
@@ -88,29 +93,36 @@ export function WalletCard({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: 48,
-              height: 48,
+              width: 44,
+              height: 44,
+              flexShrink: 0,
             }}
           >
-            <IconRenderer iconName={wallet.icon} size={32} color={'#ffffff'} />
+            <IconRenderer iconName={wallet.icon} size={28} color={'#ffffff'} />
           </div>
           <p
             style={{
-              fontSize: 14,
+              fontSize: 'clamp(13px, 3.5vw, 15px)',
               fontWeight: 600,
               color: '#fff',
-              margin: '4px 0 0',
+              margin: '8px 0 0',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
+            title={wallet.name}
           >
             {wallet.name}
           </p>
           <p
-            style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)', margin: 0 }}
+            style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', margin: 0 }}
           >
             {wallet.type.toUpperCase()}
           </p>
         </div>
-        <Space size={4}>
+
+        {/* Action Buttons */}
+        <Space size={4} style={{ flexShrink: 0 }}>
           <Button
             type="text"
             size="small"
@@ -122,14 +134,14 @@ export function WalletCard({
               )
             }
             onClick={() => setVisible((v) => !v)}
-            style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+            style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}
           />
           <Button
             type="text"
             size="small"
             icon={<EditOutlined style={{ color: '#fff' }} />}
             onClick={onEdit}
-            style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+            style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}
           />
           <Popconfirm
             title={`Delete ${wallet.name}?`}
@@ -142,19 +154,19 @@ export function WalletCard({
               type="text"
               size="small"
               icon={<DeleteOutlined style={{ color: '#fff' }} />}
-              style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+              style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}
             />
           </Popconfirm>
         </Space>
       </div>
 
       {/* Bottom row */}
-      <div style={{ position: 'relative', zIndex: 1 }}>
+      <div style={{ position: 'relative', zIndex: 1, marginTop: 12 }}>
         <p
           style={{
-            fontSize: 12,
+            fontSize: 11,
             color: 'rgba(255,255,255,0.6)',
-            marginBottom: 4,
+            marginBottom: 2,
             letterSpacing: 2,
           }}
         >
@@ -163,11 +175,14 @@ export function WalletCard({
 
         <p
           style={{
-            fontSize: 24,
+            fontSize: 'clamp(18px, 5vw, 24px)',
             fontWeight: 700,
             color: '#fff',
             fontFamily: "'JetBrains Mono', monospace",
             margin: 0,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
           }}
         >
           {visible
@@ -176,7 +191,12 @@ export function WalletCard({
             : '●●●●●'}
         </p>
         <p
-          style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}
+          style={{
+            fontSize: 11,
+            color: 'rgba(255,255,255,0.6)',
+            marginTop: 2,
+            margin: 0,
+          }}
         >
           VND
         </p>

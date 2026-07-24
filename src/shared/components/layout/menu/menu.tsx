@@ -1,11 +1,19 @@
-import { Flex, Input, Typography } from 'antd'
+import { Flex, Grid, Input, Typography } from 'antd'
 import { Brand } from '@/shared/assets/images'
 import './menu.css'
 
+const { useBreakpoint } = Grid
+
 export default function Menu() {
+  const screen = useBreakpoint()
+
   return (
     <Flex
-      style={{ background: '#3D1F10', padding: 12 }}
+      style={{
+        display: screen.xs ? 'none' : 'flex',
+        background: '#3D1F10',
+        padding: 12,
+      }}
       justify="space-between"
       align="center"
     >

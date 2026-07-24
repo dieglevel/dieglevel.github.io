@@ -99,7 +99,7 @@ export function LoginComponent() {
             )
 
             router.navigate({
-              to: '/dashboard',
+              to: '/',
               replace: true,
             })
           },
@@ -115,14 +115,14 @@ export function LoginComponent() {
       justify="center"
       align="center"
       flex={1}
-      style={{ minHeight: '100vh', backgroundColor: '#f0f2f5' }}
+      style={{ minHeight: '100vh', backgroundColor: '#f0f2f5', padding: 12 }}
     >
-      <Card title="Login" style={{ width: 400 }}>
+      <Card title="Login" style={{ maxWidth: 400, width: '100%' }}>
         <Form layout="vertical" form={form} onFinish={handleLogin}>
           {field.map((item) => (
             <WriteItem key={item.form.name} {...item} />
           ))}
-          <Form.Item>
+          <Form.Item style={{ marginBottom: 0 }}>
             <Flex style={{ gap: 8 }} vertical>
               <Button
                 htmlType="submit"

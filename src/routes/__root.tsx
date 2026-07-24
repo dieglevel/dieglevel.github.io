@@ -19,7 +19,7 @@ Spin.setDefaultIndicator(SpinGlobal)
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
-    <>
+    <header>
       <GlobalLoading />
       <Outlet />
       <TanStackDevtools
@@ -37,7 +37,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
           },
         ]}
       />
-    </>
+    </header>
   ),
   notFoundComponent: () => <NotFound />,
 })

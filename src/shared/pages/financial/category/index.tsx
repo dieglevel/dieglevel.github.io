@@ -62,7 +62,6 @@ export default function Categories() {
     setOpen(true)
   }
 
-  // 3. Gọi API Update để Toggle trạng thái Archive thay vì set state ảo
   function archive(id: string) {
     const target = categories.find((c) => c.id === id)
     if (target) {
@@ -85,7 +84,6 @@ export default function Categories() {
     })
   }
 
-  // 4. Gửi dữ liệu lên Server qua Mutation API thay vì cập nhật State local không tồn tại
   const save = async (formData: Omit<IWallet_Category, 'id'>) => {
     if (mode === 'add') {
       await mCategory_Create.mutateAsync(
@@ -117,16 +115,34 @@ export default function Categories() {
   }
 
   return (
-    <Flex vertical gap={24} style={{ padding: 24, width: '100%' }}>
-      <Flex justify="space-between" align="center">
+    <Flex
+      vertical
+      gap={24}
+      style={{
+        padding: '16px',
+        width: '100%',
+        maxWidth: '100%',
+        height: '100%',
+        overflowY: 'auto',
+        boxSizing: 'border-box',
+      }}
+    >
+      {/* Header */}
+      <Flex justify="space-between" align="flex-start" wrap="wrap" gap={16}>
         <div>
-          <Title level={2}>Categories</Title>
+          <Title level={2} style={{ margin: 0 }}>
+            Categories
+          </Title>
           <Text type="secondary">
             {active.length} Active · {archived.length} Archived
           </Text>
         </div>
 
-        <Flex gap={12}>
+        <Flex
+          gap={12}
+          wrap="wrap"
+          style={{ width: '100%', justifyContent: 'flex-end' }}
+        >
           <Button
             icon={showArchived ? <EyeInvisibleOutlined /> : <EyeOutlined />}
             onClick={() => setShowArchived((x) => !x)}
@@ -139,9 +155,11 @@ export default function Categories() {
           </Button>
         </Flex>
       </Flex>
-      <Flex justify="end" align="center">
+
+      {/* Date Filter Bar */}
+      <Flex justify="end" align="center" wrap="wrap" gap={12}>
         <DatePicker
-          style={{ width: 'fit-content' }}
+          style={{ width: '100%', maxWidth: '200px' }}
           picker="month"
           value={selectedMonth}
           onChange={(date) => {
@@ -149,21 +167,26 @@ export default function Categories() {
           }}
         />
       </Flex>
+
+      {/* Summary Cards */}
       <SummaryCards totalBudget={totalBudget} totalSpent={totalSpent} />
 
-      <AnimatedGrid
-        items={shown}
-        isPending={isFetching}
-        getKey={(category) => category.id} // Truyền cách lấy ID
-        renderItem={(category) => (
-          <CategoryCard
-            category={category}
-            onEdit={openEdit}
-            onArchive={archive}
-            onDelete={remove}
-          />
-        )}
-      />
+      {/* Animated Grid Wrapper */}
+      <div style={{ width: '100%', overflowX: 'hidden' }}>
+        <AnimatedGrid
+          items={shown}
+          isPending={isFetching}
+          getKey={(category) => category.id}
+          renderItem={(category) => (
+            <CategoryCard
+              category={category}
+              onEdit={openEdit}
+              onArchive={archive}
+              onDelete={remove}
+            />
+          )}
+        />
+      </div>
 
       <CategoryModal
         open={open}
