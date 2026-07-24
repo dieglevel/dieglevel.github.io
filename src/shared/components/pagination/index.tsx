@@ -84,7 +84,7 @@ export default function Pagination({
       align="center"
       justify="space-between"
       wrap="wrap"
-      gap={{ xs: 12, sm: 16 }}
+      gap={8}
       style={{ width: '100%' }}
     >
       {/* Total Display */}
