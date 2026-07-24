@@ -2,7 +2,7 @@ import React from 'react'
 import * as LucideIcons from 'lucide-react'
 
 interface IconRendererProps {
-  iconName: string | null
+  iconName?: string | null
   size?: number
   color?: string
 }

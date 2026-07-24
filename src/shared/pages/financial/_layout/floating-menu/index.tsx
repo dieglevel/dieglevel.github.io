@@ -9,7 +9,7 @@ import {
   IconCreditCard,
   IconSetting,
 } from '@/shared/assets/icons'
-import { colors } from '@/shared/common/design-token'
+import { background, colors } from '@/shared/common/design-token'
 
 interface MenuItem {
   label: string
@@ -90,7 +90,7 @@ export default function FloatingMenu() {
       <div
         className={styles.mainButton}
         style={{
-          border: '3px solid var(--primary-base)',
+          border: '1px solid var(--primary-base)',
           width: 40,
           height: 40,
           borderRadius: 8,
@@ -98,6 +98,7 @@ export default function FloatingMenu() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          backgroundColor: background.base,
         }}
       >
         <AnimatePresence mode="wait" initial={false}>
@@ -156,10 +157,12 @@ export default function FloatingMenu() {
               justifyContent: 'center',
               borderRadius: 8,
               fontSize: 26,
+              backgroundColor: background.base,
+              border: `1px solid ${colors.primary.base}`,
             }}
             className={styles.button}
           >
-            <Tooltip placement="left" title={menu.label}>
+            <Tooltip placement="left" title={menu.label} mouseEnterDelay={1}>
               {menu.icon}
             </Tooltip>
           </div>

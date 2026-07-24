@@ -98,12 +98,14 @@ export function Transactions() {
       title: 'Wallet',
       dataIndex: 'wallet',
       key: 'walletId',
-      render: (data: IWallet_Wallet) => {
+      render: (data?: IWallet_Wallet) => {
+        console.log('date', data)
+
         return (
           <Flex align="center" gap={8}>
             <div
               style={{
-                backgroundColor: `${data.color}ff`,
+                backgroundColor: `${data?.color}ff`,
                 borderRadius: 8,
                 padding: 8,
                 display: 'flex',
@@ -111,9 +113,9 @@ export function Transactions() {
                 justifyContent: 'center',
               }}
             >
-              <IconRenderer iconName={data.icon} size={12} color={'#ffffff'} />
+              <IconRenderer iconName={data?.icon} size={12} color={'#ffffff'} />
             </div>
-            <Text style={{ fontSize: 13 }}>{data.name}</Text>
+            <Text style={{ fontSize: 13 }}>{data?.name}</Text>
           </Flex>
         )
       },
@@ -122,12 +124,12 @@ export function Transactions() {
       title: 'Category',
       dataIndex: 'category',
       key: 'categoryId',
-      render: (data: IWallet_Category) => {
+      render: (data?: IWallet_Category) => {
         return (
           <Flex align="center" gap={8}>
             <div
               style={{
-                backgroundColor: `${data.color}ff`,
+                backgroundColor: `${data?.color}ff`,
                 borderRadius: 8,
                 padding: 8,
                 display: 'flex',
@@ -135,9 +137,9 @@ export function Transactions() {
                 justifyContent: 'center',
               }}
             >
-              <IconRenderer iconName={data.icon} size={12} color={'#ffffff'} />
+              <IconRenderer iconName={data?.icon} size={12} color={'#ffffff'} />
             </div>
-            <Text style={{ fontSize: 13 }}>{data.name}</Text>
+            <Text style={{ fontSize: 13 }}>{data?.name || '-'}</Text>
           </Flex>
         )
       },
