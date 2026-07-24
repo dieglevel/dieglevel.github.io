@@ -77,7 +77,7 @@ function RouteComponent() {
             )
 
             router.navigate({
-              to: '/dashboard',
+              to: '/',
               replace: true,
             })
           },

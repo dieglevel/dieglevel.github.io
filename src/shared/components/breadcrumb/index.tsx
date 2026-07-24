@@ -32,7 +32,7 @@ export function AppBreadcrumb() {
 
   return (
     <Flex align="center" className="app-breadcrumb" style={{ width: '100%' }}>
-      <Link to="/dashboard" className="app-breadcrumb-home">
+      <Link to="/" className="app-breadcrumb-home">
         <HomeOutlined />
       </Link>
 

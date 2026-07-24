@@ -6,7 +6,7 @@ export default function NotFound() {
   return (
     <Flex vertical justify="center" align="center" style={{ height: '100vh' }}>
       <Typography.Title>Page Not Found</Typography.Title>
-      <Button onClick={() => navigate({ to: '/dashboard' })}>Go Home</Button>
+      <Button onClick={() => navigate({ to: '/' })}>Go Home</Button>
     </Flex>
   )
 }
