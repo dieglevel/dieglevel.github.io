@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
 import {
   RouterProvider,
-  createHashHistory,
+  createBrowserHistory,
   createRouter,
 } from '@tanstack/react-router'
 import * as AppProvider from './root-provider.tsx'
@@ -28,7 +28,7 @@ export const router = createRouter({
   scrollRestoration: true,
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
-  history: createHashHistory(),
+  history: createBrowserHistory(),
 })
 
 // Register the router instance for type safety

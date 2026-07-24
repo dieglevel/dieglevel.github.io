@@ -49,6 +49,8 @@ const TableComponent = <T extends object>({
             value: LIST_PAGE_SIZE_OPTIONS,
             defaultValue: 1,
           }}
+          showSizeChanger={false}
+          showTotal={false}
           onChange={(page, pageSize) => {
             setPaginate((prev) => ({
               ...prev,

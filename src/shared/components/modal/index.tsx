@@ -10,6 +10,7 @@ interface BaseModalProps {
   showButtonOk?: boolean
   showButtonCancel?: boolean
   width?: number | string
+  style?: React.CSSProperties
 }
 
 export default function BaseModal({
@@ -21,6 +22,7 @@ export default function BaseModal({
   showButtonOk = true,
   showButtonCancel = true,
   width = 900,
+  style,
 }: BaseModalProps) {
   return (
     <Modal
@@ -74,6 +76,7 @@ export default function BaseModal({
           padding: '16px 24px',
         },
       }}
+      style={style}
     >
       {children}
     </Modal>

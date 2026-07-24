@@ -4,11 +4,14 @@ import { border } from '@/shared/common/design-token'
 import { IconPlus } from '@/shared/assets/icons'
 
 interface ColorPickerProps {
-  value: string
-  onChange: (color: string) => void
+  value?: string
+  onChange?: (color: string) => void
 }
 
-export default function ColorPicker({ value, onChange }: ColorPickerProps) {
+export default function ColorPicker({
+  value = DEFAULT_COLORS[0],
+  onChange = (_) => {},
+}: ColorPickerProps) {
   return (
     <Flex wrap gap={8}>
       {DEFAULT_COLORS.map((c) => {

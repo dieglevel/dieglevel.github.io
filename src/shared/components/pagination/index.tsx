@@ -80,21 +80,34 @@ export default function Pagination({
   }
 
   return (
-    <Flex align="center" justify="space-between" style={{ width: '100%' }}>
-      <Flex style={{ minWidth: 120 }}>
+    <Flex
+      align="center"
+      justify="space-between"
+      wrap="wrap"
+      gap={{ xs: 12, sm: 16 }}
+      style={{ width: '100%' }}
+    >
+      {/* Total Display */}
+      <Flex
+        align="center"
+        style={{
+          minWidth: 100,
+          flexShrink: 0,
+        }}
+      >
         {showTotal ? (
-          <Flex gap={8}>
+          <Flex gap={8} align="center">
             <Typography.Text
               style={{
                 color: colors.secondary[600],
-                fontSize: 16,
+                fontSize: 14,
               }}
             >
               Total
             </Typography.Text>
             <Typography.Text
               style={{
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: 'bold',
                 color: colors.primary.base,
               }}
@@ -105,25 +118,31 @@ export default function Pagination({
         ) : null}
       </Flex>
 
-      <Flex style={{ flex: 1 }} justify="center" gap={8} align="center">
+      {/* Main Page Navigation Controls */}
+      <Flex
+        style={{ flex: 1, minWidth: 260 }}
+        justify="center"
+        gap={4}
+        align="center"
+      >
         {resolvedCurrent > 1 && (
           <Button
             type="text"
             onClick={handleJumpFirst}
             disabled={resolvedCurrent <= 1}
             icon={<DoubleLeftOutlined />}
+            size="small"
           />
         )}
+
         <AntPagination
+          responsive
           total={total}
           current={resolvedCurrent}
           pageSize={resolvedPageSize}
           showQuickJumper={showQuickJumper}
           showSizeChanger={false}
           onChange={handleChange}
-          styles={{
-            item: {},
-          }}
         />
 
         {resolvedCurrent < totalPages && (
@@ -132,16 +151,25 @@ export default function Pagination({
             onClick={handleJumpLast}
             disabled={resolvedCurrent >= totalPages}
             icon={<DoubleRightOutlined />}
+            size="small"
           />
         )}
       </Flex>
 
-      <Flex style={{ minWidth: 120 }} justify="flex-end">
+      {/* Page Size Changer Dropdown */}
+      <Flex
+        style={{
+          minWidth: 100,
+          flexShrink: 0,
+        }}
+        justify="flex-end"
+      >
         {showSizeChanger ? (
           <Select
             value={resolvedPageSize}
             options={pageSizeOptions}
             onChange={handlePageSizeChange}
+            style={{ minWidth: 90 }}
           />
         ) : null}
       </Flex>

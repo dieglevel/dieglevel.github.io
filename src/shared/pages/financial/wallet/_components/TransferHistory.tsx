@@ -29,25 +29,26 @@ export default function TransferHistory({
   const columns: ColumnsType<IWallet_WalletTransfer> = useMemo(() => {
     const cols: ColumnsType<IWallet_WalletTransfer> = [
       {
-        title: '',
+        title: '#',
         dataIndex: ['index'],
         key: 'index',
-        render(value, record, index) {
+        render(_value, _record, index) {
           return index + 1
         },
-        width: 90,
+        fixed: 'left',
       },
       {
         title: 'From Wallet',
         dataIndex: ['fromWallet', 'name'],
         key: 'fromWallet',
+        fixed: 'left',
       },
       {
         title: '',
         dataIndex: ['iconTransfer'],
         key: 'iconTransfer',
-        render: () => <MoveRight />,
-        width: 50,
+        render: () => <MoveRight size={16} />,
+        align: 'center',
       },
       {
         title: 'To Wallet',
@@ -72,9 +73,8 @@ export default function TransferHistory({
       },
     ]
     return cols
-  }, []) // Đã tối ưu dependency array từ [data] về [] vì các cột này là tĩnh
+  }, [])
 
-  // Tính toán tổng số lượng và tổng phí dựa trên data nhận về
   const { totalAmount, totalFee } = useMemo(() => {
     const list = data?.data || []
     let totalAmount = 0
@@ -95,71 +95,75 @@ export default function TransferHistory({
       onClose={onClose}
       showButtonOk={false}
       showButtonCancel={true}
+      width="100%"
+      style={{ maxWidth: 800, top: 20 }}
     >
-      <Table<IWallet_WalletTransfer>
-        dataSource={data?.data}
-        columns={columns}
-        styles={{
-          body: {
-            cell: {
-              height: 40,
-              paddingTop: 0,
-              paddingBottom: 0,
+      <div style={{ width: '100%', overflowX: 'auto' }}>
+        <Table<IWallet_WalletTransfer>
+          dataSource={data?.data}
+          columns={columns}
+          rowKey={(record) => record.id}
+          scroll={{ x: 600, y: 400 }}
+          styles={{
+            body: {
+              cell: {
+                height: 40,
+                paddingTop: 4,
+                paddingBottom: 4,
+              },
             },
-          },
-        }}
-        loading={isFetching}
-        summary={() => {
-          // Tránh hiển thị dòng summary khi không có dữ liệu
-          if (!data?.data || data.data.length === 0) return null
+          }}
+          loading={isFetching}
+          summary={() => {
+            if (!data?.data || data.data.length === 0) return null
 
-          return (
-            <Table.Summary fixed>
-              <Table.Summary.Row className="bg-gray-50 font-semibold">
-                <Table.Summary.Cell index={0}>
-                  <Typography
-                    style={{
-                      fontSize: 24,
-                      fontWeight: 'bolder',
-                    }}
-                  >
-                    Total
-                  </Typography>
-                </Table.Summary.Cell>
+            return (
+              <Table.Summary fixed>
+                <Table.Summary.Row className="bg-gray-50 font-semibold">
+                  <Table.Summary.Cell index={0}>
+                    <Typography.Text
+                      style={{
+                        fontSize: 'clamp(13px, 3.5vw, 15px)',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      Total
+                    </Typography.Text>
+                  </Table.Summary.Cell>
 
-                <Table.Summary.Cell index={1} />
+                  <Table.Summary.Cell index={1} />
+                  <Table.Summary.Cell index={2} />
+                  <Table.Summary.Cell index={3} />
 
-                <Table.Summary.Cell index={2} />
-                <Table.Summary.Cell index={3} />
+                  <Table.Summary.Cell index={4}>
+                    <Typography.Text
+                      style={{
+                        fontSize: 'clamp(13px, 3.5vw, 15px)',
+                        fontWeight: 'bold',
+                        color: 'green',
+                      }}
+                    >
+                      {convertCurrency(totalAmount)}
+                    </Typography.Text>
+                  </Table.Summary.Cell>
 
-                <Table.Summary.Cell index={4}>
-                  <Typography
-                    style={{
-                      fontSize: 24,
-                      fontWeight: 'bolder',
-                      color: 'green',
-                    }}
-                  >
-                    {convertCurrency(totalAmount)}
-                  </Typography>
-                </Table.Summary.Cell>
-
-                <Table.Summary.Cell index={5}>
-                  <Typography
-                    style={{
-                      fontSize: 24,
-                      fontWeight: 'bolder',
-                      color: 'red',
-                    }}
-                  >
-                    {convertCurrency(totalFee)}
-                  </Typography>
-                </Table.Summary.Cell>
-              </Table.Summary.Row>
-            </Table.Summary>
-          )
-        }}
-      />
+                  <Table.Summary.Cell index={5}>
+                    <Typography.Text
+                      style={{
+                        fontSize: 'clamp(13px, 3.5vw, 15px)',
+                        fontWeight: 'bold',
+                        color: 'red',
+                      }}
+                    >
+                      {convertCurrency(totalFee)}
+                    </Typography.Text>
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
+              </Table.Summary>
+            )
+          }}
+        />
+      </div>
     </BaseModal>
   )
 }

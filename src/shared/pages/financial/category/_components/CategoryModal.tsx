@@ -84,10 +84,7 @@ export default function CategoryModal({
 
         <Form.Item label="Color" shouldUpdate>
           <Form.Item noStyle name="color">
-            <ColorPicker
-              value={form.getFieldValue('color')}
-              onChange={(color) => form.setFieldValue('color', color)}
-            />
+            <ColorPicker />
           </Form.Item>
         </Form.Item>
 
