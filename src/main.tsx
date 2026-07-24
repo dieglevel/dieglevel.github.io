@@ -1,10 +1,6 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
-import {
-  RouterProvider,
-  createBrowserHistory,
-  createRouter,
-} from '@tanstack/react-router'
+import { RouterProvider, createRouter } from '@tanstack/react-router'
 import * as AppProvider from './root-provider.tsx'
 
 // Import the generated route tree
@@ -28,7 +24,8 @@ export const router = createRouter({
   scrollRestoration: true,
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
-  history: createBrowserHistory(),
+  basepath:
+    import.meta.env.NODE_ENV === 'production' ? '/dieglevel.github.io' : '/',
 })
 
 // Register the router instance for type safety

@@ -22,6 +22,7 @@ const normalizeIconName = (
     .toLowerCase()
     .trim() as keyof typeof dynamicIconImports
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   return dynamicIconImports[kebab] ? kebab : null
 }
 
