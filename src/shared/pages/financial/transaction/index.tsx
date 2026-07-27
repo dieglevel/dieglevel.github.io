@@ -1,17 +1,26 @@
 import React, { useMemo, useState } from 'react'
 import {
+  Badge,
   Button,
   Card,
   Flex,
   FloatButton,
+  Grid,
   Input,
+  Modal,
   Select,
   Space,
   Table,
   Tag,
   Typography,
 } from 'antd'
-import { DeleteOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons'
+import {
+  DeleteOutlined,
+  FilterOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+  SearchOutlined,
+} from '@ant-design/icons'
 import { AddTransactionModal } from './_components/AddTransactionModal'
 import { TransactionsSummary } from './_components/TransactionsSummary'
 import type { ColumnsType } from 'antd/es/table'
@@ -23,6 +32,7 @@ import { useGetWallet_Transaction_Date } from '@/shared/api/financial/transactio
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const { Title, Text } = Typography
+const { useBreakpoint } = Grid
 
 const STATUS_TAG: Record<IWallet_Transaction['status'], { color: string }> = {
   completed: { color: 'success' },
@@ -31,11 +41,13 @@ const STATUS_TAG: Record<IWallet_Transaction['status'], { color: string }> = {
 }
 
 export function Transactions() {
-  const [selectTransactions, setTransactions] = useState<
-    Array<IWallet_Transaction>
-  >([])
+  const screens = useBreakpoint()
+  const isMobile = !screens.md
+
   const { data: dataTransaction } = useGetWallet_Transaction_Date({})
   const transactions = dataTransaction?.data || []
+
+  // State Tìm kiếm & Bộ lọc
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense'>(
     'all',
@@ -43,12 +55,57 @@ export function Transactions() {
   const [walletFilter, setWalletFilter] = useState('all')
   const [catFilter, setCatFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
+
+  // State UI Controls
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
   const [showAdd, setShowAdd] = useState(false)
   const [selectedKeys, setSelectedKeys] = useState<Array<React.Key>>([])
 
-  // Lọc dữ liệu
+  // Danh sách Ví cho Select
+  const walletOptions = useMemo(() => {
+    const map = new Map<string, IWallet_Wallet>()
+    transactions.forEach((t) => {
+      if (t.wallet?.id) map.set(t.wallet.id, t.wallet)
+    })
+    return Array.from(map.values()).map((w) => ({
+      value: w.id,
+      label: w.name,
+    }))
+  }, [transactions])
+
+  // Danh sách Danh mục cho Select
+  const categoryOptions = useMemo(() => {
+    const map = new Map<string, IWallet_Category>()
+    transactions.forEach((t) => {
+      if (t.category?.id) map.set(t.category.id, t.category)
+    })
+    return Array.from(map.values()).map((c) => ({
+      value: c.id,
+      label: c.name,
+    }))
+  }, [transactions])
+
+  // Đếm số lượng bộ lọc nâng cao đang active (không tính search)
+  const activeFilterCount = useMemo(() => {
+    let count = 0
+    if (typeFilter !== 'all') count++
+    if (walletFilter !== 'all') count++
+    if (catFilter !== 'all') count++
+    if (statusFilter !== 'all') count++
+    return count
+  }, [typeFilter, walletFilter, catFilter, statusFilter])
+
+  // Reset toàn bộ filter
+  const handleResetFilter = () => {
+    setTypeFilter('all')
+    setWalletFilter('all')
+    setCatFilter('all')
+    setStatusFilter('all')
+  }
+
+  // Logic Filter dữ liệu
   const filtered = useMemo(() => {
-    const result = transactions.filter((t) => {
+    return transactions.filter((t) => {
       if (
         search &&
         ![t.description, t.amount.toString()]
@@ -63,20 +120,19 @@ export function Transactions() {
       if (statusFilter !== 'all' && t.status !== statusFilter) return false
       return true
     })
-    return result
   }, [transactions, search, typeFilter, walletFilter, catFilter, statusFilter])
 
   const deleteSelected = () => {
-    setTransactions((prev) => prev.filter((t) => !selectedKeys.includes(t.id)))
     setSelectedKeys([])
   }
 
-  // Cấu hình cột Table Antd
+  // Cấu hình Cột Bảng
   const columns: ColumnsType<IWallet_Transaction> = [
     {
       title: 'Date',
       dataIndex: 'createdAt',
       key: 'createdAt',
+      width: 90,
       sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
       render: (date: string) => (
         <Text
@@ -91,59 +147,10 @@ export function Transactions() {
       ),
     },
     {
-      title: 'Wallet',
-      dataIndex: 'wallet',
-      key: 'walletId',
-      render: (data?: IWallet_Wallet) => {
-        console.log('date', data)
-
-        return (
-          <Flex align="center" gap={8}>
-            <div
-              style={{
-                backgroundColor: `${data?.color}ff`,
-                borderRadius: 8,
-                padding: 8,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <IconRenderer iconName={data?.icon} size={12} color={'#ffffff'} />
-            </div>
-            <Text style={{ fontSize: 13 }}>{data?.name}</Text>
-          </Flex>
-        )
-      },
-    },
-    {
-      title: 'Category',
-      dataIndex: 'category',
-      key: 'categoryId',
-      render: (data?: IWallet_Category) => {
-        return (
-          <Flex align="center" gap={8}>
-            <div
-              style={{
-                backgroundColor: `${data?.color}ff`,
-                borderRadius: 8,
-                padding: 8,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <IconRenderer iconName={data?.icon} size={12} color={'#ffffff'} />
-            </div>
-            <Text style={{ fontSize: 13 }}>{data?.name || '-'}</Text>
-          </Flex>
-        )
-      },
-    },
-    {
       title: 'Description',
       dataIndex: 'description',
       key: 'description',
+      ellipsis: true,
       sorter: (a, b) => a.description.localeCompare(b.description),
       render: (desc: string) => <Text strong>{desc}</Text>,
     },
@@ -170,9 +177,56 @@ export function Transactions() {
       },
     },
     {
+      title: 'Wallet',
+      dataIndex: 'wallet',
+      key: 'walletId',
+      responsive: ['sm'],
+      render: (data?: IWallet_Wallet) => (
+        <Flex align="center" gap={8}>
+          <div
+            style={{
+              backgroundColor: `${data?.color || '#ccc'}ff`,
+              borderRadius: 6,
+              padding: 6,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <IconRenderer iconName={data?.icon} size={12} color={'#ffffff'} />
+          </div>
+          <Text style={{ fontSize: 13 }}>{data?.name}</Text>
+        </Flex>
+      ),
+    },
+    {
+      title: 'Category',
+      dataIndex: 'category',
+      key: 'categoryId',
+      responsive: ['md'],
+      render: (data?: IWallet_Category) => (
+        <Flex align="center" gap={8}>
+          <div
+            style={{
+              backgroundColor: `${data?.color || '#ccc'}ff`,
+              borderRadius: 6,
+              padding: 6,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <IconRenderer iconName={data?.icon} size={12} color={'#ffffff'} />
+          </div>
+          <Text style={{ fontSize: 13 }}>{data?.name || '-'}</Text>
+        </Flex>
+      ),
+    },
+    {
       title: 'Type',
       dataIndex: 'type',
       key: 'type',
+      responsive: ['lg'],
       render: (type: 'income' | 'expense') => (
         <Tag
           color={type === 'income' ? 'green' : 'volcano'}
@@ -186,6 +240,7 @@ export function Transactions() {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
+      responsive: ['md'],
       render: (status: IWallet_Transaction['status']) => (
         <Tag
           color={STATUS_TAG[status].color}
@@ -200,104 +255,125 @@ export function Transactions() {
   return (
     <Space
       direction="vertical"
-      size="middle"
-      style={{ width: '100%', padding: 24 }}
+      size={isMobile ? 'small' : 'middle'}
+      style={{
+        width: '100%',
+        padding: isMobile ? 12 : 24,
+        boxSizing: 'border-box',
+      }}
     >
       {/* Header */}
-      <Flex justify="space-between" align="center">
+      <Flex
+        vertical={isMobile}
+        justify="space-between"
+        align={isMobile ? 'stretch' : 'center'}
+        gap={12}
+      >
         <div>
-          <Title level={3} style={{ margin: 0 }}>
+          <Title level={isMobile ? 4 : 3} style={{ margin: 0 }}>
             Transactions
           </Title>
-          <Text type="secondary">{transactions.length} total records</Text>
+          <Text type="secondary" style={{ fontSize: 13 }}>
+            Showing {filtered.length} of {transactions.length} records
+          </Text>
         </div>
-        <Space>
+        <Space
+          style={{ width: isMobile ? '100%' : 'auto' }}
+          orientation={isMobile ? 'vertical' : 'horizontal'}
+        >
           {selectedKeys.length > 0 && (
-            <Button danger icon={<DeleteOutlined />} onClick={deleteSelected}>
+            <Button
+              danger
+              icon={<DeleteOutlined />}
+              onClick={deleteSelected}
+              style={{ flex: 1 }}
+            >
               Delete ({selectedKeys.length})
             </Button>
           )}
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => setShowAdd(true)}
-          >
-            Add Transaction
-          </Button>
+          {!isMobile && (
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setShowAdd(true)}
+            >
+              Add Transaction
+            </Button>
+          )}
         </Space>
       </Flex>
 
-      {/* Summary Component */}
+      {/* Summary Chart Component */}
       <TransactionsSummary transactions={transactions} />
 
-      {/* Filter Controls */}
-      <Card size="small">
-        <Space wrap style={{ width: '100%' }}>
+      {/* Thanh công cụ Tìm kiếm & Nút mở Filter Modal */}
+      <Card size="small" bodyStyle={{ padding: 12 }}>
+        <Flex gap={10} align="center">
           <Input
             placeholder="Search transactions…"
             prefix={<SearchOutlined />}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ width: 220 }}
+            style={{ flex: 1 }}
             allowClear
           />
-          <Select
-            value={typeFilter}
-            onChange={setTypeFilter}
-            style={{ width: 130 }}
-            options={[
-              { value: 'all', label: 'All Types' },
-              { value: 'income', label: 'Income' },
-              { value: 'expense', label: 'Expense' },
-            ]}
-          />
-          <Select
-            value={walletFilter}
-            onChange={setWalletFilter}
-            style={{ width: 150 }}
-            options={[
-              { value: 'all', label: 'All Wallets' },
-              ...transactions.map((w) => ({
-                value: w.id,
-                label: `${w.wallet?.icon} ${w.wallet?.name}`,
-              })),
-            ]}
-          />
-          <Select
-            value={catFilter}
-            onChange={setCatFilter}
-            style={{ width: 160 }}
-            options={[
-              { value: 'all', label: 'All Categories' },
-              ...transactions.map((c) => ({
-                value: c.id,
-                label: `${c.category?.icon} ${c.category?.name}`,
-              })),
-            ]}
-          />
-          <Select
-            value={statusFilter}
-            onChange={setStatusFilter}
-            style={{ width: 140 }}
-            options={[
-              { value: 'all', label: 'All Status' },
-              { value: 'completed', label: 'Completed' },
-              { value: 'pending', label: 'Pending' },
-              { value: 'failed', label: 'Failed' },
-            ]}
-          />
-        </Space>
-        <div style={{ marginTop: 8 }}>
-          <Text type="secondary" style={{ fontSize: 12 }}>
-            Showing {filtered.length} of {transactions.length} results
-          </Text>
-        </div>
+          <Badge count={activeFilterCount} color="#1677ff" offset={[-2, 2]}>
+            <Button
+              icon={<FilterOutlined />}
+              onClick={() => setIsFilterModalOpen(true)}
+            >
+              {!isMobile && 'Filters'}
+            </Button>
+          </Badge>
+        </Flex>
+
+        {/* Chíp hiển thị các Filter đang active để xóa nhanh */}
+        {activeFilterCount > 0 && (
+          <Flex wrap gap={6} style={{ marginTop: 10 }}>
+            <Text type="secondary" style={{ fontSize: 12, marginRight: 4 }}>
+              Active Filters:
+            </Text>
+
+            {typeFilter !== 'all' && (
+              <Tag closable onClose={() => setTypeFilter('all')} color="blue">
+                Type: {typeFilter}
+              </Tag>
+            )}
+            {walletFilter !== 'all' && (
+              <Tag closable onClose={() => setWalletFilter('all')} color="blue">
+                Wallet:{' '}
+                {walletOptions.find((w) => w.value === walletFilter)?.label}
+              </Tag>
+            )}
+            {catFilter !== 'all' && (
+              <Tag closable onClose={() => setCatFilter('all')} color="blue">
+                Category:{' '}
+                {categoryOptions.find((c) => c.value === catFilter)?.label}
+              </Tag>
+            )}
+            {statusFilter !== 'all' && (
+              <Tag closable onClose={() => setStatusFilter('all')} color="blue">
+                Status: {statusFilter}
+              </Tag>
+            )}
+
+            <Button
+              type="link"
+              size="small"
+              onClick={handleResetFilter}
+              style={{ padding: 0, fontSize: 12 }}
+            >
+              Clear all
+            </Button>
+          </Flex>
+        )}
       </Card>
 
       {/* Main Table */}
-      <Card bodyStyle={{ padding: 0 }}>
+      <Card bodyStyle={{ padding: 0 }} style={{ overflow: 'hidden' }}>
         <Table<IWallet_Transaction>
           rowKey="id"
+          size={isMobile ? 'small' : 'medium'}
           columns={columns}
           dataSource={filtered}
           rowSelection={{
@@ -307,12 +383,125 @@ export function Transactions() {
           pagination={{
             pageSize: 10,
             showSizeChanger: false,
-            showTotal: (total, range) =>
-              `${range[0]}-${range[1]} of ${total} items`,
+            simple: isMobile,
+            showTotal: isMobile
+              ? undefined
+              : (total, range) => `${range[0]}-${range[1]} of ${total} items`,
           }}
-          scroll={{ x: 768 }}
+          scroll={{ x: 'max-content' }}
         />
       </Card>
+
+      {/* FILTER MODAL */}
+      <Modal
+        title={
+          <Flex
+            justify="space-between"
+            align="center"
+            style={{ paddingRight: 24 }}
+          >
+            <span>Filter Transactions</span>
+            {activeFilterCount > 0 && (
+              <Button
+                type="link"
+                size="small"
+                icon={<ReloadOutlined />}
+                onClick={handleResetFilter}
+              >
+                Reset
+              </Button>
+            )}
+          </Flex>
+        }
+        open={isFilterModalOpen}
+        onCancel={() => setIsFilterModalOpen(false)}
+        onOk={() => setIsFilterModalOpen(false)}
+        okText="Apply Filters"
+        cancelText="Close"
+        centered
+        width={420}
+      >
+        <Space
+          direction="vertical"
+          size="middle"
+          style={{ width: '100%', marginTop: 16 }}
+        >
+          <div>
+            <Text
+              strong
+              style={{ fontSize: 13, display: 'block', marginBottom: 6 }}
+            >
+              Transaction Type
+            </Text>
+            <Select
+              value={typeFilter}
+              onChange={setTypeFilter}
+              style={{ width: '100%' }}
+              options={[
+                { value: 'all', label: 'All Types' },
+                { value: 'income', label: 'Income' },
+                { value: 'expense', label: 'Expense' },
+              ]}
+            />
+          </div>
+
+          <div>
+            <Text
+              strong
+              style={{ fontSize: 13, display: 'block', marginBottom: 6 }}
+            >
+              Wallet
+            </Text>
+            <Select
+              value={walletFilter}
+              onChange={setWalletFilter}
+              style={{ width: '100%' }}
+              options={[
+                { value: 'all', label: 'All Wallets' },
+                ...walletOptions,
+              ]}
+            />
+          </div>
+
+          <div>
+            <Text
+              strong
+              style={{ fontSize: 13, display: 'block', marginBottom: 6 }}
+            >
+              Category
+            </Text>
+            <Select
+              value={catFilter}
+              onChange={setCatFilter}
+              style={{ width: '100%' }}
+              options={[
+                { value: 'all', label: 'All Categories' },
+                ...categoryOptions,
+              ]}
+            />
+          </div>
+
+          <div>
+            <Text
+              strong
+              style={{ fontSize: 13, display: 'block', marginBottom: 6 }}
+            >
+              Status
+            </Text>
+            <Select
+              value={statusFilter}
+              onChange={setStatusFilter}
+              style={{ width: '100%' }}
+              options={[
+                { value: 'all', label: 'All Status' },
+                { value: 'completed', label: 'Completed' },
+                { value: 'pending', label: 'Pending' },
+                { value: 'failed', label: 'Failed' },
+              ]}
+            />
+          </div>
+        </Space>
+      </Modal>
 
       {/* Add Modal */}
       {showAdd && (
@@ -324,7 +513,7 @@ export function Transactions() {
         type="primary"
         icon={<PlusOutlined />}
         onClick={() => setShowAdd(true)}
-        style={{ right: 24, bottom: 24 }}
+        style={{ left: 16, bottom: 16 }}
       />
     </Space>
   )
