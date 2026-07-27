@@ -18,15 +18,11 @@ import type { ColumnsType } from 'antd/es/table'
 import type { IWallet_Transaction } from '@/shared/api/financial/transaction/transaction.type'
 import type { IWallet_Category } from '@/shared/api/financial/category/category.type'
 import type { IWallet_Wallet } from '@/shared/api/financial/wallet/wallet.type'
-import { useGetWallet_Transaction_List } from '@/shared/api/financial/transaction/useGetWallet_Transaction_List'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
+import { useGetWallet_Transaction_Date } from '@/shared/api/financial/transaction/useGetWallet_Transaction_Date'
+import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const { Title, Text } = Typography
-
-const fmt = (n: number) =>
-  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
-    n,
-  )
 
 const STATUS_TAG: Record<IWallet_Transaction['status'], { color: string }> = {
   completed: { color: 'success' },
@@ -38,7 +34,7 @@ export function Transactions() {
   const [selectTransactions, setTransactions] = useState<
     Array<IWallet_Transaction>
   >([])
-  const { data: dataTransaction } = useGetWallet_Transaction_List({})
+  const { data: dataTransaction } = useGetWallet_Transaction_Date({})
   const transactions = dataTransaction?.data || []
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense'>(
@@ -168,7 +164,7 @@ export function Transactions() {
             }}
           >
             {isIncome ? '+' : '-'}
-            {fmt(amount)}
+            {convertCurrency(amount)}
           </Text>
         )
       },

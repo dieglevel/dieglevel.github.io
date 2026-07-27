@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
-  Button,
   DatePicker,
   Flex,
   Form,
@@ -9,9 +8,7 @@ import {
   Modal,
   Segmented,
   Select,
-  Upload,
 } from 'antd'
-import { PaperClipOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import Text from 'antd/es/typography/Text'
 import { useGetWallet_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
@@ -22,6 +19,7 @@ import {
   FINANCIAL_TRANSACTION_TYPE,
 } from '@/shared/api/financial/transaction/transaction.enum'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
+import { InputWithComma } from '@/shared/components/input/utils'
 
 interface AddTransactionModalProps {
   open: boolean
@@ -35,13 +33,42 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   const { mTransaction_Create, mTransaction_Update } = useMutationTransaction()
 
   const [form] = Form.useForm()
-  const { data: wallets } = useGetWallet_Wallet_List({})
-  const { data: categories } = useGetWallet_Category_List({})
+  const { data: wallets } = useGetWallet_Wallet_List({
+    options: {
+      enabled: open,
+    },
+  })
+  const { data: categories } = useGetWallet_Category_List({
+    options: {
+      enabled: open,
+    },
+  })
+
+  // initialize form instance
+  useEffect(() => {
+    if (open) {
+      form.setFieldsValue({
+        type: 'expense',
+        walletId: wallets?.data[0]?.id,
+        categoryId: categories?.data[0]?.id,
+        date: dayjs(),
+        status: 'completed',
+      })
+    }
+  }, [wallets, categories])
+
+  useEffect(() => {
+    if (open) {
+      form.resetFields()
+    }
+  }, [open, form])
 
   const handleSave = async () => {
     try {
       const values = await form.validateFields()
-      await mTransaction_Create.mutateAsync(values)
+      await mTransaction_Create.mutateAsync({
+        body: { ...values },
+      })
 
       form.resetFields()
       onClose()
@@ -112,7 +139,12 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
           <Select
             options={categories?.data.map((c) => ({
               value: c.id,
-              label: `${c.icon} ${c.name}`,
+              label: (
+                <Flex align="center" gap={8}>
+                  <IconRenderer iconName={c.icon} />
+                  <Text style={{ fontSize: 13 }}>{c.name}</Text>
+                </Flex>
+              ),
             }))}
           />
         </Form.Item>
@@ -135,6 +167,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
             precision={2}
             placeholder="0.00"
             min={0}
+            {...InputWithComma}
           />
         </Form.Item>
 
@@ -153,22 +186,20 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                 value: FINANCIAL_TRANSACTION_STATUS.COMPLETED,
                 label: '✅ Completed',
               },
-              { value: 'pending', label: '⏳ Pending' },
-              { value: 'failed', label: '❌ Failed' },
+              {
+                value: FINANCIAL_TRANSACTION_STATUS.PENDING,
+                label: '⏳ Pending',
+              },
+              {
+                value: FINANCIAL_TRANSACTION_STATUS.FAILED,
+                label: '❌ Failed',
+              },
             ]}
           />
         </Form.Item>
 
         <Form.Item label="Note (optional)" name="note">
           <Input.TextArea rows={2} placeholder="Add a note…" />
-        </Form.Item>
-
-        <Form.Item>
-          <Upload beforeUpload={() => false} maxCount={1}>
-            <Button icon={<PaperClipOutlined />} block>
-              Attach Receipt
-            </Button>
-          </Upload>
         </Form.Item>
       </Form>
     </Modal>

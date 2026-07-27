@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card, Col, Row, Statistic } from 'antd'
 import type { IWallet_Transaction } from '@/shared/api/financial/transaction/transaction.type'
+import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 interface TransactionsSummaryProps {
   transactions: Array<IWallet_Transaction>
@@ -25,9 +26,8 @@ export const TransactionsSummary: React.FC<TransactionsSummaryProps> = ({
         <Card size="small">
           <Statistic
             title="Total Income"
-            value={income}
+            value={convertCurrency(income)}
             precision={2}
-            prefix="$"
             valueStyle={{
               color: '#10b981',
             }}
@@ -38,9 +38,8 @@ export const TransactionsSummary: React.FC<TransactionsSummaryProps> = ({
         <Card size="small">
           <Statistic
             title="Total Expenses"
-            value={expense}
+            value={convertCurrency(expense)}
             precision={2}
-            prefix="$"
             valueStyle={{
               color: '#f43f5e',
             }}
@@ -51,9 +50,8 @@ export const TransactionsSummary: React.FC<TransactionsSummaryProps> = ({
         <Card size="small">
           <Statistic
             title="Net Balance"
-            value={net}
+            value={convertCurrency(net)}
             precision={2}
-            prefix="$"
             valueStyle={{
               color: '#5b5fef',
             }}
