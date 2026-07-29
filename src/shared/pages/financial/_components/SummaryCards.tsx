@@ -13,35 +13,31 @@ export default function SummaryCards({
   const remaining = totalBudget - totalSpent
 
   return (
-    <Row gutter={[16, 16]}>
-      <Col xs={24} md={8}>
-        <Card variant="borderless">
+    <Row gutter={[12, 12]}>
+      <Col xs={12} md={8}>
+        <Card variant="borderless" size="small">
           <Statistic
             title="Total Budget"
             value={convertCurrency(totalBudget)}
             precision={2}
-            valueStyle={{
-              color: '#1677ff',
-            }}
+            valueStyle={{ color: '#1677ff' }}
           />
         </Card>
       </Col>
 
-      <Col xs={24} md={8}>
-        <Card variant="borderless">
+      <Col xs={12} md={8}>
+        <Card variant="borderless" size="small">
           <Statistic
             title="Total Spent"
             value={convertCurrency(totalSpent)}
             precision={2}
-            valueStyle={{
-              color: '#ff4d4f',
-            }}
+            valueStyle={{ color: '#ff4d4f' }}
           />
         </Card>
       </Col>
 
       <Col xs={24} md={8}>
-        <Card variant="borderless">
+        <Card variant="borderless" size="small">
           <Statistic
             title="Remaining"
             value={convertCurrency(remaining)}
