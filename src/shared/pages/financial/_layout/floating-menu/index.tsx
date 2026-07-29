@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useNavigate } from '@tanstack/react-router'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import type { Variants } from 'motion/react'
 import type { LinkProps } from '@tanstack/react-router'
 import {
@@ -15,7 +15,7 @@ interface MenuItem {
   id: string
   label: string
   icon: React.ReactNode
-  link?: LinkProps['to']
+  link: LinkProps['to']
 }
 
 const menus: Array<MenuItem> = [
@@ -78,19 +78,22 @@ const itemVariants: Variants = {
 
 export default function FloatingMenu() {
   const [isOpen, setIsOpen] = useState(false)
-  const [selectedMenu, setSelectedMenu] = useState<MenuItem>(menus[0])
   const navigate = useNavigate()
+
+  // 1. Lấy thông tin location hiện tại từ TanStack Router
+  const location = useLocation()
 
   const handleMenuClick = (e: React.MouseEvent, menu: MenuItem) => {
     e.stopPropagation()
-    setSelectedMenu(menu)
     setIsOpen(false)
-    if (menu.link) navigate({ to: menu.link })
+    if (menu.link) {
+      navigate({ to: menu.link })
+    }
   }
 
   return (
     <>
-      {/* 1. OVERLAY LAYER (Làm mờ nền & Chống click nhầm) */}
+      {/* 1. OVERLAY LAYER */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -144,7 +147,9 @@ export default function FloatingMenu() {
               }}
             >
               {menus.map((menu) => {
-                const isSelected = selectedMenu.id === menu.id
+                // 2. Kiểm tra xem route hiện tại có khớp với menu link hay không
+                // Dùng startsWith nếu bạn muốn active cả các route con (VD: /financial/transaction/123)
+                const isSelected = location.pathname.startsWith(menu.link || '')
 
                 return (
                   <motion.div
@@ -160,18 +165,21 @@ export default function FloatingMenu() {
                       cursor: 'pointer',
                     }}
                   >
-                    {/* Label tên Menu hiển thị bên trái */}
+                    {/* Label tên Menu */}
                     <span
                       style={{
                         fontSize: 13,
-                        fontWeight: 500,
-                        color: colors.primary.base,
-                        backgroundColor: background.base,
+                        fontWeight: isSelected ? 600 : 500,
+                        color: isSelected ? '#ffffff' : colors.primary.base,
+                        backgroundColor: isSelected
+                          ? colors.primary.base
+                          : background.base,
                         padding: '4px 10px',
                         borderRadius: 6,
                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                        border: `1px solid ${colors.primary.base}30`,
+                        border: `1px solid ${colors.primary.base}${isSelected ? 'FF' : '30'}`,
                         userSelect: 'none',
+                        transition: 'all 0.2s ease',
                       }}
                     >
                       {menu.label}
@@ -187,10 +195,10 @@ export default function FloatingMenu() {
                         alignItems: 'center',
                         justifyContent: 'center',
                         backgroundColor: isSelected
-                          ? `${colors.primary.base}15`
+                          ? colors.primary.base
                           : background.base,
                         border: `1.5px solid ${colors.primary.base}`,
-                        color: colors.primary.base,
+                        color: isSelected ? '#ffffff' : colors.primary.base,
                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.12)',
                         transition: 'all 0.2s ease',
                       }}
@@ -204,7 +212,7 @@ export default function FloatingMenu() {
           )}
         </AnimatePresence>
 
-        {/* NÚT TÁC VỤ CHÍNH (MAIN TRIGGER BUTTON) */}
+        {/* NÚT TÁC VỤ CHÍNH (HAMBURGER TO CLOSE) */}
         <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.92 }}
@@ -223,22 +231,52 @@ export default function FloatingMenu() {
             border: 'none',
           }}
         >
-          {/* Icon Dấu cộng xoay 135 độ chuyển thành Dấu X khi mở */}
-          <motion.svg
+          <svg
             width="20"
             height="20"
             viewBox="0 0 24 24"
-            fill="none"
             stroke="currentColor"
             strokeWidth="2.5"
             strokeLinecap="round"
-            strokeLinejoin="round"
-            animate={{ rotate: isOpen ? 135 : 0 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           >
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </motion.svg>
+            {/* Vạch trên: Xoay chéo xuống */}
+            <motion.line
+              x1="4"
+              y1="6"
+              x2="20"
+              y2="6"
+              animate={{
+                y1: isOpen ? 12 : 6,
+                y2: isOpen ? 12 : 6,
+                rotate: isOpen ? 45 : 0,
+              }}
+              transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+              style={{ transformOrigin: 'center' }}
+            />
+            {/* Vạch giữa: Biến mất khi mở */}
+            <motion.line
+              x1="4"
+              y1="12"
+              x2="20"
+              y2="12"
+              animate={{ opacity: isOpen ? 0 : 1, scale: isOpen ? 0 : 1 }}
+              transition={{ duration: 0.15 }}
+            />
+            {/* Vạch dưới: Xoay chéo lên */}
+            <motion.line
+              x1="4"
+              y1="18"
+              x2="20"
+              y2="18"
+              animate={{
+                y1: isOpen ? 12 : 18,
+                y2: isOpen ? 12 : 18,
+                rotate: isOpen ? -45 : 0,
+              }}
+              transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+              style={{ transformOrigin: 'center' }}
+            />
+          </svg>
         </motion.div>
       </div>
     </>
