@@ -4,7 +4,7 @@ export const Route = createFileRoute('/(protected)/financial/')({
   beforeLoad: ({ location }) => {
     if (location.pathname === '/financial') {
       throw redirect({
-        to: '/financial/wallet',
+        to: '/financial/transaction',
       })
     }
   },
