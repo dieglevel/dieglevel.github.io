@@ -15,7 +15,10 @@ export const LocalStorageService = {
     if (typeof window === 'undefined') return defaultValue ?? null
 
     const item = localStorage.getItem(key)
-    if (!item) return defaultValue ?? null
+    if (!item) {
+      localStorage.setItem(key, JSON.stringify(defaultValue))
+      return defaultValue ?? null
+    }
 
     try {
       return JSON.parse(item) as T

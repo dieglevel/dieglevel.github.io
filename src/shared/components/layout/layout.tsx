@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Layout } from 'antd'
+import { Flex, Layout } from 'antd'
 import Menu from './menu/menu'
 import { background } from '@/shared/common/design-token'
 
@@ -30,10 +30,17 @@ const MainLayout: React.FC<Props> = ({ children }) => {
         <Content
           style={{
             overflow: 'initial',
-            background: background.layout,
           }}
         >
-          {children}
+          <Flex
+            flex={1}
+            style={{
+              minHeight: '100vh',
+              background: background.layout,
+            }}
+          >
+            {children}
+          </Flex>
         </Content>
       </Layout>
     </Layout>
