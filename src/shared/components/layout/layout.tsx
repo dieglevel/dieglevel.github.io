@@ -18,7 +18,6 @@ const MainLayout: React.FC<Props> = ({ children }) => {
         height: '100%',
       }}
     >
-      <Menu />
       <Layout
         className="hide-scrollbar
       "
@@ -27,6 +26,8 @@ const MainLayout: React.FC<Props> = ({ children }) => {
           height: '100vh',
         }}
       >
+        <Menu />
+
         <Content
           style={{
             overflow: 'initial',

@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { MoveRight } from 'lucide-react'
-import { Typography } from 'antd'
+import { DatePicker, Typography } from 'antd'
 import dayjs from 'dayjs'
 import type { IWallet_WalletTransfer } from '@/shared/api/financial/wallet-transfer/wallet-transfer.type'
 import type { ColumnsType } from 'antd/es/table'
@@ -12,14 +12,14 @@ import { convertCurrency } from '@/shared/utils/helper/format-money'
 interface TransferHistoryProps {
   open: boolean
   onClose: () => void
-  selectedMonth: dayjs.Dayjs | string | Date
 }
 
 export default function TransferHistory({
   open,
   onClose,
-  selectedMonth,
 }: TransferHistoryProps) {
+  const [selectedMonth, setSelectedMonth] = useState<dayjs.Dayjs>(dayjs())
+
   const { data, isFetching } = useGetWallet_WalletTransfer_List({
     queryParams: {
       date: dayjs(selectedMonth).format('YYYY-MM-DD'),
@@ -32,33 +32,42 @@ export default function TransferHistory({
         title: '#',
         dataIndex: ['index'],
         key: 'index',
+        width: 50,
+        align: 'center',
         render(_value, _record, index) {
           return index + 1
         },
-        fixed: 'left',
       },
       {
         title: 'From Wallet',
         dataIndex: ['fromWallet', 'name'],
         key: 'fromWallet',
-        fixed: 'left',
+        width: 140,
+        ellipsis: true,
       },
       {
         title: '',
         dataIndex: ['iconTransfer'],
         key: 'iconTransfer',
-        render: () => <MoveRight size={16} />,
+        width: 40,
         align: 'center',
+        render: () => (
+          <MoveRight size={16} className="shrink-0 text-gray-400" />
+        ),
       },
       {
         title: 'To Wallet',
         dataIndex: ['toWallet', 'name'],
         key: 'toWallet',
+        width: 140,
+        ellipsis: true,
       },
       {
         title: 'Amount',
         dataIndex: 'amount',
         key: 'amount',
+        width: 130,
+        align: 'right',
         render(value) {
           return convertCurrency(value)
         },
@@ -67,6 +76,8 @@ export default function TransferHistory({
         title: 'Transfer Fee',
         dataIndex: 'transferFee',
         key: 'transferFee',
+        width: 120,
+        align: 'right',
         render(value) {
           return convertCurrency(value)
         },
@@ -95,75 +106,64 @@ export default function TransferHistory({
       onClose={onClose}
       showButtonOk={false}
       showButtonCancel={true}
-      width="100%"
-      style={{ maxWidth: 800, top: 20 }}
+      width={768}
+      style={{ top: 20 }}
     >
-      <div style={{ width: '100%', overflowX: 'auto' }}>
-        <Table<IWallet_WalletTransfer>
-          dataSource={data?.data}
-          columns={columns}
-          rowKey={(record) => record.id}
-          scroll={{ x: 600, y: 400 }}
-          styles={{
-            body: {
-              cell: {
-                height: 40,
-                paddingTop: 4,
-                paddingBottom: 4,
-              },
+      <DatePicker
+        style={{ width: '100%', maxWidth: '200px' }}
+        picker="month"
+        value={selectedMonth}
+        onChange={(date) => {
+          setSelectedMonth(date ?? dayjs())
+        }}
+      />
+      <Table<IWallet_WalletTransfer>
+        dataSource={data?.data}
+        columns={columns}
+        rowKey={(record) => record.id}
+        scroll={{ x: 'max-content', y: 360 }}
+        size="small"
+        style={{
+          marginTop: 8,
+        }}
+        styles={{
+          body: {
+            cell: {
+              height: 40,
+              paddingTop: 6,
+              paddingBottom: 6,
             },
-          }}
-          loading={isFetching}
-          summary={() => {
-            if (!data?.data || data.data.length === 0) return null
+          },
+        }}
+        loading={isFetching}
+        summary={() => {
+          if (!data?.data || data.data.length === 0) return null
 
-            return (
-              <Table.Summary fixed>
-                <Table.Summary.Row className="bg-gray-50 font-semibold">
-                  <Table.Summary.Cell index={0}>
-                    <Typography.Text
-                      style={{
-                        fontSize: 'clamp(13px, 3.5vw, 15px)',
-                        fontWeight: 'bold',
-                      }}
-                    >
-                      Total
-                    </Typography.Text>
-                  </Table.Summary.Cell>
+          return (
+            <Table.Summary fixed>
+              <Table.Summary.Row className="bg-gray-50 font-semibold">
+                <Table.Summary.Cell index={0} colSpan={4}>
+                  <Typography.Text className="text-sm font-bold">
+                    Total
+                  </Typography.Text>
+                </Table.Summary.Cell>
 
-                  <Table.Summary.Cell index={1} />
-                  <Table.Summary.Cell index={2} />
-                  <Table.Summary.Cell index={3} />
+                <Table.Summary.Cell index={1} align="right">
+                  <Typography.Text className="text-sm font-bold text-green-600">
+                    {convertCurrency(totalAmount)}
+                  </Typography.Text>
+                </Table.Summary.Cell>
 
-                  <Table.Summary.Cell index={4}>
-                    <Typography.Text
-                      style={{
-                        fontSize: 'clamp(13px, 3.5vw, 15px)',
-                        fontWeight: 'bold',
-                        color: 'green',
-                      }}
-                    >
-                      {convertCurrency(totalAmount)}
-                    </Typography.Text>
-                  </Table.Summary.Cell>
-
-                  <Table.Summary.Cell index={5}>
-                    <Typography.Text
-                      style={{
-                        fontSize: 'clamp(13px, 3.5vw, 15px)',
-                        fontWeight: 'bold',
-                        color: 'red',
-                      }}
-                    >
-                      {convertCurrency(totalFee)}
-                    </Typography.Text>
-                  </Table.Summary.Cell>
-                </Table.Summary.Row>
-              </Table.Summary>
-            )
-          }}
-        />
-      </div>
+                <Table.Summary.Cell index={2} align="right">
+                  <Typography.Text className="text-sm font-bold text-red-500">
+                    {convertCurrency(totalFee)}
+                  </Typography.Text>
+                </Table.Summary.Cell>
+              </Table.Summary.Row>
+            </Table.Summary>
+          )
+        }}
+      />
     </BaseModal>
   )
 }

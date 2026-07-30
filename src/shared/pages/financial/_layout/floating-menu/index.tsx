@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLocation, useNavigate } from '@tanstack/react-router'
+import { Grid } from 'antd' // 1. Import Grid từ antd
 import type { Variants } from 'motion/react'
 import type { LinkProps } from '@tanstack/react-router'
 import {
@@ -10,6 +11,8 @@ import {
   IconSetting,
 } from '@/shared/assets/icons'
 import { background, colors } from '@/shared/common/design-token'
+
+const { useBreakpoint } = Grid // 2. Lấy hook useBreakpoint
 
 interface MenuItem {
   id: string
@@ -45,7 +48,6 @@ const menus: Array<MenuItem> = [
   },
 ]
 
-// Variants cho container sub-menu
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -64,7 +66,6 @@ const containerVariants = {
   },
 }
 
-// Variants cho từng menu item
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 15, scale: 0.8 },
   visible: {
@@ -79,9 +80,15 @@ const itemVariants: Variants = {
 export default function FloatingMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
-
-  // 1. Lấy thông tin location hiện tại từ TanStack Router
   const location = useLocation()
+
+  // 3. Kiểm tra kích thước màn hình
+  const screen = useBreakpoint()
+
+  // 4. Nếu là mobile (xs), không hiển thị Floating Menu
+  if (screen.xs) {
+    return null
+  }
 
   const handleMenuClick = (e: React.MouseEvent, menu: MenuItem) => {
     e.stopPropagation()
@@ -147,8 +154,6 @@ export default function FloatingMenu() {
               }}
             >
               {menus.map((menu) => {
-                // 2. Kiểm tra xem route hiện tại có khớp với menu link hay không
-                // Dùng startsWith nếu bạn muốn active cả các route con (VD: /financial/transaction/123)
                 const isSelected = location.pathname.startsWith(menu.link || '')
 
                 return (
@@ -239,7 +244,6 @@ export default function FloatingMenu() {
             strokeWidth="2.5"
             strokeLinecap="round"
           >
-            {/* Vạch trên: Xoay chéo xuống */}
             <motion.line
               x1="4"
               y1="6"
@@ -253,7 +257,6 @@ export default function FloatingMenu() {
               transition={{ type: 'spring', stiffness: 300, damping: 22 }}
               style={{ transformOrigin: 'center' }}
             />
-            {/* Vạch giữa: Biến mất khi mở */}
             <motion.line
               x1="4"
               y1="12"
@@ -262,7 +265,6 @@ export default function FloatingMenu() {
               animate={{ opacity: isOpen ? 0 : 1, scale: isOpen ? 0 : 1 }}
               transition={{ duration: 0.15 }}
             />
-            {/* Vạch dưới: Xoay chéo lên */}
             <motion.line
               x1="4"
               y1="18"

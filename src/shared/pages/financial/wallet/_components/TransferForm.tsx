@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Button, Form, InputNumber, Select, Space } from 'antd'
+import { Button, Form, InputNumber, Select, Space, Typography } from 'antd'
 import type { IWallet_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { InputWithComma } from '@/shared/components/input/utils'
 
@@ -147,6 +147,9 @@ export function TransferForm({
           },
         ]}
       >
+        <Typography.Paragraph type="secondary" style={{ fontSize: 12 }}>
+          Transfer fee will be deducted from "From Wallet".
+        </Typography.Paragraph>
         <InputNumber
           style={{ width: '100%' }}
           placeholder="0.00"

@@ -124,7 +124,6 @@ export default function CategoryCard({
 
   return (
     <Card
-      hoverable
       size="small"
       style={{
         opacity: category.archived ? 0.6 : 1,

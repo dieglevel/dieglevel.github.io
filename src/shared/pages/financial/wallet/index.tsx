@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { Button, DatePicker, Flex, Modal, Space, Typography } from 'antd'
+import { Button, Flex, Modal, Space, Typography } from 'antd'
 import { HistoryOutlined, PlusOutlined, SwapOutlined } from '@ant-design/icons'
-import dayjs from 'dayjs'
 import SummaryCards from '../_components/SummaryCards'
 import { AnimatedGrid } from '../category/_components/animation-card'
 import { TransferForm } from './_components/TransferForm'
@@ -15,13 +14,7 @@ import { useMutationWallet } from '@/shared/api/financial/wallet/wallet.mutation
 const { Title, Text } = Typography
 
 export function Wallets() {
-  const [selectedMonth, setSelectedMonth] = useState<dayjs.Dayjs>(dayjs())
-
-  const { data, isFetching } = useGetWallet_Wallet_List({
-    queryParams: {
-      date: dayjs(selectedMonth).format('YYYY-MM-DD'),
-    },
-  })
+  const { data, isFetching } = useGetWallet_Wallet_List({})
   const wallets: Array<IWallet_Wallet> = data?.data || []
   const [mode, setMode] = useState<'add' | 'edit' | 'transfer' | null>(null)
   const [editTarget, setEditTarget] = useState<IWallet_Wallet | null>(null)
@@ -121,7 +114,6 @@ export function Wallets() {
       }}
     >
       <TransferHistory
-        selectedMonth={selectedMonth}
         open={transferHistoryOpen}
         onClose={() => setTransferHistoryOpen(false)}
       />
@@ -163,16 +155,7 @@ export function Wallets() {
       </Flex>
 
       {/* Filter / Controls Bar */}
-      <Flex justify="end" align="center" wrap="wrap" gap={12}>
-        <DatePicker
-          style={{ width: '100%', maxWidth: '200px' }}
-          picker="month"
-          value={selectedMonth}
-          onChange={(date) => {
-            setSelectedMonth(date ?? dayjs())
-          }}
-        />
-      </Flex>
+      <Flex justify="end" align="center" wrap="wrap" gap={12}></Flex>
 
       {/* Summary Cards */}
       <SummaryCards totalBudget={totalBalance} totalSpent={0} />

@@ -621,7 +621,14 @@ export function Transactions() {
               </Descriptions.Item>
 
               <Descriptions.Item label="Date" span={2}>
-                {new Date(viewTransaction.createdAt).toLocaleString()}
+                <Flex align="center" justify="space-between">
+                  <Typography.Text style={{ fontSize: 12 }}>
+                    {new Date(viewTransaction.createdAt).toLocaleDateString()}
+                  </Typography.Text>
+                  <Typography.Text style={{ fontSize: 12 }}>
+                    {new Date(viewTransaction.createdAt).toLocaleTimeString()}
+                  </Typography.Text>
+                </Flex>
               </Descriptions.Item>
             </Descriptions>
 

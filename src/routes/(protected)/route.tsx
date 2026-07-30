@@ -20,7 +20,7 @@ export const Route = createFileRoute('/(protected)')({
 function RouteComponent() {
   return (
     <MainLayout>
-      <Flex flex={1}>
+      <Flex flex={1} vertical style={{ overflowY: 'auto' }}>
         <Outlet />
       </Flex>
     </MainLayout>
