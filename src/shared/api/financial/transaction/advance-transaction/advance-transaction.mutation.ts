@@ -1,0 +1,32 @@
+import { useMutationPost } from '@/shared/lib/api/mutation/useMutation'
+
+export interface FinancialAdvanceTransaction_Create_Request {
+  data: Array<{
+    description: string
+    amount: number
+  }>
+  type: string
+  description: string
+  categoryId: string
+  walletId: string
+  status: string
+  date: string
+}
+
+export const useMutationAdvanceTransaction = () => {
+  const mAdvanceTransaction_Create = useMutationPost<
+    void,
+    FinancialAdvanceTransaction_Create_Request,
+    'financial-advance-transactions/create'
+  >({
+    endPoint: 'financial-advance-transactions/create',
+    queryKey: [
+      'getFinancialTransactionList',
+      'financial-advance-transactions/create',
+    ],
+  })
+
+  return {
+    mAdvanceTransaction_Create,
+  }
+}

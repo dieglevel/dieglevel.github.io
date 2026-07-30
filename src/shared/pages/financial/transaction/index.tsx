@@ -3,6 +3,8 @@ import {
   Badge,
   Button,
   Card,
+  Descriptions,
+  Divider,
   Flex,
   FloatButton,
   Grid,
@@ -16,6 +18,7 @@ import {
 } from 'antd'
 import {
   DeleteOutlined,
+  EyeOutlined,
   FilterOutlined,
   PlusOutlined,
   ReloadOutlined,
@@ -61,6 +64,10 @@ export function Transactions() {
   const [showAdd, setShowAdd] = useState(false)
   const [selectedKeys, setSelectedKeys] = useState<Array<React.Key>>([])
 
+  // State cho Modal Xem Chi Tiết Transaction
+  const [viewTransaction, setViewTransaction] =
+    useState<IWallet_Transaction | null>(null)
+
   // Danh sách Ví cho Select
   const walletOptions = useMemo(() => {
     const map = new Map<string, IWallet_Wallet>()
@@ -85,7 +92,7 @@ export function Transactions() {
     }))
   }, [transactions])
 
-  // Đếm số lượng bộ lọc nâng cao đang active (không tính search)
+  // Đếm số lượng bộ lọc nâng cao đang active
   const activeFilterCount = useMemo(() => {
     let count = 0
     if (typeFilter !== 'all') count++
@@ -243,11 +250,27 @@ export function Transactions() {
       responsive: ['md'],
       render: (status: IWallet_Transaction['status']) => (
         <Tag
-          color={STATUS_TAG[status].color}
+          color={STATUS_TAG[status].color || 'default'}
           style={{ textTransform: 'capitalize' }}
         >
           {status}
         </Tag>
+      ),
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      width: 70,
+      align: 'center',
+      render: (_, record) => (
+        <Button
+          type="text"
+          icon={<EyeOutlined />}
+          onClick={(e) => {
+            e.stopPropagation() // Ngăn chặn sự kiện click row trùng lặp
+            setViewTransaction(record)
+          }}
+        />
       ),
     },
   ]
@@ -327,7 +350,7 @@ export function Transactions() {
           </Badge>
         </Flex>
 
-        {/* Chíp hiển thị các Filter đang active để xóa nhanh */}
+        {/* Chip hiển thị các Filter đang active để xóa nhanh */}
         {activeFilterCount > 0 && (
           <Flex wrap gap={6} style={{ marginTop: 10 }}>
             <Text type="secondary" style={{ fontSize: 12, marginRight: 4 }}>
@@ -376,6 +399,10 @@ export function Transactions() {
           size={isMobile ? 'small' : 'medium'}
           columns={columns}
           dataSource={filtered}
+          onRow={(record) => ({
+            onClick: () => setViewTransaction(record),
+            style: { cursor: 'pointer' },
+          })}
           rowSelection={{
             selectedRowKeys: selectedKeys,
             onChange: setSelectedKeys,
@@ -503,18 +530,153 @@ export function Transactions() {
         </Space>
       </Modal>
 
+      {/* VIEW TRANSACTION MODAL */}
+      <Modal
+        title="Transaction Details"
+        open={!!viewTransaction}
+        onCancel={() => setViewTransaction(null)}
+        footer={[
+          <Button key="close" onClick={() => setViewTransaction(null)}>
+            Close
+          </Button>,
+        ]}
+        width={560}
+        centered
+      >
+        {viewTransaction && (
+          <Space
+            direction="vertical"
+            style={{ width: '100%', marginTop: 12 }}
+            size="large"
+          >
+            {/* Tổng quan số tiền */}
+            <Card
+              size="small"
+              style={{
+                textAlign: 'center',
+                backgroundColor:
+                  viewTransaction.type === 'income' ? '#f6ffed' : '#fff2f0',
+                borderColor:
+                  viewTransaction.type === 'income' ? '#b7eb8f' : '#ffccc7',
+              }}
+            >
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                TOTAL AMOUNT
+              </Text>
+              <Title
+                level={2}
+                style={{
+                  margin: 0,
+                  color:
+                    viewTransaction.type === 'income' ? '#52c41a' : '#ff4d4f',
+                }}
+              >
+                {viewTransaction.type === 'income' ? '+' : '-'}
+                {convertCurrency(viewTransaction.amount)}
+              </Title>
+            </Card>
+
+            {/* Thông tin cơ bản */}
+            <Descriptions column={isMobile ? 1 : 2} bordered size="small">
+              <Descriptions.Item label="Description" span={2}>
+                <Text strong>{viewTransaction.description}</Text>
+              </Descriptions.Item>
+
+              <Descriptions.Item label="Type">
+                <Tag
+                  color={
+                    viewTransaction.type === 'income' ? 'green' : 'volcano'
+                  }
+                >
+                  {viewTransaction.type.toUpperCase()}
+                </Tag>
+              </Descriptions.Item>
+
+              <Descriptions.Item label="Status">
+                <Tag
+                  color={STATUS_TAG[viewTransaction.status].color || 'default'}
+                >
+                  {viewTransaction.status.toUpperCase()}
+                </Tag>
+              </Descriptions.Item>
+
+              <Descriptions.Item label="Wallet">
+                <Flex align="center" gap={6}>
+                  <IconRenderer
+                    iconName={viewTransaction.wallet?.icon}
+                    size={14}
+                  />
+                  <span>{viewTransaction.wallet?.name || '-'}</span>
+                </Flex>
+              </Descriptions.Item>
+
+              <Descriptions.Item label="Category">
+                <Flex align="center" gap={6}>
+                  <IconRenderer
+                    iconName={viewTransaction.category?.icon}
+                    size={14}
+                  />
+                  <span>{viewTransaction.category?.name || '-'}</span>
+                </Flex>
+              </Descriptions.Item>
+
+              <Descriptions.Item label="Date" span={2}>
+                {new Date(viewTransaction.createdAt).toLocaleString()}
+              </Descriptions.Item>
+            </Descriptions>
+
+            {/* Danh sách các chi tiết hạng mục (nếu là Advance Transaction) */}
+            {viewTransaction.financialAdvanceTransactions &&
+              viewTransaction.financialAdvanceTransactions.length > 0 && (
+                <div>
+                  <Divider
+                    orientation="horizontal"
+                    style={{ margin: '12px 0', fontSize: 14 }}
+                  >
+                    Breakdown Items (
+                    {viewTransaction.financialAdvanceTransactions.length})
+                  </Divider>
+
+                  <Table
+                    size="small"
+                    pagination={false}
+                    rowKey="id"
+                    dataSource={viewTransaction.financialAdvanceTransactions}
+                    columns={[
+                      {
+                        title: 'Item Description',
+                        dataIndex: 'description',
+                        key: 'description',
+                      },
+                      {
+                        title: 'Amount',
+                        dataIndex: 'amount',
+                        key: 'amount',
+                        align: 'right',
+                        render: (amt: number) => convertCurrency(amt),
+                      },
+                    ]}
+                  />
+                </div>
+              )}
+          </Space>
+        )}
+      </Modal>
+
       {/* Add Modal */}
       {showAdd && (
         <AddTransactionModal open={showAdd} onClose={() => setShowAdd(false)} />
       )}
 
       {/* Floating Action Button (Mobile) */}
-      <FloatButton
-        type="primary"
-        icon={<PlusOutlined />}
-        onClick={() => setShowAdd(true)}
-        style={{ left: 16, bottom: 16 }}
-      />
+      {isMobile && (
+        <FloatButton
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => setShowAdd(true)}
+          style={{ right: 24, bottom: 24 }}
+        />
+      )}
     </Space>
   )
 }

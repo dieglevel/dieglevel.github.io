@@ -5,6 +5,7 @@ import type {
 } from './transaction.enum'
 import type { IWallet_Wallet } from '../wallet/wallet.type'
 import type { IWallet_Category } from '../category/category.type'
+import type { IWallet_Advance_Transaction } from './advance-transaction/advance-transaction.type'
 
 export interface IWallet_Transaction extends IBaseEntity {
   description: string
@@ -14,4 +15,5 @@ export interface IWallet_Transaction extends IBaseEntity {
 
   wallet?: IWallet_Wallet
   category?: IWallet_Category
+  financialAdvanceTransactions?: Array<IWallet_Advance_Transaction>
 }
