@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  Avatar,
   Button,
   Card,
   Popconfirm,
@@ -14,24 +15,35 @@ import {
   EditOutlined,
   LockOutlined,
   RiseOutlined,
+  SyncOutlined,
   ThunderboltOutlined,
+  TrophyOutlined,
 } from '@ant-design/icons'
 import type { IWallet_Goal } from '@/shared/api/financial/goal/goal.type'
 
 const { Text, Title } = Typography
 
-const TYPE_LABELS: Record<IWallet_Goal['type'], string> = {
+// Dynamic Label & Mapping cho Type
+const TYPE_LABELS: Record<string, string> = {
   emergency: 'Emergency Fund',
   bigpurchase: 'Big Purchase',
   travel: 'Travel',
   custom: 'Custom',
 }
 
-const TYPE_COLORS: Record<IWallet_Goal['type'], string> = {
+const TYPE_COLORS: Record<string, string> = {
   emergency: '#ef4444',
   bigpurchase: '#3b82f6',
   travel: '#10b981',
   custom: '#8b5cf6',
+}
+
+// Dynamic Mapping cho Status
+const STATUS_COLORS: Record<string, string> = {
+  active: 'processing',
+  completed: 'success',
+  paused: 'warning',
+  cancelled: 'error',
 }
 
 function fmt(n: number) {
@@ -72,20 +84,24 @@ export const GoalCard: React.FC<GoalCardProps> = ({
   const months = monthsToComplete(
     goal.currentAmount,
     goal.targetAmount,
-    goal.autoSave,
+    goal.autoContributionAmount,
   )
-  const done = goal.currentAmount >= goal.targetAmount
-  const activeColor = done ? '#10b981' : goal.color
+  const done =
+    goal.currentAmount >= goal.targetAmount || goal.status === 'completed'
+  const goalColor = TYPE_COLORS[goal.type] || '#6366f1'
+  const activeColor = done ? '#10b981' : goalColor
 
   return (
     <Card
       hoverable
       style={{ borderRadius: 16, height: '100%' }}
-      bodyStyle={{
-        padding: 20,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 16,
+      styles={{
+        body: {
+          padding: 20,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16,
+        },
       }}
     >
       {/* Header Row */}
@@ -97,34 +113,48 @@ export const GoalCard: React.FC<GoalCardProps> = ({
         }}
       >
         <Space size="middle">
-          <div
+          <Avatar
+            src={goal.imageUrl || undefined}
+            icon={!goal.imageUrl && <TrophyOutlined />}
+            shape="square"
+            size={44}
             style={{
-              width: 44,
-              height: 44,
               borderRadius: 12,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 22,
-              backgroundColor: `${goal.color}20`,
+              backgroundColor: `${goalColor}20`,
+              color: goalColor,
+              fontSize: 20,
+              flexShrink: 0,
             }}
-          >
-            {goal.icon}
-          </div>
+          />
           <div>
             <Space size={6} align="center">
-              <Text style={{ fontSize: 15 }}>{goal.name}</Text>
-              {goal.locked && (
+              <Text style={{ fontSize: 15, fontWeight: 600 }}>{goal.name}</Text>
+              {goal.isLocked && (
                 <LockOutlined style={{ color: '#ef4444', fontSize: 12 }} />
               )}
             </Space>
-            <div>
-              <Tag
-                color={TYPE_COLORS[goal.type]}
-                style={{ borderRadius: 10, margin: 0, fontSize: 10 }}
-              >
-                {TYPE_LABELS[goal.type]}
-              </Tag>
+            <div style={{ marginTop: 2 }}>
+              <Space size={4}>
+                <Tag
+                  color={goalColor}
+                  style={{ borderRadius: 10, margin: 0, fontSize: 10 }}
+                >
+                  {TYPE_LABELS[goal.type] || goal.type}
+                </Tag>
+                {goal.status && (
+                  <Tag
+                    color={STATUS_COLORS[goal.status] || 'default'}
+                    style={{
+                      borderRadius: 10,
+                      margin: 0,
+                      fontSize: 10,
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {goal.status}
+                  </Tag>
+                )}
+              </Space>
             </div>
           </div>
         </Space>
@@ -209,12 +239,20 @@ export const GoalCard: React.FC<GoalCardProps> = ({
             {days > 0 ? `${days}d left` : 'Overdue'}
           </Tag>
         )}
-        {goal.autoSave && (
+        {Boolean(goal.autoContributionAmount) && (
           <Tag
             icon={<ThunderboltOutlined style={{ color: '#f59e0b' }} />}
             style={{ borderRadius: 8, padding: '2px 8px' }}
           >
-            {fmt(goal.autoSave)}/mo
+            {fmt(goal.autoContributionAmount)}/mo
+          </Tag>
+        )}
+        {Boolean(goal.autoContributionDay) && (
+          <Tag
+            icon={<SyncOutlined style={{ color: '#3b82f6' }} />}
+            style={{ borderRadius: 8, padding: '2px 8px' }}
+          >
+            Day {goal.autoContributionDay}
           </Tag>
         )}
         {months !== null && months > 0 && (
@@ -226,17 +264,6 @@ export const GoalCard: React.FC<GoalCardProps> = ({
           </Tag>
         )}
       </Space>
-
-      {/* Description */}
-      {goal.description && (
-        <Text
-          type="secondary"
-          style={{ fontSize: 11 }}
-          ellipsis={{ tooltip: goal.description }}
-        >
-          {goal.description}
-        </Text>
-      )}
     </Card>
   )
 }

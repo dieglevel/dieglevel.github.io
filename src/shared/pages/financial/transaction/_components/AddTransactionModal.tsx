@@ -107,22 +107,15 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
       // Format Payload chuẩn các trường theo Entity Backend
       const payload: FinancialAdvanceTransaction_Create_Request = {
         description: values.description?.trim(),
-        merchant: values.merchant?.trim() || null,
-        location: values.location?.trim() || null,
-        tags: values.tags || null,
-        receiptImageUrl: values.receiptImageUrl?.trim() || null,
-        amount: Number(values.amount),
         type: values.type,
         status: values.status,
         walletId: Number(values.walletId),
         categoryId: values.categoryId ? Number(values.categoryId) : undefined,
-        originalTransactionId: values.originalTransactionId
-          ? Number(values.originalTransactionId)
-          : null,
+
         date: values.date.toISOString(),
-        financialAdvanceTransactions: values.financialAdvanceTransactions.map(
+        data: values.data.map(
           (item: { description: string; amount: number }) => ({
-            description: item.description.trim(),
+            description: item.description,
             amount: Number(item.amount),
           }),
         ),

@@ -11,12 +11,6 @@ export interface FinancialAdvanceTransaction_Create_Request {
   walletId: number
   status: string
   date: string
-  merchant: string
-  location: string
-  tags: Array<string>
-  receiptImageUrl: string
-  amount: number
-  originalTransactionId?: number | null
 }
 
 export const useMutationAdvanceTransaction = () => {

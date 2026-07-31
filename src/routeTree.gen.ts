@@ -25,6 +25,7 @@ import { Route as protectedFinancialIndexRouteImport } from './routes/(protected
 import { Route as protectedFinancialWalletRouteImport } from './routes/(protected)/financial/wallet'
 import { Route as protectedFinancialTransactionRouteImport } from './routes/(protected)/financial/transaction'
 import { Route as protectedFinancialSettingRouteImport } from './routes/(protected)/financial/setting'
+import { Route as protectedFinancialGoalRouteImport } from './routes/(protected)/financial/goal'
 import { Route as protectedFinancialCategoryRouteImport } from './routes/(protected)/financial/category'
 import { Route as protectedDemoTableRouteImport } from './routes/(protected)/demo/table'
 import { Route as protectedDemoButtonRouteImport } from './routes/(protected)/demo/button'
@@ -110,6 +111,11 @@ const protectedFinancialSettingRoute =
     path: '/setting',
     getParentRoute: () => protectedFinancialRouteRoute,
   } as any)
+const protectedFinancialGoalRoute = protectedFinancialGoalRouteImport.update({
+  id: '/goal',
+  path: '/goal',
+  getParentRoute: () => protectedFinancialRouteRoute,
+} as any)
 const protectedFinancialCategoryRoute =
   protectedFinancialCategoryRouteImport.update({
     id: '/category',
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/demo/button': typeof protectedDemoButtonRoute
   '/demo/table': typeof protectedDemoTableRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
+  '/financial/goal': typeof protectedFinancialGoalRoute
   '/financial/setting': typeof protectedFinancialSettingRoute
   '/financial/transaction': typeof protectedFinancialTransactionRoute
   '/financial/wallet': typeof protectedFinancialWalletRoute
@@ -159,6 +166,7 @@ export interface FileRoutesByTo {
   '/demo/button': typeof protectedDemoButtonRoute
   '/demo/table': typeof protectedDemoTableRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
+  '/financial/goal': typeof protectedFinancialGoalRoute
   '/financial/setting': typeof protectedFinancialSettingRoute
   '/financial/transaction': typeof protectedFinancialTransactionRoute
   '/financial/wallet': typeof protectedFinancialWalletRoute
@@ -181,6 +189,7 @@ export interface FileRoutesById {
   '/(protected)/demo/button': typeof protectedDemoButtonRoute
   '/(protected)/demo/table': typeof protectedDemoTableRoute
   '/(protected)/financial/category': typeof protectedFinancialCategoryRoute
+  '/(protected)/financial/goal': typeof protectedFinancialGoalRoute
   '/(protected)/financial/setting': typeof protectedFinancialSettingRoute
   '/(protected)/financial/transaction': typeof protectedFinancialTransactionRoute
   '/(protected)/financial/wallet': typeof protectedFinancialWalletRoute
@@ -202,6 +211,7 @@ export interface FileRouteTypes {
     | '/demo/button'
     | '/demo/table'
     | '/financial/category'
+    | '/financial/goal'
     | '/financial/setting'
     | '/financial/transaction'
     | '/financial/wallet'
@@ -220,6 +230,7 @@ export interface FileRouteTypes {
     | '/demo/button'
     | '/demo/table'
     | '/financial/category'
+    | '/financial/goal'
     | '/financial/setting'
     | '/financial/transaction'
     | '/financial/wallet'
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
     | '/(protected)/demo/button'
     | '/(protected)/demo/table'
     | '/(protected)/financial/category'
+    | '/(protected)/financial/goal'
     | '/(protected)/financial/setting'
     | '/(protected)/financial/transaction'
     | '/(protected)/financial/wallet'
@@ -369,6 +381,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedFinancialSettingRouteImport
       parentRoute: typeof protectedFinancialRouteRoute
     }
+    '/(protected)/financial/goal': {
+      id: '/(protected)/financial/goal'
+      path: '/goal'
+      fullPath: '/financial/goal'
+      preLoaderRoute: typeof protectedFinancialGoalRouteImport
+      parentRoute: typeof protectedFinancialRouteRoute
+    }
     '/(protected)/financial/category': {
       id: '/(protected)/financial/category'
       path: '/category'
@@ -395,6 +414,7 @@ declare module '@tanstack/react-router' {
 
 interface protectedFinancialRouteRouteChildren {
   protectedFinancialCategoryRoute: typeof protectedFinancialCategoryRoute
+  protectedFinancialGoalRoute: typeof protectedFinancialGoalRoute
   protectedFinancialSettingRoute: typeof protectedFinancialSettingRoute
   protectedFinancialTransactionRoute: typeof protectedFinancialTransactionRoute
   protectedFinancialWalletRoute: typeof protectedFinancialWalletRoute
@@ -404,6 +424,7 @@ interface protectedFinancialRouteRouteChildren {
 const protectedFinancialRouteRouteChildren: protectedFinancialRouteRouteChildren =
   {
     protectedFinancialCategoryRoute: protectedFinancialCategoryRoute,
+    protectedFinancialGoalRoute: protectedFinancialGoalRoute,
     protectedFinancialSettingRoute: protectedFinancialSettingRoute,
     protectedFinancialTransactionRoute: protectedFinancialTransactionRoute,
     protectedFinancialWalletRoute: protectedFinancialWalletRoute,
