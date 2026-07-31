@@ -3,6 +3,7 @@ import { defineConfig } from 'vite'
 import { devtools } from '@tanstack/devtools-vite'
 import viteReact from '@vitejs/plugin-react'
 import svgr from 'vite-plugin-svgr'
+import { VitePWA } from 'vite-plugin-pwa'
 
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
 
@@ -10,6 +11,7 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 export default defineConfig({
   plugins: [
     devtools(),
+    VitePWA({ registerType: 'autoUpdate' }),
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
