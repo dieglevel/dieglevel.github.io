@@ -40,7 +40,6 @@ export const customAxios = <T = unknown>(
 
         if (
           originalRequest?.url?.includes('auth/sign-in') ||
-          originalRequest?.url?.includes('auth/resident-login') ||
           originalRequest?.url?.includes('auth/refresh-token')
         ) {
           return Promise.reject(error)

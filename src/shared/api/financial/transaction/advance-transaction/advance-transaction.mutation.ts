@@ -20,10 +20,7 @@ export const useMutationAdvanceTransaction = () => {
     'financial-advance-transactions/create'
   >({
     endPoint: 'financial-advance-transactions/create',
-    queryKey: [
-      'getFinancialTransactionList',
-      'financial-advance-transactions/create',
-    ],
+    queryKey: ['getFinancialTransactionList'],
   })
 
   return {
