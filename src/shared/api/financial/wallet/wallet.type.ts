@@ -8,5 +8,13 @@ export interface IWallet_Wallet extends IBaseEntity {
   color: string
   balance: number
 
+  institutionName: null | string
+  accountNumberMasked: null | string
+  creditLimit: null | number
+  currentDebt: null | number
+  statementDay: null | number
+  dueDay: null | number
+  isLockedForDailySpending: boolean
+
   totalAmount?: number
 }

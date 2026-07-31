@@ -1,44 +1,60 @@
 import { useState } from 'react'
-import { Button, Card, Popconfirm, Space } from 'antd'
+import { Button, Card, Popconfirm, Space, Tooltip } from 'antd'
 import {
   DeleteOutlined,
   EditOutlined,
   EyeInvisibleOutlined,
   EyeOutlined,
+  LockOutlined,
 } from '@ant-design/icons'
 import type { IWallet_Wallet } from '@/shared/api/financial/wallet/wallet.type'
+import {
+  FINANCIAL_WALLET_TYPE,
+  FINANCIAL_WALLET_TYPE_OPTIONS,
+} from '@/shared/api/financial/wallet/wallet.enum'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 
-export function WalletCard({
-  wallet,
-  onEdit,
-  onDelete,
-}: {
+interface WalletCardProps {
   wallet: IWallet_Wallet
   onEdit: () => void
   onDelete: () => void
-}) {
+}
+
+export function WalletCard({ wallet, onEdit, onDelete }: WalletCardProps) {
   const [visible, setVisible] = useState(false)
+
+  const isCreditCard =
+    wallet.type === FINANCIAL_WALLET_TYPE.CREDIT_CARD ||
+    wallet.creditLimit != null
   const isNegative = wallet.balance < 0
+
+  const typeLabel =
+    FINANCIAL_WALLET_TYPE_OPTIONS[wallet.type].label || wallet.type
+
+  // Format hiển thị số tài khoản dạng •••• 1234
+  const displayAccountNumber = wallet.accountNumberMasked
+    ? wallet.accountNumberMasked.replace(/.(?=.{4})/g, '•')
+    : '•••• •••• ••••'
 
   return (
     <Card
       variant="borderless"
       style={{
-        background: `linear-gradient(135deg, ${wallet.color}e0, ${wallet.color}90)`,
+        background: `linear-gradient(135deg, ${wallet.color}E6, ${wallet.color}99)`,
         borderRadius: 16,
         width: '100%',
-        minHeight: 180,
+        minHeight: 200,
         overflow: 'hidden',
         position: 'relative',
-        boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+        color: '#fff',
       }}
       styles={{
         body: {
-          padding: '16px 20px',
+          padding: '18px 20px',
           height: '100%',
-          minHeight: 180,
+          minHeight: 200,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
@@ -47,159 +63,230 @@ export function WalletCard({
         },
       }}
     >
-      {/* Background decoration */}
+      {/* Background Decor */}
       <div
         style={{
           position: 'absolute',
-          top: -32,
-          right: -32,
-          width: 128,
-          height: 128,
+          top: -30,
+          right: -30,
+          width: 130,
+          height: 130,
           borderRadius: '50%',
-          backgroundColor: 'rgba(255,255,255,0.08)',
+          backgroundColor: 'rgba(255, 255, 255, 0.08)',
           pointerEvents: 'none',
         }}
       />
       <div
         style={{
           position: 'absolute',
-          bottom: -24,
-          left: -24,
-          width: 96,
-          height: 96,
+          bottom: -20,
+          left: -20,
+          width: 100,
+          height: 100,
           borderRadius: '50%',
-          backgroundColor: 'rgba(255,255,255,0.05)',
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
           pointerEvents: 'none',
         }}
       />
 
-      {/* Top row */}
+      {/* Header */}
       <div
         style={{
           display: 'flex',
-          alignItems: 'flex-start',
           justifyContent: 'space-between',
-          position: 'relative',
+          alignItems: 'flex-start',
           zIndex: 1,
-          gap: 8,
         }}
       >
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            minWidth: 0,
+            flex: 1,
+          }}
+        >
           <div
             style={{
-              backgroundColor: `${wallet.color}ff`,
-              borderRadius: 8,
+              backgroundColor: 'rgba(255, 255, 255, 0.25)',
+              backdropFilter: 'blur(4px)',
+              borderRadius: 12,
               padding: 8,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: 44,
-              height: 44,
+              width: 46,
+              height: 46,
               flexShrink: 0,
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
             }}
           >
-            <IconRenderer iconName={wallet.icon} size={28} color={'#ffffff'} />
+            <IconRenderer iconName={wallet.icon} size={26} color="#ffffff" />
           </div>
-          <p
-            style={{
-              fontSize: 'clamp(13px, 3.5vw, 15px)',
-              fontWeight: 600,
-              color: '#fff',
-              margin: '8px 0 0',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-            title={wallet.name}
-          >
-            {wallet.name}
-          </p>
-          <p
-            style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', margin: 0 }}
-          >
-            {wallet.type.toUpperCase()}
-          </p>
+
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <p
+                style={{
+                  fontSize: 16,
+                  fontWeight: 600,
+                  color: '#fff',
+                  margin: 0,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+                title={wallet.name}
+              >
+                {wallet.name}
+              </p>
+              {wallet.isLockedForDailySpending && (
+                <Tooltip title="Ví bị khóa chi tiêu hàng ngày">
+                  <LockOutlined
+                    style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13 }}
+                  />
+                </Tooltip>
+              )}
+            </div>
+
+            <p
+              style={{
+                fontSize: 11,
+                color: 'rgba(255, 255, 255, 0.75)',
+                margin: '2px 0 0',
+              }}
+            >
+              {wallet.institutionName ? `${wallet.institutionName} • ` : ''}
+              {typeLabel.toUpperCase()}
+            </p>
+          </div>
         </div>
 
         {/* Action Buttons */}
-        <Space size={4} style={{ flexShrink: 0 }}>
-          <Button
-            type="text"
-            size="small"
-            icon={
-              visible ? (
-                <EyeInvisibleOutlined style={{ color: '#fff' }} />
-              ) : (
-                <EyeOutlined style={{ color: '#fff' }} />
-              )
-            }
-            onClick={() => setVisible((v) => !v)}
-            style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}
-          />
-          <Button
-            type="text"
-            size="small"
-            icon={<EditOutlined style={{ color: '#fff' }} />}
-            onClick={onEdit}
-            style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}
-          />
-          <Popconfirm
-            title={`Delete ${wallet.name}?`}
-            description="This action cannot be undone."
-            okText="Delete"
-            okButtonProps={{ danger: true }}
-            onConfirm={onDelete}
-          >
+        <Space size={4} style={{ flexShrink: 0, marginLeft: 8 }}>
+          <Tooltip title={visible ? 'Ẩn số dư' : 'Hiện số dư'}>
             <Button
               type="text"
               size="small"
-              icon={<DeleteOutlined style={{ color: '#fff' }} />}
-              style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}
+              icon={
+                visible ? (
+                  <EyeInvisibleOutlined style={{ color: '#fff' }} />
+                ) : (
+                  <EyeOutlined style={{ color: '#fff' }} />
+                )
+              }
+              onClick={() => setVisible((v) => !v)}
+              style={{ backgroundColor: 'rgba(255,255,255,0.18)' }}
             />
+          </Tooltip>
+          <Tooltip title="Chỉnh sửa">
+            <Button
+              type="text"
+              size="small"
+              icon={<EditOutlined style={{ color: '#fff' }} />}
+              onClick={onEdit}
+              style={{ backgroundColor: 'rgba(255,255,255,0.18)' }}
+            />
+          </Tooltip>
+          <Popconfirm
+            title={`Xóa ví "${wallet.name}"?`}
+            description="Hành động này không thể hoàn tác."
+            okText="Xóa"
+            cancelText="Hủy"
+            okButtonProps={{ danger: true }}
+            onConfirm={onDelete}
+          >
+            <Tooltip title="Xóa ví">
+              <Button
+                type="text"
+                size="small"
+                icon={<DeleteOutlined style={{ color: '#fff' }} />}
+                style={{ backgroundColor: 'rgba(255,255,255,0.18)' }}
+              />
+            </Tooltip>
           </Popconfirm>
         </Space>
       </div>
 
-      {/* Bottom row */}
-      <div style={{ position: 'relative', zIndex: 1, marginTop: 12 }}>
+      {/* Account Masked Number */}
+      <div style={{ zIndex: 1, marginTop: 12 }}>
         <p
           style={{
-            fontSize: 11,
-            color: 'rgba(255,255,255,0.6)',
-            marginBottom: 2,
-            letterSpacing: 2,
+            fontSize: 12,
+            color: 'rgba(255, 255, 255, 0.7)',
+            margin: 0,
+            letterSpacing: 1.5,
+            fontFamily: 'monospace',
           }}
         >
-          ●●●● ●●●● ●●●●
+          {displayAccountNumber}
         </p>
+      </div>
 
-        <p
-          style={{
-            fontSize: 'clamp(18px, 5vw, 24px)',
-            fontWeight: 700,
-            color: '#fff',
-            fontFamily: "'JetBrains Mono', monospace",
-            margin: 0,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          {visible
-            ? (isNegative ? '-' : '') +
-              convertCurrency(wallet.balance, undefined, false)
-            : '●●●●●'}
-        </p>
-        <p
-          style={{
-            fontSize: 11,
-            color: 'rgba(255,255,255,0.6)',
-            marginTop: 2,
-            margin: 0,
-          }}
-        >
-          VND
-        </p>
+      {/* Balance & Metrics */}
+      <div style={{ zIndex: 1, marginTop: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+          <p
+            style={{
+              fontSize: 'clamp(20px, 4vw, 26px)',
+              fontWeight: 700,
+              color: '#fff',
+              fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+              margin: 0,
+              lineHeight: 1.2,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {visible
+              ? `${isNegative ? '-' : ''}${convertCurrency(Math.abs(wallet.balance), undefined, false)}`
+              : '••••••••'}
+          </p>
+          <span
+            style={{
+              fontSize: 12,
+              color: 'rgba(255,255,255,0.7)',
+              fontWeight: 500,
+            }}
+          >
+            VND
+          </span>
+        </div>
+
+        {/* Credit Card Specific Metrics */}
+        {isCreditCard && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginTop: 8,
+              paddingTop: 8,
+              borderTop: '1px solid rgba(255,255,255,0.15)',
+              fontSize: 11,
+              color: 'rgba(255,255,255,0.85)',
+            }}
+          >
+            <div>
+              <span>Dư nợ: </span>
+              <strong>
+                {visible
+                  ? convertCurrency(wallet.currentDebt ?? 0, undefined, false)
+                  : '••••'}
+              </strong>
+            </div>
+            <div>
+              <span>Hạn mức: </span>
+              <strong>
+                {visible
+                  ? convertCurrency(wallet.creditLimit ?? 0, undefined, false)
+                  : '••••'}
+              </strong>
+            </div>
+          </div>
+        )}
       </div>
     </Card>
   )

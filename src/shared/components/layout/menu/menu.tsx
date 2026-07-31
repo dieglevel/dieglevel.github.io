@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Flex, Grid, Input, Typography } from 'antd'
+import { GoalIcon } from 'lucide-react'
 import type { LinkProps } from '@tanstack/react-router'
 import { Brand } from '@/shared/assets/images'
 import {
@@ -46,6 +47,12 @@ const menus: Array<MenuItem> = [
         label: 'Wallet',
         icon: <IconCreditCard style={{ fontSize: 16 }} />,
         link: '/financial/wallet',
+      },
+      {
+        id: 'goal',
+        label: 'Goal',
+        icon: <GoalIcon size={16} />,
+        link: '/financial/goal',
       },
       {
         id: 'setting',

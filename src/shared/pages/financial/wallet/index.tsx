@@ -4,9 +4,9 @@ import { HistoryOutlined, PlusOutlined, SwapOutlined } from '@ant-design/icons'
 import SummaryCards from '../_components/SummaryCards'
 import { AnimatedGrid } from '../category/_components/animation-card'
 import { TransferForm } from './_components/TransferForm'
-import { WalletModal } from './_components/WalletForm'
 import TransferHistory from './_components/TransferHistory'
 import { WalletCard } from './_components/WalletCard'
+import { WalletModal } from './_components/WalletForm'
 import type { IWallet_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { useGetWallet_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 import { useMutationWallet } from '@/shared/api/financial/wallet/wallet.mutation'
@@ -40,7 +40,7 @@ export function Wallets() {
     setEditTarget(null)
   }
 
-  const save = async (formData: IWallet_Wallet) => {
+  const save = async (formData: Partial<IWallet_Wallet>) => {
     if (mode === 'add') {
       await mWallet_Create.mutateAsync(
         { body: formData },
