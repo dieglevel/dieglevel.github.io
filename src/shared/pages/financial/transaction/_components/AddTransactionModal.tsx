@@ -88,18 +88,6 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
     }
   }, [open, form])
 
-  // Set Ví & Danh mục mặc định khi API trả về
-  useEffect(() => {
-    if (open) {
-      if (wallets?.data.length && !form.getFieldValue('walletId')) {
-        form.setFieldValue('walletId', wallets.data[0].id)
-      }
-      if (categories?.data.length && !form.getFieldValue('categoryId')) {
-        form.setFieldValue('categoryId', categories.data[0].id)
-      }
-    }
-  }, [open, wallets, categories, form])
-
   const handleSave = async () => {
     try {
       const values = await form.validateFields()
