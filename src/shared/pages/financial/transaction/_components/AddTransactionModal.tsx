@@ -103,6 +103,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   const handleSave = async () => {
     try {
       const values = await form.validateFields()
+      console.log('Validated form values:', values)
 
       // Format Payload chuẩn các trường theo Entity Backend
       const payload: FinancialAdvanceTransaction_Create_Request = {
@@ -113,7 +114,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
         categoryId: values.categoryId ? Number(values.categoryId) : undefined,
 
         date: values.date.toISOString(),
-        data: values.data.map(
+        data: values.financialAdvanceTransactions.map(
           (item: { description: string; amount: number }) => ({
             description: item.description,
             amount: Number(item.amount),
