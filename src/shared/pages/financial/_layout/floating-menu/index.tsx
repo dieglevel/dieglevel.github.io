@@ -2,58 +2,15 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Grid } from 'antd' // 1. Import Grid từ antd
-import { GoalIcon } from 'lucide-react'
 import type { Variants } from 'motion/react'
-import type { LinkProps } from '@tanstack/react-router'
-import {
-  IconArrowTopDown,
-  IconCategory,
-  IconCreditCard,
-  IconSetting,
-} from '@/shared/assets/icons'
+
+import type { MenuItem } from '@/shared/components/layout/menu/menu'
 import { background, colors } from '@/shared/common/design-token'
+import { menus } from '@/shared/components/layout/menu/menu'
 
 const { useBreakpoint } = Grid // 2. Lấy hook useBreakpoint
 
-interface MenuItem {
-  id: string
-  label: string
-  icon: React.ReactNode
-  link: LinkProps['to']
-}
-
-const menus: Array<MenuItem> = [
-  {
-    id: 'transaction',
-    label: 'Transaction',
-    icon: <IconArrowTopDown style={{ fontSize: 20 }} />,
-    link: '/financial/transaction',
-  },
-  {
-    id: 'category',
-    label: 'Category',
-    icon: <IconCategory style={{ fontSize: 20 }} />,
-    link: '/financial/category',
-  },
-  {
-    id: 'wallet',
-    label: 'Wallet',
-    icon: <IconCreditCard style={{ fontSize: 20 }} />,
-    link: '/financial/wallet',
-  },
-  {
-    id: 'goal',
-    label: 'Goal',
-    icon: <GoalIcon size={16} />,
-    link: '/financial/goal',
-  },
-  {
-    id: 'setting',
-    label: 'Settings',
-    icon: <IconSetting style={{ fontSize: 20 }} />,
-    link: '/financial/setting',
-  },
-]
+const floatingMenus: Array<MenuItem> = menus[0].children || []
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -160,7 +117,7 @@ export default function FloatingMenu() {
                 marginBottom: 12,
               }}
             >
-              {menus.map((menu) => {
+              {floatingMenus.map((menu) => {
                 const isSelected = location.pathname.startsWith(menu.link || '')
 
                 return (

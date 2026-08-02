@@ -25,6 +25,7 @@ import { Route as protectedFinancialIndexRouteImport } from './../../routes/(pro
 import { Route as protectedFinancialWalletRouteImport } from './../../routes/(protected)/financial/wallet'
 import { Route as protectedFinancialTransactionRouteImport } from './../../routes/(protected)/financial/transaction'
 import { Route as protectedFinancialSettingRouteImport } from './../../routes/(protected)/financial/setting'
+import { Route as protectedFinancialRecurringRouteImport } from './../../routes/(protected)/financial/recurring'
 import { Route as protectedFinancialGoalRouteImport } from './../../routes/(protected)/financial/goal'
 import { Route as protectedFinancialCategoryRouteImport } from './../../routes/(protected)/financial/category'
 import { Route as protectedDemoTableRouteImport } from './../../routes/(protected)/demo/table'
@@ -111,6 +112,12 @@ const protectedFinancialSettingRoute =
     path: '/setting',
     getParentRoute: () => protectedFinancialRouteRoute,
   } as any)
+const protectedFinancialRecurringRoute =
+  protectedFinancialRecurringRouteImport.update({
+    id: '/recurring',
+    path: '/recurring',
+    getParentRoute: () => protectedFinancialRouteRoute,
+  } as any)
 const protectedFinancialGoalRoute = protectedFinancialGoalRouteImport.update({
   id: '/goal',
   path: '/goal',
@@ -148,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/demo/table': typeof protectedDemoTableRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
   '/financial/goal': typeof protectedFinancialGoalRoute
+  '/financial/recurring': typeof protectedFinancialRecurringRoute
   '/financial/setting': typeof protectedFinancialSettingRoute
   '/financial/transaction': typeof protectedFinancialTransactionRoute
   '/financial/wallet': typeof protectedFinancialWalletRoute
@@ -167,6 +175,7 @@ export interface FileRoutesByTo {
   '/demo/table': typeof protectedDemoTableRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
   '/financial/goal': typeof protectedFinancialGoalRoute
+  '/financial/recurring': typeof protectedFinancialRecurringRoute
   '/financial/setting': typeof protectedFinancialSettingRoute
   '/financial/transaction': typeof protectedFinancialTransactionRoute
   '/financial/wallet': typeof protectedFinancialWalletRoute
@@ -190,6 +199,7 @@ export interface FileRoutesById {
   '/(protected)/demo/table': typeof protectedDemoTableRoute
   '/(protected)/financial/category': typeof protectedFinancialCategoryRoute
   '/(protected)/financial/goal': typeof protectedFinancialGoalRoute
+  '/(protected)/financial/recurring': typeof protectedFinancialRecurringRoute
   '/(protected)/financial/setting': typeof protectedFinancialSettingRoute
   '/(protected)/financial/transaction': typeof protectedFinancialTransactionRoute
   '/(protected)/financial/wallet': typeof protectedFinancialWalletRoute
@@ -212,6 +222,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/financial/category'
     | '/financial/goal'
+    | '/financial/recurring'
     | '/financial/setting'
     | '/financial/transaction'
     | '/financial/wallet'
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/demo/table'
     | '/financial/category'
     | '/financial/goal'
+    | '/financial/recurring'
     | '/financial/setting'
     | '/financial/transaction'
     | '/financial/wallet'
@@ -253,6 +265,7 @@ export interface FileRouteTypes {
     | '/(protected)/demo/table'
     | '/(protected)/financial/category'
     | '/(protected)/financial/goal'
+    | '/(protected)/financial/recurring'
     | '/(protected)/financial/setting'
     | '/(protected)/financial/transaction'
     | '/(protected)/financial/wallet'
@@ -381,6 +394,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedFinancialSettingRouteImport
       parentRoute: typeof protectedFinancialRouteRoute
     }
+    '/(protected)/financial/recurring': {
+      id: '/(protected)/financial/recurring'
+      path: '/recurring'
+      fullPath: '/financial/recurring'
+      preLoaderRoute: typeof protectedFinancialRecurringRouteImport
+      parentRoute: typeof protectedFinancialRouteRoute
+    }
     '/(protected)/financial/goal': {
       id: '/(protected)/financial/goal'
       path: '/goal'
@@ -415,6 +435,7 @@ declare module '@tanstack/react-router' {
 interface protectedFinancialRouteRouteChildren {
   protectedFinancialCategoryRoute: typeof protectedFinancialCategoryRoute
   protectedFinancialGoalRoute: typeof protectedFinancialGoalRoute
+  protectedFinancialRecurringRoute: typeof protectedFinancialRecurringRoute
   protectedFinancialSettingRoute: typeof protectedFinancialSettingRoute
   protectedFinancialTransactionRoute: typeof protectedFinancialTransactionRoute
   protectedFinancialWalletRoute: typeof protectedFinancialWalletRoute
@@ -425,6 +446,7 @@ const protectedFinancialRouteRouteChildren: protectedFinancialRouteRouteChildren
   {
     protectedFinancialCategoryRoute: protectedFinancialCategoryRoute,
     protectedFinancialGoalRoute: protectedFinancialGoalRoute,
+    protectedFinancialRecurringRoute: protectedFinancialRecurringRoute,
     protectedFinancialSettingRoute: protectedFinancialSettingRoute,
     protectedFinancialTransactionRoute: protectedFinancialTransactionRoute,
     protectedFinancialWalletRoute: protectedFinancialWalletRoute,

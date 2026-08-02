@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Flex, Grid, Input, Typography } from 'antd'
-import { GoalIcon } from 'lucide-react'
+import { CalendarSync, GoalIcon } from 'lucide-react'
 import type { LinkProps } from '@tanstack/react-router'
 import { Brand } from '@/shared/assets/images'
 import {
@@ -16,7 +16,7 @@ import './menu.css'
 
 const { useBreakpoint } = Grid
 
-interface MenuItem {
+export interface MenuItem {
   id: string
   label: string
   icon?: React.ReactNode
@@ -24,7 +24,7 @@ interface MenuItem {
   children?: Array<MenuItem>
 }
 
-const menus: Array<MenuItem> = [
+export const menus: Array<MenuItem> = [
   {
     id: 'finance',
     label: 'Finance',
@@ -53,6 +53,12 @@ const menus: Array<MenuItem> = [
         label: 'Goal',
         icon: <GoalIcon size={16} />,
         link: '/financial/goal',
+      },
+      {
+        id: 'recurring',
+        label: 'Recurring',
+        icon: <CalendarSync size={16} />,
+        link: '/financial/recurring',
       },
       {
         id: 'setting',

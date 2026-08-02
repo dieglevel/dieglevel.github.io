@@ -6,7 +6,7 @@
     "eslint.config.js",
     "prettier.config.js",
     "vite.config.js"
-  ],
+, "src/shared/pages/financial/recurring/_components/AddRecurringModal.tsx"  ],
 
   "compilerOptions": {
     "target": "ES2022",
