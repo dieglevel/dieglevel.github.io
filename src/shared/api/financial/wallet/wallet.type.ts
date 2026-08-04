@@ -1,7 +1,9 @@
 import type { IBaseEntity } from '@/shared/types/base-entity'
 import type { FINANCIAL_WALLET_TYPE } from './wallet.enum'
+import type { IFinance_Transaction } from '../transaction/transaction.type'
+import type { User } from '@/shared/auth/auth.type'
 
-export interface IWallet_Wallet extends IBaseEntity {
+export interface IFinance_Wallet extends IBaseEntity {
   name: string
   type: FINANCIAL_WALLET_TYPE
   icon: string
@@ -15,6 +17,9 @@ export interface IWallet_Wallet extends IBaseEntity {
   statementDay: null | number
   dueDay: null | number
   isLockedForDailySpending: boolean
+
+  transactions?: Array<IFinance_Transaction>
+  account?: User
 
   totalAmount?: number
 }

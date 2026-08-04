@@ -2,12 +2,12 @@ import { useMemo, useState } from 'react'
 import { MoveRight } from 'lucide-react'
 import { DatePicker, Typography } from 'antd'
 import dayjs from 'dayjs'
-import type { IWallet_WalletTransfer } from '@/shared/api/financial/wallet-transfer/wallet-transfer.type'
 import type { ColumnsType } from 'antd/es/table'
-import { useGetWallet_WalletTransfer_List } from '@/shared/api/financial/wallet-transfer/useGetFinancial_WalletTransfer_List'
+import type { IWallet_WalletTransfer } from '@/shared/api/financial/wallet/wallet-transfer/wallet-transfer.type'
 import BaseModal from '@/shared/components/modal'
 import Table from '@/shared/components/table'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
+import { useGetWallet_WalletTransfer_Date } from '@/shared/api/financial/wallet/wallet-transfer/useGetFinancial_WalletTransfer_Date'
 
 interface TransferHistoryProps {
   open: boolean
@@ -20,11 +20,7 @@ export default function TransferHistory({
 }: TransferHistoryProps) {
   const [selectedMonth, setSelectedMonth] = useState<dayjs.Dayjs>(dayjs())
 
-  const { data, isFetching } = useGetWallet_WalletTransfer_List({
-    queryParams: {
-      date: dayjs(selectedMonth).format('YYYY-MM-DD'),
-    },
-  })
+  const { data, isFetching } = useGetWallet_WalletTransfer_Date({})
 
   const columns: ColumnsType<IWallet_WalletTransfer> = useMemo(() => {
     const cols: ColumnsType<IWallet_WalletTransfer> = [
@@ -118,7 +114,7 @@ export default function TransferHistory({
         }}
       />
       <Table<IWallet_WalletTransfer>
-        dataSource={data?.data}
+        dataSource={data?.data || []}
         columns={columns}
         rowKey={(record) => record.id}
         scroll={{ x: 'max-content', y: 360 }}

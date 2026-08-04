@@ -19,13 +19,13 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import type { IWallet_Transaction } from '@/shared/api/financial/transaction/transaction.type'
+import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const { Text } = Typography
 
 interface TransactionsSummaryProps {
-  transactions: Array<IWallet_Transaction>
+  transactions: Array<IFinance_Transaction>
 }
 
 export const TransactionsSummary: React.FC<TransactionsSummaryProps> = ({

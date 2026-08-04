@@ -3,17 +3,22 @@ import type {
   FINANCIAL_TRANSACTION_STATUS,
   FINANCIAL_TRANSACTION_TYPE,
 } from './transaction.enum'
-import type { IWallet_Wallet } from '../wallet/wallet.type'
-import type { IWallet_Category } from '../category/category.type'
-import type { IWallet_Advance_Transaction } from './advance-transaction/advance-transaction.type'
+import type { IFinance_Wallet } from '../wallet/wallet.type'
+import type { IFinance_AdvanceTransaction } from './advance-transaction/advance-transaction.type'
+import type { User } from '@/shared/auth/auth.type'
 
-export interface IWallet_Transaction extends IBaseEntity {
-  description: string
+export interface IFinance_Transaction extends IBaseEntity {
+  description: string | null
+  merchant: string | null
+  location: string | null
+  tags: Array<string> | null
+  receiptImageUrl: string | null
   amount: number
   type: FINANCIAL_TRANSACTION_TYPE
   status: FINANCIAL_TRANSACTION_STATUS
 
-  wallet?: IWallet_Wallet
-  category?: IWallet_Category
-  financialAdvanceTransactions?: Array<IWallet_Advance_Transaction>
+  wallet?: IFinance_Wallet
+  originalTransaction?: IFinance_Transaction
+  account: User
+  financialAdvanceTransactions?: Array<IFinance_AdvanceTransaction>
 }

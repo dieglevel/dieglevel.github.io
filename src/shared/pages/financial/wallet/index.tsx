@@ -7,17 +7,17 @@ import { TransferForm } from './_components/TransferForm'
 import TransferHistory from './_components/TransferHistory'
 import { WalletCard } from './_components/WalletCard'
 import { WalletModal } from './_components/WalletForm'
-import type { IWallet_Wallet } from '@/shared/api/financial/wallet/wallet.type'
-import { useGetWallet_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
+import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { useMutationWallet } from '@/shared/api/financial/wallet/wallet.mutation'
+import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 
 const { Title, Text } = Typography
 
 export function Wallets() {
-  const { data, isFetching } = useGetWallet_Wallet_List({})
-  const wallets: Array<IWallet_Wallet> = data?.data || []
+  const { data, isFetching } = useGetFinance_Wallet_List({})
+  const wallets: Array<IFinance_Wallet> = data?.data || []
   const [mode, setMode] = useState<'add' | 'edit' | 'transfer' | null>(null)
-  const [editTarget, setEditTarget] = useState<IWallet_Wallet | null>(null)
+  const [editTarget, setEditTarget] = useState<IFinance_Wallet | null>(null)
   const [open, setOpen] = useState(false)
   const [transferHistoryOpen, setTransferHistoryOpen] = useState(false)
 
@@ -28,7 +28,7 @@ export function Wallets() {
 
   const handleOpenModal = (
     modeOpen: 'add' | 'edit' | 'transfer',
-    wallet?: IWallet_Wallet,
+    wallet?: IFinance_Wallet,
   ) => {
     setMode(modeOpen)
     setEditTarget(wallet || null)
@@ -40,7 +40,7 @@ export function Wallets() {
     setEditTarget(null)
   }
 
-  const save = async (formData: Partial<IWallet_Wallet>) => {
+  const save = async (formData: Partial<IFinance_Wallet>) => {
     if (mode === 'add') {
       await mWallet_Create.mutateAsync(
         { body: formData },
@@ -70,7 +70,7 @@ export function Wallets() {
     }
   }
 
-  async function deleteWallet(id: string) {
+  async function deleteWallet(id: number) {
     await mWallet_Delete.mutateAsync(
       {
         pathParams: {

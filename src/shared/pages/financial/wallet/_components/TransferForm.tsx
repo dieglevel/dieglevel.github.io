@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Button, Form, InputNumber, Select, Space, Typography } from 'antd'
-import type { IWallet_Wallet } from '@/shared/api/financial/wallet/wallet.type'
+import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { InputWithComma } from '@/shared/components/input/utils'
 
 export function TransferForm({
@@ -8,7 +8,7 @@ export function TransferForm({
   onTransfer,
   onClose,
 }: {
-  wallets: Array<IWallet_Wallet>
+  wallets: Array<IFinance_Wallet>
   onTransfer: (
     fromId: number,
     toId: number,

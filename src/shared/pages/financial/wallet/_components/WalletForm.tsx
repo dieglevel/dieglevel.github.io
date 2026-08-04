@@ -12,7 +12,7 @@ import {
   Switch,
 } from 'antd'
 import { LockOutlined } from '@ant-design/icons'
-import type { IWallet_Wallet } from '@/shared/api/financial/wallet/wallet.type'
+import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import {
   FINANCIAL_WALLET_TYPE,
   FINANCIAL_WALLET_TYPE_OPTIONS,
@@ -23,9 +23,9 @@ import { InputWithComma } from '@/shared/components/input/utils'
 
 interface WalletModalProps {
   open: boolean
-  wallet?: IWallet_Wallet | null
+  wallet?: IFinance_Wallet | null
   onCancel: () => void
-  onSubmit: (data: Partial<IWallet_Wallet>) => Promise<void>
+  onSubmit: (data: Partial<IFinance_Wallet>) => Promise<void>
 }
 
 export function WalletModal({

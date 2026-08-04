@@ -70,7 +70,7 @@ function monthsToComplete(current: number, target: number, autoSave?: number) {
 interface GoalCardProps {
   goal: IWallet_Goal
   onEdit: (g: IWallet_Goal) => void
-  onDelete: (id: string) => void
+  onDelete: (id: number) => void
 }
 
 export const GoalCard: React.FC<GoalCardProps> = ({

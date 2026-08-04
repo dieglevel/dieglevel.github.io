@@ -6,7 +6,7 @@ import {
   MoreOutlined,
 } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
-import type { IWallet_Category } from '@/shared/api/financial/category/category.type'
+import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import useConfirm from '@/shared/hooks/use-confirm'
@@ -14,10 +14,10 @@ import useConfirm from '@/shared/hooks/use-confirm'
 const { Text } = Typography
 
 interface CategoryCardProps {
-  category: IWallet_Category
-  onEdit: (category: IWallet_Category) => void
-  onArchive: (id: string) => void
-  onDelete: (id: string) => void
+  category: IFinance_Category
+  onEdit: (category: IFinance_Category) => void
+  onArchive: (id: number) => void
+  onDelete: (id: number) => void
 }
 
 export default function CategoryCard({
@@ -29,7 +29,7 @@ export default function CategoryCard({
   const { confirm, ConfirmModal } = useConfirm()
 
   const spent = category.totalAmount ?? 0
-  const budget = category.monthlyBudget
+  const budget = category.monthlyBudget ?? 0
   const remaining = budget - spent
 
   // Tính % thực tế đã sử dụng

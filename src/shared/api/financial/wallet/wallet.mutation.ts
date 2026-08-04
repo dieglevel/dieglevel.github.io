@@ -1,4 +1,4 @@
-import type { IWallet_Wallet } from './wallet.type'
+import type { IFinance_Wallet } from './wallet.type'
 import {
   useMutationDelete,
   useMutationPost,
@@ -7,7 +7,7 @@ import {
 export const useMutationWallet = () => {
   const mWallet_Create = useMutationPost<
     void,
-    Partial<Omit<IWallet_Wallet, 'id' | 'created_at'>>,
+    Partial<Omit<IFinance_Wallet, 'id' | 'created_at'>>,
     'financial-wallet/create'
   >({
     endPoint: 'financial-wallet/create',
@@ -16,7 +16,7 @@ export const useMutationWallet = () => {
 
   const mWallet_Update = useMutationPost<
     void,
-    Partial<Omit<IWallet_Wallet, 'id' | 'created_at'>>,
+    Partial<Omit<IFinance_Wallet, 'id' | 'created_at'>>,
     'financial-wallet/update/:id',
     { id: string }
   >({

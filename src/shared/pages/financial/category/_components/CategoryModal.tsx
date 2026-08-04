@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { Flex, Form, Input, InputNumber, Modal, Typography } from 'antd'
 
-import type { IWallet_Category } from '@/shared/api/financial/category/category.type'
+import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import { InputWithComma } from '@/shared/components/input/utils'
 import { IconPicker } from '@/shared/components/icon-picker'
 import ColorPicker from '@/shared/components/color-picker'
@@ -11,9 +11,9 @@ const { Text } = Typography
 interface CategoryModalProps {
   open: boolean
   mode: 'add' | 'edit'
-  category?: IWallet_Category | null
+  category?: IFinance_Category | null
   onCancel: () => void
-  onSubmit: (data: Omit<IWallet_Category, 'id'>) => Promise<void>
+  onSubmit: (data: Omit<IFinance_Category, 'id'>) => Promise<void>
 }
 
 export default function CategoryModal({

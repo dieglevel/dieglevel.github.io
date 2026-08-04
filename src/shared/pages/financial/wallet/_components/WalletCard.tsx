@@ -7,7 +7,7 @@ import {
   EyeOutlined,
   LockOutlined,
 } from '@ant-design/icons'
-import type { IWallet_Wallet } from '@/shared/api/financial/wallet/wallet.type'
+import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import {
   FINANCIAL_WALLET_TYPE,
   FINANCIAL_WALLET_TYPE_OPTIONS,
@@ -16,7 +16,7 @@ import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 interface WalletCardProps {
-  wallet: IWallet_Wallet
+  wallet: IFinance_Wallet
   onEdit: () => void
   onDelete: () => void
 }

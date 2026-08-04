@@ -4,7 +4,7 @@ import type { IFinance_Wallet } from './wallet.type'
 import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 
 // Get<Example><Type>Params
-interface GetFinance_Wallet_List_Params {
+interface GetFinance_Wallet_Date_Params {
   options?: Omit<
     UseQueryOptions<ApiBaseResponse<Array<IFinance_Wallet>>>,
     'queryKey' | 'queryFn'
@@ -12,13 +12,14 @@ interface GetFinance_Wallet_List_Params {
 }
 
 // useGet<Example><Type>
-export const useGetFinance_Wallet_List = (
-  props: GetFinance_Wallet_List_Params,
+export const useGetFinance_Wallet_Date = (
+  props: GetFinance_Wallet_Date_Params,
 ) =>
-  useQueryGet<ApiBaseResponse<Array<IFinance_Wallet>>, '/financial-wallet/all'>(
-    {
-      endPoint: `/financial-wallet/all`,
-      queryKey: ['getFinancialWalletList'],
-      ...props,
-    },
-  )
+  useQueryGet<
+    ApiBaseResponse<Array<IFinance_Wallet>>,
+    '/financial-wallet/with-transaction-count'
+  >({
+    endPoint: `/financial-wallet/with-transaction-count`,
+    queryKey: ['getFinancialWalletDate'],
+    ...props,
+  })

@@ -17,8 +17,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 
 import type { FinancialAdvanceTransaction_Create_Request } from '@/shared/api/financial/transaction/advance-transaction/advance-transaction.mutation'
-import { useGetWallet_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
-import { useGetWallet_Category_List } from '@/shared/api/financial/category/useGetWallet_Category_List'
+import { useGetFinance_Category_Count } from '@/shared/api/financial/category/useGetFinance_Category_Count'
 import {
   FINANCIAL_TRANSACTION_STATUS,
   FINANCIAL_TRANSACTION_TYPE,
@@ -27,6 +26,7 @@ import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { InputWithComma } from '@/shared/components/input/utils'
 import { useMutationAdvanceTransaction } from '@/shared/api/financial/transaction/advance-transaction/advance-transaction.mutation'
 import { useGetWallet_Transaction_List } from '@/shared/api/financial/transaction/useGetWallet_Transaction_List'
+import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 
 const { Text, Title } = Typography
 
@@ -45,16 +45,16 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
 
   // API Danh sách Ví & Danh mục
   const { data: wallets, isLoading: isLoadingWallets } =
-    useGetWallet_Wallet_List({
+    useGetFinance_Wallet_List({
       options: { enabled: open },
     })
 
   const { data: categories, isLoading: isLoadingCategories } =
-    useGetWallet_Category_List({
+    useGetFinance_Category_Count({
       options: { enabled: open },
     })
 
-  // API Danh sách Giao dịch gốc (dành cho chọn originalTransactionId)
+  // API Danh sách Giao dịch gốc
   const { data: originalTransactions, isLoading: isLoadingOriginal } =
     useGetWallet_Transaction_List({
       options: { enabled: open },
@@ -83,7 +83,9 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
         type: FINANCIAL_TRANSACTION_TYPE.EXPENSE,
         status: FINANCIAL_TRANSACTION_STATUS.PENDING,
         date: dayjs(),
-        financialAdvanceTransactions: [{ description: '', amount: null }],
+        financialAdvanceTransactions: [
+          { description: '', amount: null, categoryId: undefined },
+        ],
       })
     }
   }, [open, form])
@@ -91,21 +93,32 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   const handleSave = async () => {
     try {
       const values = await form.validateFields()
-      console.log('Validated form values:', values)
 
-      // Format Payload chuẩn các trường theo Entity Backend
+      // Format Payload gửi đi
       const payload: FinancialAdvanceTransaction_Create_Request = {
         description: values.description?.trim(),
         type: values.type,
         status: values.status,
         walletId: Number(values.walletId),
-        categoryId: values.categoryId ? Number(values.categoryId) : undefined,
-
         date: values.date.toISOString(),
+        merchant: values.merchant?.trim() || undefined,
+        location: values.location?.trim() || undefined,
+        tags: values.tags?.length ? values.tags : undefined,
+        receiptImageUrl: values.receiptImageUrl?.trim() || undefined,
+        originalTransactionId: values.originalTransactionId
+          ? Number(values.originalTransactionId)
+          : undefined,
+
+        // Chuẩn hóa chi tiết từng khoản kèm categoryId tương ứng
         data: values.financialAdvanceTransactions.map(
-          (item: { description: string; amount: number }) => ({
-            description: item.description,
+          (item: {
+            description: string
+            amount: number
+            categoryId?: number
+          }) => ({
+            description: item.description.trim(),
             amount: Number(item.amount),
+            categoryId: item.categoryId ? Number(item.categoryId) : undefined,
           }),
         ),
       }
@@ -130,7 +143,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
       cancelText="Hủy"
       confirmLoading={mAdvanceTransaction_Create.isPending}
       destroyOnClose
-      width={680}
+      width={720}
     >
       <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
         {/* 1. Phân loại giao dịch (type) */}
@@ -150,50 +163,26 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
           />
         </Form.Item>
 
-        {/* 2. Wallet & Category */}
-        <Flex gap={12}>
-          <Form.Item
-            label="Ví thanh toán (walletId)"
-            name="walletId"
-            className="flex-1"
-            rules={[{ required: true, message: 'Vui lòng chọn ví' }]}
-          >
-            <Select
-              placeholder="Chọn ví"
-              loading={isLoadingWallets}
-              options={wallets?.data.map((w) => ({
-                value: w.id,
-                label: (
-                  <Flex align="center" gap={8}>
-                    <IconRenderer iconName={w.icon} />
-                    <Text style={{ fontSize: 13 }}>{w.name}</Text>
-                  </Flex>
-                ),
-              }))}
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Danh mục (categoryId)"
-            name="categoryId"
-            className="flex-1"
-          >
-            <Select
-              placeholder="Chọn danh mục"
-              allowClear
-              loading={isLoadingCategories}
-              options={categories?.data.map((c) => ({
-                value: c.id,
-                label: (
-                  <Flex align="center" gap={8}>
-                    <IconRenderer iconName={c.icon} />
-                    <Text style={{ fontSize: 13 }}>{c.name}</Text>
-                  </Flex>
-                ),
-              }))}
-            />
-          </Form.Item>
-        </Flex>
+        {/* 2. Wallet select */}
+        <Form.Item
+          label="Ví thanh toán (walletId)"
+          name="walletId"
+          rules={[{ required: true, message: 'Vui lòng chọn ví' }]}
+        >
+          <Select
+            placeholder="Chọn ví thanh toán"
+            loading={isLoadingWallets}
+            options={wallets?.data.map((w) => ({
+              value: w.id,
+              label: (
+                <Flex align="center" gap={8}>
+                  <IconRenderer iconName={w.icon} />
+                  <Text style={{ fontSize: 13 }}>{w.name}</Text>
+                </Flex>
+              ),
+            }))}
+          />
+        </Form.Item>
 
         {/* 3. Mô tả chung (description) */}
         <Form.Item
@@ -204,17 +193,20 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
             { whitespace: true, message: 'Không được chỉ nhập khoảng trắng' },
           ]}
         >
-          <Input placeholder="Mô tả nội dung giao dịch..." maxLength={255} />
+          <Input
+            placeholder="Mô tả tổng quan nội dung giao dịch..."
+            maxLength={255}
+          />
         </Form.Item>
 
         {/* 4. Merchant & Location */}
         <Flex gap={12}>
           <Form.Item
-            label="Đơn vị cung cấp / Cửa hàng (merchant)"
+            label="Đơn vị / Cửa hàng (merchant)"
             name="merchant"
             className="flex-1"
           >
-            <Input placeholder="Ví dụ: Shopee, Starbucks..." maxLength={255} />
+            <Input placeholder="Shopee, Starbucks..." maxLength={255} />
           </Form.Item>
 
           <Form.Item
@@ -222,13 +214,13 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
             name="location"
             className="flex-1"
           >
-            <Input placeholder="Ví dụ: Hà Nội, Quận 1..." maxLength={255} />
+            <Input placeholder="Hà Nội, TP.HCM..." maxLength={255} />
           </Form.Item>
         </Flex>
 
-        {/* 5. Giao dịch gốc (originalTransactionId) - Dùng khi hoàn tiền */}
+        {/* 5. Giao dịch gốc (originalTransactionId) */}
         <Form.Item
-          label="Giao dịch gốc (originalTransactionId) - Chọn nếu là giao dịch Hoàn tiền"
+          label="Giao dịch gốc (Chọn nếu là giao dịch Hoàn tiền)"
           name="originalTransactionId"
         >
           <Select
@@ -269,9 +261,10 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                     key={key}
                     size="small"
                     style={{ background: '#fafafa' }}
-                    bodyStyle={{ padding: 12 }}
+                    styles={{ body: { padding: 12 } }}
                   >
-                    <Flex gap={8} align="start">
+                    <Flex gap={8} align="center">
+                      {/* Nội dung khoản chi tiết */}
                       <Form.Item
                         {...restField}
                         name={[name, 'description']}
@@ -279,11 +272,34 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                           { required: true, message: 'Nhập nội dung' },
                           { whitespace: true, message: 'Không để trống' },
                         ]}
-                        style={{ flex: 2, marginBottom: 0 }}
+                        style={{ flex: 3, marginBottom: 0 }}
                       >
-                        <Input placeholder="Nội dung khoản chi tiết" />
+                        <Input placeholder="Nội dung chi tiết" />
                       </Form.Item>
 
+                      {/* Chọn Danh mục riêng cho từng dòng */}
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'categoryId']}
+                        style={{ flex: 2, marginBottom: 0 }}
+                      >
+                        <Select
+                          placeholder="Danh mục"
+                          allowClear
+                          loading={isLoadingCategories}
+                          options={categories?.data.map((c) => ({
+                            value: c.id,
+                            label: (
+                              <Flex align="center" gap={6}>
+                                <IconRenderer iconName={c.icon} />
+                                <Text style={{ fontSize: 12 }}>{c.name}</Text>
+                              </Flex>
+                            ),
+                          }))}
+                        />
+                      </Form.Item>
+
+                      {/* Số tiền */}
                       <Form.Item
                         {...restField}
                         name={[name, 'amount']}
@@ -291,7 +307,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                           { required: true, message: 'Nhập số tiền' },
                           { type: 'number', min: 0.01, message: 'Phải > 0' },
                         ]}
-                        style={{ flex: 1, marginBottom: 0 }}
+                        style={{ flex: 2, marginBottom: 0 }}
                       >
                         <InputNumber
                           style={{ width: '100%' }}
@@ -316,7 +332,13 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
 
                 <Button
                   type="dashed"
-                  onClick={() => add({ description: '', amount: null })}
+                  onClick={() =>
+                    add({
+                      description: '',
+                      amount: null,
+                      categoryId: undefined,
+                    })
+                  }
                   block
                   icon={<PlusOutlined />}
                 >

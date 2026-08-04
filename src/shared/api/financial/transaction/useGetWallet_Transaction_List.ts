@@ -1,6 +1,6 @@
 import type dayjs from 'dayjs'
 import type { UseQueryOptions } from '@tanstack/react-query'
-import type { IWallet_Transaction } from './transaction.type'
+import type { IFinance_Transaction } from './transaction.type'
 import type { ApiBaseResponse } from '@/shared/types/base-response'
 import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 
@@ -11,7 +11,7 @@ export interface GetWallet_Transaction_List_Params {
   }
 
   options?: Omit<
-    UseQueryOptions<ApiBaseResponse<Array<IWallet_Transaction>>>,
+    UseQueryOptions<ApiBaseResponse<Array<IFinance_Transaction>>>,
     'queryKey' | 'queryFn'
   >
 }
@@ -21,7 +21,7 @@ export const useGetWallet_Transaction_List = (
   props: GetWallet_Transaction_List_Params,
 ) =>
   useQueryGet<
-    ApiBaseResponse<Array<IWallet_Transaction>>,
+    ApiBaseResponse<Array<IFinance_Transaction>>,
     '/financial-transaction/all'
   >({
     endPoint: `/financial-transaction/all`,

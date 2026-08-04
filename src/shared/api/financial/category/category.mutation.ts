@@ -1,27 +1,27 @@
-import type { IWallet_Category } from './category.type'
+import type { IFinance_Category } from './category.type'
 import {
   useMutationDelete,
   useMutationPost,
 } from '@/shared/lib/api/mutation/useMutation'
 
-export const useMutationCategory = () => {
+export const useMutationFinanceCategory = () => {
   const mCategory_Create = useMutationPost<
     void,
-    Omit<IWallet_Category, 'id' | 'created_at'>,
+    Omit<IFinance_Category, 'id' | 'created_at'>,
     'financial-category/create'
   >({
     endPoint: 'financial-category/create',
-    queryKey: ['getFinancialCategoryList'],
+    queryKey: ['getFinancialCategoryCount'],
   })
 
   const mCategory_Update = useMutationPost<
     void,
-    Partial<Omit<IWallet_Category, 'id' | 'created_at'>>,
+    Partial<Omit<IFinance_Category, 'id' | 'created_at'>>,
     'financial-category/update/:id',
     { id: string }
   >({
     endPoint: 'financial-category/update/:id',
-    queryKey: ['getFinancialCategoryList'],
+    queryKey: ['getFinancialCategoryCount'],
   })
 
   const mCategory_Delete = useMutationDelete<
@@ -31,7 +31,7 @@ export const useMutationCategory = () => {
     { id: string }
   >({
     endPoint: 'financial-category/delete/:id',
-    queryKey: ['getFinancialCategoryList'],
+    queryKey: ['getFinancialCategoryCount'],
   })
 
   return {

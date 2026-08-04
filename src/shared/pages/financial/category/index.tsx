@@ -11,29 +11,29 @@ import SummaryCards from '../_components/SummaryCards'
 import CategoryCard from './_components/animation-card/CategoryCard'
 import CategoryModal from './_components/CategoryModal'
 import { AnimatedGrid } from './_components/animation-card'
-import type { IWallet_Category } from '@/shared/api/financial/category/category.type'
-import { useMutationCategory } from '@/shared/api/financial/category/category.mutation'
-import { useGetWallet_Category_List } from '@/shared/api/financial/category/useGetWallet_Category_List'
+import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
+import { useMutationFinanceCategory } from '@/shared/api/financial/category/category.mutation'
+import { useGetFinance_Category_Count } from '@/shared/api/financial/category/useGetFinance_Category_Count'
 
 const { Title, Text } = Typography
 
 export default function Categories() {
   const [selectedMonth, setSelectedMonth] = useState<dayjs.Dayjs>(dayjs())
 
-  const { data: apiResponse, isFetching } = useGetWallet_Category_List({
+  const { data: apiResponse, isFetching } = useGetFinance_Category_Count({
     queryParams: {
       date: dayjs(selectedMonth).format('YYYY-MM-DD'),
     },
   })
-  const categories: Array<IWallet_Category> = apiResponse?.data || []
+  const categories: Array<IFinance_Category> = apiResponse?.data || []
 
   const { mCategory_Update, mCategory_Create, mCategory_Delete } =
-    useMutationCategory()
+    useMutationFinanceCategory()
 
   const [showArchived, setShowArchived] = useState(false)
   const [open, setOpen] = useState(false)
   const [mode, setMode] = useState<'add' | 'edit'>('add')
-  const [editing, setEditing] = useState<IWallet_Category | null>(null)
+  const [editing, setEditing] = useState<IFinance_Category | null>(null)
 
   const active = useMemo(
     () => categories.filter((x) => !x.archived),
@@ -47,7 +47,7 @@ export default function Categories() {
 
   const shown = showArchived ? categories : active
 
-  const totalBudget = active.reduce((s, c) => s + c.monthlyBudget, 0)
+  const totalBudget = active.reduce((s, c) => s + (c.monthlyBudget ?? 0), 0)
   const totalSpent = active.reduce((s, c) => s + (c.totalAmount ?? 0), 0)
 
   function openAdd() {
@@ -56,13 +56,13 @@ export default function Categories() {
     setOpen(true)
   }
 
-  function openEdit(category: IWallet_Category) {
+  function openEdit(category: IFinance_Category) {
     setMode('edit')
     setEditing(category)
     setOpen(true)
   }
 
-  function archive(id: string) {
+  function archive(id: number) {
     const target = categories.find((c) => c.id === id)
     if (target) {
       mCategory_Update.mutate({
@@ -76,7 +76,7 @@ export default function Categories() {
     }
   }
 
-  function remove(id: string) {
+  function remove(id: number) {
     mCategory_Delete.mutate({
       pathParams: {
         id,
@@ -84,7 +84,7 @@ export default function Categories() {
     })
   }
 
-  const save = async (formData: Omit<IWallet_Category, 'id'>) => {
+  const save = async (formData: Omit<IFinance_Category, 'id'>) => {
     if (mode === 'add') {
       await mCategory_Create.mutateAsync(
         { body: formData },

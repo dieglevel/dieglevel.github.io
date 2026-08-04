@@ -27,9 +27,9 @@ import {
 import { AddTransactionModal } from './_components/AddTransactionModal'
 import { TransactionsSummary } from './_components/TransactionsSummary'
 import type { ColumnsType } from 'antd/es/table'
-import type { IWallet_Transaction } from '@/shared/api/financial/transaction/transaction.type'
-import type { IWallet_Category } from '@/shared/api/financial/category/category.type'
-import type { IWallet_Wallet } from '@/shared/api/financial/wallet/wallet.type'
+import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
+import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
+import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { useGetWallet_Transaction_Date } from '@/shared/api/financial/transaction/useGetWallet_Transaction_Date'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
@@ -37,7 +37,7 @@ import { convertCurrency } from '@/shared/utils/helper/format-money'
 const { Title, Text } = Typography
 const { useBreakpoint } = Grid
 
-const STATUS_TAG: Record<IWallet_Transaction['status'], { color: string }> = {
+const STATUS_TAG: Record<IFinance_Transaction['status'], { color: string }> = {
   completed: { color: 'success' },
   pending: { color: 'warning' },
   failed: { color: 'error' },
@@ -55,8 +55,8 @@ export function Transactions() {
   const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense'>(
     'all',
   )
-  const [walletFilter, setWalletFilter] = useState('all')
-  const [catFilter, setCatFilter] = useState('all')
+  const [walletFilter, setWalletFilter] = useState<number | 'all'>('all')
+  const [catFilter, setCatFilter] = useState<number | 'all'>('all')
   const [statusFilter, setStatusFilter] = useState('all')
 
   // State UI Controls
@@ -66,13 +66,13 @@ export function Transactions() {
 
   // State cho Modal Xem Chi Tiết Transaction
   const [viewTransaction, setViewTransaction] =
-    useState<IWallet_Transaction | null>(null)
+    useState<IFinance_Transaction | null>(null)
 
   // Danh sách Ví cho Select
   const walletOptions = useMemo(() => {
-    const map = new Map<string, IWallet_Wallet>()
+    const map = new Map<number, IFinance_Wallet>()
     transactions.forEach((t) => {
-      if (t.wallet?.id) map.set(t.wallet.id, t.wallet)
+      if (t.wallet && t.wallet.id) map.set(t.wallet.id, t.wallet)
     })
     return Array.from(map.values()).map((w) => ({
       value: w.id,
@@ -80,11 +80,15 @@ export function Transactions() {
     }))
   }, [transactions])
 
-  // Danh sách Danh mục cho Select
+  // Danh sách Danh mục cho Select (Trích xuất từ financialAdvanceTransactions)
   const categoryOptions = useMemo(() => {
-    const map = new Map<string, IWallet_Category>()
+    const map = new Map<number, IFinance_Category>()
     transactions.forEach((t) => {
-      if (t.category?.id) map.set(t.category.id, t.category)
+      t.financialAdvanceTransactions?.forEach((adv) => {
+        if (adv.category?.id) {
+          map.set(adv.category.id, adv.category)
+        }
+      })
     })
     return Array.from(map.values()).map((c) => ({
       value: c.id,
@@ -119,12 +123,21 @@ export function Transactions() {
           .join(' ')
           .toLowerCase()
           .includes(search.toLowerCase())
-      )
+      ) {
         return false
+      }
       if (typeFilter !== 'all' && t.type !== typeFilter) return false
       if (walletFilter !== 'all' && t.wallet?.id !== walletFilter) return false
-      if (catFilter !== 'all' && t.category?.id !== catFilter) return false
       if (statusFilter !== 'all' && t.status !== statusFilter) return false
+
+      // Filter theo category nằm trong advance transactions
+      if (catFilter !== 'all') {
+        const hasCategory = t.financialAdvanceTransactions?.some(
+          (adv) => adv.categoryId === catFilter,
+        )
+        if (!hasCategory) return false
+      }
+
       return true
     })
   }, [transactions, search, typeFilter, walletFilter, catFilter, statusFilter])
@@ -134,7 +147,7 @@ export function Transactions() {
   }
 
   // Cấu hình Cột Bảng
-  const columns: ColumnsType<IWallet_Transaction> = [
+  const columns: ColumnsType<IFinance_Transaction> = [
     {
       title: 'Date',
       dataIndex: 'createdAt',
@@ -158,7 +171,12 @@ export function Transactions() {
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
-      sorter: (a, b) => a.description.localeCompare(b.description),
+      sorter: (a, b) => {
+        if (a.description && b.description) {
+          return a.description.localeCompare(b.description)
+        }
+        return 0
+      },
       render: (desc: string) => <Text strong>{desc}</Text>,
     },
     {
@@ -188,7 +206,7 @@ export function Transactions() {
       dataIndex: 'wallet',
       key: 'walletId',
       responsive: ['sm'],
-      render: (data?: IWallet_Wallet) => (
+      render: (data?: IFinance_Wallet) => (
         <Flex align="center" gap={8}>
           <div
             style={{
@@ -208,26 +226,47 @@ export function Transactions() {
     },
     {
       title: 'Category',
-      dataIndex: 'category',
-      key: 'categoryId',
+      key: 'categories',
       responsive: ['md'],
-      render: (data?: IWallet_Category) => (
-        <Flex align="center" gap={8}>
-          <div
-            style={{
-              backgroundColor: `${data?.color || '#ccc'}ff`,
-              borderRadius: 6,
-              padding: 6,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <IconRenderer iconName={data?.icon} size={12} color={'#ffffff'} />
-          </div>
-          <Text style={{ fontSize: 13 }}>{data?.name || '-'}</Text>
-        </Flex>
-      ),
+      render: (_, record) => {
+        const advances = record.financialAdvanceTransactions || []
+        // Thu thập các categories không bị trùng lặp
+        const categories = Array.from(
+          new Map(
+            advances
+              .filter((adv) => adv.category)
+              .map((adv) => [adv.category!.id, adv.category!]),
+          ).values(),
+        )
+
+        if (categories.length === 0) {
+          return (
+            <Text type="secondary" style={{ fontSize: 13 }}>
+              -
+            </Text>
+          )
+        }
+
+        return (
+          <Flex wrap gap={4} align="center">
+            {categories.map((cat) => (
+              <Tag
+                key={cat.id}
+                color={cat.color || 'blue'}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  margin: 0,
+                }}
+              >
+                <IconRenderer iconName={cat.icon} size={10} color="#fff" />
+                {cat.name}
+              </Tag>
+            ))}
+          </Flex>
+        )
+      },
     },
     {
       title: 'Type',
@@ -248,7 +287,7 @@ export function Transactions() {
       dataIndex: 'status',
       key: 'status',
       responsive: ['md'],
-      render: (status: IWallet_Transaction['status']) => (
+      render: (status: IFinance_Transaction['status']) => (
         <Tag
           color={STATUS_TAG[status].color || 'default'}
           style={{ textTransform: 'capitalize' }}
@@ -267,7 +306,7 @@ export function Transactions() {
           type="text"
           icon={<EyeOutlined />}
           onClick={(e) => {
-            e.stopPropagation() // Ngăn chặn sự kiện click row trùng lặp
+            e.stopPropagation()
             setViewTransaction(record)
           }}
         />
@@ -394,7 +433,7 @@ export function Transactions() {
 
       {/* Main Table */}
       <Card bodyStyle={{ padding: 0 }} style={{ overflow: 'hidden' }}>
-        <Table<IWallet_Transaction>
+        <Table<IFinance_Transaction>
           rowKey="id"
           size={isMobile ? 'small' : 'medium'}
           columns={columns}
@@ -600,23 +639,13 @@ export function Transactions() {
                 </Tag>
               </Descriptions.Item>
 
-              <Descriptions.Item label="Wallet">
+              <Descriptions.Item label="Wallet" span={2}>
                 <Flex align="center" gap={6}>
                   <IconRenderer
                     iconName={viewTransaction.wallet?.icon}
                     size={14}
                   />
                   <span>{viewTransaction.wallet?.name || '-'}</span>
-                </Flex>
-              </Descriptions.Item>
-
-              <Descriptions.Item label="Category">
-                <Flex align="center" gap={6}>
-                  <IconRenderer
-                    iconName={viewTransaction.category?.icon}
-                    size={14}
-                  />
-                  <span>{viewTransaction.category?.name || '-'}</span>
                 </Flex>
               </Descriptions.Item>
 
@@ -632,7 +661,7 @@ export function Transactions() {
               </Descriptions.Item>
             </Descriptions>
 
-            {/* Danh sách các chi tiết hạng mục (nếu là Advance Transaction) */}
+            {/* Danh sách các chi tiết hạng mục (Advance Transactions) */}
             {viewTransaction.financialAdvanceTransactions &&
               viewTransaction.financialAdvanceTransactions.length > 0 && (
                 <div>
@@ -656,11 +685,28 @@ export function Transactions() {
                         key: 'description',
                       },
                       {
+                        title: 'Category',
+                        dataIndex: 'category',
+                        key: 'category',
+                        render: (cat) =>
+                          cat ? (
+                            <Flex align="center" gap={6}>
+                              <IconRenderer iconName={cat.icon} size={12} />
+                              <Text style={{ fontSize: 12 }}>{cat.name}</Text>
+                            </Flex>
+                          ) : (
+                            <Text type="secondary" style={{ fontSize: 12 }}>
+                              -
+                            </Text>
+                          ),
+                      },
+                      {
                         title: 'Amount',
                         dataIndex: 'amount',
                         key: 'amount',
                         align: 'right',
-                        render: (amt: number) => convertCurrency(amt),
+                        render: (amt: string | number) =>
+                          convertCurrency(Number(amt)),
                       },
                     ]}
                   />

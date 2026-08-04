@@ -5,7 +5,7 @@ import type { IWallet_WalletTransfer } from './wallet-transfer.type'
 import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 
 // Get<Example><Type>Params
-interface GetWallet_WalletTransfer_List_Params {
+interface GetWallet_WalletTransfer_Date_Params {
   queryParams?: {
     date?: dayjs.Dayjs | string | Date
   }
@@ -17,8 +17,8 @@ interface GetWallet_WalletTransfer_List_Params {
 }
 
 // useGet<Example><Type>
-export const useGetWallet_WalletTransfer_List = (
-  props: GetWallet_WalletTransfer_List_Params,
+export const useGetWallet_WalletTransfer_Date = (
+  props: GetWallet_WalletTransfer_Date_Params,
 ) =>
   useQueryGet<
     ApiBaseResponse<Array<IWallet_WalletTransfer>>,
