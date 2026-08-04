@@ -1,9 +1,11 @@
 import { Button, Flex, Modal } from 'antd'
-import { background } from '@/shared/common/design-token'
+import type { ModalProps } from 'antd'
+import { background, border } from '@/shared/common/design-token'
 
-interface BaseModalProps {
+interface BaseModalProps extends ModalProps {
   open: boolean
   onClose?: () => void
+  onCancel?: () => void
   onOk?: () => void
   title?: React.ReactNode
   children?: React.ReactNode
@@ -16,6 +18,7 @@ interface BaseModalProps {
 export default function BaseModal({
   open,
   onClose,
+  onCancel,
   onOk,
   title,
   children,
@@ -27,7 +30,7 @@ export default function BaseModal({
   return (
     <Modal
       open={open}
-      onCancel={onClose}
+      onCancel={onCancel || onClose}
       onOk={onOk}
       title={title}
       width={width}
@@ -70,8 +73,11 @@ export default function BaseModal({
         },
         body: {
           padding: '16px 24px',
+          maxHeight: 'calc(100vh - 300px)',
+          overflowY: 'auto',
         },
         footer: {
+          borderTop: `1px solid ${border.base}`,
           margin: 0,
           padding: '16px 24px',
         },

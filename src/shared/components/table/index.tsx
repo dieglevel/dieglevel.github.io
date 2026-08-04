@@ -35,7 +35,6 @@ const TableComponent = <T extends object>({
 
   return (
     <AntdTable<T>
-      {...props}
       className="custom-table"
       rowKey="id"
       dataSource={pageData}
@@ -72,6 +71,7 @@ const TableComponent = <T extends object>({
         borderRadius: 8,
         ...props.style,
       }}
+      {...props}
     />
   )
 }

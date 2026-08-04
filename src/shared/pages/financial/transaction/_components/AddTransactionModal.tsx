@@ -7,7 +7,6 @@ import {
   Form,
   Input,
   InputNumber,
-  Modal,
   Segmented,
   Select,
   Typography,
@@ -27,6 +26,7 @@ import { InputWithComma } from '@/shared/components/input/utils'
 import { useMutationAdvanceTransaction } from '@/shared/api/financial/transaction/advance-transaction/advance-transaction.mutation'
 import { useGetWallet_Transaction_List } from '@/shared/api/financial/transaction/useGetWallet_Transaction_List'
 import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
+import BaseModal from '@/shared/components/modal'
 
 const { Text, Title } = Typography
 
@@ -81,7 +81,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
       form.resetFields()
       form.setFieldsValue({
         type: FINANCIAL_TRANSACTION_TYPE.EXPENSE,
-        status: FINANCIAL_TRANSACTION_STATUS.PENDING,
+        status: FINANCIAL_TRANSACTION_STATUS.COMPLETED,
         date: dayjs(),
         financialAdvanceTransactions: [
           { description: '', amount: null, categoryId: undefined },
@@ -134,7 +134,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
   }
 
   return (
-    <Modal
+    <BaseModal
       title="Tạo Giao Dịch Nâng Cao"
       open={open}
       onCancel={onClose}
@@ -371,7 +371,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
 
         {/* 8. Tags & Receipt Image */}
         <Flex gap={12}>
-          <Form.Item label="Thẻ (tags)" name="tags" className="flex-1">
+          <Form.Item label="Thẻ (tags)" name="tags" style={{ flex: 1 }}>
             <Select
               mode="tags"
               placeholder="Nhập tag và bấm Enter..."
@@ -382,7 +382,6 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
           <Form.Item
             label="Link ảnh hóa đơn (receiptImageUrl)"
             name="receiptImageUrl"
-            className="flex-1"
           >
             <Input placeholder="https://..." maxLength={500} />
           </Form.Item>
@@ -393,7 +392,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
           <Form.Item
             label="Ngày thực hiện"
             name="date"
-            className="flex-1"
+            style={{ flex: 1 }}
             rules={[{ required: true }]}
           >
             <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />
@@ -402,18 +401,18 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
           <Form.Item
             label="Trạng thái (status)"
             name="status"
-            className="flex-1"
+            style={{ flex: 1 }}
             rules={[{ required: true }]}
           >
             <Select
               options={[
                 {
-                  value: FINANCIAL_TRANSACTION_STATUS.PENDING,
-                  label: '⏳ PENDING (Đang chờ)',
-                },
-                {
                   value: FINANCIAL_TRANSACTION_STATUS.COMPLETED,
                   label: '✅ COMPLETED (Hoàn thành)',
+                },
+                {
+                  value: FINANCIAL_TRANSACTION_STATUS.PENDING,
+                  label: '⏳ PENDING (Đang chờ)',
                 },
                 {
                   value: FINANCIAL_TRANSACTION_STATUS.FAILED,
@@ -424,6 +423,6 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
           </Form.Item>
         </Flex>
       </Form>
-    </Modal>
+    </BaseModal>
   )
 }

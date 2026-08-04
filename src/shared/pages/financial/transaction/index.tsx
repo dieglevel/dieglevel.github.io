@@ -3,8 +3,6 @@ import {
   Badge,
   Button,
   Card,
-  Descriptions,
-  Divider,
   Flex,
   FloatButton,
   Grid,
@@ -26,6 +24,7 @@ import {
 } from '@ant-design/icons'
 import { AddTransactionModal } from './_components/AddTransactionModal'
 import { TransactionsSummary } from './_components/TransactionsSummary'
+import { TransactionDetail } from './_components/TransactionDetail'
 import type { ColumnsType } from 'antd/es/table'
 import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
@@ -33,15 +32,10 @@ import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { useGetWallet_Transaction_Date } from '@/shared/api/financial/transaction/useGetWallet_Transaction_Date'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
+import { FINANCIAL_TRANSACTION_STATUS_LABEL } from '@/shared/api/financial/transaction/transaction.enum'
 
 const { Title, Text } = Typography
 const { useBreakpoint } = Grid
-
-const STATUS_TAG: Record<IFinance_Transaction['status'], { color: string }> = {
-  completed: { color: 'success' },
-  pending: { color: 'warning' },
-  failed: { color: 'error' },
-}
 
 export function Transactions() {
   const screens = useBreakpoint()
@@ -289,7 +283,7 @@ export function Transactions() {
       responsive: ['md'],
       render: (status: IFinance_Transaction['status']) => (
         <Tag
-          color={STATUS_TAG[status].color || 'default'}
+          color={FINANCIAL_TRANSACTION_STATUS_LABEL[status].color || 'default'}
           style={{ textTransform: 'capitalize' }}
         >
           {status}
@@ -570,151 +564,10 @@ export function Transactions() {
       </Modal>
 
       {/* VIEW TRANSACTION MODAL */}
-      <Modal
-        title="Transaction Details"
-        open={!!viewTransaction}
-        onCancel={() => setViewTransaction(null)}
-        footer={[
-          <Button key="close" onClick={() => setViewTransaction(null)}>
-            Close
-          </Button>,
-        ]}
-        width={560}
-        centered
-      >
-        {viewTransaction && (
-          <Space
-            direction="vertical"
-            style={{ width: '100%', marginTop: 12 }}
-            size="large"
-          >
-            {/* Tổng quan số tiền */}
-            <Card
-              size="small"
-              style={{
-                textAlign: 'center',
-                backgroundColor:
-                  viewTransaction.type === 'income' ? '#f6ffed' : '#fff2f0',
-                borderColor:
-                  viewTransaction.type === 'income' ? '#b7eb8f' : '#ffccc7',
-              }}
-            >
-              <Text type="secondary" style={{ fontSize: 12 }}>
-                TOTAL AMOUNT
-              </Text>
-              <Title
-                level={2}
-                style={{
-                  margin: 0,
-                  color:
-                    viewTransaction.type === 'income' ? '#52c41a' : '#ff4d4f',
-                }}
-              >
-                {viewTransaction.type === 'income' ? '+' : '-'}
-                {convertCurrency(viewTransaction.amount)}
-              </Title>
-            </Card>
-
-            {/* Thông tin cơ bản */}
-            <Descriptions column={isMobile ? 1 : 2} bordered size="small">
-              <Descriptions.Item label="Description" span={2}>
-                <Text strong>{viewTransaction.description}</Text>
-              </Descriptions.Item>
-
-              <Descriptions.Item label="Type">
-                <Tag
-                  color={
-                    viewTransaction.type === 'income' ? 'green' : 'volcano'
-                  }
-                >
-                  {viewTransaction.type.toUpperCase()}
-                </Tag>
-              </Descriptions.Item>
-
-              <Descriptions.Item label="Status">
-                <Tag
-                  color={STATUS_TAG[viewTransaction.status].color || 'default'}
-                >
-                  {viewTransaction.status.toUpperCase()}
-                </Tag>
-              </Descriptions.Item>
-
-              <Descriptions.Item label="Wallet" span={2}>
-                <Flex align="center" gap={6}>
-                  <IconRenderer
-                    iconName={viewTransaction.wallet?.icon}
-                    size={14}
-                  />
-                  <span>{viewTransaction.wallet?.name || '-'}</span>
-                </Flex>
-              </Descriptions.Item>
-
-              <Descriptions.Item label="Date" span={2}>
-                <Flex align="center" justify="space-between">
-                  <Typography.Text style={{ fontSize: 12 }}>
-                    {new Date(viewTransaction.createdAt).toLocaleDateString()}
-                  </Typography.Text>
-                  <Typography.Text style={{ fontSize: 12 }}>
-                    {new Date(viewTransaction.createdAt).toLocaleTimeString()}
-                  </Typography.Text>
-                </Flex>
-              </Descriptions.Item>
-            </Descriptions>
-
-            {/* Danh sách các chi tiết hạng mục (Advance Transactions) */}
-            {viewTransaction.financialAdvanceTransactions &&
-              viewTransaction.financialAdvanceTransactions.length > 0 && (
-                <div>
-                  <Divider
-                    orientation="horizontal"
-                    style={{ margin: '12px 0', fontSize: 14 }}
-                  >
-                    Breakdown Items (
-                    {viewTransaction.financialAdvanceTransactions.length})
-                  </Divider>
-
-                  <Table
-                    size="small"
-                    pagination={false}
-                    rowKey="id"
-                    dataSource={viewTransaction.financialAdvanceTransactions}
-                    columns={[
-                      {
-                        title: 'Item Description',
-                        dataIndex: 'description',
-                        key: 'description',
-                      },
-                      {
-                        title: 'Category',
-                        dataIndex: 'category',
-                        key: 'category',
-                        render: (cat) =>
-                          cat ? (
-                            <Flex align="center" gap={6}>
-                              <IconRenderer iconName={cat.icon} size={12} />
-                              <Text style={{ fontSize: 12 }}>{cat.name}</Text>
-                            </Flex>
-                          ) : (
-                            <Text type="secondary" style={{ fontSize: 12 }}>
-                              -
-                            </Text>
-                          ),
-                      },
-                      {
-                        title: 'Amount',
-                        dataIndex: 'amount',
-                        key: 'amount',
-                        align: 'right',
-                        render: (amt: string | number) =>
-                          convertCurrency(Number(amt)),
-                      },
-                    ]}
-                  />
-                </div>
-              )}
-          </Space>
-        )}
-      </Modal>
+      <TransactionDetail
+        viewTransaction={viewTransaction}
+        setViewTransaction={() => setViewTransaction(null)}
+      />
 
       {/* Add Modal */}
       {showAdd && (
