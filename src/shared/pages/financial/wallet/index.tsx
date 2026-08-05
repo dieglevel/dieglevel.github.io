@@ -1,106 +1,39 @@
-import { useState } from 'react'
-import { Button, Flex, Modal, Space, Typography } from 'antd'
-import { HistoryOutlined, PlusOutlined, SwapOutlined } from '@ant-design/icons'
+import { useMemo } from 'react'
+import { Flex } from 'antd'
 import SummaryCards from '../_components/SummaryCards'
-import { AnimatedGrid } from '../category/_components/animation-card'
-import { TransferForm } from './_components/TransferForm'
+import { AnimatedGrid } from '../../../components/animated-grid/AnimatedGrid'
 import TransferHistory from './_components/TransferHistory'
 import { WalletCard } from './_components/WalletCard'
 import { WalletModal } from './_components/WalletForm'
+import { WalletHeader } from './_components/WalletHeader'
+import { WalletTransferModal } from './_components/WalletTransferModal'
+import { useWalletActions } from './_hooks/useWalletActions'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
-import { useMutationWallet } from '@/shared/api/financial/wallet/wallet.mutation'
 import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
-
-const { Title, Text } = Typography
 
 export function Wallets() {
   const { data, isFetching } = useGetFinance_Wallet_List({})
   const wallets: Array<IFinance_Wallet> = data?.data || []
-  const [mode, setMode] = useState<'add' | 'edit' | 'transfer' | null>(null)
-  const [editTarget, setEditTarget] = useState<IFinance_Wallet | null>(null)
-  const [open, setOpen] = useState(false)
-  const [transferHistoryOpen, setTransferHistoryOpen] = useState(false)
 
-  const { mWallet_Create, mWallet_Delete, mWallet_Update, mWallet_Transfer } =
-    useMutationWallet()
+  const {
+    mode,
+    setMode,
+    editTarget,
+    setEditTarget,
+    openModal,
+    transferHistoryOpen,
+    setTransferHistoryOpen,
+    handleOpenModal,
+    handleCloseModal,
+    saveWallet,
+    deleteWallet,
+    transfer,
+  } = useWalletActions()
 
-  const totalBalance = wallets.reduce((s, w) => s + w.balance, 0)
-
-  const handleOpenModal = (
-    modeOpen: 'add' | 'edit' | 'transfer',
-    wallet?: IFinance_Wallet,
-  ) => {
-    setMode(modeOpen)
-    setEditTarget(wallet || null)
-    setOpen(true)
-  }
-
-  const handleCloseModal = () => {
-    setOpen(false)
-    setEditTarget(null)
-  }
-
-  const save = async (formData: Partial<IFinance_Wallet>) => {
-    if (mode === 'add') {
-      await mWallet_Create.mutateAsync(
-        { body: formData },
-        {
-          onSuccess: () => {
-            setOpen(false)
-          },
-        },
-      )
-    } else if (editTarget) {
-      await mWallet_Update.mutateAsync(
-        {
-          body: {
-            ...formData,
-          },
-          pathParams: {
-            id: editTarget.id,
-          },
-        },
-        {
-          onSuccess: () => {
-            setOpen(false)
-            setEditTarget(null)
-          },
-        },
-      )
-    }
-  }
-
-  async function deleteWallet(id: number) {
-    await mWallet_Delete.mutateAsync(
-      {
-        pathParams: {
-          id,
-        },
-      },
-      {
-        onSuccess: () => {
-          setOpen(false)
-          setEditTarget(null)
-        },
-      },
-    )
-  }
-
-  async function transfer(
-    fromId: number,
-    toId: number,
-    amount: number,
-    transferFee: number,
-  ) {
-    await mWallet_Transfer.mutateAsync({
-      body: {
-        fromWalletId: fromId,
-        toWalletId: toId,
-        amount,
-        transferFee,
-      },
-    })
-  }
+  const totalBalance = useMemo(
+    () => wallets.reduce((s, w) => s + w.balance, 0),
+    [wallets],
+  )
 
   return (
     <Flex
@@ -113,54 +46,23 @@ export function Wallets() {
         boxSizing: 'border-box',
       }}
     >
+      {/* 1. Drawer Lịch sử chuyển tiền */}
       <TransferHistory
         open={transferHistoryOpen}
         onClose={() => setTransferHistoryOpen(false)}
       />
 
-      {/* Header */}
-      <Flex justify="space-between" align="flex-start" wrap="wrap" gap={16}>
-        <div>
-          <Title level={3} style={{ margin: 0 }}>
-            Wallets
-          </Title>
-          <Text type="secondary">Manage your accounts &amp; balances</Text>
-        </div>
+      {/* 2. Header Section */}
+      <WalletHeader
+        onToggleHistory={() => setTransferHistoryOpen(!transferHistoryOpen)}
+        onOpenTransfer={() => handleOpenModal('transfer')}
+        onOpenAdd={() => handleOpenModal('add')}
+      />
 
-        <Space
-          size={8}
-          wrap
-          style={{ width: '100%', justifyContent: 'flex-end' }}
-        >
-          <Button
-            icon={<HistoryOutlined />}
-            onClick={() => setTransferHistoryOpen(!transferHistoryOpen)}
-          >
-            Transfer History
-          </Button>
-          <Button
-            icon={<SwapOutlined />}
-            onClick={() => handleOpenModal('transfer')}
-          >
-            Transfer
-          </Button>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => handleOpenModal('add')}
-          >
-            Add Wallet
-          </Button>
-        </Space>
-      </Flex>
-
-      {/* Filter / Controls Bar */}
-      <Flex justify="end" align="center" wrap="wrap" gap={12}></Flex>
-
-      {/* Summary Cards */}
+      {/* 3. Summary Cards */}
       <SummaryCards totalBudget={totalBalance} totalSpent={0} />
 
-      {/* Wallet Cards Grid */}
+      {/* 4. Wallet Cards Grid */}
       <div style={{ width: '100%' }}>
         <AnimatedGrid
           items={wallets}
@@ -179,27 +81,23 @@ export function Wallets() {
         />
       </div>
 
-      {/* Modals */}
+      {/* 5. Modal Thêm / Sửa Wallet */}
       <WalletModal
-        open={(open && mode === 'add') || (mode === 'edit' && !!editTarget)}
+        open={
+          (openModal && mode === 'add') || (mode === 'edit' && !!editTarget)
+        }
         wallet={editTarget}
         onCancel={handleCloseModal}
-        onSubmit={save}
+        onSubmit={saveWallet}
       />
 
-      <Modal
-        title="Transfer Between Wallets"
+      {/* 6. Modal Chuyển tiền */}
+      <WalletTransferModal
         open={mode === 'transfer'}
-        onCancel={() => setMode(null)}
-        footer={null}
-        destroyOnClose
-      >
-        <TransferForm
-          wallets={wallets}
-          onTransfer={transfer}
-          onClose={() => setMode(null)}
-        />
-      </Modal>
+        wallets={wallets}
+        onClose={() => setMode(null)}
+        onTransfer={transfer}
+      />
     </Flex>
   )
 }

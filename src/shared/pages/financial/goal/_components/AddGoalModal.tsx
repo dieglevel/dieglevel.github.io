@@ -10,14 +10,19 @@ import {
   Row,
   Select,
   Switch,
+  message,
 } from 'antd'
 import dayjs from 'dayjs'
-import { FINANCIAL_GOAL_STATUS, FINANCIAL_GOAL_TYPE } from '..'
-import type { IFinancialGoal } from '..'
+import type { IFinance_Goal } from '@/shared/api/financial/goal/goal.type'
+import {
+  FINANCIAL_GOAL_STATUS,
+  FINANCIAL_GOAL_TYPE,
+} from '@/shared/api/financial/goal/goal.enum'
+import { useMutationGoal } from '@/shared/api/financial/goal/goal.mutation'
 
 interface AddGoalModalProps {
   open: boolean
-  initialValues?: IFinancialGoal | null
+  initialValues?: IFinance_Goal | null
   onClose: () => void
   onSuccess?: () => void
 }
@@ -29,6 +34,7 @@ export function AddGoalModal({
   onSuccess,
 }: AddGoalModalProps) {
   const [form] = Form.useForm()
+  const { mGoal_Create, mGoal_Update } = useMutationGoal()
 
   useEffect(() => {
     if (initialValues) {
@@ -41,7 +47,7 @@ export function AddGoalModal({
     } else {
       form.resetFields()
       form.setFieldsValue({
-        type: FINANCIAL_GOAL_TYPE.SAVINGS,
+        type: FINANCIAL_GOAL_TYPE.EMERGENCY_FUND,
         status: FINANCIAL_GOAL_STATUS.ACTIVE,
         currentAmount: 0,
         isLocked: false,
@@ -54,17 +60,52 @@ export function AddGoalModal({
       const values = await form.validateFields()
       const payload = {
         ...values,
-        deadline: values.deadline ? values.deadline.toISOString() : null,
+        deadline: values.deadline ? values.deadline.toDate() : null,
       }
-      console.log('Goal Payload:', payload)
 
-      // TODO: Gọi API Create/Update mutation từ Service
-      onSuccess?.()
-      onClose()
+      if (initialValues?.id) {
+        // Cập nhật
+        mGoal_Update.mutate(
+          {
+            pathParams: {
+              id: initialValues.id,
+            },
+            body: payload,
+          },
+
+          {
+            onSuccess: () => {
+              message.success('Cập nhật mục tiêu thành công!')
+              onSuccess?.()
+              onClose()
+            },
+            onError: () => {
+              message.error('Cập nhật thất bại!')
+            },
+          },
+        )
+      } else {
+        // Tạo mới
+        mGoal_Create.mutate(
+          { body: payload },
+          {
+            onSuccess: () => {
+              message.success('Tạo mục tiêu thành công!')
+              onSuccess?.()
+              onClose()
+            },
+            onError: () => {
+              message.error('Tạo mục tiêu thất bại!')
+            },
+          },
+        )
+      }
     } catch (err) {
-      // Validate Error
+      // Validate failed
     }
   }
+
+  const isSubmitting = mGoal_Create.isPending || mGoal_Update.isPending
 
   return (
     <Modal
@@ -72,6 +113,7 @@ export function AddGoalModal({
       open={open}
       onCancel={onClose}
       onOk={handleSubmit}
+      confirmLoading={isSubmitting}
       okText={initialValues ? 'Lưu thay đổi' : 'Tạo mục tiêu'}
       cancelText="Hủy"
       width={600}
@@ -100,14 +142,15 @@ export function AddGoalModal({
             >
               <Select
                 options={[
-                  { value: FINANCIAL_GOAL_TYPE.SAVINGS, label: 'Tiết kiệm' },
                   {
                     value: FINANCIAL_GOAL_TYPE.EMERGENCY_FUND,
                     label: 'Quỹ khẩn cấp',
                   },
-                  { value: FINANCIAL_GOAL_TYPE.INVESTMENT, label: 'Đầu tư' },
-                  { value: FINANCIAL_GOAL_TYPE.PURCHASE, label: 'Mua sắm' },
-                  { value: FINANCIAL_GOAL_TYPE.DEBT_PAYOFF, label: 'Trả nợ' },
+                  {
+                    value: FINANCIAL_GOAL_TYPE.BIG_PURCHASE,
+                    label: 'Mua sắm lớn',
+                  },
+                  { value: FINANCIAL_GOAL_TYPE.TRAVEL, label: 'Du lịch' },
                   { value: FINANCIAL_GOAL_TYPE.OTHER, label: 'Khác' },
                 ]}
               />
@@ -172,7 +215,6 @@ export function AddGoalModal({
                     label: 'Hoàn thành',
                   },
                   { value: FINANCIAL_GOAL_STATUS.PAUSED, label: 'Tạm dừng' },
-                  { value: FINANCIAL_GOAL_STATUS.CANCELLED, label: 'Đã hủy' },
                 ]}
               />
             </Form.Item>

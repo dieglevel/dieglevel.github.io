@@ -1,40 +1,20 @@
 import React, { useMemo, useState } from 'react'
-import {
-  Badge,
-  Button,
-  Card,
-  Flex,
-  FloatButton,
-  Grid,
-  Input,
-  Modal,
-  Select,
-  Space,
-  Table,
-  Tag,
-  Typography,
-} from 'antd'
-import {
-  DeleteOutlined,
-  EyeOutlined,
-  FilterOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-  SearchOutlined,
-} from '@ant-design/icons'
-import { AddTransactionModal } from './_components/AddTransactionModal'
+import { FloatButton, Grid, Space } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
+import { TransactionModal } from './_components/TransactionModal'
 import { TransactionsSummary } from './_components/TransactionsSummary'
 import { TransactionDetail } from './_components/TransactionDetail'
-import type { ColumnsType } from 'antd/es/table'
+import { TransactionsTable } from './_components/TransactionsTable'
+import { TransactionHeader } from './_components/TransactionHeader'
+import { TransactionSearch } from './_components/TransactionSearch'
+import { TransactionFilterModal } from './_components/TransactionFilterModal'
+
 import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
-import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
-import { useGetWallet_Transaction_Date } from '@/shared/api/financial/transaction/useGetWallet_Transaction_Date'
-import { convertCurrency } from '@/shared/utils/helper/format-money'
-import { FINANCIAL_TRANSACTION_STATUS_LABEL } from '@/shared/api/financial/transaction/transaction.enum'
+import type { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
+import { useGetWallet_Transaction_Date } from '@/shared/api/financial/transaction/useGetFinance_Transaction_Date'
 
-const { Title, Text } = Typography
 const { useBreakpoint } = Grid
 
 export function Transactions() {
@@ -44,11 +24,11 @@ export function Transactions() {
   const { data: dataTransaction } = useGetWallet_Transaction_Date({})
   const transactions = dataTransaction?.data || []
 
-  // State Tìm kiếm & Bộ lọc
+  // State Bộ lọc & Tìm kiếm
   const [search, setSearch] = useState('')
-  const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense'>(
-    'all',
-  )
+  const [typeFilter, setTypeFilter] = useState<
+    'all' | FINANCIAL_TRANSACTION_TYPE
+  >('all')
   const [walletFilter, setWalletFilter] = useState<number | 'all'>('all')
   const [catFilter, setCatFilter] = useState<number | 'all'>('all')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -57,40 +37,29 @@ export function Transactions() {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
   const [showAdd, setShowAdd] = useState(false)
   const [selectedKeys, setSelectedKeys] = useState<Array<React.Key>>([])
-
-  // State cho Modal Xem Chi Tiết Transaction
   const [viewTransaction, setViewTransaction] =
     useState<IFinance_Transaction | null>(null)
 
-  // Danh sách Ví cho Select
+  // Options Select
   const walletOptions = useMemo(() => {
     const map = new Map<number, IFinance_Wallet>()
     transactions.forEach((t) => {
-      if (t.wallet && t.wallet.id) map.set(t.wallet.id, t.wallet)
+      if (t.wallet?.id) map.set(t.wallet.id, t.wallet)
     })
-    return Array.from(map.values()).map((w) => ({
-      value: w.id,
-      label: w.name,
-    }))
+    return Array.from(map.values()).map((w) => ({ value: w.id, label: w.name }))
   }, [transactions])
 
-  // Danh sách Danh mục cho Select (Trích xuất từ financialAdvanceTransactions)
   const categoryOptions = useMemo(() => {
     const map = new Map<number, IFinance_Category>()
     transactions.forEach((t) => {
       t.financialAdvanceTransactions?.forEach((adv) => {
-        if (adv.category?.id) {
-          map.set(adv.category.id, adv.category)
-        }
+        if (adv.category?.id) map.set(adv.category.id, adv.category)
       })
     })
-    return Array.from(map.values()).map((c) => ({
-      value: c.id,
-      label: c.name,
-    }))
+    return Array.from(map.values()).map((c) => ({ value: c.id, label: c.name }))
   }, [transactions])
 
-  // Đếm số lượng bộ lọc nâng cao đang active
+  // Count active filter
   const activeFilterCount = useMemo(() => {
     let count = 0
     if (typeFilter !== 'all') count++
@@ -100,7 +69,6 @@ export function Transactions() {
     return count
   }, [typeFilter, walletFilter, catFilter, statusFilter])
 
-  // Reset toàn bộ filter
   const handleResetFilter = () => {
     setTypeFilter('all')
     setWalletFilter('all')
@@ -108,7 +76,7 @@ export function Transactions() {
     setStatusFilter('all')
   }
 
-  // Logic Filter dữ liệu
+  // Filter Logic
   const filtered = useMemo(() => {
     return transactions.filter((t) => {
       if (
@@ -124,189 +92,15 @@ export function Transactions() {
       if (walletFilter !== 'all' && t.wallet?.id !== walletFilter) return false
       if (statusFilter !== 'all' && t.status !== statusFilter) return false
 
-      // Filter theo category nằm trong advance transactions
       if (catFilter !== 'all') {
         const hasCategory = t.financialAdvanceTransactions?.some(
           (adv) => adv.categoryId === catFilter,
         )
         if (!hasCategory) return false
       }
-
       return true
     })
   }, [transactions, search, typeFilter, walletFilter, catFilter, statusFilter])
-
-  const deleteSelected = () => {
-    setSelectedKeys([])
-  }
-
-  // Cấu hình Cột Bảng
-  const columns: ColumnsType<IFinance_Transaction> = [
-    {
-      title: 'Date',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      width: 90,
-      sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
-      render: (date: string) => (
-        <Text
-          type="secondary"
-          style={{ fontFamily: 'monospace', fontSize: 12 }}
-        >
-          {new Date(date).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-          })}
-        </Text>
-      ),
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-      ellipsis: true,
-      sorter: (a, b) => {
-        if (a.description && b.description) {
-          return a.description.localeCompare(b.description)
-        }
-        return 0
-      },
-      render: (desc: string) => <Text strong>{desc}</Text>,
-    },
-    {
-      title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-      align: 'right',
-      sorter: (a, b) => a.amount - b.amount,
-      render: (amount: number, record) => {
-        const isIncome = record.type === 'income'
-        return (
-          <Text
-            style={{
-              fontFamily: "'JetBrains Mono', monospace",
-              color: isIncome ? '#10b981' : undefined,
-              fontWeight: 600,
-            }}
-          >
-            {isIncome ? '+' : '-'}
-            {convertCurrency(amount)}
-          </Text>
-        )
-      },
-    },
-    {
-      title: 'Wallet',
-      dataIndex: 'wallet',
-      key: 'walletId',
-      responsive: ['sm'],
-      render: (data?: IFinance_Wallet) => (
-        <Flex align="center" gap={8}>
-          <div
-            style={{
-              backgroundColor: `${data?.color || '#ccc'}ff`,
-              borderRadius: 6,
-              padding: 6,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <IconRenderer iconName={data?.icon} size={12} color={'#ffffff'} />
-          </div>
-          <Text style={{ fontSize: 13 }}>{data?.name}</Text>
-        </Flex>
-      ),
-    },
-    {
-      title: 'Category',
-      key: 'categories',
-      responsive: ['md'],
-      render: (_, record) => {
-        const advances = record.financialAdvanceTransactions || []
-        // Thu thập các categories không bị trùng lặp
-        const categories = Array.from(
-          new Map(
-            advances
-              .filter((adv) => adv.category)
-              .map((adv) => [adv.category!.id, adv.category!]),
-          ).values(),
-        )
-
-        if (categories.length === 0) {
-          return (
-            <Text type="secondary" style={{ fontSize: 13 }}>
-              -
-            </Text>
-          )
-        }
-
-        return (
-          <Flex wrap gap={4} align="center">
-            {categories.map((cat) => (
-              <Tag
-                key={cat.id}
-                color={cat.color || 'blue'}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  margin: 0,
-                }}
-              >
-                <IconRenderer iconName={cat.icon} size={10} color="#fff" />
-                {cat.name}
-              </Tag>
-            ))}
-          </Flex>
-        )
-      },
-    },
-    {
-      title: 'Type',
-      dataIndex: 'type',
-      key: 'type',
-      responsive: ['lg'],
-      render: (type: 'income' | 'expense') => (
-        <Tag
-          color={type === 'income' ? 'green' : 'volcano'}
-          style={{ textTransform: 'capitalize' }}
-        >
-          {type}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      responsive: ['md'],
-      render: (status: IFinance_Transaction['status']) => (
-        <Tag
-          color={FINANCIAL_TRANSACTION_STATUS_LABEL[status].color || 'default'}
-          style={{ textTransform: 'capitalize' }}
-        >
-          {status}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      width: 70,
-      align: 'center',
-      render: (_, record) => (
-        <Button
-          type="text"
-          icon={<EyeOutlined />}
-          onClick={(e) => {
-            e.stopPropagation()
-            setViewTransaction(record)
-          }}
-        />
-      ),
-    },
-  ]
 
   return (
     <Space
@@ -318,263 +112,78 @@ export function Transactions() {
         boxSizing: 'border-box',
       }}
     >
-      {/* Header */}
-      <Flex
-        vertical={isMobile}
-        justify="space-between"
-        align={isMobile ? 'stretch' : 'center'}
-        gap={12}
-      >
-        <div>
-          <Title level={isMobile ? 4 : 3} style={{ margin: 0 }}>
-            Transactions
-          </Title>
-          <Text type="secondary" style={{ fontSize: 13 }}>
-            Showing {filtered.length} of {transactions.length} records
-          </Text>
-        </div>
-        <Space
-          style={{ width: isMobile ? '100%' : 'auto' }}
-          orientation={isMobile ? 'vertical' : 'horizontal'}
-        >
-          {selectedKeys.length > 0 && (
-            <Button
-              danger
-              icon={<DeleteOutlined />}
-              onClick={deleteSelected}
-              style={{ flex: 1 }}
-            >
-              Delete ({selectedKeys.length})
-            </Button>
-          )}
-          {!isMobile && (
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => setShowAdd(true)}
-            >
-              Add Transaction
-            </Button>
-          )}
-        </Space>
-      </Flex>
+      {/* 1. Header Section */}
+      <TransactionHeader
+        isMobile={isMobile}
+        filteredCount={filtered.length}
+        totalCount={transactions.length}
+        selectedCount={selectedKeys.length}
+        onDeleteSelected={() => setSelectedKeys([])}
+        onOpenAddModal={() => setShowAdd(true)}
+      />
 
-      {/* Summary Chart Component */}
+      {/* 2. Summary Chart */}
       <TransactionsSummary transactions={transactions} />
 
-      {/* Thanh công cụ Tìm kiếm & Nút mở Filter Modal */}
-      <Card size="small" bodyStyle={{ padding: 12 }}>
-        <Flex gap={10} align="center">
-          <Input
-            placeholder="Search transactions…"
-            prefix={<SearchOutlined />}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ flex: 1 }}
-            allowClear
-          />
-          <Badge count={activeFilterCount} color="#1677ff" offset={[-2, 2]}>
-            <Button
-              icon={<FilterOutlined />}
-              onClick={() => setIsFilterModalOpen(true)}
-            >
-              {!isMobile && 'Filters'}
-            </Button>
-          </Badge>
-        </Flex>
+      {/* 3. Search & Active Filters */}
+      <TransactionSearch
+        isMobile={isMobile}
+        search={search}
+        onSearchChange={setSearch}
+        activeFilterCount={activeFilterCount}
+        onOpenFilterModal={() => setIsFilterModalOpen(true)}
+        typeFilter={typeFilter}
+        walletFilter={walletFilter}
+        catFilter={catFilter}
+        statusFilter={statusFilter}
+        walletOptions={walletOptions}
+        categoryOptions={categoryOptions}
+        onClearType={() => setTypeFilter('all')}
+        onClearWallet={() => setWalletFilter('all')}
+        onClearCat={() => setCatFilter('all')}
+        onClearStatus={() => setStatusFilter('all')}
+        onResetAll={handleResetFilter}
+      />
 
-        {/* Chip hiển thị các Filter đang active để xóa nhanh */}
-        {activeFilterCount > 0 && (
-          <Flex wrap gap={6} style={{ marginTop: 10 }}>
-            <Text type="secondary" style={{ fontSize: 12, marginRight: 4 }}>
-              Active Filters:
-            </Text>
+      {/* 4. Table */}
+      <TransactionsTable
+        dataSource={filtered}
+        isMobile={isMobile}
+        selectedKeys={selectedKeys}
+        onSelectChange={setSelectedKeys}
+        onViewDetail={setViewTransaction}
+      />
 
-            {typeFilter !== 'all' && (
-              <Tag closable onClose={() => setTypeFilter('all')} color="blue">
-                Type: {typeFilter}
-              </Tag>
-            )}
-            {walletFilter !== 'all' && (
-              <Tag closable onClose={() => setWalletFilter('all')} color="blue">
-                Wallet:{' '}
-                {walletOptions.find((w) => w.value === walletFilter)?.label}
-              </Tag>
-            )}
-            {catFilter !== 'all' && (
-              <Tag closable onClose={() => setCatFilter('all')} color="blue">
-                Category:{' '}
-                {categoryOptions.find((c) => c.value === catFilter)?.label}
-              </Tag>
-            )}
-            {statusFilter !== 'all' && (
-              <Tag closable onClose={() => setStatusFilter('all')} color="blue">
-                Status: {statusFilter}
-              </Tag>
-            )}
-
-            <Button
-              type="link"
-              size="small"
-              onClick={handleResetFilter}
-              style={{ padding: 0, fontSize: 12 }}
-            >
-              Clear all
-            </Button>
-          </Flex>
-        )}
-      </Card>
-
-      {/* Main Table */}
-      <Card bodyStyle={{ padding: 0 }} style={{ overflow: 'hidden' }}>
-        <Table<IFinance_Transaction>
-          rowKey="id"
-          size={isMobile ? 'small' : 'medium'}
-          columns={columns}
-          dataSource={filtered}
-          onRow={(record) => ({
-            onClick: () => setViewTransaction(record),
-            style: { cursor: 'pointer' },
-          })}
-          rowSelection={{
-            selectedRowKeys: selectedKeys,
-            onChange: setSelectedKeys,
-          }}
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: false,
-            simple: isMobile,
-            showTotal: isMobile
-              ? undefined
-              : (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-          }}
-          scroll={{ x: 'max-content' }}
-        />
-      </Card>
-
-      {/* FILTER MODAL */}
-      <Modal
-        title={
-          <Flex
-            justify="space-between"
-            align="center"
-            style={{ paddingRight: 24 }}
-          >
-            <span>Filter Transactions</span>
-            {activeFilterCount > 0 && (
-              <Button
-                type="link"
-                size="small"
-                icon={<ReloadOutlined />}
-                onClick={handleResetFilter}
-              >
-                Reset
-              </Button>
-            )}
-          </Flex>
-        }
+      {/* 5. Filter Modal */}
+      <TransactionFilterModal
         open={isFilterModalOpen}
-        onCancel={() => setIsFilterModalOpen(false)}
-        onOk={() => setIsFilterModalOpen(false)}
-        okText="Apply Filters"
-        cancelText="Close"
-        centered
-        width={420}
-      >
-        <Space
-          direction="vertical"
-          size="middle"
-          style={{ width: '100%', marginTop: 16 }}
-        >
-          <div>
-            <Text
-              strong
-              style={{ fontSize: 13, display: 'block', marginBottom: 6 }}
-            >
-              Transaction Type
-            </Text>
-            <Select
-              value={typeFilter}
-              onChange={setTypeFilter}
-              style={{ width: '100%' }}
-              options={[
-                { value: 'all', label: 'All Types' },
-                { value: 'income', label: 'Income' },
-                { value: 'expense', label: 'Expense' },
-              ]}
-            />
-          </div>
+        onClose={() => setIsFilterModalOpen(false)}
+        activeFilterCount={activeFilterCount}
+        typeFilter={typeFilter}
+        setTypeFilter={setTypeFilter}
+        walletFilter={walletFilter}
+        setWalletFilter={setWalletFilter}
+        catFilter={catFilter}
+        setCatFilter={setCatFilter}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+        walletOptions={walletOptions}
+        categoryOptions={categoryOptions}
+        onResetFilter={handleResetFilter}
+      />
 
-          <div>
-            <Text
-              strong
-              style={{ fontSize: 13, display: 'block', marginBottom: 6 }}
-            >
-              Wallet
-            </Text>
-            <Select
-              value={walletFilter}
-              onChange={setWalletFilter}
-              style={{ width: '100%' }}
-              options={[
-                { value: 'all', label: 'All Wallets' },
-                ...walletOptions,
-              ]}
-            />
-          </div>
-
-          <div>
-            <Text
-              strong
-              style={{ fontSize: 13, display: 'block', marginBottom: 6 }}
-            >
-              Category
-            </Text>
-            <Select
-              value={catFilter}
-              onChange={setCatFilter}
-              style={{ width: '100%' }}
-              options={[
-                { value: 'all', label: 'All Categories' },
-                ...categoryOptions,
-              ]}
-            />
-          </div>
-
-          <div>
-            <Text
-              strong
-              style={{ fontSize: 13, display: 'block', marginBottom: 6 }}
-            >
-              Status
-            </Text>
-            <Select
-              value={statusFilter}
-              onChange={setStatusFilter}
-              style={{ width: '100%' }}
-              options={[
-                { value: 'all', label: 'All Status' },
-                { value: 'completed', label: 'Completed' },
-                { value: 'pending', label: 'Pending' },
-                { value: 'failed', label: 'Failed' },
-              ]}
-            />
-          </div>
-        </Space>
-      </Modal>
-
-      {/* VIEW TRANSACTION MODAL */}
+      {/* 6. View Detail Modal */}
       <TransactionDetail
         viewTransaction={viewTransaction}
         setViewTransaction={() => setViewTransaction(null)}
       />
 
-      {/* Add Modal */}
+      {/* 7. Add Modal */}
       {showAdd && (
-        <AddTransactionModal open={showAdd} onClose={() => setShowAdd(false)} />
+        <TransactionModal open={showAdd} onClose={() => setShowAdd(false)} />
       )}
 
-      {/* Floating Action Button (Mobile) */}
+      {/* 8. Floating Action Button (Mobile) */}
       {isMobile && (
         <FloatButton
           type="primary"

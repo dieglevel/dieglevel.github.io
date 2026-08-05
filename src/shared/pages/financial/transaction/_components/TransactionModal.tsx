@@ -2,11 +2,13 @@ import React, { useEffect } from 'react'
 import {
   Button,
   Card,
+  Col,
   DatePicker,
   Flex,
   Form,
   Input,
   InputNumber,
+  Row,
   Segmented,
   Select,
   Typography,
@@ -24,18 +26,18 @@ import {
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { InputWithComma } from '@/shared/components/input/utils'
 import { useMutationAdvanceTransaction } from '@/shared/api/financial/transaction/advance-transaction/advance-transaction.mutation'
-import { useGetWallet_Transaction_List } from '@/shared/api/financial/transaction/useGetWallet_Transaction_List'
+import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
 import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 import BaseModal from '@/shared/components/modal'
 
 const { Text, Title } = Typography
 
-interface AddTransactionModalProps {
+interface TransactionModalProps {
   open: boolean
   onClose: () => void
 }
 
-export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
+export const TransactionModal: React.FC<TransactionModalProps> = ({
   open,
   onClose,
 }) => {
@@ -56,7 +58,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
 
   // API Danh sách Giao dịch gốc
   const { data: originalTransactions, isLoading: isLoadingOriginal } =
-    useGetWallet_Transaction_List({
+    useGetFinance_Transaction_List({
       options: { enabled: open },
     })
 
@@ -144,6 +146,15 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
       confirmLoading={mAdvanceTransaction_Create.isPending}
       destroyOnClose
       width={720}
+      style={{ top: 20 }}
+      styles={{
+        body: {
+          maxHeight: 'calc(100vh - 160px)',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          paddingRight: 8,
+        },
+      }}
     >
       <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
         {/* 1. Phân loại giao dịch (type) */}
@@ -200,28 +211,32 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
         </Form.Item>
 
         {/* 4. Merchant & Location */}
-        <Flex gap={12}>
-          <Form.Item
-            label="Đơn vị / Cửa hàng (merchant)"
-            name="merchant"
-            className="flex-1"
-          >
-            <Input placeholder="Shopee, Starbucks..." maxLength={255} />
-          </Form.Item>
-
-          <Form.Item
-            label="Địa điểm (location)"
-            name="location"
-            className="flex-1"
-          >
-            <Input placeholder="Hà Nội, TP.HCM..." maxLength={255} />
-          </Form.Item>
-        </Flex>
+        <Row gutter={[12, 12]}>
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="Đơn vị / Cửa hàng (merchant)"
+              name="merchant"
+              style={{ marginBottom: 0 }}
+            >
+              <Input placeholder="Shopee, Starbucks..." maxLength={255} />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="Địa điểm (location)"
+              name="location"
+              style={{ marginBottom: 0 }}
+            >
+              <Input placeholder="Hà Nội, TP.HCM..." maxLength={255} />
+            </Form.Item>
+          </Col>
+        </Row>
 
         {/* 5. Giao dịch gốc (originalTransactionId) */}
         <Form.Item
           label="Giao dịch gốc (Chọn nếu là giao dịch Hoàn tiền)"
           name="originalTransactionId"
+          style={{ marginTop: 16 }}
         >
           <Select
             placeholder="Chọn giao dịch gốc liên quan (nếu có)"
@@ -263,70 +278,79 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
                     style={{ background: '#fafafa' }}
                     styles={{ body: { padding: 12 } }}
                   >
-                    <Flex gap={8} align="center">
+                    <Row gutter={[8, 8]} align="middle">
                       {/* Nội dung khoản chi tiết */}
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'description']}
-                        rules={[
-                          { required: true, message: 'Nhập nội dung' },
-                          { whitespace: true, message: 'Không để trống' },
-                        ]}
-                        style={{ flex: 3, marginBottom: 0 }}
-                      >
-                        <Input placeholder="Nội dung chi tiết" />
-                      </Form.Item>
+                      <Col xs={24} md={10}>
+                        <Form.Item
+                          {...restField}
+                          name={[name, 'description']}
+                          rules={[
+                            { required: true, message: 'Nhập nội dung' },
+                            { whitespace: true, message: 'Không để trống' },
+                          ]}
+                          style={{ marginBottom: 0 }}
+                        >
+                          <Input placeholder="Nội dung chi tiết" />
+                        </Form.Item>
+                      </Col>
 
                       {/* Chọn Danh mục riêng cho từng dòng */}
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'categoryId']}
-                        style={{ flex: 2, marginBottom: 0 }}
-                      >
-                        <Select
-                          placeholder="Danh mục"
-                          allowClear
-                          loading={isLoadingCategories}
-                          options={categories?.data.map((c) => ({
-                            value: c.id,
-                            label: (
-                              <Flex align="center" gap={6}>
-                                <IconRenderer iconName={c.icon} />
-                                <Text style={{ fontSize: 12 }}>{c.name}</Text>
-                              </Flex>
-                            ),
-                          }))}
-                        />
-                      </Form.Item>
+                      <Col xs={24} sm={12} md={6}>
+                        <Form.Item
+                          {...restField}
+                          name={[name, 'categoryId']}
+                          style={{ marginBottom: 0 }}
+                        >
+                          <Select
+                            placeholder="Danh mục"
+                            allowClear
+                            loading={isLoadingCategories}
+                            options={categories?.data.map((c) => ({
+                              value: c.id,
+                              label: (
+                                <Flex align="center" gap={6}>
+                                  <IconRenderer iconName={c.icon} />
+                                  <Text style={{ fontSize: 12 }}>{c.name}</Text>
+                                </Flex>
+                              ),
+                            }))}
+                          />
+                        </Form.Item>
+                      </Col>
 
                       {/* Số tiền */}
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'amount']}
-                        rules={[
-                          { required: true, message: 'Nhập số tiền' },
-                          { type: 'number', min: 0.01, message: 'Phải > 0' },
-                        ]}
-                        style={{ flex: 2, marginBottom: 0 }}
-                      >
-                        <InputNumber
-                          style={{ width: '100%' }}
-                          placeholder="Số tiền"
-                          min={0}
-                          precision={2}
-                          {...InputWithComma}
-                        />
-                      </Form.Item>
+                      <Col xs={20} sm={10} md={6}>
+                        <Form.Item
+                          {...restField}
+                          name={[name, 'amount']}
+                          rules={[
+                            { required: true, message: 'Nhập số tiền' },
+                            { type: 'number', min: 0.01, message: 'Phải > 0' },
+                          ]}
+                          style={{ marginBottom: 0 }}
+                        >
+                          <InputNumber
+                            style={{ width: '100%' }}
+                            placeholder="Số tiền"
+                            min={0}
+                            precision={2}
+                            {...InputWithComma}
+                          />
+                        </Form.Item>
+                      </Col>
 
-                      {fields.length > 1 && (
-                        <Button
-                          type="text"
-                          danger
-                          icon={<DeleteOutlined />}
-                          onClick={() => remove(name)}
-                        />
-                      )}
-                    </Flex>
+                      {/* Nút xóa */}
+                      <Col xs={4} sm={2} md={2} style={{ textAlign: 'right' }}>
+                        {fields.length > 1 && (
+                          <Button
+                            type="text"
+                            danger
+                            icon={<DeleteOutlined />}
+                            onClick={() => remove(name)}
+                          />
+                        )}
+                      </Col>
+                    </Row>
                   </Card>
                 ))}
 
@@ -361,7 +385,7 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
             marginBottom: 16,
           }}
         >
-          <Flex justify="space-between" align="center">
+          <Flex justify="space-between" align="center" wrap="wrap" gap={8}>
             <Text type="secondary">Tổng tiền giao dịch (amount):</Text>
             <Title level={4} style={{ margin: 0, color: '#52c41a' }}>
               {calculatedTotalAmount.toLocaleString('vi-VN')} đ
@@ -370,58 +394,69 @@ export const AddTransactionModal: React.FC<AddTransactionModalProps> = ({
         </Card>
 
         {/* 8. Tags & Receipt Image */}
-        <Flex gap={12}>
-          <Form.Item label="Thẻ (tags)" name="tags" style={{ flex: 1 }}>
-            <Select
-              mode="tags"
-              placeholder="Nhập tag và bấm Enter..."
-              style={{ width: '100%' }}
-            />
-          </Form.Item>
-
-          <Form.Item
-            label="Link ảnh hóa đơn (receiptImageUrl)"
-            name="receiptImageUrl"
-          >
-            <Input placeholder="https://..." maxLength={500} />
-          </Form.Item>
-        </Flex>
+        <Row gutter={[12, 12]}>
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="Thẻ (tags)"
+              name="tags"
+              style={{ marginBottom: 0 }}
+            >
+              <Select
+                mode="tags"
+                placeholder="Nhập tag và bấm Enter..."
+                style={{ width: '100%' }}
+              />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="Link ảnh hóa đơn (receiptImageUrl)"
+              name="receiptImageUrl"
+              style={{ marginBottom: 0 }}
+            >
+              <Input placeholder="https://..." maxLength={500} />
+            </Form.Item>
+          </Col>
+        </Row>
 
         {/* 9. Ngày & Trạng thái (status) */}
-        <Flex gap={12}>
-          <Form.Item
-            label="Ngày thực hiện"
-            name="date"
-            style={{ flex: 1 }}
-            rules={[{ required: true }]}
-          >
-            <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />
-          </Form.Item>
-
-          <Form.Item
-            label="Trạng thái (status)"
-            name="status"
-            style={{ flex: 1 }}
-            rules={[{ required: true }]}
-          >
-            <Select
-              options={[
-                {
-                  value: FINANCIAL_TRANSACTION_STATUS.COMPLETED,
-                  label: '✅ COMPLETED (Hoàn thành)',
-                },
-                {
-                  value: FINANCIAL_TRANSACTION_STATUS.PENDING,
-                  label: '⏳ PENDING (Đang chờ)',
-                },
-                {
-                  value: FINANCIAL_TRANSACTION_STATUS.FAILED,
-                  label: '❌ FAILED (Thất bại)',
-                },
-              ]}
-            />
-          </Form.Item>
-        </Flex>
+        <Row gutter={[12, 12]} style={{ marginTop: 16 }}>
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="Ngày thực hiện"
+              name="date"
+              rules={[{ required: true }]}
+              style={{ marginBottom: 0 }}
+            >
+              <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12}>
+            <Form.Item
+              label="Trạng thái (status)"
+              name="status"
+              rules={[{ required: true }]}
+              style={{ marginBottom: 0 }}
+            >
+              <Select
+                options={[
+                  {
+                    value: FINANCIAL_TRANSACTION_STATUS.COMPLETED,
+                    label: '✅ COMPLETED (Hoàn thành)',
+                  },
+                  {
+                    value: FINANCIAL_TRANSACTION_STATUS.PENDING,
+                    label: '⏳ PENDING (Đang chờ)',
+                  },
+                  {
+                    value: FINANCIAL_TRANSACTION_STATUS.FAILED,
+                    label: '❌ FAILED (Thất bại)',
+                  },
+                ]}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
       </Form>
     </BaseModal>
   )

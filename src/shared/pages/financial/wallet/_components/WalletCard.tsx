@@ -1,12 +1,5 @@
-import { useState } from 'react'
 import { Button, Card, Popconfirm, Space, Tooltip } from 'antd'
-import {
-  DeleteOutlined,
-  EditOutlined,
-  EyeInvisibleOutlined,
-  EyeOutlined,
-  LockOutlined,
-} from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, LockOutlined } from '@ant-design/icons'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import {
   FINANCIAL_WALLET_TYPE,
@@ -22,8 +15,6 @@ interface WalletCardProps {
 }
 
 export function WalletCard({ wallet, onEdit, onDelete }: WalletCardProps) {
-  const [visible, setVisible] = useState(false)
-
   const isCreditCard =
     wallet.type === FINANCIAL_WALLET_TYPE.CREDIT_CARD ||
     wallet.creditLimit != null
@@ -165,21 +156,6 @@ export function WalletCard({ wallet, onEdit, onDelete }: WalletCardProps) {
 
         {/* Action Buttons */}
         <Space size={4} style={{ flexShrink: 0, marginLeft: 8 }}>
-          <Tooltip title={visible ? 'Ẩn số dư' : 'Hiện số dư'}>
-            <Button
-              type="text"
-              size="small"
-              icon={
-                visible ? (
-                  <EyeInvisibleOutlined style={{ color: '#fff' }} />
-                ) : (
-                  <EyeOutlined style={{ color: '#fff' }} />
-                )
-              }
-              onClick={() => setVisible((v) => !v)}
-              style={{ backgroundColor: 'rgba(255,255,255,0.18)' }}
-            />
-          </Tooltip>
           <Tooltip title="Chỉnh sửa">
             <Button
               type="text"
@@ -232,7 +208,6 @@ export function WalletCard({ wallet, onEdit, onDelete }: WalletCardProps) {
               fontSize: 'clamp(20px, 4vw, 26px)',
               fontWeight: 700,
               color: '#fff',
-              fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
               margin: 0,
               lineHeight: 1.2,
               whiteSpace: 'nowrap',
@@ -240,9 +215,7 @@ export function WalletCard({ wallet, onEdit, onDelete }: WalletCardProps) {
               textOverflow: 'ellipsis',
             }}
           >
-            {visible
-              ? `${isNegative ? '-' : ''}${convertCurrency(Math.abs(wallet.balance), undefined, false)}`
-              : '••••••••'}
+            {convertCurrency(Math.abs(wallet.balance), undefined, false)}
           </p>
           <span
             style={{
@@ -272,17 +245,13 @@ export function WalletCard({ wallet, onEdit, onDelete }: WalletCardProps) {
             <div>
               <span>Dư nợ: </span>
               <strong>
-                {visible
-                  ? convertCurrency(wallet.currentDebt ?? 0, undefined, false)
-                  : '••••'}
+                {convertCurrency(wallet.currentDebt ?? 0, undefined, false)}
               </strong>
             </div>
             <div>
               <span>Hạn mức: </span>
               <strong>
-                {visible
-                  ? convertCurrency(wallet.creditLimit ?? 0, undefined, false)
-                  : '••••'}
+                {convertCurrency(wallet.creditLimit ?? 0, undefined, false)}
               </strong>
             </div>
           </div>

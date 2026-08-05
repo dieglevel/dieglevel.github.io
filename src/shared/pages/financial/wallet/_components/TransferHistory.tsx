@@ -3,7 +3,7 @@ import { MoveRight } from 'lucide-react'
 import { DatePicker, Typography } from 'antd'
 import dayjs from 'dayjs'
 import type { ColumnsType } from 'antd/es/table'
-import type { IWallet_WalletTransfer } from '@/shared/api/financial/wallet/wallet-transfer/wallet-transfer.type'
+import type { IFinance_WalletTransfer } from '@/shared/api/financial/wallet/wallet-transfer/wallet-transfer.type'
 import BaseModal from '@/shared/components/modal'
 import Table from '@/shared/components/table'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
@@ -22,8 +22,8 @@ export default function TransferHistory({
 
   const { data, isFetching } = useGetWallet_WalletTransfer_Date({})
 
-  const columns: ColumnsType<IWallet_WalletTransfer> = useMemo(() => {
-    const cols: ColumnsType<IWallet_WalletTransfer> = [
+  const columns: ColumnsType<IFinance_WalletTransfer> = useMemo(() => {
+    const cols: ColumnsType<IFinance_WalletTransfer> = [
       {
         title: '#',
         dataIndex: ['index'],
@@ -113,7 +113,7 @@ export default function TransferHistory({
           setSelectedMonth(date ?? dayjs())
         }}
       />
-      <Table<IWallet_WalletTransfer>
+      <Table<IFinance_WalletTransfer>
         dataSource={data?.data || []}
         columns={columns}
         rowKey={(record) => record.id}

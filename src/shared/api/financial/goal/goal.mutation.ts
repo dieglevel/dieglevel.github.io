@@ -1,4 +1,4 @@
-import type { IWallet_Goal } from './goal.type'
+import type { IFinance_Goal } from './goal.type'
 import {
   useMutationDelete,
   useMutationPost,
@@ -7,7 +7,7 @@ import {
 export const useMutationGoal = () => {
   const mGoal_Create = useMutationPost<
     void,
-    Omit<IWallet_Goal, 'id' | 'created_at'>,
+    Omit<IFinance_Goal, 'id' | 'created_at'>,
     'financial-goal/create'
   >({
     endPoint: 'financial-goal/create',
@@ -16,7 +16,7 @@ export const useMutationGoal = () => {
 
   const mGoal_Update = useMutationPost<
     void,
-    Partial<Omit<IWallet_Goal, 'id' | 'created_at'>>,
+    Partial<Omit<IFinance_Goal, 'id' | 'created_at'>>,
     'financial-goal/update/:id',
     { id: string }
   >({
@@ -28,7 +28,7 @@ export const useMutationGoal = () => {
     void,
     void, // DELETE không cần body
     'financial-goal/delete/:id',
-    { id: string }
+    { id: number }
   >({
     endPoint: 'financial-goal/delete/:id',
     queryKey: ['getFinancialGoalList'],

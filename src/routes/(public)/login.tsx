@@ -98,10 +98,14 @@ export function LoginComponent() {
               response.data.user,
             )
 
-            router.navigate({
-              to: '/',
-              replace: true,
-            })
+            if (router.state.location.pathname === '/login') {
+              router.navigate({
+                to: '/',
+                replace: true,
+              })
+            } else {
+              window.location.reload()
+            }
           },
         },
       )

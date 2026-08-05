@@ -1,13 +1,14 @@
 import React, { useMemo } from 'react'
 import { Card, Col, Progress, Row, Statistic, Typography } from 'antd'
 import { AimOutlined, TrophyOutlined } from '@ant-design/icons'
-import type { IFinancialGoal } from '..'
+import type { IFinance_Goal } from '@/shared/api/financial/goal/goal.type'
+import { FINANCIAL_GOAL_STATUS } from '@/shared/api/financial/goal/goal.enum'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const { Text } = Typography
 
 interface GoalSummaryProps {
-  goals: Array<IFinancialGoal>
+  goals: Array<IFinance_Goal>
 }
 
 export function GoalSummary({ goals }: GoalSummaryProps) {
@@ -19,7 +20,7 @@ export function GoalSummary({ goals }: GoalSummaryProps) {
     goals.forEach((item) => {
       totalTarget += Number(item.targetAmount || 0)
       totalCurrent += Number(item.currentAmount || 0)
-      if (item.status === 'COMPLETED') {
+      if (item.status === FINANCIAL_GOAL_STATUS.COMPLETED) {
         completedCount++
       }
     })

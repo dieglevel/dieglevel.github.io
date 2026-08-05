@@ -5,7 +5,7 @@ import type { ApiBaseResponse } from '@/shared/types/base-response'
 import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 
 // Get<Example><Type>Params
-export interface GetWallet_Transaction_List_Params {
+export interface GetFinance_Transaction_List_Params {
   queryParams?: {
     date?: dayjs.Dayjs | string | Date
   }
@@ -17,8 +17,8 @@ export interface GetWallet_Transaction_List_Params {
 }
 
 // useGet<Example><Type>
-export const useGetWallet_Transaction_List = (
-  props: GetWallet_Transaction_List_Params,
+export const useGetFinance_Transaction_List = (
+  props: GetFinance_Transaction_List_Params,
 ) =>
   useQueryGet<
     ApiBaseResponse<Array<IFinance_Transaction>>,

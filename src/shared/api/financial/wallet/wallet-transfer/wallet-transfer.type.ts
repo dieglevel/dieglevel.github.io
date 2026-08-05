@@ -1,7 +1,7 @@
 import type { IBaseEntity } from '@/shared/types/base-entity'
 import type { IFinance_Wallet } from '../wallet.type'
 
-export interface IWallet_WalletTransfer extends IBaseEntity {
+export interface IFinance_WalletTransfer extends IBaseEntity {
   fromWallet: IFinance_Wallet
   toWallet: IFinance_Wallet
   amount: number

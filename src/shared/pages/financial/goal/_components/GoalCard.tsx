@@ -19,48 +19,48 @@ import {
   ThunderboltOutlined,
   TrophyOutlined,
 } from '@ant-design/icons'
-import type { IWallet_Goal } from '@/shared/api/financial/goal/goal.type'
+import type { IFinance_Goal } from '@/shared/api/financial/goal/goal.type'
+import {
+  FINANCIAL_GOAL_STATUS,
+  FINANCIAL_GOAL_TYPE,
+} from '@/shared/api/financial/goal/goal.enum'
+import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const { Text, Title } = Typography
 
-// Dynamic Label & Mapping cho Type
-const TYPE_LABELS: Record<string, string> = {
-  emergency: 'Emergency Fund',
-  bigpurchase: 'Big Purchase',
-  travel: 'Travel',
-  custom: 'Custom',
+// Dynamic Label & Mapping cho Type khớp với Backend
+const TYPE_LABELS: Record<FINANCIAL_GOAL_TYPE, string> = {
+  [FINANCIAL_GOAL_TYPE.EMERGENCY_FUND]: 'Quỹ khẩn cấp',
+  [FINANCIAL_GOAL_TYPE.BIG_PURCHASE]: 'Mua sắm lớn',
+  [FINANCIAL_GOAL_TYPE.TRAVEL]: 'Du lịch',
+  [FINANCIAL_GOAL_TYPE.OTHER]: 'Khác',
 }
 
-const TYPE_COLORS: Record<string, string> = {
-  emergency: '#ef4444',
-  bigpurchase: '#3b82f6',
-  travel: '#10b981',
-  custom: '#8b5cf6',
+const TYPE_COLORS: Record<FINANCIAL_GOAL_TYPE, string> = {
+  [FINANCIAL_GOAL_TYPE.EMERGENCY_FUND]: '#ef4444',
+  [FINANCIAL_GOAL_TYPE.BIG_PURCHASE]: '#3b82f6',
+  [FINANCIAL_GOAL_TYPE.TRAVEL]: '#10b981',
+  [FINANCIAL_GOAL_TYPE.OTHER]: '#8b5cf6',
 }
 
 // Dynamic Mapping cho Status
-const STATUS_COLORS: Record<string, string> = {
-  active: 'processing',
-  completed: 'success',
-  paused: 'warning',
-  cancelled: 'error',
+const STATUS_COLORS: Record<FINANCIAL_GOAL_STATUS, string> = {
+  [FINANCIAL_GOAL_STATUS.ACTIVE]: 'processing',
+  [FINANCIAL_GOAL_STATUS.COMPLETED]: 'success',
+  [FINANCIAL_GOAL_STATUS.PAUSED]: 'warning',
 }
 
-function fmt(n: number) {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  }).format(n)
-}
-
-function daysLeft(deadline?: string) {
+function daysLeft(deadline?: Date | string | null) {
   if (!deadline) return null
   const diff = new Date(deadline).getTime() - Date.now()
   return Math.ceil(diff / 86400000)
 }
 
-function monthsToComplete(current: number, target: number, autoSave?: number) {
+function monthsToComplete(
+  current: number,
+  target: number,
+  autoSave?: number | null,
+) {
   if (!autoSave || autoSave <= 0) return null
   const remaining = target - current
   if (remaining <= 0) return 0
@@ -68,8 +68,8 @@ function monthsToComplete(current: number, target: number, autoSave?: number) {
 }
 
 interface GoalCardProps {
-  goal: IWallet_Goal
-  onEdit: (g: IWallet_Goal) => void
+  goal: IFinance_Goal
+  onEdit: (g: IFinance_Goal) => void
   onDelete: (id: number) => void
 }
 
@@ -79,7 +79,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
   onDelete,
 }) => {
   const pct = Math.min(100, (goal.currentAmount / goal.targetAmount) * 100)
-  const remaining = goal.targetAmount - goal.currentAmount
+  const remaining = Math.max(0, goal.targetAmount - goal.currentAmount)
   const days = daysLeft(goal.deadline)
   const months = monthsToComplete(
     goal.currentAmount,
@@ -87,7 +87,8 @@ export const GoalCard: React.FC<GoalCardProps> = ({
     goal.autoContributionAmount,
   )
   const done =
-    goal.currentAmount >= goal.targetAmount || goal.status === 'completed'
+    goal.currentAmount >= goal.targetAmount ||
+    goal.status === FINANCIAL_GOAL_STATUS.COMPLETED
   const goalColor = TYPE_COLORS[goal.type] || '#6366f1'
   const activeColor = done ? '#10b981' : goalColor
 
@@ -141,19 +142,17 @@ export const GoalCard: React.FC<GoalCardProps> = ({
                 >
                   {TYPE_LABELS[goal.type] || goal.type}
                 </Tag>
-                {goal.status && (
-                  <Tag
-                    color={STATUS_COLORS[goal.status] || 'default'}
-                    style={{
-                      borderRadius: 10,
-                      margin: 0,
-                      fontSize: 10,
-                      textTransform: 'capitalize',
-                    }}
-                  >
-                    {goal.status}
-                  </Tag>
-                )}
+                <Tag
+                  color={STATUS_COLORS[goal.status] || 'default'}
+                  style={{
+                    borderRadius: 10,
+                    margin: 0,
+                    fontSize: 10,
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {goal.status}
+                </Tag>
               </Space>
             </div>
           </div>
@@ -166,12 +165,12 @@ export const GoalCard: React.FC<GoalCardProps> = ({
             onClick={() => onEdit(goal)}
           />
           <Popconfirm
-            title="Delete Goal"
-            description="Are you sure you want to delete this goal?"
+            title="Xóa mục tiêu"
+            description="Bạn có chắc chắn muốn xóa mục tiêu này?"
             onConfirm={() => onDelete(goal.id)}
-            okText="Delete"
+            okText="Xóa"
             okButtonProps={{ danger: true }}
-            cancelText="Cancel"
+            cancelText="Hủy"
           >
             <Button type="text" danger icon={<DeleteOutlined />} />
           </Popconfirm>
@@ -202,10 +201,10 @@ export const GoalCard: React.FC<GoalCardProps> = ({
             }}
           >
             <Title level={4} style={{ margin: 0, fontFamily: 'monospace' }}>
-              {fmt(goal.currentAmount)}
+              {convertCurrency(goal.currentAmount)}
             </Title>
             <Text type="secondary" style={{ fontSize: 11 }}>
-              of {fmt(goal.targetAmount)}
+              / {convertCurrency(goal.targetAmount)}
             </Text>
           </div>
 
@@ -218,11 +217,11 @@ export const GoalCard: React.FC<GoalCardProps> = ({
 
           {!done ? (
             <Text type="secondary" style={{ fontSize: 11 }}>
-              {fmt(remaining)} remaining
+              Còn {convertCurrency(remaining)}
             </Text>
           ) : (
             <Text type="success" style={{ fontSize: 11, fontWeight: 'bold' }}>
-              Goal achieved! 🎉
+              Mục tiêu đã đạt được! 🎉
             </Text>
           )}
         </div>
@@ -236,7 +235,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
             color={days < 30 ? 'error' : 'default'}
             style={{ borderRadius: 8, padding: '2px 8px' }}
           >
-            {days > 0 ? `${days}d left` : 'Overdue'}
+            {days > 0 ? `Còn ${days} ngày` : 'Quá hạn'}
           </Tag>
         )}
         {Boolean(goal.autoContributionAmount) && (
@@ -244,7 +243,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
             icon={<ThunderboltOutlined style={{ color: '#f59e0b' }} />}
             style={{ borderRadius: 8, padding: '2px 8px' }}
           >
-            {fmt(goal.autoContributionAmount)}/mo
+            {convertCurrency(goal.autoContributionAmount!)}/tháng
           </Tag>
         )}
         {Boolean(goal.autoContributionDay) && (
@@ -252,7 +251,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
             icon={<SyncOutlined style={{ color: '#3b82f6' }} />}
             style={{ borderRadius: 8, padding: '2px 8px' }}
           >
-            Day {goal.autoContributionDay}
+            Ngày {goal.autoContributionDay}
           </Tag>
         )}
         {months !== null && months > 0 && (
@@ -260,7 +259,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
             icon={<RiseOutlined style={{ color: '#10b981' }} />}
             style={{ borderRadius: 8, padding: '2px 8px' }}
           >
-            ~{months}mo
+            ~{months} tháng
           </Tag>
         )}
       </Space>
