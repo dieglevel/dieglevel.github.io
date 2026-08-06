@@ -27,6 +27,7 @@ import {
 import { GoalSummary } from './_components/GoalSummary'
 import { AddGoalModal } from './_components/AddGoalModal'
 import { GoalCard } from './_components/GoalCard' // Import GoalCard mới
+import { GoalDetailModal } from './_components/GoalDetailModal'
 import type { IFinance_Goal } from '@/shared/api/financial/goal/goal.type'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import {
@@ -46,6 +47,8 @@ export function Goals() {
   // 1. TanStack Query Hooks
   const { data: goalData, isLoading } = useGetFinance_Goal_List({})
   const goals: Array<IFinance_Goal> = goalData?.data || []
+  const [selectedGoalDetail, setSelectedGoalDetail] =
+    useState<IFinance_Goal | null>(null)
 
   const { mGoal_Delete } = useMutationGoal()
 
@@ -141,7 +144,7 @@ export function Goals() {
     }
   }
 
-  // Tính toán Projection khớp với logic FinancialGoalService backend
+  // Tính toán Projection khớp với logic FinanceGoalService backend
   const calculateProjection = (goal: IFinance_Goal) => {
     const targetAmount = Number(goal.targetAmount)
     const currentAmount = Number(goal.currentAmount)
@@ -275,11 +278,16 @@ export function Goals() {
                 setShowAddModal(true)
               }}
               onDelete={(id) => handleDelete(Number(id))}
+              onView={(item) => setSelectedGoalDetail(item)} // Kích hoạt Modal Chi tiết + Lịch sử
             />
           </Col>
         ))}
       </Row>
 
+      <GoalDetailModal
+        goal={selectedGoalDetail}
+        onClose={() => setSelectedGoalDetail(null)}
+      />
       {/* FILTER MODAL */}
       <Modal
         title="Lọc Mục tiêu Tài chính"
@@ -314,11 +322,9 @@ export function Goals() {
                   label: 'Quỹ khẩn cấp',
                 },
                 {
-                  value: FINANCIAL_GOAL_TYPE.BIG_PURCHASE,
-                  label: 'Mua sắm lớn',
+                  value: FINANCIAL_GOAL_TYPE.INVESTMENT,
+                  label: 'Đầu tư',
                 },
-                { value: FINANCIAL_GOAL_TYPE.TRAVEL, label: 'Du lịch' },
-                { value: FINANCIAL_GOAL_TYPE.OTHER, label: 'Khác' },
               ]}
             />
           </div>
@@ -341,7 +347,7 @@ export function Goals() {
                   label: 'Đang thực hiện',
                 },
                 { value: FINANCIAL_GOAL_STATUS.COMPLETED, label: 'Hoàn thành' },
-                { value: FINANCIAL_GOAL_STATUS.PAUSED, label: 'Tạm dừng' },
+                { value: FINANCIAL_GOAL_STATUS.INACTIVE, label: 'Tạm dừng' },
               ]}
             />
           </div>

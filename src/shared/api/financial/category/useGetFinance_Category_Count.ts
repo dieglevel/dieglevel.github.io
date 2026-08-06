@@ -25,7 +25,7 @@ export const useGetFinance_Category_Count = (
     '/financial-category/with-transaction-count'
   >({
     endPoint: `/financial-category/with-transaction-count`,
-    queryKey: ['getFinancialCategoryCount'],
+    queryKey: ['getFinanceCategoryCount'],
     queryParams: props.queryParams,
     ...props,
   })

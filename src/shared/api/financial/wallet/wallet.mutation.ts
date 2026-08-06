@@ -11,7 +11,7 @@ export const useMutationWallet = () => {
     'financial-wallet/create'
   >({
     endPoint: 'financial-wallet/create',
-    queryKey: ['getFinancialWalletList'],
+    queryKey: ['getFinanceWalletList'],
   })
 
   const mWallet_Update = useMutationPost<
@@ -21,7 +21,7 @@ export const useMutationWallet = () => {
     { id: string }
   >({
     endPoint: 'financial-wallet/update/:id',
-    queryKey: ['getFinancialWalletList'],
+    queryKey: ['getFinanceWalletList'],
   })
 
   const mWallet_Delete = useMutationDelete<
@@ -31,7 +31,7 @@ export const useMutationWallet = () => {
     { id: string }
   >({
     endPoint: 'financial-wallet/delete/:id',
-    queryKey: ['getFinancialWalletList'],
+    queryKey: ['getFinanceWalletList'],
   })
 
   const mWallet_Transfer = useMutationPost<
@@ -45,7 +45,7 @@ export const useMutationWallet = () => {
     'financial-wallet/transfer'
   >({
     endPoint: 'financial-wallet/transfer',
-    queryKey: ['getFinancialWalletList'],
+    queryKey: ['getFinanceWalletList'],
   })
 
   return {

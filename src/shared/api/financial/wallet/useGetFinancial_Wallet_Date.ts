@@ -20,6 +20,6 @@ export const useGetFinance_Wallet_Date = (
     '/financial-wallet/with-transaction-count'
   >({
     endPoint: `/financial-wallet/with-transaction-count`,
-    queryKey: ['getFinancialWalletDate'],
+    queryKey: ['getFinanceWalletDate'],
     ...props,
   })

@@ -18,7 +18,7 @@ export const useGetFinance_Wallet_List = (
   useQueryGet<ApiBaseResponse<Array<IFinance_Wallet>>, '/financial-wallet/all'>(
     {
       endPoint: `/financial-wallet/all`,
-      queryKey: ['getFinancialWalletList'],
+      queryKey: ['getFinanceWalletList'],
       ...props,
     },
   )

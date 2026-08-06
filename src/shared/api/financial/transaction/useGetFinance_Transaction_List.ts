@@ -25,7 +25,7 @@ export const useGetFinance_Transaction_List = (
     '/financial-transaction/all'
   >({
     endPoint: `/financial-transaction/all`,
-    queryKey: ['getFinancialTransactionList'],
+    queryKey: ['getFinanceTransactionList'],
     queryParams: props.queryParams,
     ...props,
   })

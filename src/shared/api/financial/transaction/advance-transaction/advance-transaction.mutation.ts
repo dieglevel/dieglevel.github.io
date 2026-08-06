@@ -1,13 +1,13 @@
 import { useMutationPost } from '@/shared/lib/api/mutation/useMutation'
 
-export interface FinancialAdvanceTransaction_Item {
+export interface FinanceAdvanceTransaction_Item {
   description: string
   amount: number
   categoryId?: number
 }
 
-export interface FinancialAdvanceTransaction_Create_Request {
-  data: Array<FinancialAdvanceTransaction_Item>
+export interface FinanceAdvanceTransaction_Create_Request {
+  data: Array<FinanceAdvanceTransaction_Item>
   type: string
   description: string
   categoryId?: number
@@ -24,11 +24,11 @@ export interface FinancialAdvanceTransaction_Create_Request {
 export const useMutationAdvanceTransaction = () => {
   const mAdvanceTransaction_Create = useMutationPost<
     void,
-    FinancialAdvanceTransaction_Create_Request,
+    FinanceAdvanceTransaction_Create_Request,
     'financial-advance-transactions/create'
   >({
     endPoint: 'financial-advance-transactions/create',
-    queryKey: ['getFinancialTransactionList'],
+    queryKey: ['getFinanceTransactionList'],
   })
 
   return {

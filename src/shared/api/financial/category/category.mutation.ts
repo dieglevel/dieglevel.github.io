@@ -11,7 +11,7 @@ export const useMutationFinanceCategory = () => {
     'financial-category/create'
   >({
     endPoint: 'financial-category/create',
-    queryKey: ['getFinancialCategoryCount'],
+    queryKey: ['getFinanceCategoryCount'],
   })
 
   const mCategory_Update = useMutationPost<
@@ -21,7 +21,7 @@ export const useMutationFinanceCategory = () => {
     { id: string }
   >({
     endPoint: 'financial-category/update/:id',
-    queryKey: ['getFinancialCategoryCount'],
+    queryKey: ['getFinanceCategoryCount'],
   })
 
   const mCategory_Delete = useMutationDelete<
@@ -31,7 +31,7 @@ export const useMutationFinanceCategory = () => {
     { id: string }
   >({
     endPoint: 'financial-category/delete/:id',
-    queryKey: ['getFinancialCategoryCount'],
+    queryKey: ['getFinanceCategoryCount'],
   })
 
   return {

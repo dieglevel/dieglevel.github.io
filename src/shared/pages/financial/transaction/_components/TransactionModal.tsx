@@ -17,7 +17,7 @@ import {
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 
-import type { FinancialAdvanceTransaction_Create_Request } from '@/shared/api/financial/transaction/advance-transaction/advance-transaction.mutation'
+import type { FinanceAdvanceTransaction_Create_Request } from '@/shared/api/financial/transaction/advance-transaction/advance-transaction.mutation'
 import { useGetFinance_Category_Count } from '@/shared/api/financial/category/useGetFinance_Category_Count'
 import {
   FINANCIAL_TRANSACTION_STATUS,
@@ -27,8 +27,8 @@ import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { InputWithComma } from '@/shared/components/input/utils'
 import { useMutationAdvanceTransaction } from '@/shared/api/financial/transaction/advance-transaction/advance-transaction.mutation'
 import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
-import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 import BaseModal from '@/shared/components/modal'
+import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 
 const { Text, Title } = Typography
 
@@ -97,7 +97,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
       const values = await form.validateFields()
 
       // Format Payload gửi đi
-      const payload: FinancialAdvanceTransaction_Create_Request = {
+      const payload: FinanceAdvanceTransaction_Create_Request = {
         description: values.description?.trim(),
         type: values.type,
         status: values.status,

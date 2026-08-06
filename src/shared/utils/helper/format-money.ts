@@ -13,10 +13,12 @@ const exchangeRates = {
 type Currency = keyof typeof exchangeRates
 
 export function convertCurrency(
-  amountVND: number,
+  amountVND?: number | null,
   locale = 'vi-VN',
   showSymbol = true,
 ): string {
+  if (!amountVND) return '-'
+
   const to = (LocalStorageService.get(LOCAL_STORAGE_KEY.CURRENCY, 'VND') ||
     'VND') as Currency
 

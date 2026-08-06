@@ -4,34 +4,45 @@ import {
   useMutationPost,
 } from '@/shared/lib/api/mutation/useMutation'
 
+/**
+ * Hook chứa tất cả mutations liên quan đến Financial Goal
+ * - Create: Tạo mục tiêu mới
+ * - Update: Cập nhật mục tiêu
+ * - Delete: Xóa mục tiêu
+ */
 export const useMutationGoal = () => {
+  // Tạo mục tiêu mới
   const mGoal_Create = useMutationPost<
-    void,
-    Omit<IFinance_Goal, 'id' | 'created_at'>,
+    IFinance_Goal, // Response type
+    Omit<IFinance_Goal, 'id' | 'created_at' | 'updated_at' | 'accountId'>, // Request body type
     'financial-goal/create'
   >({
     endPoint: 'financial-goal/create',
-    queryKey: ['getFinancialGoalList'],
+    queryKey: ['getFinanceGoalList'],
   })
 
+  // Cập nhật mục tiêu hiện tại
   const mGoal_Update = useMutationPost<
-    void,
-    Partial<Omit<IFinance_Goal, 'id' | 'created_at'>>,
+    IFinance_Goal, // Response type
+    Partial<
+      Omit<IFinance_Goal, 'id' | 'created_at' | 'updated_at' | 'accountId'>
+    >, // Request body type
     'financial-goal/update/:id',
-    { id: string }
+    { id: string | number } // Path params type
   >({
     endPoint: 'financial-goal/update/:id',
-    queryKey: ['getFinancialGoalList'],
+    queryKey: ['getFinanceGoalList'],
   })
 
+  // Xóa mục tiêu
   const mGoal_Delete = useMutationDelete<
-    void,
-    void, // DELETE không cần body
+    void, // Response type
+    void, // Request body type (DELETE không cần body)
     'financial-goal/delete/:id',
-    { id: number }
+    { id: string | number } // Path params type
   >({
     endPoint: 'financial-goal/delete/:id',
-    queryKey: ['getFinancialGoalList'],
+    queryKey: ['getFinanceGoalList'],
   })
 
   return {

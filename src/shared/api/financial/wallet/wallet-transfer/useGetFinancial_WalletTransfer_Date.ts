@@ -25,6 +25,6 @@ export const useGetWallet_WalletTransfer_Date = (
     '/financial-wallet-transfer'
   >({
     endPoint: `/financial-wallet-transfer`,
-    queryKey: ['getFinancialWalletList', 'getFinancialWalletTransferList'],
+    queryKey: ['getFinanceWalletList', 'getFinanceWalletTransferList'],
     ...props,
   })

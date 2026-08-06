@@ -20,6 +20,6 @@ export const useGetFinance_Category_List = (
     '/financial-category/all'
   >({
     endPoint: `/financial-category/all`,
-    queryKey: ['getFinancialCategoryList'],
+    queryKey: ['getFinanceCategoryList'],
     ...props,
   })

@@ -13,11 +13,11 @@ import {
   Switch,
 } from 'antd'
 import dayjs from 'dayjs'
-import type { IFinancialRecurring } from '..'
+import type { IFinanceRecurring } from '..'
 
 interface AddRecurringModalProps {
   open: boolean
-  initialValues?: IFinancialRecurring | null
+  initialValues?: IFinanceRecurring | null
   onClose: () => void
   onSuccess?: () => void
 }

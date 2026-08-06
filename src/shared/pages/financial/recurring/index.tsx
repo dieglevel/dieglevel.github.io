@@ -36,8 +36,8 @@ import type { ColumnsType } from 'antd/es/table'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 
-// Type định nghĩa dựa theo Entity Backend (FinancialRecurringEntity)
-export interface IFinancialRecurring {
+// Type định nghĩa dựa theo Entity Backend (FinanceRecurringEntity)
+export interface IFinanceRecurring {
   id: number
   name: string
   recurringType: 'BILL' | 'SUBSCRIPTION' | 'SALARY' | 'OTHER'
@@ -70,7 +70,7 @@ export function RecurringTransactions() {
 
   // MOCK DATA (Thay thế bằng hook React Query từ API backend của bạn)
   const [recurringRules, setRecurringRules] = useState<
-    Array<IFinancialRecurring>
+    Array<IFinanceRecurring>
   >([
     {
       id: 1,
@@ -125,14 +125,14 @@ export function RecurringTransactions() {
   // State UI Controls
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
-  const [editingRule, setEditingRule] = useState<IFinancialRecurring | null>(
+  const [editingRule, setEditingRule] = useState<IFinanceRecurring | null>(
     null,
   )
   const [selectedKeys, setSelectedKeys] = useState<Array<React.Key>>([])
   const [loadingRunDue, setLoadingRunDue] = useState(false)
 
   // State xem chi tiết Modal
-  const [viewRule, setViewRule] = useState<IFinancialRecurring | null>(null)
+  const [viewRule, setViewRule] = useState<IFinanceRecurring | null>(null)
 
   // Đếm filter active
   const activeFilterCount = useMemo(() => {
@@ -191,7 +191,7 @@ export function RecurringTransactions() {
   }
 
   // Cấu hình Cột Bảng chuẩn Layout của bạn
-  const columns: ColumnsType<IFinancialRecurring> = [
+  const columns: ColumnsType<IFinanceRecurring> = [
     {
       title: 'Tên & Phân loại',
       dataIndex: 'name',
@@ -450,7 +450,7 @@ export function RecurringTransactions() {
 
       {/* Main Table */}
       <Card styles={{ body: { padding: 0 } }} style={{ overflow: 'hidden' }}>
-        <Table<IFinancialRecurring>
+        <Table<IFinanceRecurring>
           rowKey="id"
           size={isMobile ? 'small' : 'medium'}
           columns={columns}

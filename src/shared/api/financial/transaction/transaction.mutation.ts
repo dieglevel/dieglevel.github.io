@@ -11,7 +11,7 @@ export const useMutationTransaction = () => {
     'financial-transaction/create'
   >({
     endPoint: 'financial-transaction/create',
-    queryKey: ['getFinancialTransactionList'],
+    queryKey: ['getFinanceTransactionList'],
   })
 
   const mTransaction_Update = useMutationPost<
@@ -21,7 +21,7 @@ export const useMutationTransaction = () => {
     { id: string }
   >({
     endPoint: 'financial-transaction/update/:id',
-    queryKey: ['getFinancialTransactionList'],
+    queryKey: ['getFinanceTransactionList'],
   })
 
   const mTransaction_Delete = useMutationDelete<
@@ -31,7 +31,7 @@ export const useMutationTransaction = () => {
     { id: string }
   >({
     endPoint: 'financial-transaction/delete/:id',
-    queryKey: ['getFinancialTransactionList'],
+    queryKey: ['getFinanceTransactionList'],
   })
 
   return {

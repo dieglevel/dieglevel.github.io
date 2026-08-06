@@ -20,7 +20,7 @@ export const ConfigAntd: ConfigProviderProps = {
       colorBgSolidHover: hoverColor(colors.primary.base),
       colorBgSolidActive: activeColor(colors.primary.base),
       colorPrimaryBgHover: hoverColor(colors.primary.base),
-      fontFamily: `'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif`,
+      fontFamily: `'MadimiOne', -apple-system, BlinkMacSystemFont, sans-serif`,
     },
     components: {
       Table: {

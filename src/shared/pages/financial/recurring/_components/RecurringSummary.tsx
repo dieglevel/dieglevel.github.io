@@ -5,13 +5,13 @@ import {
   ArrowUpOutlined,
   SyncOutlined,
 } from '@ant-design/icons'
-import type { IFinancialRecurring } from '..'
+import type { IFinanceRecurring } from '..'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const { Text } = Typography
 
 interface RecurringSummaryProps {
-  rules: Array<IFinancialRecurring>
+  rules: Array<IFinanceRecurring>
 }
 
 export function RecurringSummary({ rules }: RecurringSummaryProps) {

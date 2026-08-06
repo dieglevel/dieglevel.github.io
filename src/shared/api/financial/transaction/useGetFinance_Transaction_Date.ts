@@ -25,7 +25,7 @@ export const useGetWallet_Transaction_Date = (
     '/financial-transaction/get-with-date'
   >({
     endPoint: `/financial-transaction/get-with-date`,
-    queryKey: ['getFinancialTransactionList'],
+    queryKey: ['getFinanceTransactionList'],
     queryParams: props.queryParams,
     ...props,
   })
