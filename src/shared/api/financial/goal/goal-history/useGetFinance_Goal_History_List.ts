@@ -22,9 +22,9 @@ export const useGetFinance_Goal_History_List = (
 ) =>
   useQueryGet<
     ApiBaseResponse<Array<IFinance_GoalHistory>>,
-    `/financial-goal/${number}/history`
+    `/financial-goal/${number}/detail`
   >({
-    endPoint: `/financial-goal/${props.pathParams.goalId}/history`,
+    endPoint: `/financial-goal/${props.pathParams.goalId}/detail`,
     queryKey: ['getFinanceGoalHistoryList', props.pathParams.goalId],
     queryParams: props.queryParams,
     options: {
