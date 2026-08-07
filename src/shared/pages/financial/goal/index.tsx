@@ -360,7 +360,10 @@ export function Goals() {
                 },
                 { value: FINANCIAL_GOAL_STATUS.COMPLETED, label: 'Hoàn thành' },
                 { value: FINANCIAL_GOAL_STATUS.CANCELLED, label: 'Đã hủy' },
-                { value: FINANCIAL_GOAL_STATUS.INACTIVE, label: 'Không hoạt động' },
+                {
+                  value: FINANCIAL_GOAL_STATUS.INACTIVE,
+                  label: 'Không hoạt động',
+                },
               ]}
             />
           </div>

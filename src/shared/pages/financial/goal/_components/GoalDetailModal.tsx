@@ -10,8 +10,8 @@ import {
   Input,
   InputNumber,
   Modal,
-  Progress,
   Popconfirm,
+  Progress,
   Space,
   Table,
   Tabs,
@@ -22,12 +22,12 @@ import {
 import {
   ArrowDownOutlined,
   ArrowUpOutlined,
-  DeleteOutlined,
   LockOutlined,
   PlusOutlined,
   TrophyOutlined,
 } from '@ant-design/icons'
 import dayjs from 'dayjs'
+import { useQueryClient } from '@tanstack/react-query'
 import type { IFinance_Goal } from '@/shared/api/financial/goal/goal.type'
 import type { IFinance_GoalHistory } from '@/shared/api/financial/goal/goal-history/goal-history.type'
 import { FINANCIAL_GOAL_STATUS } from '@/shared/api/financial/goal/goal.enum'
@@ -37,7 +37,6 @@ import { useGetFinance_Goal_Detail } from '@/shared/api/financial/goal/goal-hist
 import { useGetFinance_Goal_Projection } from '@/shared/api/financial/goal/useGetFinance_Goal_Projection'
 import { useMutationGoalHistory } from '@/shared/api/financial/goal/goal-history/goal.mutation'
 import { useMutationGoal } from '@/shared/api/financial/goal/goal.mutation'
-import { useQueryClient } from '@tanstack/react-query'
 import { FINANCIAL_GOAL_HISTORY_STATUS } from '@/shared/api/financial/goal/goal-history/goal-history.enum'
 
 const { Title, Text } = Typography
@@ -62,7 +61,8 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
       pathParams: { id: goal?.id || 0 },
       options: { enabled: !!goal?.id },
     })
-  const historyList: Array<IFinance_GoalHistory> = detailRes?.data?.histories || []
+  const historyList: Array<IFinance_GoalHistory> =
+    detailRes?.data?.histories || []
 
   const { data: projectionRes } = useGetFinance_Goal_Projection({
     pathParams: { id: goal?.id || 0 },
@@ -100,8 +100,12 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
     projection?.estimatedMonthsToTarget ?? estimatedMonths
 
   const refreshGoalQueries = () => {
-    queryClient.invalidateQueries({ queryKey: ['getFinanceGoalDetail', goal.id] })
-    queryClient.invalidateQueries({ queryKey: ['getFinanceGoalProjection', goal.id] })
+    queryClient.invalidateQueries({
+      queryKey: ['getFinanceGoalDetail', goal.id],
+    })
+    queryClient.invalidateQueries({
+      queryKey: ['getFinanceGoalProjection', goal.id],
+    })
     queryClient.invalidateQueries({ queryKey: ['getFinanceGoalList'] })
   }
 
