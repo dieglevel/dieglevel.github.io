@@ -1,6 +1,6 @@
 import type { UseQueryOptions } from '@tanstack/react-query'
 import type { ApiBaseResponse } from '@/shared/types/base-response'
-import type { IFinance_Goal } from '../goal.type'
+import type { IFinance_Goal_Detail } from '../goal.type'
 import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 
 export interface GetFinance_Goal_Detail_Params {
@@ -8,7 +8,7 @@ export interface GetFinance_Goal_Detail_Params {
     id: number
   }
   options?: Omit<
-    UseQueryOptions<ApiBaseResponse<IFinance_Goal>>,
+    UseQueryOptions<ApiBaseResponse<IFinance_Goal_Detail>>,
     'queryKey' | 'queryFn'
   >
 }
@@ -16,8 +16,11 @@ export interface GetFinance_Goal_Detail_Params {
 export const useGetFinance_Goal_Detail = (
   props: GetFinance_Goal_Detail_Params,
 ) =>
-  useQueryGet<ApiBaseResponse<IFinance_Goal>, `/financial-goal/${number}`>({
-    endPoint: `/financial-goal/${props.pathParams.id}`,
+  useQueryGet<
+    ApiBaseResponse<IFinance_Goal_Detail>,
+    `/financial-goal/${number}/detail`
+  >({
+    endPoint: `/financial-goal/${props.pathParams.id}/detail`,
     queryKey: ['getFinanceGoalDetail', props.pathParams.id],
     options: {
       enabled: !!props.pathParams.id,

@@ -117,11 +117,12 @@ export function Goals() {
         color: 'red',
         label: 'Quỹ khẩn cấp',
       },
-      [FINANCIAL_GOAL_TYPE.BIG_PURCHASE]: {
-        color: 'blue',
-        label: 'Mua sắm lớn',
+      [FINANCIAL_GOAL_TYPE.SAVING]: {
+        color: 'gold',
+        label: 'Tiết kiệm',
       },
-      [FINANCIAL_GOAL_TYPE.TRAVEL]: { color: 'green', label: 'Du lịch' },
+      [FINANCIAL_GOAL_TYPE.INVESTMENT]: { color: 'green', label: 'Đầu tư' },
+      [FINANCIAL_GOAL_TYPE.DEBT_PAYMENT]: { color: 'orange', label: 'Trả nợ' },
       [FINANCIAL_GOAL_TYPE.OTHER]: { color: 'default', label: 'Khác' },
     }
     const target = map[type]
@@ -139,8 +140,10 @@ export function Goals() {
             Hoàn thành
           </Tag>
         )
-      case FINANCIAL_GOAL_STATUS.PAUSED:
-        return <Tag color="warning">Tạm dừng</Tag>
+      case FINANCIAL_GOAL_STATUS.CANCELLED:
+        return <Tag color="error">Đã hủy</Tag>
+      case FINANCIAL_GOAL_STATUS.INACTIVE:
+        return <Tag color="default">Không hoạt động</Tag>
     }
   }
 
@@ -322,9 +325,18 @@ export function Goals() {
                   label: 'Quỹ khẩn cấp',
                 },
                 {
+                  value: FINANCIAL_GOAL_TYPE.SAVING,
+                  label: 'Tiết kiệm',
+                },
+                {
                   value: FINANCIAL_GOAL_TYPE.INVESTMENT,
                   label: 'Đầu tư',
                 },
+                {
+                  value: FINANCIAL_GOAL_TYPE.DEBT_PAYMENT,
+                  label: 'Trả nợ',
+                },
+                { value: FINANCIAL_GOAL_TYPE.OTHER, label: 'Khác' },
               ]}
             />
           </div>
@@ -347,7 +359,8 @@ export function Goals() {
                   label: 'Đang thực hiện',
                 },
                 { value: FINANCIAL_GOAL_STATUS.COMPLETED, label: 'Hoàn thành' },
-                { value: FINANCIAL_GOAL_STATUS.INACTIVE, label: 'Tạm dừng' },
+                { value: FINANCIAL_GOAL_STATUS.CANCELLED, label: 'Đã hủy' },
+                { value: FINANCIAL_GOAL_STATUS.INACTIVE, label: 'Không hoạt động' },
               ]}
             />
           </div>

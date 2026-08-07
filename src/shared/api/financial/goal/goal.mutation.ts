@@ -1,6 +1,7 @@
 import type { IFinance_Goal } from './goal.type'
 import {
   useMutationDelete,
+  useMutationPatch,
   useMutationPost,
 } from '@/shared/lib/api/mutation/useMutation'
 
@@ -45,9 +46,20 @@ export const useMutationGoal = () => {
     queryKey: ['getFinanceGoalList'],
   })
 
+  const mGoal_Cancel = useMutationPatch<
+    IFinance_Goal,
+    void,
+    'financial-goal/:id/cancel',
+    { id: string | number }
+  >({
+    endPoint: 'financial-goal/:id/cancel',
+    queryKey: [['getFinanceGoalList'], ['getFinanceGoalDetail']],
+  })
+
   return {
     mGoal_Create,
     mGoal_Update,
     mGoal_Delete,
+    mGoal_Cancel,
   }
 }

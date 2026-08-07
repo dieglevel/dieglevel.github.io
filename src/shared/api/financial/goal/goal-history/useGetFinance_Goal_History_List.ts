@@ -1,6 +1,6 @@
 import type { UseQueryOptions } from '@tanstack/react-query'
 import type { ApiBaseResponse } from '@/shared/types/base-response'
-import type { IFinance_GoalHistory } from './goal-history.type'
+import type { IFinance_Goal_Detail } from '../goal.type'
 import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 
 export interface GetFinance_Goal_History_List_Params {
@@ -12,7 +12,7 @@ export interface GetFinance_Goal_History_List_Params {
     limit?: number
   }
   options?: Omit<
-    UseQueryOptions<ApiBaseResponse<Array<IFinance_GoalHistory>>>,
+    UseQueryOptions<ApiBaseResponse<IFinance_Goal_Detail>>,
     'queryKey' | 'queryFn'
   >
 }
@@ -21,7 +21,7 @@ export const useGetFinance_Goal_History_List = (
   props: GetFinance_Goal_History_List_Params,
 ) =>
   useQueryGet<
-    ApiBaseResponse<Array<IFinance_GoalHistory>>,
+    ApiBaseResponse<IFinance_Goal_Detail>,
     `/financial-goal/${number}/detail`
   >({
     endPoint: `/financial-goal/${props.pathParams.goalId}/detail`,

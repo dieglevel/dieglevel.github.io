@@ -10,9 +10,8 @@ import {
   Input,
   InputNumber,
   Modal,
-  Popconfirm,
   Progress,
-  Radio,
+  Popconfirm,
   Space,
   Table,
   Tabs,
@@ -34,12 +33,12 @@ import type { IFinance_GoalHistory } from '@/shared/api/financial/goal/goal-hist
 import { FINANCIAL_GOAL_STATUS } from '@/shared/api/financial/goal/goal.enum'
 
 import { convertCurrency } from '@/shared/utils/helper/format-money'
-import { useGetFinance_Goal_History_List } from '@/shared/api/financial/goal/goal-history/useGetFinance_Goal_History_List'
+import { useGetFinance_Goal_Detail } from '@/shared/api/financial/goal/goal-history/useGetFinance_Goal_Detail'
+import { useGetFinance_Goal_Projection } from '@/shared/api/financial/goal/useGetFinance_Goal_Projection'
 import { useMutationGoalHistory } from '@/shared/api/financial/goal/goal-history/goal.mutation'
-import {
-  FINANCIAL_GOAL_HISTORY_SOURCE,
-  FINANCIAL_GOAL_HISTORY_STATUS,
-} from '@/shared/api/financial/goal/goal-history/goal-history.enum'
+import { useMutationGoal } from '@/shared/api/financial/goal/goal.mutation'
+import { useQueryClient } from '@tanstack/react-query'
+import { FINANCIAL_GOAL_HISTORY_STATUS } from '@/shared/api/financial/goal/goal-history/goal-history.enum'
 
 const { Title, Text } = Typography
 
@@ -55,16 +54,30 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
   const [activeTab, setActiveTab] = useState('overview')
   const [showAddTransaction, setShowAddTransaction] = useState(false)
   const [form] = Form.useForm()
+  const queryClient = useQueryClient()
 
   // 1. TanStack Query Hooks
-  const { data: historyRes, isLoading: isLoadingHistory } =
-    useGetFinance_Goal_History_List({
-      pathParams: { goalId: goal?.id || 0 },
+  const { data: detailRes, isLoading: isLoadingHistory } =
+    useGetFinance_Goal_Detail({
+      pathParams: { id: goal?.id || 0 },
       options: { enabled: !!goal?.id },
     })
-  const historyList: Array<IFinance_GoalHistory> = historyRes?.data || []
+  const historyList: Array<IFinance_GoalHistory> = detailRes?.data?.histories || []
 
-  const { mGoalHistory_Create, mGoalHistory_Delete } = useMutationGoalHistory()
+  const { data: projectionRes } = useGetFinance_Goal_Projection({
+    pathParams: { id: goal?.id || 0 },
+    queryParams: {
+      monthlySavingRate: goal?.autoContributionAmount ?? 0,
+    },
+    options: { enabled: !!goal?.id },
+  })
+
+  const {
+    mGoalHistory_ManualContribution,
+    mGoalHistory_Complete,
+    mGoalHistory_Skip,
+  } = useMutationGoalHistory()
+  const { mGoal_Cancel } = useMutationGoal()
 
   if (!goal) return null
 
@@ -80,22 +93,29 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
   const estimatedMonths =
     monthlySaving > 0 ? Math.ceil(remainingAmount / monthlySaving) : null
 
-  // Handle Tạo Giao dịch Lịch sử Nạp/Rút
+  const projection = projectionRes?.data
+  const projectionRemaining = projection?.remainingAmount ?? remainingAmount
+  const projectionMonthly = projection?.monthlyAmount ?? monthlySaving
+  const projectionMonths =
+    projection?.estimatedMonthsToTarget ?? estimatedMonths
+
+  const refreshGoalQueries = () => {
+    queryClient.invalidateQueries({ queryKey: ['getFinanceGoalDetail', goal.id] })
+    queryClient.invalidateQueries({ queryKey: ['getFinanceGoalProjection', goal.id] })
+    queryClient.invalidateQueries({ queryKey: ['getFinanceGoalList'] })
+  }
+
+  // Handle ghi nhận góp thêm vào goal
   const handleCreateTransaction = async (values: any) => {
-    const isDeposit = values.type === 'DEPOSIT'
     const amountVal = Number(values.amount)
 
-    mGoalHistory_Create.mutate(
+    mGoalHistory_ManualContribution.mutate(
       {
+        pathParams: { id: goal.id },
         body: {
-          goalId: goal.id,
+          amount: amountVal,
+          note: values.note || 'Ghi nhận tích lũy',
           period: dayjs().format('YYYY-MM'),
-          plannedAmount: goal.autoContributionAmount || 0,
-          amount: isDeposit ? amountVal : -amountVal,
-          source: FINANCIAL_GOAL_HISTORY_SOURCE.USER,
-          status: FINANCIAL_GOAL_HISTORY_STATUS.COMPLETED,
-          note: values.note || (isDeposit ? 'Nạp tiền tích lũy' : 'Rút tiền'),
-          completedAt: new Date(),
         },
       },
       {
@@ -103,6 +123,7 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
           message.success('Cập nhật biến động tiền thành công!')
           form.resetFields()
           setShowAddTransaction(false)
+          refreshGoalQueries()
         },
         onError: (err: any) => {
           message.error(err?.message || 'Không thể thực hiện giao dịch!')
@@ -111,13 +132,56 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
     )
   }
 
-  // Handle Xóa lịch sử
-  const handleDeleteHistory = (historyId: number) => {
-    mGoalHistory_Delete.mutate(
-      { pathParams: { id: historyId } },
+  const handleCompleteHistory = (history: IFinance_GoalHistory) => {
+    const amount = Number(history.plannedAmount || history.amount || 0)
+
+    if (amount <= 0) {
+      message.error('Không có số tiền hợp lệ để hoàn thành.')
+      return
+    }
+
+    mGoalHistory_Complete.mutate(
       {
-        onSuccess: () => message.success('Xóa bản ghi lịch sử thành công!'),
-        onError: () => message.error('Xóa thất bại!'),
+        pathParams: { historyId: history.id },
+        body: {
+          amount,
+          note: history.note || 'Hoàn thành từ giao diện',
+        },
+      },
+      {
+        onSuccess: () => {
+          message.success('Đã hoàn thành khoản tích lũy.')
+          refreshGoalQueries()
+        },
+        onError: () => message.error('Không thể hoàn thành lịch sử này.'),
+      },
+    )
+  }
+
+  const handleSkipHistory = (historyId: number) => {
+    mGoalHistory_Skip.mutate(
+      {
+        pathParams: { historyId },
+      },
+      {
+        onSuccess: () => {
+          message.success('Đã bỏ qua lịch sử chờ.')
+          refreshGoalQueries()
+        },
+        onError: () => message.error('Không thể bỏ qua lịch sử này.'),
+      },
+    )
+  }
+
+  const handleCancelGoal = () => {
+    mGoal_Cancel.mutate(
+      { pathParams: { id: goal.id } },
+      {
+        onSuccess: () => {
+          message.success('Đã hủy mục tiêu.')
+          refreshGoalQueries()
+        },
+        onError: () => message.error('Không thể hủy mục tiêu.'),
       },
     )
   }
@@ -164,25 +228,46 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
       render: (note?: string) => note || <Text type="secondary">-</Text>,
     },
     {
+      title: 'Trạng thái',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: FINANCIAL_GOAL_HISTORY_STATUS) => {
+        if (status === FINANCIAL_GOAL_HISTORY_STATUS.PENDING) {
+          return <Tag color="gold">Chờ xử lý</Tag>
+        }
+        if (status === FINANCIAL_GOAL_HISTORY_STATUS.COMPLETED) {
+          return <Tag color="green">Hoàn thành</Tag>
+        }
+        return <Tag color="default">Đã bỏ qua</Tag>
+      },
+    },
+    {
       title: '',
       key: 'action',
-      width: 50,
-      render: (_: any, record: IFinance_GoalHistory) => (
-        <Popconfirm
-          title="Xóa lịch sử này?"
-          onConfirm={() => handleDeleteHistory(record.id)}
-          okText="Xóa"
-          cancelText="Hủy"
-          okButtonProps={{ danger: true }}
-        >
-          <Button
-            type="text"
-            danger
-            icon={<DeleteOutlined />}
-            loading={mGoalHistory_Delete.isPending}
-          />
-        </Popconfirm>
-      ),
+      width: 160,
+      render: (_: any, record: IFinance_GoalHistory) =>
+        record.status === FINANCIAL_GOAL_HISTORY_STATUS.PENDING ? (
+          <Space size={4}>
+            <Button
+              size="small"
+              type="primary"
+              onClick={() => handleCompleteHistory(record)}
+              loading={mGoalHistory_Complete.isPending}
+            >
+              Hoàn thành
+            </Button>
+            <Popconfirm
+              title="Bỏ qua lịch sử này?"
+              onConfirm={() => handleSkipHistory(record.id)}
+              okText="Bỏ qua"
+              cancelText="Hủy"
+            >
+              <Button size="small" danger loading={mGoalHistory_Skip.isPending}>
+                Bỏ qua
+              </Button>
+            </Popconfirm>
+          </Space>
+        ) : null,
     },
   ]
 
@@ -251,18 +336,18 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
                   <Descriptions column={2} size="small" bordered>
                     <Descriptions.Item label="Còn lại">
                       <Text type="danger" strong>
-                        {convertCurrency(remainingAmount)}
+                        {convertCurrency(projectionRemaining)}
                       </Text>
                     </Descriptions.Item>
                     <Descriptions.Item label="Trích hàng tháng">
-                      {monthlySaving > 0
-                        ? convertCurrency(monthlySaving)
+                      {projectionMonthly > 0
+                        ? convertCurrency(projectionMonthly)
                         : 'Chưa đặt'}
                     </Descriptions.Item>
                     <Descriptions.Item label="Dự kiến hoàn thành" span={2}>
                       <Text strong style={{ color: '#1677ff' }}>
-                        {estimatedMonths !== null
-                          ? `Còn khoảng ${estimatedMonths} tháng`
+                        {projectionMonths !== null
+                          ? `Còn khoảng ${projectionMonths} tháng`
                           : 'Cần cài đặt số tiền trích hàng tháng'}
                       </Text>
                     </Descriptions.Item>
@@ -295,6 +380,16 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
                       : 'Không giới hạn'}
                   </Descriptions.Item>
                 </Descriptions>
+                {goal.status === FINANCIAL_GOAL_STATUS.ACTIVE && (
+                  <Button
+                    danger
+                    block
+                    onClick={handleCancelGoal}
+                    loading={mGoal_Cancel.isPending}
+                  >
+                    Hủy mục tiêu
+                  </Button>
+                )}
               </Space>
             ),
           },
@@ -336,26 +431,10 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
                       layout="vertical"
                       onFinish={handleCreateTransaction}
                     >
-                      <Form.Item
-                        name="type"
-                        initialValue="DEPOSIT"
-                        rules={[{ required: true }]}
-                      >
-                        <Radio.Group buttonStyle="solid">
-                          <Radio.Button value="DEPOSIT">Nạp vào</Radio.Button>
-                          <Radio.Button
-                            value="WITHDRAW"
-                            disabled={goal.isLocked}
-                          >
-                            Rút ra {goal.isLocked && '(Đã khóa)'}
-                          </Radio.Button>
-                        </Radio.Group>
-                      </Form.Item>
-
                       <Space style={{ display: 'flex' }} align="start">
                         <Form.Item
                           name="amount"
-                          label="Số tiền"
+                          label="Số tiền góp thêm"
                           rules={[{ required: true, message: 'Nhập số tiền' }]}
                           style={{ flex: 1 }}
                         >
@@ -376,14 +455,14 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
                           label="Ghi chú"
                           style={{ flex: 2 }}
                         >
-                          <Input placeholder="Lý do nạp/rút..." />
+                          <Input placeholder="Lý do góp thêm..." />
                         </Form.Item>
                       </Space>
 
                       <Button
                         type="primary"
                         htmlType="submit"
-                        loading={mGoalHistory_Create.isPending}
+                        loading={mGoalHistory_ManualContribution.isPending}
                         block
                       >
                         Xác nhận

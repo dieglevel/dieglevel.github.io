@@ -1,65 +1,63 @@
-import type {
-  FINANCIAL_GOAL_HISTORY_SOURCE,
-  FINANCIAL_GOAL_HISTORY_STATUS,
-} from './goal-history.enum'
 import type { IFinance_GoalHistory } from './goal-history.type'
-import {
-  useMutationDelete,
-  useMutationPost,
-} from '@/shared/lib/api/mutation/useMutation'
+import { useMutationPost } from '@/shared/lib/api/mutation/useMutation'
+
+export interface ManualContributionResponse {
+  history: IFinance_GoalHistory
+  currentAmount: number
+  isCompleted: boolean
+}
 
 export interface CreateGoalHistoryDto {
-  goalId: number
-  period: string
-  plannedAmount?: number
   amount: number
-  source?: FINANCIAL_GOAL_HISTORY_SOURCE
-  status?: FINANCIAL_GOAL_HISTORY_STATUS
   note?: string
-  completedAt?: string | Date
+  period?: string
+}
+
+export interface CompleteGoalHistoryDto {
+  amount: number
+  note?: string
 }
 /**
- * Hook chứa tất cả mutations liên quan đến Financial Goal History
- * - Create: Tạo lịch sử/giao dịch tích lũy mới
- * - Update: Cập nhật thông tin lịch sử
- * - Delete: Xóa lịch sử
+ * Backend hiện tại chỉ hỗ trợ ghi nhận contribution trực tiếp lên goal.
  */
 export const useMutationGoalHistory = () => {
-  // Tạo bản ghi lịch sử mục tiêu mới (Tích lũy / Nạp / Rút)
-  const mGoalHistory_Create = useMutationPost<
-    IFinance_GoalHistory,
+  const mGoalHistory_ManualContribution = useMutationPost<
+    ManualContributionResponse,
     CreateGoalHistoryDto,
-    'financial-goal-history/create'
+    'financial-goal/:id/manual-contribution',
+    { id: string | number }
   >({
-    endPoint: 'financial-goal-history/create',
-    queryKey: ['getFinanceGoalHistoryList', 'getFinanceGoalList'],
+    endPoint: 'financial-goal/:id/manual-contribution',
+    queryKey: ['getFinanceGoalList'],
   })
 
-  // Cập nhật bản ghi lịch sử mục tiêu
-  const mGoalHistory_Update = useMutationPost<
+  const mGoalHistory_Complete = useMutationPost<
+    {
+      history: IFinance_GoalHistory
+      currentAmount: number
+      status: string
+    },
+    CompleteGoalHistoryDto,
+    'financial-goal/history/:historyId/complete',
+    { historyId: string | number }
+  >({
+    endPoint: 'financial-goal/history/:historyId/complete',
+    queryKey: [['getFinanceGoalDetail'], ['getFinanceGoalList']],
+  })
+
+  const mGoalHistory_Skip = useMutationPost<
     IFinance_GoalHistory,
-    Partial<CreateGoalHistoryDto>,
-    'financial-goal-history/update/:id',
-    { id: string | number }
-  >({
-    endPoint: 'financial-goal-history/update/:id',
-    queryKey: ['getFinanceGoalHistoryList', 'getFinanceGoalList'],
-  })
-
-  // Xóa bản ghi lịch sử mục tiêu
-  const mGoalHistory_Delete = useMutationDelete<
     void,
-    void,
-    'financial-goal-history/delete/:id',
-    { id: string | number }
+    'financial-goal/history/:historyId/skip',
+    { historyId: string | number }
   >({
-    endPoint: 'financial-goal-history/delete/:id',
-    queryKey: ['getFinanceGoalHistoryList', 'getFinanceGoalList'],
+    endPoint: 'financial-goal/history/:historyId/skip',
+    queryKey: [['getFinanceGoalDetail'], ['getFinanceGoalList']],
   })
 
   return {
-    mGoalHistory_Create,
-    mGoalHistory_Update,
-    mGoalHistory_Delete,
+    mGoalHistory_ManualContribution,
+    mGoalHistory_Complete,
+    mGoalHistory_Skip,
   }
 }

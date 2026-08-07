@@ -24,8 +24,9 @@ const { Text } = Typography
 
 const TYPE_OPTIONS = [
   { label: 'Quỹ khẩn cấp', value: FINANCIAL_GOAL_TYPE.EMERGENCY_FUND },
-  { label: 'Mua sắm lớn', value: FINANCIAL_GOAL_TYPE.BIG_PURCHASE },
-  { label: 'Du lịch', value: FINANCIAL_GOAL_TYPE.TRAVEL },
+  { label: 'Tiết kiệm', value: FINANCIAL_GOAL_TYPE.SAVING },
+  { label: 'Đầu tư', value: FINANCIAL_GOAL_TYPE.INVESTMENT },
+  { label: 'Trả nợ', value: FINANCIAL_GOAL_TYPE.DEBT_PAYMENT },
   { label: 'Khác', value: FINANCIAL_GOAL_TYPE.OTHER },
 ]
 
