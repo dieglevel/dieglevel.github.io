@@ -20,11 +20,12 @@ export const IconRenderer: React.FC<IconRendererProps> = ({
   size = 20,
   color = 'currentColor',
 }) => {
-  if (!iconName) return null
+  if (iconName === null || iconName === undefined) {
+    return <>-</>
+  }
 
   const formattedName = toPascalCase(iconName)
-  const IconComponent =
-    (LucideIcons as any)[formattedName] || LucideIcons.HelpCircle
+  const IconComponent = (LucideIcons as any)[formattedName]
 
   return <IconComponent size={size} color={color || 'currentColor'} />
 }

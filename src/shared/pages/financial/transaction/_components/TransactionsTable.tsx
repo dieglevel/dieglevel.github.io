@@ -7,6 +7,7 @@ import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { FINANCIAL_TRANSACTION_STATUS_LABEL } from '@/shared/api/financial/transaction/transaction.enum'
+import { DayjsHelper } from '@/shared/utils/helper/dayjs'
 
 const { Text } = Typography
 
@@ -38,10 +39,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
           type="secondary"
           style={{ fontFamily: 'monospace', fontSize: 12 }}
         >
-          {new Date(date).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-          })}
+          {DayjsHelper.formatDate(date, 'DD/MM/YYYY')}
         </Text>
       ),
     },

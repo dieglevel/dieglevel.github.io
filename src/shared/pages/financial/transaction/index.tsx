@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react'
-import { FloatButton, Grid, Space } from 'antd'
+import { FloatButton, Grid, Space, Tabs } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
+import { ChartLine } from 'lucide-react'
 import { TransactionModal } from './_components/TransactionModal'
 import { TransactionsSummary } from './_components/TransactionsSummary'
 import { TransactionDetail } from './_components/TransactionDetail'
@@ -8,6 +9,7 @@ import { TransactionsTable } from './_components/TransactionsTable'
 import { TransactionHeader } from './_components/TransactionHeader'
 import { TransactionSearch } from './_components/TransactionSearch'
 import { TransactionFilterModal } from './_components/TransactionFilterModal'
+import type { TabsProps } from 'antd'
 
 import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
@@ -17,12 +19,49 @@ import { useGetWallet_Transaction_Date } from '@/shared/api/financial/transactio
 
 const { useBreakpoint } = Grid
 
+const tabsData: TabsProps['items'] = [
+  {
+    key: 'all',
+    label: 'Tất cả',
+  },
+  {
+    key: 'income',
+    label: 'Thu nhập',
+  },
+  {
+    key: 'expense',
+    label: 'Chi tiêu',
+  },
+  {
+    key: 'transfer',
+    label: 'Chuyển khoản',
+  },
+  {
+    key: 'refund',
+    label: 'Hoàn tiền',
+  },
+  {
+    key: 'adjustment',
+    label: 'Điều chỉnh',
+  },
+  {
+    key: 'pending',
+    label: 'Đang chờ',
+  },
+  {
+    key: 'statistics',
+    label: <ChartLine size={18} />,
+  },
+]
+
 export function Transactions() {
   const screens = useBreakpoint()
   const isMobile = !screens.md
 
   const { data: dataTransaction } = useGetWallet_Transaction_Date({})
   const transactions = dataTransaction?.data || []
+
+  const [activeTab, setActiveTab] = useState('all')
 
   // State Bộ lọc & Tìm kiếm
   const [search, setSearch] = useState('')
@@ -102,6 +141,92 @@ export function Transactions() {
     })
   }, [transactions, search, typeFilter, walletFilter, catFilter, statusFilter])
 
+  const renderTabs = useMemo(() => {
+    switch (activeTab) {
+      case 'all':
+        return (
+          <TransactionsTable
+            dataSource={filtered}
+            isMobile={isMobile}
+            selectedKeys={selectedKeys}
+            onSelectChange={setSelectedKeys}
+            onViewDetail={setViewTransaction}
+          />
+        )
+      case 'income':
+        return (
+          <TransactionsTable
+            dataSource={filtered.filter((t) => t.type === 'income')}
+            isMobile={isMobile}
+            selectedKeys={selectedKeys}
+            onSelectChange={setSelectedKeys}
+            onViewDetail={setViewTransaction}
+          />
+        )
+      case 'expense':
+        return (
+          <TransactionsTable
+            dataSource={filtered.filter((t) => t.type === 'expense')}
+            isMobile={isMobile}
+            selectedKeys={selectedKeys}
+            onSelectChange={setSelectedKeys}
+            onViewDetail={setViewTransaction}
+          />
+        )
+      case 'transfer':
+        return (
+          <TransactionsTable
+            dataSource={filtered.filter((t) => t.type === 'transfer')}
+            isMobile={isMobile}
+            selectedKeys={selectedKeys}
+            onSelectChange={setSelectedKeys}
+            onViewDetail={setViewTransaction}
+          />
+        )
+      case 'refund':
+        return (
+          <TransactionsTable
+            dataSource={filtered.filter((t) => t.type === 'refund')}
+            isMobile={isMobile}
+            selectedKeys={selectedKeys}
+            onSelectChange={setSelectedKeys}
+            onViewDetail={setViewTransaction}
+          />
+        )
+      case 'adjustment':
+        return (
+          <TransactionsTable
+            dataSource={filtered.filter((t) => t.type === 'adjustment')}
+            isMobile={isMobile}
+            selectedKeys={selectedKeys}
+            onSelectChange={setSelectedKeys}
+            onViewDetail={setViewTransaction}
+          />
+        )
+      case 'pending':
+        return (
+          <TransactionsTable
+            dataSource={filtered.filter((t) => t.status === 'pending')}
+            isMobile={isMobile}
+            selectedKeys={selectedKeys}
+            onSelectChange={setSelectedKeys}
+            onViewDetail={setViewTransaction}
+          />
+        )
+      case 'statistics':
+        return <TransactionsSummary transactions={filtered} />
+      default:
+        return null
+    }
+  }, [
+    activeTab,
+    filtered,
+    isMobile,
+    selectedKeys,
+    setSelectedKeys,
+    setViewTransaction,
+  ])
+
   return (
     <Space
       direction="vertical"
@@ -122,8 +247,8 @@ export function Transactions() {
         onOpenAddModal={() => setShowAdd(true)}
       />
 
-      {/* 2. Summary Chart */}
-      <TransactionsSummary transactions={transactions} />
+      <Tabs items={tabsData} activeKey={activeTab} onChange={setActiveTab} />
+      {renderTabs}
 
       {/* 3. Search & Active Filters */}
       <TransactionSearch
@@ -143,15 +268,6 @@ export function Transactions() {
         onClearCat={() => setCatFilter('all')}
         onClearStatus={() => setStatusFilter('all')}
         onResetAll={handleResetFilter}
-      />
-
-      {/* 4. Table */}
-      <TransactionsTable
-        dataSource={filtered}
-        isMobile={isMobile}
-        selectedKeys={selectedKeys}
-        onSelectChange={setSelectedKeys}
-        onViewDetail={setViewTransaction}
       />
 
       {/* 5. Filter Modal */}

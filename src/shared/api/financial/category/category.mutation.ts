@@ -34,9 +34,20 @@ export const useMutationFinanceCategory = () => {
     queryKey: ['getFinanceCategoryCount'],
   })
 
+  const mCategory_Archive = useMutationPost<
+    void,
+    void,
+    'financial-category/archive/:categoryId',
+    { categoryId: string }
+  >({
+    endPoint: 'financial-category/archive/:categoryId',
+    queryKey: ['getFinanceCategoryCount'],
+  })
+
   return {
     mCategory_Create,
     mCategory_Update,
     mCategory_Delete,
+    mCategory_Archive,
   }
 }

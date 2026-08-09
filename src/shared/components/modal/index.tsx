@@ -41,7 +41,7 @@ export default function BaseModal({
               style={{
                 minWidth: 70,
               }}
-              onClick={onClose}
+              onClick={onClose || onCancel}
             >
               Cancel
             </Button>

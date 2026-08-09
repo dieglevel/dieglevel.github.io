@@ -210,11 +210,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           color: color || token.colorText,
         }}
       >
-        {value ? (
-          <DynamicLucideIcon name={value} size={16} />
-        ) : (
-          <HelpCircle size={16} style={{ color }} />
-        )}
+        {value ? <DynamicLucideIcon name={value} size={16} /> : <>-</>}
       </Button>
     </Popover>
   )

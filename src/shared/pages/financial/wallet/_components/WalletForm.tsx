@@ -91,7 +91,7 @@ export function WalletModal({
       width={560}
       centered
     >
-      <Form form={form} layout="vertical" requiredMark="optional">
+      <Form form={form} layout="vertical">
         {/* Tên ví & Loại ví */}
         <Row gutter={12}>
           <Col span={14}>

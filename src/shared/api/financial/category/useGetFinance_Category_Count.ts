@@ -22,9 +22,9 @@ export const useGetFinance_Category_Count = (
 ) =>
   useQueryGet<
     ApiBaseResponse<Array<IFinance_Category>>,
-    '/financial-category/with-transaction-count'
+    '/financial-category/list'
   >({
-    endPoint: `/financial-category/with-transaction-count`,
+    endPoint: `/financial-category/list`,
     queryKey: ['getFinanceCategoryCount'],
     queryParams: props.queryParams,
     ...props,
