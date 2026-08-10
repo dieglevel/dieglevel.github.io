@@ -18,7 +18,6 @@ export function WalletCard({ wallet, onEdit, onDelete }: WalletCardProps) {
   const isCreditCard =
     wallet.type === FINANCIAL_WALLET_TYPE.CREDIT_CARD ||
     wallet.creditLimit != null
-  const isNegative = wallet.balance < 0
 
   const typeLabel =
     FINANCIAL_WALLET_TYPE_OPTIONS[wallet.type].label || wallet.type

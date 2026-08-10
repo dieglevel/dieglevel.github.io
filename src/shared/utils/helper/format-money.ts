@@ -17,7 +17,7 @@ export function convertCurrency(
   locale = 'vi-VN',
   showSymbol = true,
 ): string {
-  if (!amountVND) return '-'
+  if (amountVND === null || amountVND === undefined) return '-'
 
   const to = (LocalStorageService.get(LOCAL_STORAGE_KEY.CURRENCY, 'VND') ||
     'VND') as Currency

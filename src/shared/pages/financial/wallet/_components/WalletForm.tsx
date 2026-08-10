@@ -121,33 +121,17 @@ export function WalletModal({
           </Col>
         </Row>
 
-        {/* Số dư hiện tại, Icon & Mã màu */}
         <Row gutter={12}>
           <Col span={16}>
-            <Form.Item
-              label="Số dư ban đầu"
-              name="balance"
-              rules={[{ required: true, message: 'Vui lòng nhập số dư' }]}
-            >
-              <InputNumber
-                style={{ width: '100%' }}
-                placeholder="0"
-                {...InputWithComma}
-                suffix="VND"
-              />
+            <Form.Item label="Màu sắc" name="color">
+              <ColorPicker />
             </Form.Item>
           </Col>
-          <Col span={8}>
+          <Col span={6}>
             <Form.Item label="Biểu tượng" name="icon">
               <IconPicker color={watchColor} />
             </Form.Item>
           </Col>
-        </Row>
-
-        <Row gutter={12}>
-          <Form.Item label="Màu sắc" name="color">
-            <ColorPicker />
-          </Form.Item>
         </Row>
 
         {/* Thông tin tổ chức tài chính / Ngân hàng */}
