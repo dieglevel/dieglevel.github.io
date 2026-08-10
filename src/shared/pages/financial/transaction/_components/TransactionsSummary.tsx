@@ -21,6 +21,7 @@ import {
 } from 'recharts'
 import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
+import { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
 
 const { Text } = Typography
 
@@ -35,11 +36,11 @@ export const TransactionsSummary: React.FC<TransactionsSummaryProps> = ({
 
   // Tính toán dữ liệu tài chính
   const income = transactions
-    .filter((t) => t.type === 'income')
+    .filter((t) => t.type === FINANCIAL_TRANSACTION_TYPE.INCOME)
     .reduce((s, t) => s + t.amount, 0)
 
   const expense = transactions
-    .filter((t) => t.type === 'expense')
+    .filter((t) => t.type === FINANCIAL_TRANSACTION_TYPE.EXPENSE)
     .reduce((s, t) => s + t.amount, 0)
 
   const net = income - expense

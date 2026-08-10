@@ -6,7 +6,10 @@ import type { IFinance_Transaction } from '@/shared/api/financial/transaction/tr
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
-import { FINANCIAL_TRANSACTION_STATUS_LABEL } from '@/shared/api/financial/transaction/transaction.enum'
+import {
+  FINANCIAL_TRANSACTION_STATUS_LABEL,
+  FINANCIAL_TRANSACTION_TYPE,
+} from '@/shared/api/financial/transaction/transaction.enum'
 import { DayjsHelper } from '@/shared/utils/helper/dayjs'
 
 const { Text } = Typography
@@ -63,7 +66,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       align: 'right',
       sorter: (a, b) => a.amount - b.amount,
       render: (amount: number, record) => {
-        const isIncome = record.type === 'income'
+        const isIncome = record.type === FINANCIAL_TRANSACTION_TYPE.INCOME
         return (
           <Text
             style={{
@@ -106,7 +109,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       key: 'categories',
       responsive: ['md'],
       render: (_, record) => {
-        const advances = record.financialAdvanceTransactions || []
+        const advances = record.financialTransactionItems || []
         // Thu thập các categories không bị trùng lặp
         const categories = Array.from(
           new Map(

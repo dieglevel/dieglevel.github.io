@@ -15,7 +15,7 @@ import type { TabsProps } from 'antd'
 import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
-import type { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
+import { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
 import { useGetWallet_Transaction_Date } from '@/shared/api/financial/transaction/useGetFinance_Transaction_Date'
 
 const { useBreakpoint } = Grid
@@ -93,8 +93,8 @@ export function Transactions() {
   const categoryOptions = useMemo(() => {
     const map = new Map<number, IFinance_Category>()
     transactions.forEach((t) => {
-      t.financialAdvanceTransactions?.forEach((adv) => {
-        if (adv.category?.id) map.set(adv.category.id, adv.category)
+      t.financialTransactionItems?.forEach((item) => {
+        if (item.category?.id) map.set(item.category.id, item.category)
       })
     })
     return Array.from(map.values()).map((c) => ({ value: c.id, label: c.name }))
@@ -134,8 +134,8 @@ export function Transactions() {
       if (statusFilter !== 'all' && t.status !== statusFilter) return false
 
       if (catFilter !== 'all') {
-        const hasCategory = t.financialAdvanceTransactions?.some(
-          (adv) => adv.categoryId === catFilter,
+        const hasCategory = t.financialTransactionItems?.some(
+          (item) => item.categoryId === catFilter,
         )
         if (!hasCategory) return false
       }
@@ -158,7 +158,9 @@ export function Transactions() {
       case 'income':
         return (
           <TransactionsTable
-            dataSource={filtered.filter((t) => t.type === 'income')}
+            dataSource={filtered.filter(
+              (t) => t.type === FINANCIAL_TRANSACTION_TYPE.INCOME,
+            )}
             isMobile={isMobile}
             selectedKeys={selectedKeys}
             onSelectChange={setSelectedKeys}
@@ -168,7 +170,9 @@ export function Transactions() {
       case 'expense':
         return (
           <TransactionsTable
-            dataSource={filtered.filter((t) => t.type === 'expense')}
+            dataSource={filtered.filter(
+              (t) => t.type === FINANCIAL_TRANSACTION_TYPE.EXPENSE,
+            )}
             isMobile={isMobile}
             selectedKeys={selectedKeys}
             onSelectChange={setSelectedKeys}
@@ -178,7 +182,9 @@ export function Transactions() {
       case 'transfer':
         return (
           <TransactionsTable
-            dataSource={filtered.filter((t) => t.type === 'transfer')}
+            dataSource={filtered.filter(
+              (t) => t.type === FINANCIAL_TRANSACTION_TYPE.TRANSFER,
+            )}
             isMobile={isMobile}
             selectedKeys={selectedKeys}
             onSelectChange={setSelectedKeys}
@@ -188,7 +194,9 @@ export function Transactions() {
       case 'refund':
         return (
           <TransactionsTable
-            dataSource={filtered.filter((t) => t.type === 'refund')}
+            dataSource={filtered.filter(
+              (t) => t.type === FINANCIAL_TRANSACTION_TYPE.REFUND,
+            )}
             isMobile={isMobile}
             selectedKeys={selectedKeys}
             onSelectChange={setSelectedKeys}
@@ -198,23 +206,16 @@ export function Transactions() {
       case 'adjustment':
         return (
           <TransactionsTable
-            dataSource={filtered.filter((t) => t.type === 'adjustment')}
+            dataSource={filtered.filter(
+              (t) => t.type === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT,
+            )}
             isMobile={isMobile}
             selectedKeys={selectedKeys}
             onSelectChange={setSelectedKeys}
             onViewDetail={setViewTransaction}
           />
         )
-      case 'pending':
-        return (
-          <TransactionsTable
-            dataSource={filtered.filter((t) => t.status === 'pending')}
-            isMobile={isMobile}
-            selectedKeys={selectedKeys}
-            onSelectChange={setSelectedKeys}
-            onViewDetail={setViewTransaction}
-          />
-        )
+
       case 'statistics':
         return <TransactionsSummary transactions={filtered} />
       default:

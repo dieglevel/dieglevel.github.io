@@ -16,7 +16,10 @@ import type { IFinance_Transaction } from '@/shared/api/financial/transaction/tr
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import Table from '@/shared/components/table'
-import { FINANCIAL_TRANSACTION_STATUS_LABEL } from '@/shared/api/financial/transaction/transaction.enum'
+import {
+  FINANCIAL_TRANSACTION_STATUS_LABEL,
+  FINANCIAL_TRANSACTION_TYPE,
+} from '@/shared/api/financial/transaction/transaction.enum'
 
 const { useBreakpoint } = Grid
 
@@ -57,9 +60,13 @@ export function TransactionDetail({
             style={{
               textAlign: 'center',
               backgroundColor:
-                viewTransaction.type === 'income' ? '#f6ffed' : '#fff2f0',
+                viewTransaction.type === FINANCIAL_TRANSACTION_TYPE.INCOME
+                  ? '#f6ffed'
+                  : '#fff2f0',
               borderColor:
-                viewTransaction.type === 'income' ? '#b7eb8f' : '#ffccc7',
+                viewTransaction.type === FINANCIAL_TRANSACTION_TYPE.INCOME
+                  ? '#b7eb8f'
+                  : '#ffccc7',
             }}
           >
             <Text type="secondary" style={{ fontSize: 12 }}>
@@ -70,10 +77,14 @@ export function TransactionDetail({
               style={{
                 margin: 0,
                 color:
-                  viewTransaction.type === 'income' ? '#52c41a' : '#ff4d4f',
+                  viewTransaction.type === FINANCIAL_TRANSACTION_TYPE.INCOME
+                    ? '#52c41a'
+                    : '#ff4d4f',
               }}
             >
-              {viewTransaction.type === 'income' ? '+' : '-'}
+              {viewTransaction.type === FINANCIAL_TRANSACTION_TYPE.INCOME
+                ? '+'
+                : '-'}
               {convertCurrency(viewTransaction.amount)}
             </Title>
           </Card>
@@ -86,7 +97,11 @@ export function TransactionDetail({
 
             <Descriptions.Item label="Type">
               <Tag
-                color={viewTransaction.type === 'income' ? 'green' : 'volcano'}
+                color={
+                  viewTransaction.type === FINANCIAL_TRANSACTION_TYPE.INCOME
+                    ? 'green'
+                    : 'volcano'
+                }
               >
                 {viewTransaction.type.toUpperCase()}
               </Tag>
@@ -126,22 +141,22 @@ export function TransactionDetail({
           </Descriptions>
 
           {/* Danh sách các chi tiết hạng mục (Advance Transactions) */}
-          {viewTransaction.financialAdvanceTransactions &&
-            viewTransaction.financialAdvanceTransactions.length > 0 && (
+          {viewTransaction.financialTransactionItems &&
+            viewTransaction.financialTransactionItems.length > 0 && (
               <div>
                 <Divider
                   orientation="horizontal"
                   style={{ margin: '12px 0', fontSize: 14 }}
                 >
                   Breakdown Items (
-                  {viewTransaction.financialAdvanceTransactions.length})
+                  {viewTransaction.financialTransactionItems.length})
                 </Divider>
 
                 <Table
                   size="small"
                   footer={undefined}
                   rowKey="id"
-                  dataSource={viewTransaction.financialAdvanceTransactions}
+                  dataSource={viewTransaction.financialTransactionItems}
                   columns={[
                     {
                       title: 'Item Description',

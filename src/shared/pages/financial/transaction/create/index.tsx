@@ -30,22 +30,12 @@ import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { InputWithComma } from '@/shared/components/input/utils'
 import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
 import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
+import {
+  FINANCIAL_TRANSACTION_STATUS,
+  FINANCIAL_TRANSACTION_TYPE,
+} from '@/shared/api/financial/transaction/transaction.enum'
 
 const { Text, Title } = Typography
-
-export enum FINANCIAL_TRANSACTION_TYPE {
-  INCOME = 'INCOME',
-  EXPENSE = 'EXPENSE',
-  REFUND = 'REFUND',
-  ADJUSTMENT = 'ADJUSTMENT',
-  TRANSFER = 'TRANSFER',
-}
-
-export enum FINANCIAL_TRANSACTION_STATUS {
-  PENDING = 'PENDING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-}
 
 export const CreateTransactionPage: React.FC = () => {
   const [form] = Form.useForm<IMutationTransaction_Create>()
