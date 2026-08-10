@@ -3,7 +3,7 @@ import type {
   FINANCIAL_CATEGORY_SPENDING_NATURE,
   FINANCIAL_CATEGORY_TYPE,
 } from './category.enum'
-import type { IFinance_AdvanceTransaction } from '../transaction/advance-transaction/advance-transaction.type'
+import type { IFinance_TransactionItem } from '../transaction/transaction-item/transaction-item.type'
 import type { User } from '@/shared/auth/auth.type'
 
 export interface IFinance_Category extends IBaseEntity {
@@ -17,7 +17,7 @@ export interface IFinance_Category extends IBaseEntity {
   parent?: IFinance_Category | null
   parentId?: number | null
   children?: Array<IFinance_Category>
-  advanceTransactions?: Array<IFinance_AdvanceTransaction>
+  advanceTransactions?: Array<IFinance_TransactionItem>
   account?: User
 
   totalAmount?: number

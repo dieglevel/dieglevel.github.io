@@ -1,13 +1,21 @@
 import type { IFinance_Transaction } from './transaction.type'
+import type { Dayjs } from 'dayjs'
 import {
   useMutationDelete,
   useMutationPost,
 } from '@/shared/lib/api/mutation/useMutation'
 
+export interface IMutationTransaction_Create extends Omit<
+  IFinance_Transaction,
+  'id' | 'createdAt'
+> {
+  date: Dayjs
+}
+
 export const useMutationTransaction = () => {
   const mTransaction_Create = useMutationPost<
     void,
-    Omit<IFinance_Transaction, 'id' | 'created_at'>,
+    IMutationTransaction_Create,
     'financial-transaction/create'
   >({
     endPoint: 'financial-transaction/create',

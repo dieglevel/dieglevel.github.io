@@ -1,22 +1,24 @@
 export enum FINANCIAL_TRANSACTION_TYPE {
-  INCOME = 'income',
-  EXPENSE = 'expense',
-  REFUND = 'refund',
-  ADJUSTMENT = 'adjustment',
-  TRANSFER = 'transfer',
+  INCOME = 'INCOME',
+  EXPENSE = 'EXPENSE',
+  REFUND = 'REFUND',
+  ADJUSTMENT = 'ADJUSTMENT',
+  TRANSFER = 'TRANSFER',
 }
 
+export class FinancialTransactionTypeHelper {}
+
 export enum FINANCIAL_TRANSACTION_STATUS {
-  PENDING = 'pending',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
+  PENDING = 'PENDING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
 }
 
 export const FINANCIAL_TRANSACTION_STATUS_LABEL: Record<
   FINANCIAL_TRANSACTION_STATUS,
   { color: string }
 > = {
-  completed: { color: 'success' },
-  pending: { color: 'warning' },
-  failed: { color: 'error' },
+  [FINANCIAL_TRANSACTION_STATUS.COMPLETED]: { color: 'success' },
+  [FINANCIAL_TRANSACTION_STATUS.PENDING]: { color: 'warning' },
+  [FINANCIAL_TRANSACTION_STATUS.FAILED]: { color: 'error' },
 }

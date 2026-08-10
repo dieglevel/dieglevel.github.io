@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { FloatButton, Grid, Space, Tabs } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { ChartLine } from 'lucide-react'
+import { useRouter } from '@tanstack/react-router'
 import { TransactionModal } from './_components/TransactionModal'
 import { TransactionsSummary } from './_components/TransactionsSummary'
 import { TransactionDetail } from './_components/TransactionDetail'
@@ -56,6 +57,7 @@ const tabsData: TabsProps['items'] = [
 
 export function Transactions() {
   const screens = useBreakpoint()
+  const router = useRouter()
   const isMobile = !screens.md
 
   const { data: dataTransaction } = useGetWallet_Transaction_Date({})
@@ -244,7 +246,11 @@ export function Transactions() {
         totalCount={transactions.length}
         selectedCount={selectedKeys.length}
         onDeleteSelected={() => setSelectedKeys([])}
-        onOpenAddModal={() => setShowAdd(true)}
+        onOpenAddModal={() => {
+          router.navigate({
+            to: '/financial/transaction/create',
+          })
+        }}
       />
 
       <Tabs items={tabsData} activeKey={activeTab} onChange={setActiveTab} />

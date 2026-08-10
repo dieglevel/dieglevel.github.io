@@ -17,7 +17,6 @@ import {
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 
-import type { FinanceAdvanceTransaction_Create_Request } from '@/shared/api/financial/transaction/advance-transaction/advance-transaction.mutation'
 import { useGetFinance_Category_Count } from '@/shared/api/financial/category/useGetFinance_Category_Count'
 import {
   FINANCIAL_TRANSACTION_STATUS,
@@ -25,7 +24,6 @@ import {
 } from '@/shared/api/financial/transaction/transaction.enum'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { InputWithComma } from '@/shared/components/input/utils'
-import { useMutationAdvanceTransaction } from '@/shared/api/financial/transaction/advance-transaction/advance-transaction.mutation'
 import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
 import BaseModal from '@/shared/components/modal'
 import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
@@ -42,8 +40,6 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   onClose,
 }) => {
   const [form] = Form.useForm()
-
-  const { mAdvanceTransaction_Create } = useMutationAdvanceTransaction()
 
   // API Danh sách Ví & Danh mục
   const { data: wallets, isLoading: isLoadingWallets } =
@@ -96,37 +92,6 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
     try {
       const values = await form.validateFields()
 
-      // Format Payload gửi đi
-      const payload: FinanceAdvanceTransaction_Create_Request = {
-        description: values.description?.trim(),
-        type: values.type,
-        status: values.status,
-        walletId: Number(values.walletId),
-        date: values.date.toISOString(),
-        merchant: values.merchant?.trim() || undefined,
-        location: values.location?.trim() || undefined,
-        tags: values.tags?.length ? values.tags : undefined,
-        receiptImageUrl: values.receiptImageUrl?.trim() || undefined,
-        originalTransactionId: values.originalTransactionId
-          ? Number(values.originalTransactionId)
-          : undefined,
-
-        // Chuẩn hóa chi tiết từng khoản kèm categoryId tương ứng
-        data: values.financialAdvanceTransactions.map(
-          (item: {
-            description: string
-            amount: number
-            categoryId?: number
-          }) => ({
-            description: item.description.trim(),
-            amount: Number(item.amount),
-            categoryId: item.categoryId ? Number(item.categoryId) : undefined,
-          }),
-        ),
-      }
-
-      await mAdvanceTransaction_Create.mutateAsync({ body: payload })
-
       message.success('Tạo giao dịch thành công!')
       form.resetFields()
       onClose()
@@ -143,7 +108,6 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
       onOk={handleSave}
       okText="Lưu Giao Dịch"
       cancelText="Hủy"
-      confirmLoading={mAdvanceTransaction_Create.isPending}
       destroyOnClose
       width={720}
       style={{ top: 20 }}
