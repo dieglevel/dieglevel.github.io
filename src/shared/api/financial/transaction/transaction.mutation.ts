@@ -1,5 +1,6 @@
 import type { IFinance_Transaction } from './transaction.type'
 import type { Dayjs } from 'dayjs'
+import type { IFinance_TransactionItem } from './transaction-item/transaction-item.type'
 import {
   useMutationDelete,
   useMutationPost,
@@ -7,9 +8,27 @@ import {
 
 export interface IMutationTransaction_Create extends Omit<
   IFinance_Transaction,
-  'id' | 'createdAt'
+  | 'id'
+  | 'createdAt'
+  | 'financialTransactionItems'
+  | 'updatedAt'
+  | 'deletedAt'
+  | 'account'
+  | 'originalTransaction'
 > {
   date: Dayjs
+  toWalletId?: number
+  financialTransactionItems?: Array<
+    Omit<
+      IFinance_TransactionItem,
+      | 'id'
+      | 'transaction'
+      | 'category'
+      | 'createdAt'
+      | 'updatedAt'
+      | 'deletedAt'
+    >
+  >
 }
 
 export const useMutationTransaction = () => {
