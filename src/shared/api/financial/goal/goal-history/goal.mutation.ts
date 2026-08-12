@@ -1,4 +1,6 @@
 import type { IFinance_GoalHistory } from './goal-history.type'
+import { goalHistoryKeys } from '../goalHistory.keys'
+import { goalKeys } from '../goal.keys'
 import { useMutationPost } from '@/shared/lib/api/mutation/useMutation'
 
 export interface ManualContributionResponse {
@@ -28,7 +30,7 @@ export const useMutationGoalHistory = () => {
     { id: string | number }
   >({
     endPoint: 'financial-goal/:id/manual-contribution',
-    queryKey: ['getFinanceGoalList'],
+    queryKey: [goalKeys.list(), goalKeys.details(), goalHistoryKeys.all],
   })
 
   const mGoalHistory_Complete = useMutationPost<
@@ -42,7 +44,7 @@ export const useMutationGoalHistory = () => {
     { historyId: string | number }
   >({
     endPoint: 'financial-goal/history/:historyId/complete',
-    queryKey: [['getFinanceGoalDetail'], ['getFinanceGoalList']],
+    queryKey: [[goalKeys.details()], [goalKeys.list()], [goalHistoryKeys.details()]],
   })
 
   const mGoalHistory_Skip = useMutationPost<
@@ -52,7 +54,7 @@ export const useMutationGoalHistory = () => {
     { historyId: string | number }
   >({
     endPoint: 'financial-goal/history/:historyId/skip',
-    queryKey: [['getFinanceGoalDetail'], ['getFinanceGoalList']],
+    queryKey: [[goalKeys.details()], [goalKeys.list()], [goalHistoryKeys.details()]],
   })
 
   return {

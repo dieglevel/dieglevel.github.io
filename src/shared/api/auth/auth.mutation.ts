@@ -7,6 +7,7 @@ import type {
   Response_Logout,
   Response_SignUp,
 } from './auth.dto'
+import { authKeys } from './auth.keys'
 import { useMutationPost } from '@/shared/lib/api/mutation/useMutation'
 
 export const useMutationAuth = () => {
@@ -16,7 +17,7 @@ export const useMutationAuth = () => {
     '/auth/sign-in'
   >({
     endPoint: '/auth/sign-in',
-    queryKey: ['login'],
+    queryKey: authKeys.signIn(),
   })
 
   const mLogout = useMutationPost<
@@ -25,7 +26,7 @@ export const useMutationAuth = () => {
     '/auth/logout'
   >({
     endPoint: '/auth/logout',
-    queryKey: ['auth', 'logout'],
+    queryKey: authKeys.logout(),
   })
 
   const mSignup = useMutationPost<
@@ -34,7 +35,7 @@ export const useMutationAuth = () => {
     '/auth/v1/signup'
   >({
     endPoint: '/auth/v1/signup',
-    queryKey: ['auth', 'signup'],
+    queryKey: authKeys.signUp(),
   })
 
   return { mLogin, mLogout, mSignup }

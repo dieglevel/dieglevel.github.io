@@ -1,4 +1,5 @@
 import type { IFinance_Goal } from './goal.type'
+import { goalKeys } from './goal.keys'
 import {
   useMutationDelete,
   useMutationPatch,
@@ -19,7 +20,7 @@ export const useMutationGoal = () => {
     'financial-goal/create'
   >({
     endPoint: 'financial-goal/create',
-    queryKey: ['getFinanceGoalList'],
+    queryKey: [goalKeys.list()],
   })
 
   // Cập nhật mục tiêu hiện tại
@@ -32,7 +33,7 @@ export const useMutationGoal = () => {
     { id: string | number } // Path params type
   >({
     endPoint: 'financial-goal/update/:id',
-    queryKey: ['getFinanceGoalList'],
+    queryKey: [goalKeys.list(), goalKeys.details()],
   })
 
   // Xóa mục tiêu
@@ -43,7 +44,7 @@ export const useMutationGoal = () => {
     { id: string | number } // Path params type
   >({
     endPoint: 'financial-goal/delete/:id',
-    queryKey: ['getFinanceGoalList'],
+    queryKey: [goalKeys.list(), goalKeys.details()],
   })
 
   const mGoal_Cancel = useMutationPatch<
@@ -53,7 +54,7 @@ export const useMutationGoal = () => {
     { id: string | number }
   >({
     endPoint: 'financial-goal/:id/cancel',
-    queryKey: [['getFinanceGoalList'], ['getFinanceGoalDetail']],
+    queryKey: [[goalKeys.list()], [goalKeys.details()]],
   })
 
   return {

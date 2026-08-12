@@ -1,3 +1,4 @@
+import { categoryKeys } from './category.keys'
 import type { UseQueryOptions } from '@tanstack/react-query'
 import type { IFinance_Category } from './category.type'
 import type { ApiBaseResponse } from '@/shared/types/base-response'
@@ -20,6 +21,6 @@ export const useGetFinance_Category_List = (
     '/financial-category/all'
   >({
     endPoint: `/financial-category/all`,
-    queryKey: ['getFinanceCategoryList'],
+    queryKey: categoryKeys.list(),
     ...props,
   })

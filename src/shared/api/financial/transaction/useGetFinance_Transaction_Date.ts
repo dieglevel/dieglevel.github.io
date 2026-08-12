@@ -1,3 +1,4 @@
+import { transactionKeys } from './transaction.keys'
 import type dayjs from 'dayjs'
 import type { UseQueryOptions } from '@tanstack/react-query'
 import type { IFinance_Transaction } from './transaction.type'
@@ -25,7 +26,7 @@ export const useGetWallet_Transaction_Date = (
     '/financial-transaction/get-with-date'
   >({
     endPoint: `/financial-transaction/get-with-date`,
-    queryKey: ['getFinanceTransactionList'],
+    queryKey: transactionKeys.date(),
     queryParams: props.queryParams,
     ...props,
   })

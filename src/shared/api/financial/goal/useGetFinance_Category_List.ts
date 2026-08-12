@@ -2,6 +2,7 @@ import type dayjs from 'dayjs'
 import type { UseQueryOptions } from '@tanstack/react-query'
 import type { IFinance_Goal } from './goal.type'
 import type { ApiBaseResponse } from '@/shared/types/base-response'
+import { goalKeys } from './goal.keys'
 import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 
 export interface GetFinance_Goal_List_Params {
@@ -27,7 +28,7 @@ export const useGetFinance_Goal_List = (
 ) =>
   useQueryGet<ApiBaseResponse<Array<IFinance_Goal>>, '/financial-goal/all'>({
     endPoint: `/financial-goal/all`,
-    queryKey: ['getFinanceGoalList', props.queryParams],
+    queryKey: goalKeys.list(),
     queryParams: props.queryParams,
     // Default options untuk error handling
     ...{

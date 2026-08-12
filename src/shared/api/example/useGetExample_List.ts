@@ -1,3 +1,4 @@
+import { exampleKeys } from './example.keys'
 import type { UseQueryOptions } from '@tanstack/react-query'
 import type { ApiBaseResponse } from '@/shared/types/base-response'
 import type { IExample } from './example.type'
@@ -20,6 +21,6 @@ interface GetExample_List_Params {
 export const useGetExample_List = (props: GetExample_List_Params) =>
   useQueryGet<ApiBaseResponse<IExample>, '/admin/examples'>({
     endPoint: `/admin/examples`,
-    queryKey: ['admin-examples'],
+    queryKey: exampleKeys.lists(),
     ...props,
   })

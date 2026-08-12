@@ -1,4 +1,5 @@
 import type { IFinance_Category } from './category.type'
+import { categoryKeys } from './category.keys'
 import {
   useMutationDelete,
   useMutationPost,
@@ -11,7 +12,7 @@ export const useMutationFinanceCategory = () => {
     'financial-category/create'
   >({
     endPoint: 'financial-category/create',
-    queryKey: ['getFinanceCategoryCount'],
+    queryKey: [categoryKeys.list(), categoryKeys.count()],
   })
 
   const mCategory_Update = useMutationPost<
@@ -21,7 +22,7 @@ export const useMutationFinanceCategory = () => {
     { id: string }
   >({
     endPoint: 'financial-category/update/:id',
-    queryKey: ['getFinanceCategoryCount'],
+    queryKey: [categoryKeys.list(), categoryKeys.count()],
   })
 
   const mCategory_Delete = useMutationDelete<
@@ -31,7 +32,7 @@ export const useMutationFinanceCategory = () => {
     { id: string }
   >({
     endPoint: 'financial-category/delete/:id',
-    queryKey: ['getFinanceCategoryCount'],
+    queryKey: [categoryKeys.list(), categoryKeys.count()],
   })
 
   const mCategory_Archive = useMutationPost<
@@ -41,7 +42,7 @@ export const useMutationFinanceCategory = () => {
     { categoryId: string }
   >({
     endPoint: 'financial-category/archive/:categoryId',
-    queryKey: ['getFinanceCategoryCount'],
+    queryKey: [categoryKeys.list(), categoryKeys.count()],
   })
 
   return {

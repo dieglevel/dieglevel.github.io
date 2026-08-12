@@ -1,6 +1,7 @@
 import type { UseQueryOptions } from '@tanstack/react-query'
 import type { ApiBaseResponse } from '@/shared/types/base-response'
 import type { IExample } from './example.type'
+import { exampleKeys } from './example.keys'
 import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 
 // Get<Example><Type>Params
@@ -22,7 +23,7 @@ interface GetExample_Detail_Params {
 export const useGetExample_Detail = (props: GetExample_Detail_Params) =>
   useQueryGet<ApiBaseResponse<IExample>, '/admin/examples/:id'>({
     endPoint: `/admin/examples/:id`,
-    queryKey: ['admin-examples', props.pathParams.id],
+    queryKey: exampleKeys.detail(props.pathParams.id),
     options: {
       enabled: !!props.pathParams.id,
     },

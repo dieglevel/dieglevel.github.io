@@ -1,3 +1,4 @@
+import { transactionKeys } from './transaction.keys'
 import type { IFinance_Transaction } from './transaction.type'
 import type { IFinance_TransactionItem } from './transaction-item/transaction-item.type'
 import {
@@ -38,7 +39,7 @@ export const useMutationTransaction = () => {
     'financial-transaction/create'
   >({
     endPoint: 'financial-transaction/create',
-    queryKey: ['getFinanceTransactionList'],
+    queryKey: [transactionKeys.list(), transactionKeys.date()],
   })
 
   const mTransaction_Update = useMutationPost<
@@ -48,7 +49,11 @@ export const useMutationTransaction = () => {
     { id: string }
   >({
     endPoint: 'financial-transaction/update/:id',
-    queryKey: ['getFinanceTransactionList'],
+    queryKey: [
+      transactionKeys.list(),
+      transactionKeys.date(),
+      transactionKeys.details(),
+    ],
   })
 
   const mTransaction_Delete = useMutationDelete<
@@ -58,7 +63,11 @@ export const useMutationTransaction = () => {
     { id: string }
   >({
     endPoint: 'financial-transaction/delete/:id',
-    queryKey: ['getFinanceTransactionList'],
+    queryKey: [
+      transactionKeys.list(),
+      transactionKeys.date(),
+      transactionKeys.details(),
+    ],
   })
 
   return {

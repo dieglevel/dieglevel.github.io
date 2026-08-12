@@ -1,6 +1,7 @@
 import type { UseQueryOptions } from '@tanstack/react-query'
 import type { ApiBaseResponse } from '@/shared/types/base-response'
 import type { IFinance_Wallet } from './wallet.type'
+import { walletKeys } from './wallet.keys'
 import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 
 // Get<Example><Type>Params
@@ -20,6 +21,6 @@ export const useGetFinance_Wallet_Date = (
     '/financial-wallet/with-transaction-count'
   >({
     endPoint: `/financial-wallet/with-transaction-count`,
-    queryKey: ['getFinanceWalletDate'],
+    queryKey: walletKeys.date(),
     ...props,
   })

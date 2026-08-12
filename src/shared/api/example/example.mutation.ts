@@ -1,3 +1,4 @@
+import { exampleKeys } from './example.keys'
 import {
   useMutationPatch,
   useMutationPost,
@@ -14,7 +15,7 @@ export const useMutationExample = () => {
     }
   >({
     endPoint: '/admin/products/custom',
-    queryKey: ['createProduct'],
+    queryKey: exampleKeys.lists(),
   })
 
   const mExample_UpdateMainInformationProduct = useMutationPatch<
@@ -26,7 +27,7 @@ export const useMutationExample = () => {
     }
   >({
     endPoint: '/admin/products/custom/:id',
-    queryKey: ['updateMainInformationProduct'],
+    queryKey: [exampleKeys.lists(), exampleKeys.details()],
   })
 
   const mExample_UpdateConfigProduct = useMutationPatch<
@@ -38,7 +39,7 @@ export const useMutationExample = () => {
     }
   >({
     endPoint: '/admin/products/custom/configs/:id',
-    queryKey: ['updateConfigProduct'],
+    queryKey: [exampleKeys.lists(), exampleKeys.details()],
   })
 
   return {
