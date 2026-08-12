@@ -6,6 +6,7 @@ import {
   DatePicker,
   Flex,
   Form,
+  Grid,
   Input,
   Row,
   Segmented,
@@ -31,8 +32,11 @@ import {
 } from '@/shared/api/financial/transaction/transaction.enum'
 
 const { Text, Title } = Typography
+const { useBreakpoint } = Grid
 
 export const CreateTransactionPage: React.FC = () => {
+  const screens = useBreakpoint()
+  const isMobile = !screens.sm
   const [form] = Form.useForm<CreateFinanceTransactionDto>()
   const router = useRouter()
 
@@ -168,25 +172,57 @@ export const CreateTransactionPage: React.FC = () => {
         backgroundColor: '#f5f5f5',
       }}
     >
-      <Flex justify="space-between" align="center" style={{ marginBottom: 20 }}>
+      <Flex
+        vertical={isMobile}
+        justify={isMobile ? 'flex-start' : 'space-between'}
+        align={isMobile ? 'stretch' : 'center'}
+        gap={isMobile ? 12 : 0}
+        style={{ marginBottom: 20 }}
+      >
+        {/* Khối bên trái: Nút Back + Title */}
         <Space align="center" size={12}>
           <Button
             icon={<ArrowLeftOutlined />}
             onClick={handleBack}
             type="text"
           />
-          <Title level={3} style={{ margin: 0 }}>
+          <Title
+            level={isMobile ? 4 : 3}
+            style={{
+              margin: 0,
+              whiteSpace: isMobile ? 'normal' : 'nowrap',
+              wordBreak: 'break-word',
+            }}
+          >
             {selectedType === FINANCIAL_TRANSACTION_TYPE.REFUND
               ? 'Tạo Giao Dịch Hoàn Tiền'
               : 'Tạo Giao Dịch Mới'}
           </Title>
         </Space>
-        <Space>
-          <Button onClick={handleBack}>Hủy</Button>
-          <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
+
+        {/* Khối bên phải: Nút Hủy + Nút Lưu */}
+        <Flex
+          justify={isMobile ? 'flex-end' : 'flex-start'}
+          gap={8}
+          style={{ width: isMobile ? '100%' : 'auto' }}
+        >
+          <Button
+            onClick={handleBack}
+            block={isMobile}
+            style={{ flex: isMobile ? 1 : 'none' }}
+          >
+            Hủy
+          </Button>
+          <Button
+            type="primary"
+            icon={<SaveOutlined />}
+            onClick={handleSave}
+            block={isMobile}
+            style={{ flex: isMobile ? 1 : 'none' }}
+          >
             Lưu Giao Dịch
           </Button>
-        </Space>
+        </Flex>
       </Flex>
 
       <Form form={form} layout="vertical">
