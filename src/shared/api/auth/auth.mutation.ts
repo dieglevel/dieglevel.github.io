@@ -1,3 +1,4 @@
+import { authKeys } from './auth.keys'
 import type { ApiBaseResponse } from '../../types/base-response'
 import type {
   Request_Login,
@@ -7,7 +8,6 @@ import type {
   Response_Logout,
   Response_SignUp,
 } from './auth.dto'
-import { authKeys } from './auth.keys'
 import { useMutationPost } from '@/shared/lib/api/mutation/useMutation'
 
 export const useMutationAuth = () => {

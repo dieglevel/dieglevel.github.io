@@ -84,7 +84,7 @@ export const CreateTransactionPage: React.FC = () => {
     if (!tx) return
 
     form.setFieldsValue({
-      description: `Hoàn tiền: ${tx.description}`,
+      description: `Hoàn tiền: ${tx.description ?? ''}`,
       merchant: tx.merchant || '',
       location: tx.location || '',
       walletId: tx.walletId,
@@ -97,7 +97,7 @@ export const CreateTransactionPage: React.FC = () => {
           }))
         : [
             {
-              description: tx.description,
+              description: tx.description ?? undefined,
               amount: tx.amount,
               categoryId: undefined,
             },

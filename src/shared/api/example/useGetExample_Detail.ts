@@ -1,7 +1,7 @@
+import { exampleKeys } from './example.keys'
 import type { UseQueryOptions } from '@tanstack/react-query'
 import type { ApiBaseResponse } from '@/shared/types/base-response'
 import type { IExample } from './example.type'
-import { exampleKeys } from './example.keys'
 import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 
 // Get<Example><Type>Params

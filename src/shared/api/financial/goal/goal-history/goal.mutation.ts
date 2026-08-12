@@ -44,7 +44,11 @@ export const useMutationGoalHistory = () => {
     { historyId: string | number }
   >({
     endPoint: 'financial-goal/history/:historyId/complete',
-    queryKey: [[goalKeys.details()], [goalKeys.list()], [goalHistoryKeys.details()]],
+    queryKey: [
+      [goalKeys.details()],
+      [goalKeys.list()],
+      [goalHistoryKeys.details()],
+    ],
   })
 
   const mGoalHistory_Skip = useMutationPost<
@@ -54,7 +58,11 @@ export const useMutationGoalHistory = () => {
     { historyId: string | number }
   >({
     endPoint: 'financial-goal/history/:historyId/skip',
-    queryKey: [[goalKeys.details()], [goalKeys.list()], [goalHistoryKeys.details()]],
+    queryKey: [
+      [goalKeys.details()],
+      [goalKeys.list()],
+      [goalHistoryKeys.details()],
+    ],
   })
 
   return {
