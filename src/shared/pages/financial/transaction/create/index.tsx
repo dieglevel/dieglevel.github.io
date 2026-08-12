@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import {
-  Alert,
   Button,
   Card,
   Col,
@@ -8,7 +7,6 @@ import {
   Flex,
   Form,
   Input,
-  InputNumber,
   Row,
   Segmented,
   Select,
@@ -16,20 +14,15 @@ import {
   Typography,
   message,
 } from 'antd'
-import {
-  ArrowLeftOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  SaveOutlined,
-} from '@ant-design/icons'
+import { ArrowLeftOutlined, SaveOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import { useRouter } from '@tanstack/react-router'
 
-import type { IMutationTransaction_Create } from '@/shared/api/financial/transaction/transaction.mutation'
+import Income from './_components/Income'
+import type { CreateFinanceTransactionDto } from '@/shared/api/financial/transaction/transaction.mutation'
 import { useMutationTransaction } from '@/shared/api/financial/transaction/transaction.mutation'
 import { useGetFinance_Category_Count } from '@/shared/api/financial/category/useGetFinance_Category_Count'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
-import { InputWithComma } from '@/shared/components/input/utils'
 import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
 import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 import {
@@ -40,9 +33,7 @@ import {
 const { Text, Title } = Typography
 
 export const CreateTransactionPage: React.FC = () => {
-  const [form] = Form.useForm<
-    IMutationTransaction_Create & { toWalletId?: number }
-  >()
+  const [form] = Form.useForm<CreateFinanceTransactionDto>()
   const router = useRouter()
 
   const { mTransaction_Create } = useMutationTransaction()
@@ -60,7 +51,7 @@ export const CreateTransactionPage: React.FC = () => {
   const items = Form.useWatch('financialTransactionItems', form) || []
 
   // Tìm thông tin giao dịch gốc được chọn
-  const selectedOriginalTx = originalTransactions?.data?.find(
+  const selectedOriginalTx = originalTransactions?.data.find(
     (t) => t.id === selectedOriginalId,
   )
 
@@ -89,7 +80,7 @@ export const CreateTransactionPage: React.FC = () => {
 
   // Xử lý khi chọn giao dịch gốc trong chế độ Hoàn tiền
   const handleSelectOriginalTransaction = (txId: number) => {
-    const tx = originalTransactions?.data?.find((t) => t.id === txId)
+    const tx = originalTransactions?.data.find((t) => t.id === txId)
     if (!tx) return
 
     form.setFieldsValue({
@@ -122,7 +113,7 @@ export const CreateTransactionPage: React.FC = () => {
     try {
       const values = await form.validateFields()
 
-      const payload: IMutationTransaction_Create = {
+      const payload: CreateFinanceTransactionDto = {
         description: values.description,
         merchant: values.merchant || '',
         location: values.location || '',
@@ -199,185 +190,43 @@ export const CreateTransactionPage: React.FC = () => {
       </Flex>
 
       <Form form={form} layout="vertical">
+        <Form.Item name="type" label="Loại giao dịch">
+          <Segmented
+            block
+            options={[
+              {
+                label: 'Chi tiêu',
+                value: FINANCIAL_TRANSACTION_TYPE.EXPENSE,
+              },
+              {
+                label: 'Thu nhập',
+                value: FINANCIAL_TRANSACTION_TYPE.INCOME,
+              },
+              {
+                label: 'Hoàn tiền',
+                value: FINANCIAL_TRANSACTION_TYPE.REFUND,
+              },
+              {
+                label: 'Điều chỉnh',
+                value: FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT,
+              },
+              {
+                label: 'Chuyển tiền',
+                value: FINANCIAL_TRANSACTION_TYPE.TRANSFER,
+              },
+            ]}
+          />
+        </Form.Item>
         <Row gutter={[20, 20]}>
           {/* CỘT TRÁI */}
-          <Col xs={24} lg={15} xl={16}>
-            <Card
-              title="Chi tiết các khoản (Transaction Items)"
-              style={{ height: '100%' }}
-            >
-              {selectedType === FINANCIAL_TRANSACTION_TYPE.REFUND &&
-                selectedOriginalTx && (
-                  <Alert
-                    type="info"
-                    showIcon
-                    style={{ marginBottom: 16 }}
-                    message={`Đang hoàn tiền cho giao dịch gốc #${selectedOriginalTx.id}`}
-                    description={`Tổng giá trị ban đầu: ${selectedOriginalTx.amount.toLocaleString('vi-VN')} đ. Bạn có thể điều chỉnh số tiền hoàn cho từng khoản bên dưới.`}
-                  />
-                )}
-
-              <Form.Item required style={{ marginBottom: 12 }}>
-                <Form.List
-                  name="financialTransactionItems"
-                  rules={[
-                    {
-                      validator: async (_, value) => {
-                        if (!value || value.length < 1) {
-                          return Promise.reject(
-                            new Error('Cần ít nhất 1 hạng mục chi tiết'),
-                          )
-                        }
-                      },
-                    },
-                  ]}
-                >
-                  {(fields, { add, remove }) => (
-                    <Flex vertical gap={12}>
-                      {fields.map(({ key, name, ...restField }) => (
-                        <Card
-                          key={key}
-                          size="small"
-                          style={{
-                            background: '#fafafa',
-                            borderColor: '#f0f0f0',
-                          }}
-                          styles={{ body: { padding: 12 } }}
-                        >
-                          <Row gutter={[12, 12]} align="middle">
-                            <Col xs={24} sm={10}>
-                              <Form.Item
-                                {...restField}
-                                name={[name, 'description']}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: 'Nhập nội dung',
-                                  },
-                                  {
-                                    whitespace: true,
-                                    message: 'Không để trống',
-                                  },
-                                ]}
-                                style={{ marginBottom: 0 }}
-                              >
-                                <Input placeholder="Nội dung chi tiết" />
-                              </Form.Item>
-                            </Col>
-
-                            <Col xs={24} sm={7}>
-                              <Form.Item
-                                {...restField}
-                                name={[name, 'categoryId']}
-                                style={{ marginBottom: 0 }}
-                              >
-                                <Select
-                                  placeholder="Danh mục"
-                                  allowClear
-                                  loading={isLoadingCategories}
-                                  options={categories?.data.map((c) => ({
-                                    value: c.id,
-                                    label: (
-                                      <Flex align="center" gap={6}>
-                                        <IconRenderer iconName={c.icon} />
-                                        <Text style={{ fontSize: 12 }}>
-                                          {c.name}
-                                        </Text>
-                                      </Flex>
-                                    ),
-                                  }))}
-                                />
-                              </Form.Item>
-                            </Col>
-
-                            <Col xs={18} sm={5}>
-                              <Form.Item
-                                {...restField}
-                                name={[name, 'amount']}
-                                rules={[
-                                  {
-                                    required: true,
-                                    message: 'Nhập số tiền',
-                                  },
-                                  {
-                                    type: 'number',
-                                    min: 0.01,
-                                    message: 'Phải > 0',
-                                  },
-                                ]}
-                                style={{ marginBottom: 0 }}
-                              >
-                                <InputNumber
-                                  style={{ width: '100%' }}
-                                  placeholder="Số tiền"
-                                  precision={2}
-                                  {...InputWithComma}
-                                />
-                              </Form.Item>
-                            </Col>
-
-                            <Col xs={6} sm={2} style={{ textAlign: 'right' }}>
-                              {fields.length > 1 && (
-                                <Button
-                                  type="text"
-                                  danger
-                                  icon={<DeleteOutlined />}
-                                  onClick={() => remove(name)}
-                                />
-                              )}
-                            </Col>
-                          </Row>
-                        </Card>
-                      ))}
-
-                      <Button
-                        type="dashed"
-                        onClick={() =>
-                          add({
-                            description: '',
-                            amount: 0,
-                            categoryId: undefined,
-                          })
-                        }
-                        block
-                        icon={<PlusOutlined />}
-                      >
-                        Thêm hạng mục
-                      </Button>
-                    </Flex>
-                  )}
-                </Form.List>
-              </Form.Item>
-
-              <Form.Item name="amount" hidden>
-                <InputNumber />
-              </Form.Item>
-
-              <Card
-                size="small"
-                style={{
-                  backgroundColor: '#f6ffed',
-                  borderColor: '#b7eb8f',
-                  marginTop: 20,
-                }}
-              >
-                <Flex
-                  justify="space-between"
-                  align="center"
-                  wrap="wrap"
-                  gap={8}
-                >
-                  <Text type="secondary">
-                    {selectedType === FINANCIAL_TRANSACTION_TYPE.REFUND
-                      ? 'Tổng tiền hoàn nhận lại:'
-                      : 'Tổng tiền giao dịch:'}
-                  </Text>
-                  <Title level={3} style={{ margin: 0, color: '#52c41a' }}>
-                    {calculatedTotalAmount.toLocaleString('vi-VN')} đ
-                  </Title>
-                </Flex>
-              </Card>
-            </Card>
+          <Col xs={24} lg={15} xl={8}>
+            <Income
+              categories={categories?.data}
+              isLoadingCategories={isLoadingCategories}
+              selectedType={selectedType}
+              calculatedTotalAmount={calculatedTotalAmount}
+              selectedOriginalTx={selectedOriginalTx}
+            />
           </Col>
 
           {/* CỘT PHẢI */}
@@ -392,34 +241,6 @@ export const CreateTransactionPage: React.FC = () => {
               }}
             >
               <Card title="Thông tin chung">
-                <Form.Item name="type" label="Loại giao dịch">
-                  <Segmented
-                    block
-                    options={[
-                      {
-                        label: 'Chi tiêu',
-                        value: FINANCIAL_TRANSACTION_TYPE.EXPENSE,
-                      },
-                      {
-                        label: 'Thu nhập',
-                        value: FINANCIAL_TRANSACTION_TYPE.INCOME,
-                      },
-                      {
-                        label: 'Hoàn tiền',
-                        value: FINANCIAL_TRANSACTION_TYPE.REFUND,
-                      },
-                      {
-                        label: 'Điều chỉnh',
-                        value: FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT,
-                      },
-                      {
-                        label: 'Chuyển tiền',
-                        value: FINANCIAL_TRANSACTION_TYPE.TRANSFER,
-                      },
-                    ]}
-                  />
-                </Form.Item>
-
                 {/* Chọn giao dịch gốc (bắt buộc khi chọn REFUND) */}
                 {selectedType === FINANCIAL_TRANSACTION_TYPE.REFUND && (
                   <Form.Item
@@ -564,42 +385,43 @@ export const CreateTransactionPage: React.FC = () => {
                   </Col>
                 </Row>
               </Card>
-
-              <Card title="Thông tin bổ sung">
-                <Form.Item label="Đơn vị / Cửa hàng (merchant)" name="merchant">
-                  <Input placeholder="Shopee, Starbucks..." maxLength={255} />
-                </Form.Item>
-
-                <Form.Item label="Địa điểm (location)" name="location">
-                  <Input placeholder="Hà Nội, TP.HCM..." maxLength={255} />
-                </Form.Item>
-
-                {selectedType !== FINANCIAL_TRANSACTION_TYPE.REFUND && (
-                  <Form.Item
-                    label="Giao dịch gốc (nếu có)"
-                    name="originalTransactionId"
-                  >
-                    <Select
-                      placeholder="Chọn giao dịch gốc"
-                      allowClear
-                      loading={isLoadingOriginal}
-                      options={originalTransactions?.data.map((t) => ({
-                        value: t.id,
-                        label: `#${t.id} - ${t.description} (${t.amount.toLocaleString('vi-VN')} đ)`,
-                      }))}
-                    />
-                  </Form.Item>
-                )}
-
-                <Form.Item
-                  label="Link ảnh hóa đơn"
-                  name="receiptImageUrl"
-                  style={{ marginBottom: 0 }}
-                >
-                  <Input placeholder="https://..." maxLength={500} />
-                </Form.Item>
-              </Card>
             </div>
+          </Col>
+          <Col xs={24} lg={9} xl={8}>
+            <Card title="Thông tin bổ sung">
+              <Form.Item label="Đơn vị / Cửa hàng (merchant)" name="merchant">
+                <Input placeholder="Shopee, Starbucks..." maxLength={255} />
+              </Form.Item>
+
+              <Form.Item label="Địa điểm (location)" name="location">
+                <Input placeholder="Hà Nội, TP.HCM..." maxLength={255} />
+              </Form.Item>
+
+              {selectedType !== FINANCIAL_TRANSACTION_TYPE.REFUND && (
+                <Form.Item
+                  label="Giao dịch gốc (nếu có)"
+                  name="originalTransactionId"
+                >
+                  <Select
+                    placeholder="Chọn giao dịch gốc"
+                    allowClear
+                    loading={isLoadingOriginal}
+                    options={originalTransactions?.data.map((t) => ({
+                      value: t.id,
+                      label: `#${t.id} - ${t.description} (${t.amount.toLocaleString('vi-VN')} đ)`,
+                    }))}
+                  />
+                </Form.Item>
+              )}
+
+              <Form.Item
+                label="Link ảnh hóa đơn"
+                name="receiptImageUrl"
+                style={{ marginBottom: 0 }}
+              >
+                <Input placeholder="https://..." maxLength={500} />
+              </Form.Item>
+            </Card>
           </Col>
         </Row>
       </Form>

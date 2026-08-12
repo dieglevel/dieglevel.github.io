@@ -9,9 +9,7 @@ export const UserTokenService = {
     memoryUserToken = user
 
     if (typeof window !== 'undefined') {
-      CookieService.set(AUTH_TOKEN_KEY.USER, JSON.stringify(memoryUserToken), {
-        days: 1 / 24,
-      })
+      CookieService.set(AUTH_TOKEN_KEY.USER, JSON.stringify(memoryUserToken))
     }
   },
 

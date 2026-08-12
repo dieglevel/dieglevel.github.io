@@ -1,40 +1,40 @@
 import type { IFinance_Transaction } from './transaction.type'
-import type { Dayjs } from 'dayjs'
 import type { IFinance_TransactionItem } from './transaction-item/transaction-item.type'
 import {
   useMutationDelete,
   useMutationPost,
 } from '@/shared/lib/api/mutation/useMutation'
 
-export interface IMutationTransaction_Create extends Omit<
-  IFinance_Transaction,
-  | 'id'
-  | 'createdAt'
-  | 'financialTransactionItems'
-  | 'updatedAt'
-  | 'deletedAt'
-  | 'account'
-  | 'originalTransaction'
-> {
-  date: Dayjs
-  toWalletId?: number
-  financialTransactionItems?: Array<
-    Omit<
-      IFinance_TransactionItem,
-      | 'id'
-      | 'transaction'
-      | 'category'
-      | 'createdAt'
-      | 'updatedAt'
-      | 'deletedAt'
-    >
-  >
+export type CreateFinanceTransactionItemDto = Pick<
+  IFinance_TransactionItem,
+  'description' | 'amount'
+> & {
+  categoryId?: number | null
 }
+
+// DTO cho Transaction: Lấy các trường từ Entity, biến các trường tùy chọn thành optional (?)
+export type CreateFinanceTransactionDto = Pick<
+  IFinance_Transaction,
+  'amount' | 'type' | 'walletId'
+> &
+  Partial<
+    Pick<
+      IFinance_Transaction,
+      | 'description'
+      | 'merchant'
+      | 'location'
+      | 'receiptImageUrl'
+      | 'status'
+      | 'originalTransactionId'
+    >
+  > & {
+    financialTransactionItems?: Array<CreateFinanceTransactionItemDto>
+  }
 
 export const useMutationTransaction = () => {
   const mTransaction_Create = useMutationPost<
     void,
-    IMutationTransaction_Create,
+    CreateFinanceTransactionDto,
     'financial-transaction/create'
   >({
     endPoint: 'financial-transaction/create',

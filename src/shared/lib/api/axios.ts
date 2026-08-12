@@ -1,5 +1,9 @@
 /* eslint-disable no-shadow */
 import axios from 'axios'
+import {
+  LOCAL_STORAGE_KEY,
+  LocalStorageService,
+} from '../service/local-storage'
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
 import type { RefreshTokenResponse } from '@/shared/api/auth/refreshToken'
 import { refreshTokenRequest } from '@/shared/api/auth/refreshToken'
@@ -53,6 +57,10 @@ export const customAxios = <T = unknown>(
             useAuthStore.getState().clearAuth()
 
             if (typeof window !== 'undefined') {
+              LocalStorageService.set(
+                LOCAL_STORAGE_KEY.CURRENT_PAGE,
+                window.location.pathname,
+              )
               window.location.href = '/login'
             }
 
@@ -92,6 +100,10 @@ export const customAxios = <T = unknown>(
             useAuthStore.getState().clearAuth()
 
             if (typeof window !== 'undefined') {
+              LocalStorageService.set(
+                LOCAL_STORAGE_KEY.CURRENT_PAGE,
+                window.location.pathname,
+              )
               window.location.href = '/login'
             }
 

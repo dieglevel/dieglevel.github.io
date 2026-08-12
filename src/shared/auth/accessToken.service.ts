@@ -8,9 +8,7 @@ export const AccessTokenService = {
     memoryAccessToken = token
 
     if (typeof window !== 'undefined') {
-      CookieService.set(AUTH_TOKEN_KEY.ACCESS_TOKEN, token, {
-        days: 1 / 24,
-      })
+      CookieService.set(AUTH_TOKEN_KEY.ACCESS_TOKEN, token)
     }
   },
 

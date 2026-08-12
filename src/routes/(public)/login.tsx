@@ -8,8 +8,12 @@ import type { Request_Login } from '@/shared/api/auth/auth.dto'
 import WriteItem from '@/shared/components/form/write-item'
 import { AuthTokenService } from '@/shared/auth/authToken.service'
 import { useMutationAuth } from '@/shared/api/auth/auth.mutation'
-import { UserRoleEnum } from '@/shared/auth/auth.type'
 import { useAuthStore } from '@/shared/auth/auth.store'
+import { UserRoleEnum } from '@/shared/auth/auth.type'
+import {
+  LOCAL_STORAGE_KEY,
+  LocalStorageService,
+} from '@/shared/lib/service/local-storage'
 
 export const Route = createFileRoute('/(public)/login')({
   component: LoginComponent,
@@ -104,7 +108,14 @@ export function LoginComponent() {
                 replace: true,
               })
             } else {
-              window.location.reload()
+              const currentPage = LocalStorageService.get<string>(
+                LOCAL_STORAGE_KEY.CURRENT_PAGE,
+              )
+              if (currentPage) {
+                window.location.href = currentPage
+              } else {
+                window.location.reload()
+              }
             }
           },
         },
@@ -135,7 +146,6 @@ export function LoginComponent() {
                   width: '100%',
                 }}
                 loading={isLoading}
-                onClick={() => form.submit()}
               >
                 Login
               </Button>
