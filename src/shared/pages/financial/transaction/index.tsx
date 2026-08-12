@@ -311,7 +311,9 @@ export function Transactions() {
         <FloatButton
           type="primary"
           icon={<PlusOutlined />}
-          onClick={() => setShowAdd(true)}
+          onClick={() =>
+            router.navigate({ to: '/financial/transaction/create' })
+          }
           style={{ right: 24, bottom: 24 }}
         />
       )}
