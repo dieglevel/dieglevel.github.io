@@ -8,13 +8,13 @@ import {
   Input,
   InputNumber,
   Row,
+  TreeSelect,
   Typography,
 } from 'antd'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
-import Select from '@/shared/components/select'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { InputWithComma } from '@/shared/components/input/utils'
 
@@ -31,7 +31,6 @@ interface IncomeProps {
 export default function Income({
   selectedType,
   selectedOriginalTx,
-  isLoadingCategories,
   categories,
   calculatedTotalAmount,
 }: IncomeProps) {
@@ -40,6 +39,25 @@ export default function Income({
       title="Chi tiết các khoản (Transaction Items)"
       style={{ height: '100%' }}
     >
+      <Card
+        size="small"
+        style={{
+          backgroundColor: '#f6ffed',
+          borderColor: '#b7eb8f',
+          marginBottom: 20,
+        }}
+      >
+        <Flex justify="space-between" align="center" wrap="wrap" gap={8}>
+          <Text type="secondary">
+            {selectedType === FINANCIAL_TRANSACTION_TYPE.REFUND
+              ? 'Tổng tiền hoàn nhận lại:'
+              : 'Tổng tiền giao dịch:'}
+          </Text>
+          <Title level={3} style={{ margin: 0, color: '#52c41a' }}>
+            {calculatedTotalAmount.toLocaleString('vi-VN')} đ
+          </Title>
+        </Flex>
+      </Card>
       {selectedType === FINANCIAL_TRANSACTION_TYPE.REFUND &&
         selectedOriginalTx && (
           <Alert
@@ -67,7 +85,7 @@ export default function Income({
           ]}
         >
           {(fields, { add, remove }) => (
-            <Flex vertical gap={12}>
+            <Flex vertical gap={12} align="start">
               {fields.map(({ key, name, ...restField }) => (
                 <Card
                   key={key}
@@ -78,7 +96,7 @@ export default function Income({
                   }}
                   styles={{ body: { padding: 12 } }}
                 >
-                  <Row gutter={[12, 12]} align="middle">
+                  <Row gutter={[12, 12]} align="top">
                     <Col xs={24} sm={10}>
                       <Form.Item
                         {...restField}
@@ -96,29 +114,6 @@ export default function Income({
                         style={{ marginBottom: 0 }}
                       >
                         <Input placeholder="Nội dung chi tiết" />
-                      </Form.Item>
-                    </Col>
-
-                    <Col xs={24} sm={7}>
-                      <Form.Item
-                        {...restField}
-                        name={[name, 'categoryId']}
-                        style={{ marginBottom: 0 }}
-                      >
-                        <Select
-                          placeholder="Danh mục"
-                          allowClear
-                          loading={isLoadingCategories}
-                          options={categories?.map((c) => ({
-                            value: c.id,
-                            label: (
-                              <Flex align="center" gap={6}>
-                                <IconRenderer iconName={c.icon} />
-                                <Text style={{ fontSize: 12 }}>{c.name}</Text>
-                              </Flex>
-                            ),
-                          }))}
-                        />
                       </Form.Item>
                     </Col>
 
@@ -144,6 +139,45 @@ export default function Income({
                           placeholder="Số tiền"
                           precision={2}
                           {...InputWithComma}
+                        />
+                      </Form.Item>
+                    </Col>
+
+                    <Col xs={24} sm={7}>
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'categoryId']}
+                        style={{ marginBottom: 0 }}
+                      >
+                        <TreeSelect
+                          allowClear
+                          style={{ width: '100%' }}
+                          placeholder="None (Root Category)"
+                          treeData={categories}
+                          fieldNames={{
+                            label: 'name',
+                            value: 'id',
+                            children: 'children',
+                          }}
+                          treeTitleRender={(data) => {
+                            return (
+                              <Flex
+                                align="center"
+                                gap={8}
+                                justify="space-between"
+                              >
+                                <Flex gap={8} align="center">
+                                  <IconRenderer
+                                    iconName={data.icon}
+                                    size={16}
+                                    color={data.color}
+                                  />
+                                  <Text>{data.name}</Text>
+                                </Flex>
+                              </Flex>
+                            )
+                          }}
+                          treeDefaultExpandAll
                         />
                       </Form.Item>
                     </Col>
@@ -184,26 +218,6 @@ export default function Income({
       <Form.Item name="amount" hidden>
         <InputNumber />
       </Form.Item>
-
-      <Card
-        size="small"
-        style={{
-          backgroundColor: '#f6ffed',
-          borderColor: '#b7eb8f',
-          marginTop: 20,
-        }}
-      >
-        <Flex justify="space-between" align="center" wrap="wrap" gap={8}>
-          <Text type="secondary">
-            {selectedType === FINANCIAL_TRANSACTION_TYPE.REFUND
-              ? 'Tổng tiền hoàn nhận lại:'
-              : 'Tổng tiền giao dịch:'}
-          </Text>
-          <Title level={3} style={{ margin: 0, color: '#52c41a' }}>
-            {calculatedTotalAmount.toLocaleString('vi-VN')} đ
-          </Title>
-        </Flex>
-      </Card>
     </Card>
   )
 }

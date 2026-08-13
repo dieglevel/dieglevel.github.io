@@ -8,10 +8,14 @@ import { VitePWA } from 'vite-plugin-pwa'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [
     devtools(),
-    VitePWA({ registerType: 'autoUpdate' }),
+    VitePWA({
+      disable: mode === 'development',
+      registerType: 'autoUpdate',
+      injectRegister: 'auto',
+    }),
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
@@ -31,4 +35,4 @@ export default defineConfig({
       '@shared': fileURLToPath(new URL('./src/shared', import.meta.url)),
     },
   },
-})
+}))
