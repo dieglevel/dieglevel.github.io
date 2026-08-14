@@ -225,19 +225,56 @@ export const CreateTransactionPage: React.FC = () => {
           }
       }
 
-      mTransaction_Create.mutate(
-        { body: payload },
-        {
-          onSuccess: () => {
-            message.success('Giao dịch đã được tạo thành công!')
-            router.navigate({ to: '/financial/transaction' })
+      if (selectedType === FINANCIAL_TRANSACTION_TYPE.TRANSFER) {
+        mTransaction_Create.mutate(
+          { body: payload },
+          {
+            onSuccess: () => {
+              mTransaction_Create.mutate(
+                {
+                  body: {
+                    ...payload, // ! NEED TO FIX
+                    type: FINANCIAL_TRANSACTION_TYPE.EXPENSE,
+                    walletId: payload.toWalletId!,
+                  },
+                },
+                {
+                  onSuccess: () => {
+                    message.success(
+                      'Giao dịch chuyển tiền đã được tạo thành công!',
+                    )
+                    router.navigate({ to: '/financial/transaction' })
+                  },
+                  onError: (error) => {
+                    console.error('API error:', error)
+                    message.error(
+                      'Có lỗi xảy ra khi tạo giao dịch chuyển tiền.',
+                    )
+                  },
+                },
+              )
+            },
+            onError: (error) => {
+              console.error('API error:', error)
+              message.error('Có lỗi xảy ra khi tạo giao dịch.')
+            },
           },
-          onError: (error) => {
-            console.error('API error:', error)
-            message.error('Có lỗi xảy ra khi tạo giao dịch.')
+        )
+      } else {
+        mTransaction_Create.mutate(
+          { body: payload },
+          {
+            onSuccess: () => {
+              message.success('Giao dịch đã được tạo thành công!')
+              router.navigate({ to: '/financial/transaction' })
+            },
+            onError: (error) => {
+              console.error('API error:', error)
+              message.error('Có lỗi xảy ra khi tạo giao dịch.')
+            },
           },
-        },
-      )
+        )
+      }
     } catch (error) {
       console.error('Validation error:', error)
     }
