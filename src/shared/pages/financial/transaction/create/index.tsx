@@ -90,6 +90,17 @@ export const CreateTransactionPage: React.FC = () => {
     }
   }, [calculatedTotalAmount, items.length, selectedType, form])
 
+  useEffect(() => {
+    if (selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT) {
+      form.setFieldValue(
+        'description',
+        `Điều chỉnh số dư cho ví ${selectedWalletId ? ` (${wallets?.data.find((w) => w.id === selectedWalletId)?.name})` : ''} `,
+      )
+    } else {
+      form.setFieldValue('description', '')
+    }
+  }, [selectedType, selectedWalletId, wallets?.data, form])
+
   // Giá trị khởi tạo
   useEffect(() => {
     form.setFieldsValue({
@@ -680,7 +691,13 @@ export const CreateTransactionPage: React.FC = () => {
                     },
                   ]}
                 >
-                  <Input placeholder="Mô tả tổng quan..." maxLength={255} />
+                  <Input
+                    disabled={
+                      selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT
+                    }
+                    placeholder="Mô tả tổng quan..."
+                    maxLength={255}
+                  />
                 </Form.Item>
 
                 {/* Ngày & Trạng thái */}
