@@ -68,6 +68,8 @@ export const CreateTransactionPage: React.FC = () => {
   const directAmount = Form.useWatch('amount', form)
   const items = Form.useWatch('financialTransactionItems', form) || []
 
+  console.log('data', Form.useWatch([], form))
+
   // Tìm giao dịch gốc khi tạo Hoàn tiền
   const selectedOriginalTx = originalTransactions?.data.find(
     (t) => t.id === selectedOriginalId,
@@ -88,18 +90,17 @@ export const CreateTransactionPage: React.FC = () => {
     ) {
       form.setFieldValue('amount', calculatedTotalAmount)
     }
-  }, [calculatedTotalAmount, items.length, selectedType, form])
+  }, [calculatedTotalAmount, items.length, selectedType, form, directAmount])
 
   useEffect(() => {
     if (selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT) {
-      form.setFieldValue(
-        'description',
-        `Điều chỉnh số dư cho ví ${selectedWalletId ? ` (${wallets?.data.find((w) => w.id === selectedWalletId)?.name})` : ''} `,
-      )
+      form.setFieldsValue({
+        description: `Điều chỉnh số dư cho ví ${selectedWalletId ? ` (${wallets?.data.find((w) => w.id === selectedWalletId)?.name}) | ${convertCurrency(wallets?.data.find((w) => w.id === selectedWalletId)?.balance || 0)} -> ${convertCurrency((wallets?.data.find((w) => w.id === selectedWalletId)?.balance || 0) + (directAmount || 0))}` : ''} `,
+      })
     } else {
       form.setFieldValue('description', '')
     }
-  }, [selectedType, selectedWalletId, wallets?.data, form])
+  }, [selectedType, selectedWalletId, wallets?.data, form, directAmount])
 
   // Giá trị khởi tạo
   useEffect(() => {
@@ -426,10 +427,7 @@ export const CreateTransactionPage: React.FC = () => {
                 <Form.Item
                   name="amount"
                   label="Số tiền điều chỉnh"
-                  rules={[
-                    { required: true, message: 'Vui lòng nhập số tiền' },
-                    { type: 'number', min: 0.01, message: 'Số tiền phải > 0' },
-                  ]}
+                  rules={[{ required: true, message: 'Vui lòng nhập số tiền' }]}
                 >
                   <InputNumber
                     style={{ width: '100%' }}
@@ -743,7 +741,15 @@ export const CreateTransactionPage: React.FC = () => {
               </Card>
 
               {/* Card 2: Thông tin bổ sung */}
-              <Card title="Thông tin bổ sung">
+              <Card
+                title="Thông tin bổ sung"
+                style={{
+                  display:
+                    selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT
+                      ? 'none'
+                      : 'block',
+                }}
+              >
                 <Form.Item label="Đơn vị / Cửa hàng (merchant)" name="merchant">
                   <Input placeholder="Shopee, Starbucks..." maxLength={255} />
                 </Form.Item>
@@ -780,6 +786,9 @@ export const CreateTransactionPage: React.FC = () => {
             </Flex>
           </Col>
         </Row>
+        <Form.Item name="amount" hidden>
+          <InputNumber />
+        </Form.Item>
       </Form>
 
       {/* Fixed Footer Bar */}

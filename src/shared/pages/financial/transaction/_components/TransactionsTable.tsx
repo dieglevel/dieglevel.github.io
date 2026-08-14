@@ -67,6 +67,8 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       sorter: (a, b) => a.amount - b.amount,
       render: (amount: number, record) => {
         const isIncome = record.type === FINANCIAL_TRANSACTION_TYPE.INCOME
+        const isAdjustment =
+          record.type === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT
         return (
           <Text
             style={{
@@ -75,8 +77,13 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
               fontWeight: 600,
             }}
           >
-            {isIncome ? '+' : '-'}
-            {convertCurrency(amount)}
+            {isAdjustment ? (
+              convertCurrency(amount)
+            ) : (
+              <>
+                {isIncome ? '+' : '-'} {convertCurrency(amount)}
+              </>
+            )}
           </Text>
         )
       },
