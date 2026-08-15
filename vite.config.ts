@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     devtools(),
     VitePWA({
-      disable: mode === 'development',
+      disable: mode !== 'production',
       registerType: 'autoUpdate',
       injectRegister: 'auto',
     }),
