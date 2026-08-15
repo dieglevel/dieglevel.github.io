@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import {
   Alert,
   Button,
@@ -62,13 +62,12 @@ export const CreateTransactionPage: React.FC = () => {
   const { data: originalTransactions, isLoading: isLoadingOriginal } =
     useGetFinance_Transaction_List({})
 
+  const description = Form.useWatch('description', form)
   const selectedType = Form.useWatch('type', form)
   const selectedWalletId = Form.useWatch('walletId', form)
   const selectedOriginalId = Form.useWatch('originalTransactionId', form)
   const directAmount = Form.useWatch('amount', form)
   const items = Form.useWatch('financialTransactionItems', form) || []
-
-  console.log('data', Form.useWatch([], form))
 
   // Tìm giao dịch gốc khi tạo Hoàn tiền
   const selectedOriginalTx = originalTransactions?.data.find(
@@ -82,7 +81,50 @@ export const CreateTransactionPage: React.FC = () => {
     0,
   )
 
-  // Cập nhật giá trị amount khi có thay đổi ở danh sách hạng mục (trừ ADJUSTMENT)
+  const prevLengthRef = useRef(items.length)
+  const prevTypeRef = useRef(selectedType)
+
+  // 1. Xử lý duy nhất cho Description
+  useEffect(() => {
+    // TRƯỜNG HỢP 1: Loại giao dịch là ADJUSTMENT
+    if (selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT) {
+      const selectedWallet = wallets?.data.find(
+        (w) => w.id === selectedWalletId,
+      )
+      const walletName = selectedWallet?.name ? ` (${selectedWallet.name})` : ''
+      const currentBalance = selectedWallet?.balance || 0
+      const newBalance = currentBalance + (directAmount || 0)
+
+      const adjustmentDesc = `Điều chỉnh số dư cho ví${walletName} | ${convertCurrency(currentBalance)} -> ${convertCurrency(newBalance)}`
+
+      form.setFieldValue('description', adjustmentDesc)
+      prevTypeRef.current = selectedType
+      return
+    }
+
+    // TRƯỜNG HỢP 2: Chuyển từ ADJUSTMENT sang loại khác -> Reset description về trống
+    if (prevTypeRef.current === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT) {
+      form.setFieldValue('description', '')
+      prevTypeRef.current = selectedType
+    }
+
+    // TRƯỜNG HỢP 3: Các loại giao dịch thông thường (sử dụng items)
+    const prevLength = prevLengthRef.current
+    const currentLength = items.length
+
+    if (currentLength === 1) {
+      // Nếu chỉ có 1 item, ưu tiên lấy description của item đó
+      form.setFieldValue('description', items[0]?.description ?? '')
+    } else if (prevLength === 1 && currentLength > 1) {
+      // Vừa bấm thêm item thứ 2 (tăng từ 1 -> 2) -> Xóa description hiện tại
+      form.setFieldValue('description', '')
+    }
+    // Nếu currentLength > 1 và giữ nguyên hoặc thêm tiếp (2 -> 3, 3 -> 4) -> Không làm gì cả để giữ nguyên description!
+
+    prevLengthRef.current = currentLength
+  }, [selectedType, selectedWalletId, wallets?.data, directAmount, items, form])
+
+  // 2. Xử lý Amount (Giữ nguyên)
   useEffect(() => {
     if (
       selectedType !== FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT &&
@@ -90,17 +132,7 @@ export const CreateTransactionPage: React.FC = () => {
     ) {
       form.setFieldValue('amount', calculatedTotalAmount)
     }
-  }, [calculatedTotalAmount, items.length, selectedType, form, directAmount])
-
-  useEffect(() => {
-    if (selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT) {
-      form.setFieldsValue({
-        description: `Điều chỉnh số dư cho ví ${selectedWalletId ? ` (${wallets?.data.find((w) => w.id === selectedWalletId)?.name}) | ${convertCurrency(wallets?.data.find((w) => w.id === selectedWalletId)?.balance || 0)} -> ${convertCurrency((wallets?.data.find((w) => w.id === selectedWalletId)?.balance || 0) + (directAmount || 0))}` : ''} `,
-      })
-    } else {
-      form.setFieldValue('description', '')
-    }
-  }, [selectedType, selectedWalletId, wallets?.data, form, directAmount])
+  }, [calculatedTotalAmount, items.length, selectedType, form])
 
   // Giá trị khởi tạo
   useEffect(() => {
@@ -519,7 +551,11 @@ export const CreateTransactionPage: React.FC = () => {
                                     allowClear
                                     style={{ width: '100%' }}
                                     styles={{
-                                      popup: { root: { width: 'max-content' } },
+                                      popup: {
+                                        root: {
+                                          minWidth: 'max-content',
+                                        },
+                                      },
                                     }}
                                     placeholder="Danh mục"
                                     treeData={categories?.data}
@@ -691,7 +727,8 @@ export const CreateTransactionPage: React.FC = () => {
                 >
                   <Input
                     disabled={
-                      selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT
+                      selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT ||
+                      items.length <= 1
                     }
                     placeholder="Mô tả tổng quan..."
                     maxLength={255}
