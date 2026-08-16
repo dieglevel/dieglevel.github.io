@@ -81,7 +81,8 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
               convertCurrency(amount)
             ) : (
               <>
-                {isIncome ? '+' : '-'} {convertCurrency(amount)}
+                {isIncome ? '+' : '-'}
+                {convertCurrency(amount)}
               </>
             )}
           </Text>
@@ -147,7 +148,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
                   margin: 0,
                 }}
               >
-                <IconRenderer iconName={cat.icon} size={10} color="#fff" />
+                <IconRenderer iconName={cat.icon} size={16} color={cat.color} />
                 {cat.name}
               </Tag>
             ))}

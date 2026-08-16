@@ -12,7 +12,6 @@ import { TransactionSearch } from './_components/TransactionSearch'
 import { TransactionFilterModal } from './_components/TransactionFilterModal'
 import type { TabsProps } from 'antd'
 
-import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
@@ -78,8 +77,11 @@ export function Transactions() {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
   const [showAdd, setShowAdd] = useState(false)
   const [selectedKeys, setSelectedKeys] = useState<Array<React.Key>>([])
-  const [viewTransaction, setViewTransaction] =
-    useState<IFinance_Transaction | null>(null)
+
+  // Sửa state lưu ID giao dịch thay vì object giao dịch
+  const [viewTransactionId, setViewTransactionId] = useState<number | null>(
+    null,
+  )
 
   // Options Select
   const walletOptions = useMemo(() => {
@@ -143,6 +145,11 @@ export function Transactions() {
     })
   }, [transactions, search, typeFilter, walletFilter, catFilter, statusFilter])
 
+  // Handler mở Modal xem chi tiết
+  const handleViewDetail = (transaction: { id: number }) => {
+    setViewTransactionId(transaction.id)
+  }
+
   const renderTabs = useMemo(() => {
     switch (activeTab) {
       case 'all':
@@ -152,7 +159,7 @@ export function Transactions() {
             isMobile={isMobile}
             selectedKeys={selectedKeys}
             onSelectChange={setSelectedKeys}
-            onViewDetail={setViewTransaction}
+            onViewDetail={handleViewDetail}
           />
         )
       case 'income':
@@ -164,7 +171,7 @@ export function Transactions() {
             isMobile={isMobile}
             selectedKeys={selectedKeys}
             onSelectChange={setSelectedKeys}
-            onViewDetail={setViewTransaction}
+            onViewDetail={handleViewDetail}
           />
         )
       case 'expense':
@@ -176,7 +183,7 @@ export function Transactions() {
             isMobile={isMobile}
             selectedKeys={selectedKeys}
             onSelectChange={setSelectedKeys}
-            onViewDetail={setViewTransaction}
+            onViewDetail={handleViewDetail}
           />
         )
       case 'transfer':
@@ -188,7 +195,7 @@ export function Transactions() {
             isMobile={isMobile}
             selectedKeys={selectedKeys}
             onSelectChange={setSelectedKeys}
-            onViewDetail={setViewTransaction}
+            onViewDetail={handleViewDetail}
           />
         )
       case 'refund':
@@ -200,7 +207,7 @@ export function Transactions() {
             isMobile={isMobile}
             selectedKeys={selectedKeys}
             onSelectChange={setSelectedKeys}
-            onViewDetail={setViewTransaction}
+            onViewDetail={handleViewDetail}
           />
         )
       case 'adjustment':
@@ -212,7 +219,7 @@ export function Transactions() {
             isMobile={isMobile}
             selectedKeys={selectedKeys}
             onSelectChange={setSelectedKeys}
-            onViewDetail={setViewTransaction}
+            onViewDetail={handleViewDetail}
           />
         )
 
@@ -221,14 +228,7 @@ export function Transactions() {
       default:
         return null
     }
-  }, [
-    activeTab,
-    filtered,
-    isMobile,
-    selectedKeys,
-    setSelectedKeys,
-    setViewTransaction,
-  ])
+  }, [activeTab, filtered, isMobile, selectedKeys])
 
   return (
     <Space
@@ -297,8 +297,8 @@ export function Transactions() {
 
       {/* 6. View Detail Modal */}
       <TransactionDetail
-        viewTransaction={viewTransaction}
-        setViewTransaction={() => setViewTransaction(null)}
+        viewTransaction={viewTransactionId}
+        setViewTransaction={setViewTransactionId}
       />
 
       {/* 7. Add Modal */}

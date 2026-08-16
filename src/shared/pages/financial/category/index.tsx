@@ -3,7 +3,6 @@ import { Button, DatePicker, Flex, Spin, Tree, Typography } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 
 import dayjs from 'dayjs'
-import SummaryCards from '../_components/SummaryCards'
 import CategoryModal from './_components/CategoryModal'
 import CategoryTreeNode from './_components/CategoryTreeNode'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
@@ -21,7 +20,7 @@ export default function Categories() {
 
   const { data: apiResponse, isPending } = useGetFinance_Category_Count({
     queryParams: {
-      date: dayjs(selectedMonth).format('YYYY-MM-DD'),
+      date: dayjs(selectedMonth).format('YYYY-MM'),
     },
   })
   const rawCategories: Array<ExtendedFinanceCategory> = apiResponse?.data || []
@@ -199,7 +198,10 @@ export default function Categories() {
           </Text>
         </div>
 
-        <Flex gap={12} wrap="wrap">
+        <Flex gap={12} wrap="wrap" justify="center" align="center">
+          <Text type="secondary" style={{ fontSize: '13px' }}>
+            Total Budget: {totalBudget.toLocaleString()}
+          </Text>
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -217,9 +219,6 @@ export default function Categories() {
           />
         </Flex>
       </Flex>
-
-      {/* Summary Cards */}
-      <SummaryCards totalBudget={totalBudget} totalSpent={totalSpent} />
 
       {/* Tree Structure */}
       {isPending ? (

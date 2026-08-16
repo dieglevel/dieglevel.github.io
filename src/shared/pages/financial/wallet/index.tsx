@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { Flex } from 'antd'
-import SummaryCards from '../_components/SummaryCards'
 import { AnimatedGrid } from '../../../components/animated-grid/AnimatedGrid'
 import TransferHistory from './_components/TransferHistory'
 import { WalletCard } from './_components/WalletCard'
@@ -58,9 +57,6 @@ export function Wallets() {
         onOpenTransfer={() => handleOpenModal('transfer')}
         onOpenAdd={() => handleOpenModal('add')}
       />
-
-      {/* 3. Summary Cards */}
-      <SummaryCards totalBudget={totalBalance} totalSpent={0} />
 
       {/* 4. Wallet Cards Grid */}
       <div style={{ width: '100%' }}>

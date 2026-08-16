@@ -35,10 +35,17 @@ export default function CategoryTreeNode({
   const isMobile = !screens.md
 
   const spent = node.totalAmount || 0
-  const budget = node.monthlyBudget || 0
+  const isHaveMonthlyBudget =
+    node.monthlyBudget === null || node.monthlyBudget > 0
+  const budget = isHaveMonthlyBudget ? node.monthlyBudget || 0 : 0
   const percent =
     budget > 0 ? Math.min(Math.round((spent / budget) * 100), 100) : 0
   const isOverBudget = budget > 0 && spent > budget
+
+  const totalMonthlyBudget = node.children?.reduce(
+    (acc, child) => acc + (child.monthlyBudget || 0),
+    0,
+  )
 
   // Action Buttons Group
   const renderActions = () => (
@@ -320,30 +327,21 @@ export default function CategoryTreeNode({
           flexShrink: 0,
         }}
       >
-        {node.monthlyBudget && (
-          <Text
-            style={{
-              fontSize: 13,
-              fontWeight: 600,
-              lineHeight: '18px',
-            }}
-          >
-            {spent.toLocaleString()} đ
-          </Text>
-        )}
+        <Text
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            lineHeight: '18px',
+          }}
+        >
+          {spent.toLocaleString()} đ
+        </Text>
 
-        {node.monthlyBudget && (
-          <Text
-            type="secondary"
-            style={{
-              fontSize: 10,
-              lineHeight: '16px',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {budget > 0 ? `/ ${budget.toLocaleString()} đ` : 'Không hạn mức'}
-          </Text>
-        )}
+        <Text type="secondary" style={{ fontSize: 11 }}>
+          {budget > 0 || (totalMonthlyBudget && totalMonthlyBudget > 0)
+            ? `/ ${(budget || totalMonthlyBudget!).toLocaleString()} đ`
+            : 'Không hạn mức'}
+        </Text>
       </Flex>
 
       {/* Nhãn loại danh mục */}

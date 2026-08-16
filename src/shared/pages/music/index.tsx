@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import {
   Avatar,
+  Button,
   Card,
   Col,
   Input,
@@ -12,13 +13,14 @@ import {
   Typography,
 } from 'antd'
 import {
+  BarsOutlined,
   DislikeOutlined,
   LikeOutlined,
   PlayCircleOutlined,
   SearchOutlined,
   TrophyOutlined,
 } from '@ant-design/icons'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { TRACK_MUSIC } from './track'
 
 const { Title, Text } = Typography
@@ -43,68 +45,128 @@ export interface Track {
 
 const sampleTracks: Array<Track> = TRACK_MUSIC
 
+// Hàm trích xuất YouTube Video ID từ link Embed/Watch
+const extractVideoId = (url: string) => {
+  const regExp =
+    /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+  const match = url.match(regExp)
+  return match && match[2].length === 11 ? match[2] : ''
+}
+
 export default function MusicPlayerPage() {
   const [tracks] = useState<Array<Track>>(sampleTracks)
   const [selectedTrack, setSelectedTrack] = useState<Track>(sampleTracks[0])
   const [search, setSearch] = useState('')
-  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const [isShuffle, setIsShuffle] = useState(false)
+
+  const playerRef = useRef<any>(null)
+  const isApiReadyRef = useRef<boolean>(false)
 
   const filteredTracks = tracks.filter((t) =>
     t.name.toLowerCase().includes(search.toLowerCase()),
   )
 
-  // Hàm chuyển bài tiếp theo
-  const playNextTrack = () => {
-    const currentIndex = tracks.findIndex((t) => t.id === selectedTrack.id)
-    if (currentIndex !== -1 && currentIndex < tracks.length - 1) {
-      setSelectedTrack(tracks[currentIndex + 1])
-    } else {
-      // Nếu là bài cuối cùng -> Quay lại bài đầu tiên
-      setSelectedTrack(tracks[0])
-    }
-  }
+  // 1. Lưu trữ state mới nhất vào Ref để callback API luôn lấy được dữ liệu hiện tại
+  const stateRef = useRef({
+    selectedTrack,
+    filteredTracks,
+    tracks,
+    isShuffle,
+  })
 
-  // Lắng nghe sự kiện từ Youtube iframe postMessage
   useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      // Kiểm tra nguồn gửi từ youtube
-      if (!event.origin.includes('youtube.com')) return
+    stateRef.current = {
+      selectedTrack,
+      filteredTracks,
+      tracks,
+      isShuffle,
+    }
+  }, [selectedTrack, filteredTracks, tracks, isShuffle])
 
-      try {
-        const data =
-          typeof event.data === 'string' ? JSON.parse(event.data) : event.data
+  // 2. Logic chuyển bài tiếp theo
+  const playNextTrack = () => {
+    const {
+      selectedTrack: currentTrack,
+      filteredTracks: currentFiltered,
+      tracks: currentTracks,
+      isShuffle: currentShuffle,
+    } = stateRef.current
 
-        // Khi video thay đổi trạng thái (infoDelivery hoặc onStateChange)
-        if (data.event === 'infoDelivery' && data.info) {
-          // state = 0 là trạng thái YT.PlayerState.ENDED (Đã phát xong)
-          if (data.info.playerState === 0) {
-            playNextTrack()
-          }
-        }
-      } catch (err) {
-        // Bỏ qua lỗi parse JSON từ các nguồn khác
+    const listToPlay =
+      currentFiltered.length > 0 ? currentFiltered : currentTracks
+
+    if (currentShuffle && listToPlay.length > 1) {
+      const otherTracks = listToPlay.filter((t) => t.id !== currentTrack.id)
+      const randomIndex = Math.floor(Math.random() * otherTracks.length)
+      setSelectedTrack(otherTracks[randomIndex])
+    } else {
+      const currentIndex = listToPlay.findIndex((t) => t.id === currentTrack.id)
+      if (currentIndex !== -1 && currentIndex < listToPlay.length - 1) {
+        setSelectedTrack(listToPlay[currentIndex + 1])
+      } else {
+        setSelectedTrack(listToPlay[0])
       }
     }
-
-    window.addEventListener('message', handleMessage)
-    return () => {
-      window.removeEventListener('message', handleMessage)
-    }
-  }, [selectedTrack, tracks])
-
-  // Gửi lệnh đăng ký listener tới iframe khi video load
-  const handleIframeLoad = () => {
-    if (iframeRef.current && iframeRef.current.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(
-        JSON.stringify({
-          event: 'listening',
-          id: 1,
-          channel: 'widget',
-        }),
-        '*',
-      )
-    }
   }
+
+  // 3. Tải YouTube Iframe Player API & Khởi tạo Player
+  useEffect(() => {
+    const initPlayer = () => {
+      const videoId = extractVideoId(selectedTrack.videoUrl)
+
+      playerRef.current = new (window as any).YT.Player('youtube-player', {
+        videoId: videoId,
+        playerVars: {
+          autoplay: 1,
+          enablejsapi: 1,
+          origin: window.location.origin,
+        },
+        events: {
+          onReady: (event: any) => {
+            event.target.playVideo()
+          },
+          onStateChange: (event: any) => {
+            // YT.PlayerState.ENDED === 0 (Khi bài hát kết thúc)
+            if (event.data === 0) {
+              playNextTrack()
+            }
+          },
+        },
+      })
+    }
+
+    // Nếu script YouTube API chưa tồn tại thì chèn vào DOM
+    if (!(window as any).YT) {
+      const tag = document.createElement('script')
+      tag.src = 'https://www.youtube.com/iframe_api'
+      const firstScriptTag = document.getElementsByTagName('script')[0]
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag)
+      ;(window as any).onYouTubeIframeAPIReady = () => {
+        isApiReadyRef.current = true
+        initPlayer()
+      }
+    } else if ((window as any).YT && (window as any).YT.Player) {
+      isApiReadyRef.current = true
+      initPlayer()
+    }
+
+    return () => {
+      if (playerRef.current && playerRef.current.destroy) {
+        playerRef.current.destroy()
+      }
+    }
+  }, []) // Chỉ chạy 1 lần duy nhất khi Mount
+
+  // 4. Khi `selectedTrack` thay đổi, load Video mới thông qua YT API thay vì mount lại iframe
+  useEffect(() => {
+    const videoId = extractVideoId(selectedTrack.videoUrl)
+    if (
+      playerRef.current &&
+      typeof playerRef.current.loadVideoById === 'function'
+    ) {
+      playerRef.current.loadVideoById(videoId)
+    }
+  }, [selectedTrack])
 
   return (
     <div
@@ -130,20 +192,40 @@ export default function MusicPlayerPage() {
           </Title>
         </Col>
         <Col>
-          <Input
-            placeholder="Tìm bài hát..."
-            prefix={<SearchOutlined />}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ width: 280, borderRadius: 20 }}
-            allowClear
-          />
+          <Space size="middle">
+            <Tooltip
+              title={isShuffle ? 'Tắt phát ngẫu nhiên' : 'Bật phát ngẫu nhiên'}
+            >
+              <Button
+                type={isShuffle ? 'primary' : 'default'}
+                icon={<BarsOutlined />}
+                onClick={() => setIsShuffle(!isShuffle)}
+                style={{
+                  borderRadius: 20,
+                  backgroundColor: isShuffle ? '#6366f1' : '#1e293b',
+                  borderColor: isShuffle ? '#6366f1' : '#334155',
+                  color: '#fff',
+                }}
+              >
+                {isShuffle ? 'Shuffle On' : 'Shuffle Off'}
+              </Button>
+            </Tooltip>
+
+            <Input
+              placeholder="Tìm bài hát..."
+              prefix={<SearchOutlined />}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              style={{ width: 260, borderRadius: 20 }}
+              allowClear
+            />
+          </Space>
         </Col>
       </Row>
 
       {/* Main Container */}
       <Row gutter={[24, 24]} style={{ flex: 1, minHeight: 0 }}>
-        {/* Bên trái: Video Player */}
+        {/* Left: Player */}
         <Col
           xs={24}
           lg={16}
@@ -162,7 +244,7 @@ export default function MusicPlayerPage() {
               height: '100%',
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'space-between',
+              justifyItems: 'space-between',
             }}
           >
             <div
@@ -176,21 +258,15 @@ export default function MusicPlayerPage() {
                 background: '#000',
               }}
             >
-              <iframe
-                ref={iframeRef}
-                onLoad={handleIframeLoad}
-                /* Bổ sung enablejsapi=1 để giao tiếp qua postMessage */
-                src={`${selectedTrack.videoUrl}?autoplay=1&enablejsapi=1`}
-                title={selectedTrack.name}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
+              {/* Thẻ div chứa Youtube Player API thay cho thẻ iframe trực tiếp */}
+              <div
+                id="youtube-player"
                 style={{
                   position: 'absolute',
                   top: 0,
                   left: 0,
                   width: '100%',
                   height: '100%',
-                  border: 'none',
                 }}
               />
             </div>
@@ -227,19 +303,31 @@ export default function MusicPlayerPage() {
                       Win Rate: {(selectedTrack.winLossRatio * 100).toFixed(1)}%
                     </Tag>
                   </Tooltip>
+                  {isShuffle && (
+                    <Tag icon={<BarsOutlined />} color="purple">
+                      Shuffle Active
+                    </Tag>
+                  )}
                 </Space>
               </motion.div>
             </AnimatePresence>
           </Card>
         </Col>
 
-        {/* Bên phải: Danh sách bài hát */}
+        {/* Right: Tracklist */}
         <Col xs={24} lg={8} style={{ height: '100%' }}>
           <Card
             title={
-              <Text style={{ color: '#fff' }}>
-                Danh sách phát ({filteredTracks.length})
-              </Text>
+              <Row justify="space-between" align="middle">
+                <Text style={{ color: '#fff' }}>
+                  Danh sách phát ({filteredTracks.length})
+                </Text>
+                {isShuffle && (
+                  <Text style={{ color: '#a855f7', fontSize: 12 }}>
+                    🔀 Ngẫu nhiên
+                  </Text>
+                )}
+              </Row>
             }
             style={{
               background: '#1e293b',

@@ -1,5 +1,6 @@
 export const transactionKeys = {
   all: ['financial', 'transaction'] as const,
+  view: () => [...transactionKeys.all, 'view'] as const,
   list: () => [...transactionKeys.all, 'list'] as const,
   date: () => [...transactionKeys.all, 'date'] as const,
   details: () => [...transactionKeys.all, 'detail'] as const,

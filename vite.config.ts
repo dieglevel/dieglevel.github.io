@@ -3,7 +3,6 @@ import { defineConfig } from 'vite'
 import { devtools } from '@tanstack/devtools-vite'
 import viteReact from '@vitejs/plugin-react'
 import svgr from 'vite-plugin-svgr'
-import { VitePWA } from 'vite-plugin-pwa'
 
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
 
@@ -11,11 +10,11 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 export default defineConfig(({ mode }) => ({
   plugins: [
     devtools(),
-    VitePWA({
-      disable: mode !== 'production',
-      registerType: 'autoUpdate',
-      injectRegister: 'auto',
-    }),
+    // VitePWA({
+    //   disable: mode !== 'production',
+    //   registerType: 'autoUpdate',
+    //   injectRegister: 'auto',
+    // }),
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
