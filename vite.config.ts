@@ -5,33 +5,37 @@ import viteReact from '@vitejs/plugin-react'
 import svgr from 'vite-plugin-svgr'
 
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
+import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  plugins: [
-    devtools(),
-    // VitePWA({
-    //   disable: mode !== 'production',
-    //   registerType: 'autoUpdate',
-    //   injectRegister: 'auto',
-    // }),
-    tanstackRouter({
-      target: 'react',
-      autoCodeSplitting: true,
-      routesDirectory: 'src/routes',
-      generatedRouteTree: 'src/shared/router/routeTree.gen.ts',
-    }),
-    viteReact(),
-    svgr({
-      svgrOptions: {
-        icon: true,
+export default defineConfig(({ mode }) => {
+  console.log('mode', mode)
+  return {
+    plugins: [
+      devtools(),
+      VitePWA({
+        disable: mode !== 'production',
+        registerType: 'autoUpdate',
+        injectRegister: 'auto',
+      }),
+      tanstackRouter({
+        target: 'react',
+        autoCodeSplitting: true,
+        routesDirectory: 'src/routes',
+        generatedRouteTree: 'src/shared/router/routeTree.gen.ts',
+      }),
+      viteReact(),
+      svgr({
+        svgrOptions: {
+          icon: true,
+        },
+      }),
+    ],
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+        '@shared': fileURLToPath(new URL('./src/shared', import.meta.url)),
       },
-    }),
-  ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-      '@shared': fileURLToPath(new URL('./src/shared', import.meta.url)),
     },
-  },
-}))
+  }
+})

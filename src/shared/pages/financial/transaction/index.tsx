@@ -1,10 +1,12 @@
 import React, { useMemo, useState } from 'react'
-import { FloatButton, Grid, Space, Tabs } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
-import { ChartLine } from 'lucide-react'
+import { FloatButton, Grid, Space, Tabs, Tag } from 'antd'
+import {
+  ArrowDownOutlined,
+  ArrowUpOutlined,
+  PlusOutlined,
+} from '@ant-design/icons'
 import { useRouter } from '@tanstack/react-router'
 import { TransactionModal } from './_components/TransactionModal'
-import { TransactionsSummary } from './_components/TransactionsSummary'
 import { TransactionDetail } from './_components/TransactionDetail'
 import { TransactionsTable } from './_components/TransactionsTable'
 import { TransactionHeader } from './_components/TransactionHeader'
@@ -16,6 +18,7 @@ import type { IFinance_Category } from '@/shared/api/financial/category/category
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
 import { useGetWallet_Transaction_Date } from '@/shared/api/financial/transaction/useGetFinance_Transaction_Date'
+import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const { useBreakpoint } = Grid
 
@@ -48,10 +51,6 @@ const tabsData: TabsProps['items'] = [
     key: 'pending',
     label: 'Đang chờ',
   },
-  {
-    key: 'statistics',
-    label: <ChartLine size={18} />,
-  },
 ]
 
 export function Transactions() {
@@ -60,7 +59,7 @@ export function Transactions() {
   const isMobile = !screens.md
 
   const { data: dataTransaction } = useGetWallet_Transaction_Date({})
-  const transactions = dataTransaction?.data || []
+  const transactions = dataTransaction?.data.transactions || []
 
   const [activeTab, setActiveTab] = useState('all')
 
@@ -223,8 +222,6 @@ export function Transactions() {
           />
         )
 
-      case 'statistics':
-        return <TransactionsSummary transactions={filtered} />
       default:
         return null
     }
@@ -254,7 +251,46 @@ export function Transactions() {
         }}
       />
 
-      <Tabs items={tabsData} activeKey={activeTab} onChange={setActiveTab} />
+      <Tabs
+        items={tabsData}
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        tabBarExtraContent={{
+          right: (
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <Tag
+                color="red"
+                style={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  padding: '2px 8px',
+                }}
+              >
+                <ArrowDownOutlined />
+                {convertCurrency(dataTransaction?.data.totalExpense || 0)}
+              </Tag>
+
+              <Tag
+                color="green"
+                style={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  padding: '2px 8px',
+                }}
+              >
+                <ArrowUpOutlined />
+                {convertCurrency(dataTransaction?.data.totalIncome || 0)}
+              </Tag>
+            </div>
+          ),
+        }}
+      />
       {renderTabs}
 
       {/* 3. Search & Active Filters */}

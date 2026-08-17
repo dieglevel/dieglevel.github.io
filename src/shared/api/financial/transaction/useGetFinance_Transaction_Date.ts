@@ -5,6 +5,12 @@ import type { IFinance_Transaction } from './transaction.type'
 import type { ApiBaseResponse } from '@/shared/types/base-response'
 import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 
+export interface GetFinance_Transaction_Date_Response {
+  transactions: Array<IFinance_Transaction>
+  totalExpense: number
+  totalIncome: number
+}
+
 // Get<Example><Type>Params
 export interface GetWallet_Transaction_Date_Params {
   queryParams?: {
@@ -12,7 +18,7 @@ export interface GetWallet_Transaction_Date_Params {
   }
 
   options?: Omit<
-    UseQueryOptions<ApiBaseResponse<Array<IFinance_Transaction>>>,
+    UseQueryOptions<ApiBaseResponse<GetFinance_Transaction_Date_Response>>,
     'queryKey' | 'queryFn'
   >
 }
@@ -22,7 +28,7 @@ export const useGetWallet_Transaction_Date = (
   props: GetWallet_Transaction_Date_Params,
 ) =>
   useQueryGet<
-    ApiBaseResponse<Array<IFinance_Transaction>>,
+    ApiBaseResponse<GetFinance_Transaction_Date_Response>,
     '/financial-transaction/get-with-date'
   >({
     endPoint: `/financial-transaction/get-with-date`,

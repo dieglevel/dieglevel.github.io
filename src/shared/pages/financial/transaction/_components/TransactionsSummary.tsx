@@ -19,29 +19,24 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
-import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
-import { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
 
 const { Text } = Typography
 
 interface TransactionsSummaryProps {
-  transactions: Array<IFinance_Transaction>
+  totalIncome?: number
+  totalExpense?: number
 }
 
 export const TransactionsSummary: React.FC<TransactionsSummaryProps> = ({
-  transactions,
+  totalIncome,
+  totalExpense,
 }) => {
   const [chartType, setChartType] = useState<'bar' | 'pie'>('bar')
 
   // Tính toán dữ liệu tài chính
-  const income = transactions
-    .filter((t) => t.type === FINANCIAL_TRANSACTION_TYPE.INCOME)
-    .reduce((s, t) => s + t.amount, 0)
-
-  const expense = transactions
-    .filter((t) => t.type === FINANCIAL_TRANSACTION_TYPE.EXPENSE)
-    .reduce((s, t) => s + t.amount, 0)
+  const income = totalIncome || 0
+  const expense = totalExpense || 0
 
   const net = income - expense
   const totalVolume = income + expense

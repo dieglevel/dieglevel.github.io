@@ -200,7 +200,10 @@ export default function Categories() {
 
         <Flex gap={12} wrap="wrap" justify="center" align="center">
           <Text type="secondary" style={{ fontSize: '13px' }}>
-            Total Budget: {totalBudget.toLocaleString()}
+            {`Total Budget: `}
+            <Text style={{ fontWeight: 'bold', color: 'red' }}>
+              {totalBudget.toLocaleString()}
+            </Text>
           </Text>
           <Button
             type="primary"
