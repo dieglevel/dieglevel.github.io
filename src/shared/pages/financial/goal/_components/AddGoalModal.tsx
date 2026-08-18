@@ -4,6 +4,7 @@ import {
   DatePicker,
   Divider,
   Form,
+  Image,
   Input,
   InputNumber,
   Modal,
@@ -69,6 +70,8 @@ export function AddGoalModal({
   // Watch savingMode to toggle auto contribution inputs
   const savingMode = Form.useWatch('savingMode', form)
   const isAutoMode = savingMode === FINANCIAL_GOAL_SAVING_MODE.AUTO
+
+  const watchImageUrl = Form.useWatch('imageUrl', form)
 
   useEffect(() => {
     if (open) {
@@ -309,12 +312,31 @@ export function AddGoalModal({
 
         {/* Image & Lock Options */}
         <Row gutter={16}>
-          <Col xs={24} sm={18}>
+          <Col xs={24} sm={12}>
             <Form.Item name="imageUrl" label="URL Ảnh minh họa">
               <Input placeholder="https://example.com/image.jpg" type="url" />
             </Form.Item>
           </Col>
-          <Col xs={24} sm={6}>
+          <Col xs={24} sm={12}>
+            {watchImageUrl && (
+              <div style={{ textAlign: 'center' }}>
+                <Image
+                  src={watchImageUrl}
+                  alt="Goal Image"
+                  style={{
+                    objectFit: 'cover',
+                    borderRadius: 8,
+                    height: 80,
+                    width: 80,
+                  }}
+                  fallback="https://via.placeholder.com/80?text=No+Image"
+                />
+              </div>
+            )}
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col xs={24} sm={18}>
             <Form.Item
               name="isLocked"
               label="Khóa rút tiền"

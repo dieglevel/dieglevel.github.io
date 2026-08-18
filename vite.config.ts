@@ -31,6 +31,9 @@ export default defineConfig(({ mode }) => {
         },
       }),
     ],
+    optimizeDeps: {
+      include: ['lucide-react'], // Ép Vite gom tất cả icon vào 1 chunk duy nhất trong dev
+    },
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

@@ -322,19 +322,20 @@ export function Goals() {
                 { value: 'all', label: 'Tất cả loại' },
                 {
                   value: FINANCIAL_GOAL_TYPE.EMERGENCY_FUND,
-                  label: 'Quỹ khẩn cấp',
+                  label: 'Quỹ khẩn cấp / Dự phòng rủi ro',
                 },
                 {
                   value: FINANCIAL_GOAL_TYPE.SAVING,
-                  label: 'Tiết kiệm',
+                  label:
+                    'Tiết kiệm / Tích lũy ngắn hạn / Trung hạn / Mục tiêu cụ thể',
                 },
                 {
                   value: FINANCIAL_GOAL_TYPE.INVESTMENT,
-                  label: 'Đầu tư',
+                  label: 'Đầu tư / Tích lũy dài hạn',
                 },
                 {
                   value: FINANCIAL_GOAL_TYPE.DEBT_PAYMENT,
-                  label: 'Trả nợ',
+                  label: 'Trả nợ / Khoản vay / Trả góp',
                 },
                 { value: FINANCIAL_GOAL_TYPE.OTHER, label: 'Khác' },
               ]}

@@ -139,7 +139,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
             src={goal.imageUrl || undefined}
             icon={!goal.imageUrl && <TrophyOutlined />}
             shape="square"
-            size={44}
+            size={60}
             style={{
               borderRadius: 12,
               backgroundColor: `${goalColor}20`,
