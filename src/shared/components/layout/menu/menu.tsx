@@ -49,6 +49,12 @@ export const menus: Array<MenuItem> = [
         link: '/financial/wallet',
       },
       {
+        id: 'debt',
+        label: 'Debt',
+        icon: <GoalIcon size={16} />,
+        link: '/financial/debt',
+      },
+      {
         id: 'goal',
         label: 'Goal',
         icon: <GoalIcon size={16} />,
