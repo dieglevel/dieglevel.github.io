@@ -33,6 +33,7 @@ export type CreateFinanceTransactionDto = Pick<
     financialTransactionItems?: Array<CreateFinanceTransactionItemDto>
     date: Dayjs
     toWalletId?: number | null
+    transferFee?: number
   }
 
 export const useMutationTransaction = () => {

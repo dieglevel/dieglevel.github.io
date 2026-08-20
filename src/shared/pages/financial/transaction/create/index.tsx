@@ -62,11 +62,12 @@ export const CreateTransactionPage: React.FC = () => {
   const { data: originalTransactions, isLoading: isLoadingOriginal } =
     useGetFinance_Transaction_List({})
 
-  const description = Form.useWatch('description', form)
   const selectedType = Form.useWatch('type', form)
   const selectedWalletId = Form.useWatch('walletId', form)
+  const selectedToWalletId = Form.useWatch('toWalletId', form)
   const selectedOriginalId = Form.useWatch('originalTransactionId', form)
   const directAmount = Form.useWatch('amount', form)
+  const transferFee = Form.useWatch('transferFee', form) || 0
   const items = Form.useWatch('financialTransactionItems', form) || []
 
   // Tìm giao dịch gốc khi tạo Hoàn tiền
@@ -84,9 +85,24 @@ export const CreateTransactionPage: React.FC = () => {
   const prevLengthRef = useRef(items.length)
   const prevTypeRef = useRef(selectedType)
 
-  // 1. Xử lý duy nhất cho Description
+  // 1. Xử lý tự động cập nhật Description
   useEffect(() => {
-    // TRƯỜNG HỢP 1: Loại giao dịch là ADJUSTMENT
+    // TRƯỜNG HỢP 1: Giao dịch TRANSFER (Chuyển tiền)
+    if (selectedType === FINANCIAL_TRANSACTION_TYPE.TRANSFER) {
+      const fromWallet = wallets?.data.find((w) => w.id === selectedWalletId)
+      const toWallet = wallets?.data.find((w) => w.id === selectedToWalletId)
+
+      const fromName = fromWallet?.name || 'Ví A'
+      const toName = toWallet?.name || 'Ví B'
+
+      const transferDesc = `Chuyển tiền ${fromName} -> ${toName}`
+      form.setFieldValue('description', transferDesc)
+
+      prevTypeRef.current = selectedType
+      return
+    }
+
+    // TRƯỜNG HỢP 2: Giao dịch ADJUSTMENT
     if (selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT) {
       const selectedWallet = wallets?.data.find(
         (w) => w.id === selectedWalletId,
@@ -102,32 +118,41 @@ export const CreateTransactionPage: React.FC = () => {
       return
     }
 
-    // TRƯỜNG HỢP 2: Chuyển từ ADJUSTMENT sang loại khác -> Reset description về trống
-    if (prevTypeRef.current === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT) {
+    // TRƯỜNG HỢP 3: Chuyển từ ADJUSTMENT hoặc TRANSFER sang loại khác -> Reset description về trống
+    if (
+      prevTypeRef.current === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT ||
+      prevTypeRef.current === FINANCIAL_TRANSACTION_TYPE.TRANSFER
+    ) {
       form.setFieldValue('description', '')
       prevTypeRef.current = selectedType
     }
 
-    // TRƯỜNG HỢP 3: Các loại giao dịch thông thường (sử dụng items)
+    // TRƯỜNG HỢP 4: Các loại giao dịch thông thường (sử dụng items)
     const prevLength = prevLengthRef.current
     const currentLength = items.length
 
     if (currentLength === 1) {
-      // Nếu chỉ có 1 item, ưu tiên lấy description của item đó
       form.setFieldValue('description', items[0]?.description ?? '')
     } else if (prevLength === 1 && currentLength > 1) {
-      // Vừa bấm thêm item thứ 2 (tăng từ 1 -> 2) -> Xóa description hiện tại
       form.setFieldValue('description', '')
     }
-    // Nếu currentLength > 1 và giữ nguyên hoặc thêm tiếp (2 -> 3, 3 -> 4) -> Không làm gì cả để giữ nguyên description!
 
     prevLengthRef.current = currentLength
-  }, [selectedType, selectedWalletId, wallets?.data, directAmount, items, form])
+  }, [
+    selectedType,
+    selectedWalletId,
+    selectedToWalletId,
+    wallets?.data,
+    directAmount,
+    items,
+    form,
+  ])
 
-  // 2. Xử lý Amount (Giữ nguyên)
+  // 2. Xử lý Amount cho các loại giao dịch thông thường
   useEffect(() => {
     if (
       selectedType !== FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT &&
+      selectedType !== FINANCIAL_TRANSACTION_TYPE.TRANSFER &&
       items.length > 0
     ) {
       form.setFieldValue('amount', calculatedTotalAmount)
@@ -141,6 +166,7 @@ export const CreateTransactionPage: React.FC = () => {
       status: FINANCIAL_TRANSACTION_STATUS.COMPLETED,
       date: dayjs(),
       amount: 0,
+      transferFee: 0,
       financialTransactionItems: [
         { description: '', amount: 0, categoryId: undefined },
       ],
@@ -254,10 +280,8 @@ export const CreateTransactionPage: React.FC = () => {
             ...basePayload,
             type: FINANCIAL_TRANSACTION_TYPE.TRANSFER,
             toWalletId: values.toWalletId,
+            transferFee: Number(values.transferFee || 0),
             description: values.description,
-            financialTransactionItems: mapItems(
-              values.financialTransactionItems,
-            ),
             originalTransactionId: values.originalTransactionId,
           }
           break
@@ -269,64 +293,32 @@ export const CreateTransactionPage: React.FC = () => {
           }
       }
 
-      if (selectedType === FINANCIAL_TRANSACTION_TYPE.TRANSFER) {
-        mTransaction_Create.mutate(
-          { body: payload },
-          {
-            onSuccess: () => {
-              mTransaction_Create.mutate(
-                {
-                  body: {
-                    ...payload, // ! NEED TO FIX
-                    type: FINANCIAL_TRANSACTION_TYPE.EXPENSE,
-                    walletId: payload.toWalletId!,
-                  },
-                },
-                {
-                  onSuccess: () => {
-                    message.success(
-                      'Giao dịch chuyển tiền đã được tạo thành công!',
-                    )
-                    router.navigate({ to: '/financial/transaction' })
-                  },
-                  onError: (error) => {
-                    console.error('API error:', error)
-                    message.error(
-                      'Có lỗi xảy ra khi tạo giao dịch chuyển tiền.',
-                    )
-                  },
-                },
-              )
-            },
-            onError: (error) => {
-              console.error('API error:', error)
-              message.error('Có lỗi xảy ra khi tạo giao dịch.')
-            },
+      mTransaction_Create.mutate(
+        { body: payload },
+        {
+          onSuccess: () => {
+            message.success('Giao dịch đã được tạo thành công!')
+            router.navigate({ to: '/financial/transaction' })
           },
-        )
-      } else {
-        mTransaction_Create.mutate(
-          { body: payload },
-          {
-            onSuccess: () => {
-              message.success('Giao dịch đã được tạo thành công!')
-              router.navigate({ to: '/financial/transaction' })
-            },
-            onError: (error) => {
-              console.error('API error:', error)
-              message.error('Có lỗi xảy ra khi tạo giao dịch.')
-            },
+          onError: (error) => {
+            console.error('API error:', error)
+            message.error('Có lỗi xảy ra khi tạo giao dịch.')
           },
-        )
-      }
+        },
+      )
     } catch (error) {
       console.error('Validation error:', error)
     }
   }
 
+  // Xác định số tiền hiển thị trên Banner
   const displayAmount =
-    selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT
-      ? Number(directAmount) || 0
+    selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT ||
+    selectedType === FINANCIAL_TRANSACTION_TYPE.TRANSFER
+      ? (Number(directAmount) || 0) +
+        (selectedType === FINANCIAL_TRANSACTION_TYPE.TRANSFER
+          ? Number(transferFee)
+          : 0)
       : calculatedTotalAmount
 
   return (
@@ -365,7 +357,9 @@ export const CreateTransactionPage: React.FC = () => {
               ? 'Tạo Giao Dịch Hoàn Tiền'
               : selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT
                 ? 'Tạo Điều Chỉnh Số Dư'
-                : 'Tạo Giao Dịch Mới'}
+                : selectedType === FINANCIAL_TRANSACTION_TYPE.TRANSFER
+                  ? 'Tạo Giao Dịch Chuyển Tiền'
+                  : 'Tạo Giao Dịch Mới'}
           </Title>
         </Space>
 
@@ -411,7 +405,7 @@ export const CreateTransactionPage: React.FC = () => {
         </Card>
 
         <Row gutter={[20, 20]}>
-          {/* CỘT TRÁI: Chi tiết khoản tiền / Hạng mục */}
+          {/* CỘT TRÁI: Chi tiết khoản tiền */}
           <Col xs={24} lg={14} xl={15}>
             <Card title="Chi tiết khoản tiền" style={{ height: '100%' }}>
               {/* Tổng tiền Banner */}
@@ -434,7 +428,9 @@ export const CreateTransactionPage: React.FC = () => {
                       ? 'Tổng tiền hoàn nhận lại:'
                       : selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT
                         ? 'Số tiền điều chỉnh:'
-                        : 'Tổng tiền giao dịch:'}
+                        : selectedType === FINANCIAL_TRANSACTION_TYPE.TRANSFER
+                          ? 'Tổng số tiền trừ ví nguồn (Gồm phí):'
+                          : 'Tổng tiền giao dịch:'}
                   </Text>
                   <Title level={3} style={{ margin: 0, color: '#52c41a' }}>
                     {convertCurrency(displayAmount)}
@@ -454,22 +450,58 @@ export const CreateTransactionPage: React.FC = () => {
                   />
                 )}
 
-              {/* Nhập số tiền trực tiếp cho ADJUSTMENT */}
-              {selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT ? (
-                <Form.Item
-                  name="amount"
-                  label="Số tiền điều chỉnh"
-                  rules={[{ required: true, message: 'Vui lòng nhập số tiền' }]}
-                >
-                  <InputNumber
-                    style={{ width: '100%' }}
-                    placeholder="Nhập số tiền..."
-                    precision={2}
-                    {...InputWithComma}
-                  />
-                </Form.Item>
+              {/* Nhập số tiền trực tiếp cho ADJUSTMENT hoặc TRANSFER */}
+              {selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT ||
+              selectedType === FINANCIAL_TRANSACTION_TYPE.TRANSFER ? (
+                <>
+                  <Form.Item
+                    name="amount"
+                    label={
+                      selectedType === FINANCIAL_TRANSACTION_TYPE.TRANSFER
+                        ? 'Số tiền chuyển'
+                        : 'Số tiền điều chỉnh'
+                    }
+                    rules={[
+                      { required: true, message: 'Vui lòng nhập số tiền' },
+                      {
+                        type: 'number',
+                        min: 0.01,
+                        message: 'Số tiền phải lớn hơn 0',
+                      },
+                    ]}
+                  >
+                    <InputNumber
+                      style={{ width: '100%' }}
+                      placeholder="Nhập số tiền..."
+                      precision={2}
+                      {...InputWithComma}
+                    />
+                  </Form.Item>
+
+                  {/* Nhập phí giao dịch khi Chuyển tiền */}
+                  {selectedType === FINANCIAL_TRANSACTION_TYPE.TRANSFER && (
+                    <Form.Item
+                      name="transferFee"
+                      label="Phí chuyển tiền (nếu có)"
+                      rules={[
+                        {
+                          type: 'number',
+                          min: 0,
+                          message: 'Phí chuyển tiền không thể âm',
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        style={{ width: '100%' }}
+                        placeholder="Nhập phí chuyển tiền..."
+                        precision={2}
+                        {...InputWithComma}
+                      />
+                    </Form.Item>
+                  )}
+                </>
               ) : (
-                /* Form.List Hạng mục chi tiết cho EXPENSE, INCOME, REFUND, TRANSFER */
+                /* Form.List Hạng mục chi tiết cho EXPENSE, INCOME, REFUND */
                 <Form.Item required style={{ marginBottom: 12 }}>
                   <Form.List
                     name="financialTransactionItems"
@@ -728,7 +760,8 @@ export const CreateTransactionPage: React.FC = () => {
                   <Input
                     disabled={
                       selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT ||
-                      items.length <= 1
+                      (selectedType !== FINANCIAL_TRANSACTION_TYPE.TRANSFER &&
+                        items.length <= 1)
                     }
                     placeholder="Mô tả tổng quan..."
                     maxLength={255}
@@ -823,9 +856,6 @@ export const CreateTransactionPage: React.FC = () => {
             </Flex>
           </Col>
         </Row>
-        <Form.Item name="amount" hidden>
-          <InputNumber />
-        </Form.Item>
       </Form>
 
       {/* Fixed Footer Bar */}
