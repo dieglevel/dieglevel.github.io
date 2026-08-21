@@ -1,7 +1,7 @@
+import { goalKeys } from '../goal.keys'
 import type { UseQueryOptions } from '@tanstack/react-query'
 import type { ApiBaseResponse } from '@/shared/types/base-response'
 import type { IFinance_Goal_Detail } from '../goal.type'
-import { goalKeys } from '../goal.keys'
 import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 
 export interface GetFinance_Goal_Detail_Params {

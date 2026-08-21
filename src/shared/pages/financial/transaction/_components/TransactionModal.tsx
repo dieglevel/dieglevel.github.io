@@ -21,6 +21,7 @@ import { useGetFinance_Category_Count } from '@/shared/api/financial/category/us
 import {
   FINANCIAL_TRANSACTION_STATUS,
   FINANCIAL_TRANSACTION_TYPE,
+  FinancialTransactionTypeHelper,
 } from '@/shared/api/financial/transaction/transaction.enum'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { InputWithComma } from '@/shared/components/input/utils'
@@ -125,16 +126,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
         <Form.Item name="type">
           <Segmented
             block
-            options={[
-              {
-                label: 'Chi tiêu (Expense)',
-                value: FINANCIAL_TRANSACTION_TYPE.EXPENSE,
-              },
-              {
-                label: 'Thu nhập (Income)',
-                value: FINANCIAL_TRANSACTION_TYPE.INCOME,
-              },
-            ]}
+            options={FinancialTransactionTypeHelper.getOptions()}
           />
         </Form.Item>
 

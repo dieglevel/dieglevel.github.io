@@ -1,8 +1,8 @@
+import { walletTransferKeys } from '../walletTransfer.keys'
 import type dayjs from 'dayjs'
 import type { UseQueryOptions } from '@tanstack/react-query'
 import type { ApiBaseResponse } from '@/shared/types/base-response'
 import type { IFinance_WalletTransfer } from './wallet-transfer.type'
-import { walletTransferKeys } from '../walletTransfer.keys'
 import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 
 // Get<Example><Type>Params

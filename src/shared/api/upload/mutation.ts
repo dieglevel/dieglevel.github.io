@@ -1,5 +1,5 @@
-import type { ApiBaseResponse } from '@/shared/types/base-response'
 import { uploadKeys } from './upload.keys'
+import type { ApiBaseResponse } from '@/shared/types/base-response'
 import { useMutationPost } from '@/shared/lib/api/mutation/useMutation'
 
 export interface UploadRawResponse {}

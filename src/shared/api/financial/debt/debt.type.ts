@@ -19,6 +19,7 @@ export interface IFinance_Debt extends IBaseEntity {
   note?: string | null
   accountId: number
   account?: User
+  startDate: string | Date
 }
 
 export interface IFinance_DebtHistory extends IBaseEntity {

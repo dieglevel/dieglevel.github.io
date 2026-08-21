@@ -125,9 +125,7 @@ export function RecurringTransactions() {
   // State UI Controls
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
   const [showAddModal, setShowAddModal] = useState(false)
-  const [editingRule, setEditingRule] = useState<IFinanceRecurring | null>(
-    null,
-  )
+  const [editingRule, setEditingRule] = useState<IFinanceRecurring | null>(null)
   const [selectedKeys, setSelectedKeys] = useState<Array<React.Key>>([])
   const [loadingRunDue, setLoadingRunDue] = useState(false)
 

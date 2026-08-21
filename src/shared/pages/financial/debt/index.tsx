@@ -163,7 +163,7 @@ export const DebtManagementPage: React.FC = () => {
           <Tag color={FinancialDebtDirectionHelper.getColor(record.direction)}>
             {FinancialDebtDirectionHelper.getLabel(record.direction)}
           </Tag>
-          {record.type && <Tag style={{ fontSize: 11 }}>{record.type}</Tag>}
+          <Tag style={{ fontSize: 11 }}>{record.type}</Tag>
         </Space>
       ),
     },
@@ -409,7 +409,7 @@ export const DebtManagementPage: React.FC = () => {
               >
                 <Select
                   placeholder="Chọn phân loại"
-                  options={Object.values(FINANCIAL_DEBT_TYPE_ENUM || {}).map(
+                  options={Object.values(FINANCIAL_DEBT_TYPE_ENUM).map(
                     (val) => ({
                       label: val,
                       value: val,

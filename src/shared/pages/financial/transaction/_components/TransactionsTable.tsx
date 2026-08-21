@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, Card, Flex, Table, Tag, Typography } from 'antd'
 import { EyeOutlined } from '@ant-design/icons'
+import { useNavigate } from '@tanstack/react-router'
 import type { ColumnsType } from 'antd/es/table'
 import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
@@ -29,6 +30,8 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
   onSelectChange,
   onViewDetail,
 }) => {
+  const navigate = useNavigate()
+
   // Cấu hình Cột Bảng
   const columns: ColumnsType<IFinance_Transaction> = [
     {
@@ -210,7 +213,8 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
         columns={columns}
         dataSource={dataSource}
         onRow={(record) => ({
-          onClick: () => onViewDetail(record),
+          onClick: () =>
+            navigate({ to: `/financial/transaction/${record.id}` }),
           style: { cursor: 'pointer' },
         })}
         rowSelection={{

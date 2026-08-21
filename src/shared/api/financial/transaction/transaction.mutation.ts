@@ -7,15 +7,14 @@ import {
   useMutationPost,
 } from '@/shared/lib/api/mutation/useMutation'
 
-export type CreateFinanceTransactionItemDto = Pick<
+export type UpsertFinanceTransactionItemDto = Pick<
   IFinance_TransactionItem,
   'description' | 'amount'
 > & {
   categoryId?: number | null
 }
 
-// DTO cho Transaction: Lấy các trường từ Entity, biến các trường tùy chọn thành optional (?)
-export type CreateFinanceTransactionDto = Pick<
+export type UpsertFinanceTransactionDto = Pick<
   IFinance_Transaction,
   'amount' | 'type' | 'walletId'
 > &
@@ -30,7 +29,7 @@ export type CreateFinanceTransactionDto = Pick<
       | 'originalTransactionId'
     >
   > & {
-    financialTransactionItems?: Array<CreateFinanceTransactionItemDto>
+    financialTransactionItems?: Array<UpsertFinanceTransactionItemDto>
     date: Dayjs
     toWalletId?: number | null
     transferFee?: number
@@ -39,7 +38,7 @@ export type CreateFinanceTransactionDto = Pick<
 export const useMutationTransaction = () => {
   const mTransaction_Create = useMutationPost<
     void,
-    CreateFinanceTransactionDto,
+    UpsertFinanceTransactionDto,
     'financial-transaction/create'
   >({
     endPoint: 'financial-transaction/create',
@@ -48,7 +47,7 @@ export const useMutationTransaction = () => {
 
   const mTransaction_Update = useMutationPost<
     void,
-    Partial<Omit<IFinance_Transaction, 'id' | 'created_at'>>,
+    UpsertFinanceTransactionDto,
     'financial-transaction/update/:id',
     { id: string }
   >({

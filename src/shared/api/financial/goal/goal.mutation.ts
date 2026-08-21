@@ -1,5 +1,5 @@
-import type { IFinance_Goal } from './goal.type'
 import { goalKeys } from './goal.keys'
+import type { IFinance_Goal } from './goal.type'
 import {
   useMutationDelete,
   useMutationPatch,
