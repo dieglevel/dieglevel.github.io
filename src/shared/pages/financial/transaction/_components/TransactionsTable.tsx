@@ -7,11 +7,9 @@ import type { IFinance_Transaction } from '@/shared/api/financial/transaction/tr
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
-import {
-  FINANCIAL_TRANSACTION_STATUS_LABEL,
-  FINANCIAL_TRANSACTION_TYPE,
-} from '@/shared/api/financial/transaction/transaction.enum'
+import { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
 import { DayjsHelper } from '@/shared/utils/helper/dayjs'
+import { FinancialTransactionStatusHelper } from '@/shared/api/financial/wallet/wallet.enum'
 
 const { Text } = Typography
 
@@ -180,7 +178,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       responsive: ['md'],
       render: (status: IFinance_Transaction['status']) => (
         <Tag
-          color={FINANCIAL_TRANSACTION_STATUS_LABEL[status].color || 'default'}
+          color={FinancialTransactionStatusHelper.getColor(status)}
           style={{ textTransform: 'capitalize' }}
         >
           {status}

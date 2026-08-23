@@ -17,8 +17,8 @@ import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import Table from '@/shared/components/table'
 import {
-  FINANCIAL_TRANSACTION_STATUS_LABEL,
   FINANCIAL_TRANSACTION_TYPE,
+  FinancialTransactionStatusHelper,
 } from '@/shared/api/financial/transaction/transaction.enum'
 import { useGetFinance_Transaction_View } from '@/shared/api/financial/transaction/useGetFinance_Transaction_View'
 
@@ -108,9 +108,9 @@ export function TransactionDetail({
 
             <Descriptions.Item label="Status">
               <Tag
-                color={
-                  FINANCIAL_TRANSACTION_STATUS_LABEL[transaction.status].color
-                }
+                color={FinancialTransactionStatusHelper.getColor(
+                  transaction.status,
+                )}
               >
                 {transaction.status.toUpperCase() || '-'}
               </Tag>

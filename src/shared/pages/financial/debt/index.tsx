@@ -4,6 +4,7 @@ import {
   Card,
   Col,
   DatePicker,
+  Flex,
   Form,
   Input,
   InputNumber,
@@ -17,6 +18,7 @@ import {
   Tabs,
   Tag,
   Tooltip,
+  Typography,
 } from 'antd'
 import {
   ArrowDownLeft,
@@ -35,6 +37,8 @@ import type { IFinance_Debt } from '@/shared/api/financial/debt/debt.type'
 import { useMutationFinanceDebt } from '@/shared/api/financial/debt/useMutationDebt'
 import { useGetFinance_Debt_List } from '@/shared/api/financial/debt/useGetDebtList'
 import { useGetFinance_Debt_Histories } from '@/shared/api/financial/debt/useGetDebtHistories'
+import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
+
 import {
   FINANCIAL_DEBT_DIRECTION_ENUM,
   FINANCIAL_DEBT_STATUS_ENUM,
@@ -43,9 +47,20 @@ import {
   FinancialDebtStatusHelper,
 } from '@/shared/api/financial/debt/debt.enum'
 
+const { Text } = Typography
+
+// Helper Component để render icon ví (nếu chưa có sẵn component IconRenderer)
+const IconRenderer: React.FC<{ iconName?: string }> = ({ iconName }) => {
+  return iconName ? <span style={{ marginRight: 4 }}>💳</span> : null
+}
+
 export const DebtManagementPage: React.FC = () => {
   // Queries & Mutations
   const { data: debtListResponse, isLoading } = useGetFinance_Debt_List()
+  const { data: walletListResponse, isLoading: isLoadingWallets } =
+    useGetFinance_Wallet_List({})
+
+  const wallets = walletListResponse?.data || []
   const debts = debtListResponse?.data || []
 
   const {
@@ -72,13 +87,24 @@ export const DebtManagementPage: React.FC = () => {
   const [formPayment] = Form.useForm()
   const [formAdjust] = Form.useForm()
 
+  // Dynamic Options cho Select Ví
+  const walletOptions = wallets.map((w) => ({
+    value: w.id,
+    label: (
+      <Flex align="center" gap={8}>
+        <IconRenderer iconName={w.icon} />
+        <Text style={{ fontSize: 13 }}>{w.name}</Text>
+      </Flex>
+    ),
+  }))
+
   // Statistics calculation
   const totalLent = debts
-    .filter((d) => d.direction === FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING)
+    .filter((d) => d.direction === FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING)
     .reduce((sum, item) => sum + Number(item.outstandingAmount || 0), 0)
 
   const totalBorrowed = debts
-    .filter((d) => d.direction === FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING)
+    .filter((d) => d.direction === FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING)
     .reduce((sum, item) => sum + Number(item.outstandingAmount || 0), 0)
 
   // Handlers
@@ -344,8 +370,8 @@ export const DebtManagementPage: React.FC = () => {
           onChange={setActiveTab}
           items={[
             { key: 'ALL', label: 'Tất cả' },
-            { key: FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING, label: 'Cho vay' },
-            { key: FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING, label: 'Đi vay' },
+            { key: FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING, label: 'Cho vay' },
+            { key: FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING, label: 'Đi vay' },
           ]}
         />
         <Table
@@ -393,7 +419,7 @@ export const DebtManagementPage: React.FC = () => {
               <Form.Item
                 name="direction"
                 label="Chiều nợ"
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: 'Vui lòng chọn chiều nợ' }]}
               >
                 <Select
                   options={FinancialDebtDirectionHelper.getOptions()}
@@ -438,18 +464,14 @@ export const DebtManagementPage: React.FC = () => {
             </Col>
             <Col span={12}>
               <Form.Item
-                name="outstandingAmount"
-                label="Số tiền nợ ban đầu"
-                rules={[
-                  { required: true, message: 'Vui lòng nhập số tiền nợ' },
-                ]}
+                name="walletId"
+                label="Ví giao dịch"
+                rules={[{ required: true, message: 'Vui lòng chọn ví' }]}
               >
-                <InputNumber
-                  style={{ width: '100%' }}
-                  min={0}
-                  formatter={(v) =>
-                    `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                  }
+                <Select
+                  placeholder="Chọn ví"
+                  loading={isLoadingWallets}
+                  options={walletOptions}
                 />
               </Form.Item>
             </Col>
@@ -493,14 +515,18 @@ export const DebtManagementPage: React.FC = () => {
           <Form.Item
             name="walletId"
             label="Chọn ví giao dịch"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: 'Vui lòng chọn ví' }]}
           >
-            <InputNumber style={{ width: '100%' }} placeholder="Nhập ID Ví" />
+            <Select
+              placeholder="Chọn ví"
+              loading={isLoadingWallets}
+              options={walletOptions}
+            />
           </Form.Item>
           <Form.Item
             name="amount"
             label="Số tiền thanh toán"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: 'Vui lòng nhập số tiền' }]}
           >
             <InputNumber
               style={{ width: '100%' }}
