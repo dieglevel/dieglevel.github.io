@@ -12,6 +12,7 @@ import {
   Typography,
 } from 'antd'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
+import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { InputWithComma } from '@/shared/components/input/utils'
 
@@ -19,7 +20,7 @@ const { Text } = Typography
 
 interface TransactionItemsFormListProps {
   fieldName?: string
-  categories?: Array<any>
+  categories?: Array<IFinance_Category>
 }
 
 export const TransactionItemsFormList: React.FC<

@@ -54,8 +54,7 @@ export function useTransactionUpsertForm({
   const { data: originalTransactions, isLoading: isLoadingOriginal } =
     useGetFinance_Transaction_List({})
 
-  const selectedType =
-    Form.useWatch('type', form) || FINANCIAL_TRANSACTION_TYPE.INCOME
+  const selectedType = Form.useWatch('type', form)
   const selectedWalletId = Form.useWatch('walletId', form)
   const selectedToWalletId = Form.useWatch('toWalletId', form)
   const selectedOriginalId = Form.useWatch('originalTransactionId', form)
@@ -85,9 +84,7 @@ export function useTransactionUpsertForm({
   // Lọc danh mục theo loại giao dịch
   const filteredCategories = useMemo(() => {
     if (!categories?.data) return []
-    return categories.data.filter(
-      (cat: any) => !cat.type || cat.type === selectedType,
-    )
+    return categories.data
   }, [categories?.data, selectedType])
 
   // Tính tổng số tiền từ danh sách hạng mục
