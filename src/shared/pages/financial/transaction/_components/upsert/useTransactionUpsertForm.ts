@@ -275,6 +275,7 @@ export function useTransactionUpsertForm({
         case FINANCIAL_TRANSACTION_TYPE.EXPENSE:
           payload = {
             ...basePayload,
+            amount: calculatedTotalAmount,
             type: selectedType,
             description: values.description,
             merchant: values.merchant,
