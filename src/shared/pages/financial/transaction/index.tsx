@@ -16,41 +16,20 @@ import type { TabsProps } from 'antd'
 
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
-import { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
+import type { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
 import { useGetWallet_Transaction_Date } from '@/shared/api/financial/transaction/useGetFinance_Transaction_Date'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const { useBreakpoint } = Grid
 
 const tabsData: TabsProps['items'] = [
-  {
-    key: 'all',
-    label: 'Tất cả',
-  },
-  {
-    key: 'income',
-    label: 'Thu nhập',
-  },
-  {
-    key: 'expense',
-    label: 'Chi tiêu',
-  },
-  {
-    key: 'transfer',
-    label: 'Chuyển khoản',
-  },
-  {
-    key: 'refund',
-    label: 'Hoàn tiền',
-  },
-  {
-    key: 'adjustment',
-    label: 'Điều chỉnh',
-  },
-  {
-    key: 'pending',
-    label: 'Đang chờ',
-  },
+  { key: 'all', label: 'Tất cả' },
+  { key: 'income', label: 'Thu nhập' },
+  { key: 'expense', label: 'Chi tiêu' },
+  { key: 'transfer', label: 'Chuyển khoản' },
+  { key: 'refund', label: 'Hoàn tiền' },
+  { key: 'adjustment', label: 'Điều chỉnh' },
+  { key: 'pending', label: 'Đang chờ' },
 ]
 
 export function Transactions() {
@@ -76,8 +55,6 @@ export function Transactions() {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
   const [showAdd, setShowAdd] = useState(false)
   const [selectedKeys, setSelectedKeys] = useState<Array<React.Key>>([])
-
-  // Sửa state lưu ID giao dịch thay vì object giao dịch
   const [viewTransactionId, setViewTransactionId] = useState<number | null>(
     null,
   )
@@ -144,88 +121,24 @@ export function Transactions() {
     })
   }, [transactions, search, typeFilter, walletFilter, catFilter, statusFilter])
 
-  // Handler mở Modal xem chi tiết
+  // Sub-filtering by active tab
+  const tabFilteredTransactions = useMemo(() => {
+    if (activeTab === 'all') return filtered
+    if (activeTab === 'pending') {
+      return filtered.filter((t) => t.status?.toLowerCase() === 'pending')
+    }
+    return filtered.filter(
+      (t) => t.type?.toLowerCase() === activeTab.toLowerCase(),
+    )
+  }, [activeTab, filtered])
+
   const handleViewDetail = (transaction: { id: number }) => {
     setViewTransactionId(transaction.id)
   }
 
-  const renderTabs = useMemo(() => {
-    switch (activeTab) {
-      case 'all':
-        return (
-          <TransactionsTable
-            dataSource={filtered}
-            isMobile={isMobile}
-            selectedKeys={selectedKeys}
-            onSelectChange={setSelectedKeys}
-            onViewDetail={handleViewDetail}
-          />
-        )
-      case 'income':
-        return (
-          <TransactionsTable
-            dataSource={filtered.filter(
-              (t) => t.type === FINANCIAL_TRANSACTION_TYPE.INCOME,
-            )}
-            isMobile={isMobile}
-            selectedKeys={selectedKeys}
-            onSelectChange={setSelectedKeys}
-            onViewDetail={handleViewDetail}
-          />
-        )
-      case 'expense':
-        return (
-          <TransactionsTable
-            dataSource={filtered.filter(
-              (t) => t.type === FINANCIAL_TRANSACTION_TYPE.EXPENSE,
-            )}
-            isMobile={isMobile}
-            selectedKeys={selectedKeys}
-            onSelectChange={setSelectedKeys}
-            onViewDetail={handleViewDetail}
-          />
-        )
-      case 'transfer':
-        return (
-          <TransactionsTable
-            dataSource={filtered.filter(
-              (t) => t.type === FINANCIAL_TRANSACTION_TYPE.TRANSFER,
-            )}
-            isMobile={isMobile}
-            selectedKeys={selectedKeys}
-            onSelectChange={setSelectedKeys}
-            onViewDetail={handleViewDetail}
-          />
-        )
-      case 'refund':
-        return (
-          <TransactionsTable
-            dataSource={filtered.filter(
-              (t) => t.type === FINANCIAL_TRANSACTION_TYPE.REFUND,
-            )}
-            isMobile={isMobile}
-            selectedKeys={selectedKeys}
-            onSelectChange={setSelectedKeys}
-            onViewDetail={handleViewDetail}
-          />
-        )
-      case 'adjustment':
-        return (
-          <TransactionsTable
-            dataSource={filtered.filter(
-              (t) => t.type === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT,
-            )}
-            isMobile={isMobile}
-            selectedKeys={selectedKeys}
-            onSelectChange={setSelectedKeys}
-            onViewDetail={handleViewDetail}
-          />
-        )
-
-      default:
-        return null
-    }
-  }, [activeTab, filtered, isMobile, selectedKeys])
+  const navigateToCreate = () => {
+    router.navigate({ to: '/financial/transaction/create' })
+  }
 
   return (
     <Space
@@ -244,13 +157,10 @@ export function Transactions() {
         totalCount={transactions.length}
         selectedCount={selectedKeys.length}
         onDeleteSelected={() => setSelectedKeys([])}
-        onOpenAddModal={() => {
-          router.navigate({
-            to: '/financial/transaction/create',
-          })
-        }}
+        onOpenAddModal={navigateToCreate}
       />
 
+      {/* 2. Tabs Section */}
       <Tabs
         items={tabsData}
         activeKey={activeTab}
@@ -291,9 +201,17 @@ export function Transactions() {
           ),
         }}
       />
-      {renderTabs}
 
-      {/* 3. Search & Active Filters */}
+      {/* 3. Transactions Table */}
+      <TransactionsTable
+        dataSource={tabFilteredTransactions}
+        isMobile={isMobile}
+        selectedKeys={selectedKeys}
+        onSelectChange={setSelectedKeys}
+        onViewDetail={handleViewDetail}
+      />
+
+      {/* 4. Search & Active Filters */}
       <TransactionSearch
         isMobile={isMobile}
         search={search}
@@ -347,9 +265,7 @@ export function Transactions() {
         <FloatButton
           type="primary"
           icon={<PlusOutlined />}
-          onClick={() =>
-            router.navigate({ to: '/financial/transaction/create' })
-          }
+          onClick={navigateToCreate}
           style={{ right: 24, bottom: 24 }}
         />
       )}

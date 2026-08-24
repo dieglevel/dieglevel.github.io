@@ -112,7 +112,7 @@ export function TransactionDetail({
                   transaction.status,
                 )}
               >
-                {transaction.status.toUpperCase() || '-'}
+                {FinancialTransactionStatusHelper.getLabel(transaction.status)}
               </Tag>
             </Descriptions.Item>
 

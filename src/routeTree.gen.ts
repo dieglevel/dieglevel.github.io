@@ -15,6 +15,7 @@ import { Route as publicRouteRouteImport } from './routes/(public)/route'
 import { Route as protectedRouteRouteImport } from './routes/(protected)/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as publicSignUpRouteImport } from './routes/(public)/sign-up'
+import { Route as publicMusicRouteImport } from './routes/(public)/music'
 import { Route as publicLoginRouteImport } from './routes/(public)/login'
 import { Route as protectedIconRouteImport } from './routes/(protected)/icon'
 import { Route as protectedHashIdRouteImport } from './routes/(protected)/hashId'
@@ -26,11 +27,14 @@ import { Route as protectedFinancialWalletRouteImport } from './routes/(protecte
 import { Route as protectedFinancialSettingRouteImport } from './routes/(protected)/financial/setting'
 import { Route as protectedFinancialRecurringRouteImport } from './routes/(protected)/financial/recurring'
 import { Route as protectedFinancialGoalRouteImport } from './routes/(protected)/financial/goal'
+import { Route as protectedFinancialDebtRouteImport } from './routes/(protected)/financial/debt'
+import { Route as protectedFinancialDashboardRouteImport } from './routes/(protected)/financial/dashboard'
 import { Route as protectedFinancialCategoryRouteImport } from './routes/(protected)/financial/category'
 import { Route as protectedDemoTableRouteImport } from './routes/(protected)/demo/table'
 import { Route as protectedDemoButtonRouteImport } from './routes/(protected)/demo/button'
 import { Route as protectedFinancialTransactionIndexRouteImport } from './routes/(protected)/financial/transaction/index'
 import { Route as protectedFinancialTransactionCreateRouteImport } from './routes/(protected)/financial/transaction/create'
+import { Route as protectedFinancialTransactionUpdateIdRouteImport } from './routes/(protected)/financial/transaction/$updateId'
 
 const R404Route = R404RouteImport.update({
   id: '/404',
@@ -58,6 +62,11 @@ const IndexRoute = IndexRouteImport.update({
 const publicSignUpRoute = publicSignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
+  getParentRoute: () => publicRouteRoute,
+} as any)
+const publicMusicRoute = publicMusicRouteImport.update({
+  id: '/music',
+  path: '/music',
   getParentRoute: () => publicRouteRoute,
 } as any)
 const publicLoginRoute = publicLoginRouteImport.update({
@@ -118,6 +127,17 @@ const protectedFinancialGoalRoute = protectedFinancialGoalRouteImport.update({
   path: '/goal',
   getParentRoute: () => protectedFinancialRouteRoute,
 } as any)
+const protectedFinancialDebtRoute = protectedFinancialDebtRouteImport.update({
+  id: '/debt',
+  path: '/debt',
+  getParentRoute: () => protectedFinancialRouteRoute,
+} as any)
+const protectedFinancialDashboardRoute =
+  protectedFinancialDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => protectedFinancialRouteRoute,
+  } as any)
 const protectedFinancialCategoryRoute =
   protectedFinancialCategoryRouteImport.update({
     id: '/category',
@@ -146,6 +166,12 @@ const protectedFinancialTransactionCreateRoute =
     path: '/transaction/create',
     getParentRoute: () => protectedFinancialRouteRoute,
   } as any)
+const protectedFinancialTransactionUpdateIdRoute =
+  protectedFinancialTransactionUpdateIdRouteImport.update({
+    id: '/transaction/$updateId',
+    path: '/transaction/$updateId',
+    getParentRoute: () => protectedFinancialRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -157,15 +183,19 @@ export interface FileRoutesByFullPath {
   '/hashId': typeof protectedHashIdRoute
   '/icon': typeof protectedIconRoute
   '/login': typeof publicLoginRoute
+  '/music': typeof publicMusicRoute
   '/sign-up': typeof publicSignUpRoute
   '/demo/button': typeof protectedDemoButtonRoute
   '/demo/table': typeof protectedDemoTableRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
+  '/financial/dashboard': typeof protectedFinancialDashboardRoute
+  '/financial/debt': typeof protectedFinancialDebtRoute
   '/financial/goal': typeof protectedFinancialGoalRoute
   '/financial/recurring': typeof protectedFinancialRecurringRoute
   '/financial/setting': typeof protectedFinancialSettingRoute
   '/financial/wallet': typeof protectedFinancialWalletRoute
   '/financial/': typeof protectedFinancialIndexRoute
+  '/financial/transaction/$updateId': typeof protectedFinancialTransactionUpdateIdRoute
   '/financial/transaction/create': typeof protectedFinancialTransactionCreateRoute
   '/financial/transaction/': typeof protectedFinancialTransactionIndexRoute
 }
@@ -178,15 +208,19 @@ export interface FileRoutesByTo {
   '/hashId': typeof protectedHashIdRoute
   '/icon': typeof protectedIconRoute
   '/login': typeof publicLoginRoute
+  '/music': typeof publicMusicRoute
   '/sign-up': typeof publicSignUpRoute
   '/demo/button': typeof protectedDemoButtonRoute
   '/demo/table': typeof protectedDemoTableRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
+  '/financial/dashboard': typeof protectedFinancialDashboardRoute
+  '/financial/debt': typeof protectedFinancialDebtRoute
   '/financial/goal': typeof protectedFinancialGoalRoute
   '/financial/recurring': typeof protectedFinancialRecurringRoute
   '/financial/setting': typeof protectedFinancialSettingRoute
   '/financial/wallet': typeof protectedFinancialWalletRoute
   '/financial': typeof protectedFinancialIndexRoute
+  '/financial/transaction/$updateId': typeof protectedFinancialTransactionUpdateIdRoute
   '/financial/transaction/create': typeof protectedFinancialTransactionCreateRoute
   '/financial/transaction': typeof protectedFinancialTransactionIndexRoute
 }
@@ -203,15 +237,19 @@ export interface FileRoutesById {
   '/(protected)/hashId': typeof protectedHashIdRoute
   '/(protected)/icon': typeof protectedIconRoute
   '/(public)/login': typeof publicLoginRoute
+  '/(public)/music': typeof publicMusicRoute
   '/(public)/sign-up': typeof publicSignUpRoute
   '/(protected)/demo/button': typeof protectedDemoButtonRoute
   '/(protected)/demo/table': typeof protectedDemoTableRoute
   '/(protected)/financial/category': typeof protectedFinancialCategoryRoute
+  '/(protected)/financial/dashboard': typeof protectedFinancialDashboardRoute
+  '/(protected)/financial/debt': typeof protectedFinancialDebtRoute
   '/(protected)/financial/goal': typeof protectedFinancialGoalRoute
   '/(protected)/financial/recurring': typeof protectedFinancialRecurringRoute
   '/(protected)/financial/setting': typeof protectedFinancialSettingRoute
   '/(protected)/financial/wallet': typeof protectedFinancialWalletRoute
   '/(protected)/financial/': typeof protectedFinancialIndexRoute
+  '/(protected)/financial/transaction/$updateId': typeof protectedFinancialTransactionUpdateIdRoute
   '/(protected)/financial/transaction/create': typeof protectedFinancialTransactionCreateRoute
   '/(protected)/financial/transaction/': typeof protectedFinancialTransactionIndexRoute
 }
@@ -227,15 +265,19 @@ export interface FileRouteTypes {
     | '/hashId'
     | '/icon'
     | '/login'
+    | '/music'
     | '/sign-up'
     | '/demo/button'
     | '/demo/table'
     | '/financial/category'
+    | '/financial/dashboard'
+    | '/financial/debt'
     | '/financial/goal'
     | '/financial/recurring'
     | '/financial/setting'
     | '/financial/wallet'
     | '/financial/'
+    | '/financial/transaction/$updateId'
     | '/financial/transaction/create'
     | '/financial/transaction/'
   fileRoutesByTo: FileRoutesByTo
@@ -248,15 +290,19 @@ export interface FileRouteTypes {
     | '/hashId'
     | '/icon'
     | '/login'
+    | '/music'
     | '/sign-up'
     | '/demo/button'
     | '/demo/table'
     | '/financial/category'
+    | '/financial/dashboard'
+    | '/financial/debt'
     | '/financial/goal'
     | '/financial/recurring'
     | '/financial/setting'
     | '/financial/wallet'
     | '/financial'
+    | '/financial/transaction/$updateId'
     | '/financial/transaction/create'
     | '/financial/transaction'
   id:
@@ -272,15 +318,19 @@ export interface FileRouteTypes {
     | '/(protected)/hashId'
     | '/(protected)/icon'
     | '/(public)/login'
+    | '/(public)/music'
     | '/(public)/sign-up'
     | '/(protected)/demo/button'
     | '/(protected)/demo/table'
     | '/(protected)/financial/category'
+    | '/(protected)/financial/dashboard'
+    | '/(protected)/financial/debt'
     | '/(protected)/financial/goal'
     | '/(protected)/financial/recurring'
     | '/(protected)/financial/setting'
     | '/(protected)/financial/wallet'
     | '/(protected)/financial/'
+    | '/(protected)/financial/transaction/$updateId'
     | '/(protected)/financial/transaction/create'
     | '/(protected)/financial/transaction/'
   fileRoutesById: FileRoutesById
@@ -335,6 +385,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-up'
       fullPath: '/sign-up'
       preLoaderRoute: typeof publicSignUpRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
+    '/(public)/music': {
+      id: '/(public)/music'
+      path: '/music'
+      fullPath: '/music'
+      preLoaderRoute: typeof publicMusicRouteImport
       parentRoute: typeof publicRouteRoute
     }
     '/(public)/login': {
@@ -414,6 +471,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedFinancialGoalRouteImport
       parentRoute: typeof protectedFinancialRouteRoute
     }
+    '/(protected)/financial/debt': {
+      id: '/(protected)/financial/debt'
+      path: '/debt'
+      fullPath: '/financial/debt'
+      preLoaderRoute: typeof protectedFinancialDebtRouteImport
+      parentRoute: typeof protectedFinancialRouteRoute
+    }
+    '/(protected)/financial/dashboard': {
+      id: '/(protected)/financial/dashboard'
+      path: '/dashboard'
+      fullPath: '/financial/dashboard'
+      preLoaderRoute: typeof protectedFinancialDashboardRouteImport
+      parentRoute: typeof protectedFinancialRouteRoute
+    }
     '/(protected)/financial/category': {
       id: '/(protected)/financial/category'
       path: '/category'
@@ -449,16 +520,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedFinancialTransactionCreateRouteImport
       parentRoute: typeof protectedFinancialRouteRoute
     }
+    '/(protected)/financial/transaction/$updateId': {
+      id: '/(protected)/financial/transaction/$updateId'
+      path: '/transaction/$updateId'
+      fullPath: '/financial/transaction/$updateId'
+      preLoaderRoute: typeof protectedFinancialTransactionUpdateIdRouteImport
+      parentRoute: typeof protectedFinancialRouteRoute
+    }
   }
 }
 
 interface protectedFinancialRouteRouteChildren {
   protectedFinancialCategoryRoute: typeof protectedFinancialCategoryRoute
+  protectedFinancialDashboardRoute: typeof protectedFinancialDashboardRoute
+  protectedFinancialDebtRoute: typeof protectedFinancialDebtRoute
   protectedFinancialGoalRoute: typeof protectedFinancialGoalRoute
   protectedFinancialRecurringRoute: typeof protectedFinancialRecurringRoute
   protectedFinancialSettingRoute: typeof protectedFinancialSettingRoute
   protectedFinancialWalletRoute: typeof protectedFinancialWalletRoute
   protectedFinancialIndexRoute: typeof protectedFinancialIndexRoute
+  protectedFinancialTransactionUpdateIdRoute: typeof protectedFinancialTransactionUpdateIdRoute
   protectedFinancialTransactionCreateRoute: typeof protectedFinancialTransactionCreateRoute
   protectedFinancialTransactionIndexRoute: typeof protectedFinancialTransactionIndexRoute
 }
@@ -466,11 +547,15 @@ interface protectedFinancialRouteRouteChildren {
 const protectedFinancialRouteRouteChildren: protectedFinancialRouteRouteChildren =
   {
     protectedFinancialCategoryRoute: protectedFinancialCategoryRoute,
+    protectedFinancialDashboardRoute: protectedFinancialDashboardRoute,
+    protectedFinancialDebtRoute: protectedFinancialDebtRoute,
     protectedFinancialGoalRoute: protectedFinancialGoalRoute,
     protectedFinancialRecurringRoute: protectedFinancialRecurringRoute,
     protectedFinancialSettingRoute: protectedFinancialSettingRoute,
     protectedFinancialWalletRoute: protectedFinancialWalletRoute,
     protectedFinancialIndexRoute: protectedFinancialIndexRoute,
+    protectedFinancialTransactionUpdateIdRoute:
+      protectedFinancialTransactionUpdateIdRoute,
     protectedFinancialTransactionCreateRoute:
       protectedFinancialTransactionCreateRoute,
     protectedFinancialTransactionIndexRoute:
@@ -508,11 +593,13 @@ const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(
 
 interface publicRouteRouteChildren {
   publicLoginRoute: typeof publicLoginRoute
+  publicMusicRoute: typeof publicMusicRoute
   publicSignUpRoute: typeof publicSignUpRoute
 }
 
 const publicRouteRouteChildren: publicRouteRouteChildren = {
   publicLoginRoute: publicLoginRoute,
+  publicMusicRoute: publicMusicRoute,
   publicSignUpRoute: publicSignUpRoute,
 }
 

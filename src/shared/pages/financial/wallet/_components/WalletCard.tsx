@@ -1,9 +1,16 @@
-import { Button, Card, Popconfirm, Space, Tooltip } from 'antd'
-import { DeleteOutlined, EditOutlined, LockOutlined } from '@ant-design/icons'
+import React from 'react'
+import { Button, Card, Popconfirm, Space, Tag, Tooltip, message } from 'antd'
+import {
+  CopyOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  KeyOutlined,
+  LockOutlined,
+} from '@ant-design/icons'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import {
   FINANCIAL_WALLET_TYPE,
-  FINANCIAL_WALLET_TYPE_OPTIONS,
+  FinancialWalletTypeHelper,
 } from '@/shared/api/financial/wallet/wallet.enum'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
@@ -14,37 +21,57 @@ interface WalletCardProps {
   onDelete: () => void
 }
 
-export function WalletCard({ wallet, onEdit, onDelete }: WalletCardProps) {
+export const WalletCard: React.FC<WalletCardProps> = ({
+  wallet,
+  onEdit,
+  onDelete,
+}) => {
   const isCreditCard =
-    wallet.type === FINANCIAL_WALLET_TYPE.CREDIT_CARD ||
-    wallet.creditLimit != null
+    wallet.type === FINANCIAL_WALLET_TYPE.E_WALLET || wallet.creditLimit != null
 
-  const typeLabel =
-    FINANCIAL_WALLET_TYPE_OPTIONS[wallet.type].label || wallet.type
+  const typeLabel = FinancialWalletTypeHelper.getLabel(wallet.type)
 
-  // Format hiển thị số tài khoản dạng •••• 1234
   const displayAccountNumber = wallet.accountNumberMasked
     ? wallet.accountNumberMasked.replace(/.(?=.{4})/g, '•')
     : '•••• •••• ••••'
+
+  const handleCopyApiKey = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!wallet.apiKey) {
+      message.warning('Ví này chưa được khởi tạo API Key!')
+      return
+    }
+    navigator.clipboard.writeText(wallet.apiKey)
+    message.success('Đã sao chép API Key vào khay nhớ tạm!')
+  }
+
+  // Credit Utilization Percentage
+  const creditLimit = Number(wallet.creditLimit || 0)
+  const currentDebt = Number(wallet.currentDebt || 0)
+  const creditUsagePercent =
+    creditLimit > 0
+      ? Math.min(100, Math.round((currentDebt / creditLimit) * 100))
+      : 0
 
   return (
     <Card
       variant="borderless"
       style={{
-        background: `linear-gradient(135deg, ${wallet.color}E6, ${wallet.color}99)`,
-        borderRadius: 16,
+        background: `linear-gradient(135deg, ${wallet.color}E6, ${wallet.color}AA)`,
+        borderRadius: 20,
         width: '100%',
-        minHeight: 200,
+        minHeight: 210,
         overflow: 'hidden',
         position: 'relative',
-        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
         color: '#fff',
+        transition: 'transform 0.2s ease, box-shadow 0.2s ease',
       }}
       styles={{
         body: {
-          padding: '18px 20px',
+          padding: '20px 22px',
           height: '100%',
-          minHeight: 200,
+          minHeight: 210,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
@@ -53,33 +80,33 @@ export function WalletCard({ wallet, onEdit, onDelete }: WalletCardProps) {
         },
       }}
     >
-      {/* Background Decor */}
+      {/* Glossy Background Accents */}
       <div
         style={{
           position: 'absolute',
-          top: -30,
-          right: -30,
-          width: 130,
-          height: 130,
+          top: -40,
+          right: -40,
+          width: 160,
+          height: 160,
           borderRadius: '50%',
-          backgroundColor: 'rgba(255, 255, 255, 0.08)',
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
           pointerEvents: 'none',
         }}
       />
       <div
         style={{
           position: 'absolute',
-          bottom: -20,
-          left: -20,
-          width: 100,
-          height: 100,
+          bottom: -30,
+          left: -30,
+          width: 120,
+          height: 120,
           borderRadius: '50%',
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          backgroundColor: 'rgba(255, 255, 255, 0.06)',
           pointerEvents: 'none',
         }}
       />
 
-      {/* Header */}
+      {/* Top Bar: Icon, Name & Actions */}
       <div
         style={{
           display: 'flex',
@@ -99,17 +126,17 @@ export function WalletCard({ wallet, onEdit, onDelete }: WalletCardProps) {
         >
           <div
             style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.25)',
-              backdropFilter: 'blur(4px)',
-              borderRadius: 12,
+              backgroundColor: 'rgba(255, 255, 255, 0.22)',
+              backdropFilter: 'blur(8px)',
+              borderRadius: 14,
               padding: 8,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: 46,
-              height: 46,
+              width: 48,
+              height: 48,
               flexShrink: 0,
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.12)',
             }}
           >
             <IconRenderer iconName={wallet.icon} size={26} color="#ffffff" />
@@ -117,34 +144,48 @@ export function WalletCard({ wallet, onEdit, onDelete }: WalletCardProps) {
 
           <div style={{ minWidth: 0, flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <p
+              <h4
                 style={{
-                  fontSize: 16,
-                  fontWeight: 600,
+                  fontSize: 17,
+                  fontWeight: 700,
                   color: '#fff',
                   margin: 0,
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
+                  letterSpacing: -0.2,
                 }}
                 title={wallet.name}
               >
                 {wallet.name}
-              </p>
+              </h4>
               {wallet.isLockedForDailySpending && (
-                <Tooltip title="Ví bị khóa chi tiêu hàng ngày">
-                  <LockOutlined
-                    style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13 }}
-                  />
+                <Tooltip title="Ví bị khóa khỏi tổng chi tiêu hàng ngày">
+                  <Tag
+                    color="warning"
+                    style={{
+                      margin: 0,
+                      borderRadius: 10,
+                      padding: '0 6px',
+                      fontSize: 10,
+                      lineHeight: '18px',
+                      background: 'rgba(251, 146, 60, 0.3)',
+                      borderColor: 'rgba(251, 146, 60, 0.5)',
+                      color: '#fff',
+                    }}
+                  >
+                    <LockOutlined style={{ marginRight: 2 }} /> Khóa
+                  </Tag>
                 </Tooltip>
               )}
             </div>
 
             <p
               style={{
-                fontSize: 11,
-                color: 'rgba(255, 255, 255, 0.75)',
+                fontSize: 12,
+                color: 'rgba(255, 255, 255, 0.8)',
                 margin: '2px 0 0',
+                fontWeight: 500,
               }}
             >
               {wallet.institutionName ? `${wallet.institutionName} • ` : ''}
@@ -154,16 +195,35 @@ export function WalletCard({ wallet, onEdit, onDelete }: WalletCardProps) {
         </div>
 
         {/* Action Buttons */}
-        <Space size={4} style={{ flexShrink: 0, marginLeft: 8 }}>
+        <Space size={6} style={{ flexShrink: 0, marginLeft: 8 }}>
+          {wallet.apiKey && (
+            <Tooltip title="Sao chép API Key (Cho App điện thoại)">
+              <Button
+                type="text"
+                size="small"
+                icon={<KeyOutlined style={{ color: '#fff' }} />}
+                onClick={handleCopyApiKey}
+                style={{
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                  backdropFilter: 'blur(4px)',
+                }}
+              />
+            </Tooltip>
+          )}
+
           <Tooltip title="Chỉnh sửa">
             <Button
               type="text"
               size="small"
               icon={<EditOutlined style={{ color: '#fff' }} />}
               onClick={onEdit}
-              style={{ backgroundColor: 'rgba(255,255,255,0.18)' }}
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.2)',
+                backdropFilter: 'blur(4px)',
+              }}
             />
           </Tooltip>
+
           <Popconfirm
             title={`Xóa ví "${wallet.name}"?`}
             description="Hành động này không thể hoàn tác."
@@ -177,22 +237,44 @@ export function WalletCard({ wallet, onEdit, onDelete }: WalletCardProps) {
                 type="text"
                 size="small"
                 icon={<DeleteOutlined style={{ color: '#fff' }} />}
-                style={{ backgroundColor: 'rgba(255,255,255,0.18)' }}
+                style={{
+                  backgroundColor: 'rgba(255,255,255,0.2)',
+                  backdropFilter: 'blur(4px)',
+                }}
               />
             </Tooltip>
           </Popconfirm>
         </Space>
       </div>
 
-      {/* Account Masked Number */}
-      <div style={{ zIndex: 1, marginTop: 12 }}>
+      {/* EMV Chip & Account Masked Number */}
+      <div
+        style={{
+          zIndex: 1,
+          marginTop: 14,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <div
+          style={{
+            width: 32,
+            height: 24,
+            borderRadius: 5,
+            background: 'linear-gradient(135deg, #fce055 0%, #d8a027 100%)',
+            border: '1px solid rgba(255, 255, 255, 0.4)',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
+          }}
+        />
         <p
           style={{
-            fontSize: 12,
-            color: 'rgba(255, 255, 255, 0.7)',
+            fontSize: 13,
+            color: 'rgba(255, 255, 255, 0.85)',
             margin: 0,
-            letterSpacing: 1.5,
-            fontFamily: 'monospace',
+            letterSpacing: 2,
+            fontFamily: "'JetBrains Mono', monospace",
+            fontWeight: 600,
           }}
         >
           {displayAccountNumber}
@@ -200,58 +282,98 @@ export function WalletCard({ wallet, onEdit, onDelete }: WalletCardProps) {
       </div>
 
       {/* Balance & Metrics */}
-      <div style={{ zIndex: 1, marginTop: 8 }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-          <p
-            style={{
-              fontSize: 'clamp(20px, 4vw, 26px)',
-              fontWeight: 700,
-              color: '#fff',
-              margin: 0,
-              lineHeight: 1.2,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {convertCurrency(Math.abs(wallet.balance), undefined, false)}
-          </p>
-          <span
-            style={{
-              fontSize: 12,
-              color: 'rgba(255,255,255,0.7)',
-              fontWeight: 500,
-            }}
-          >
-            VND
-          </span>
+      <div style={{ zIndex: 1, marginTop: 12 }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'baseline',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div>
+            <span
+              style={{
+                fontSize: 11,
+                color: 'rgba(255,255,255,0.7)',
+                textTransform: 'uppercase',
+                letterSpacing: 0.5,
+              }}
+            >
+              Số dư hiện tại
+            </span>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+              <p
+                style={{
+                  fontSize: 'clamp(22px, 4vw, 28px)',
+                  fontWeight: 800,
+                  color: '#fff',
+                  margin: 0,
+                  lineHeight: 1.2,
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
+              >
+                {convertCurrency(Math.abs(wallet.balance), undefined, false)}
+              </p>
+              <span
+                style={{
+                  fontSize: 12,
+                  color: 'rgba(255,255,255,0.85)',
+                  fontWeight: 600,
+                }}
+              >
+                VND
+              </span>
+            </div>
+          </div>
+
+          {/* Quick API Key Copy Pill */}
+          {wallet.apiKey && (
+            <div
+              onClick={handleCopyApiKey}
+              style={{
+                cursor: 'pointer',
+                backgroundColor: 'rgba(0, 0, 0, 0.25)',
+                backdropFilter: 'blur(6px)',
+                padding: '4px 8px',
+                borderRadius: 8,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: 11,
+                color: 'rgba(255, 255, 255, 0.9)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+              }}
+              title="Nhấn để sao chép API Key"
+            >
+              <KeyOutlined style={{ fontSize: 12, color: '#60a5fa' }} />
+              <span style={{ fontFamily: 'monospace' }}>
+                {wallet.apiKey.slice(0, 8)}...
+              </span>
+              <CopyOutlined size={10} />
+            </div>
+          )}
         </div>
 
         {/* Credit Card Specific Metrics */}
-        {isCreditCard && (
+        {isCreditCard && creditLimit > 0 && (
           <div
             style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginTop: 8,
+              marginTop: 10,
               paddingTop: 8,
-              borderTop: '1px solid rgba(255,255,255,0.15)',
+              borderTop: '1px solid rgba(255,255,255,0.2)',
               fontSize: 11,
-              color: 'rgba(255,255,255,0.85)',
             }}
           >
-            <div>
-              <span>Dư nợ: </span>
-              <strong>
-                {convertCurrency(wallet.currentDebt ?? 0, undefined, false)}
-              </strong>
-            </div>
-            <div>
-              <span>Hạn mức: </span>
-              <strong>
-                {convertCurrency(wallet.creditLimit ?? 0, undefined, false)}
-              </strong>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                color: 'rgba(255,255,255,0.85)',
+                marginBottom: 4,
+              }}
+            >
+              <span>Dư nợ: {convertCurrency(currentDebt)}</span>
+              <span>Hạn mức: {convertCurrency(creditLimit)}</span>
             </div>
           </div>
         )}

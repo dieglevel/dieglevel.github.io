@@ -17,6 +17,7 @@ export interface IFinance_Wallet extends IBaseEntity {
   statementDay: null | number
   dueDay: null | number
   isLockedForDailySpending: boolean
+  apiKey?: null | string
 
   transactions?: Array<IFinance_Transaction>
   account?: User

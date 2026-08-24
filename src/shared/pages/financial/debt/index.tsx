@@ -1,60 +1,28 @@
-import React, { useState } from 'react'
-import {
-  Button,
-  Card,
-  Col,
-  DatePicker,
-  Flex,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Popconfirm,
-  Row,
-  Select,
-  Space,
-  Statistic,
-  Table,
-  Tabs,
-  Tag,
-  Tooltip,
-  Typography,
-} from 'antd'
-import {
-  ArrowDownLeft,
-  ArrowUpRight,
-  CheckCircle2,
-  History,
-  Pencil,
-  Plus,
-  Receipt,
-  Trash2,
-  XCircle,
-} from 'lucide-react'
-import dayjs from 'dayjs'
+import React, { useMemo, useState } from 'react'
+import { Grid, Space } from 'antd'
 
+import { DebtHeader } from './_components/DebtHeader'
+import { DebtSummaryCards } from './_components/DebtSummaryCards'
+import { DebtTable } from './_components/DebtTable'
+import { DebtCreateModal } from './_components/DebtCreateModal'
+import { DebtPaymentModal } from './_components/DebtPaymentModal'
+import { DebtAdjustModal } from './_components/DebtAdjustModal'
+import { DebtHistoryModal } from './_components/DebtHistoryModal'
 import type { IFinance_Debt } from '@/shared/api/financial/debt/debt.type'
-import { useMutationFinanceDebt } from '@/shared/api/financial/debt/useMutationDebt'
-import { useGetFinance_Debt_List } from '@/shared/api/financial/debt/useGetDebtList'
-import { useGetFinance_Debt_Histories } from '@/shared/api/financial/debt/useGetDebtHistories'
-import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
-
 import {
   FINANCIAL_DEBT_DIRECTION_ENUM,
   FINANCIAL_DEBT_STATUS_ENUM,
-  FINANCIAL_DEBT_TYPE_ENUM,
-  FinancialDebtDirectionHelper,
-  FinancialDebtStatusHelper,
 } from '@/shared/api/financial/debt/debt.enum'
+import { useMutationFinanceDebt } from '@/shared/api/financial/debt/useMutationDebt'
+import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
+import { useGetFinance_Debt_List } from '@/shared/api/financial/debt/useGetDebtList'
 
-const { Text } = Typography
-
-// Helper Component để render icon ví (nếu chưa có sẵn component IconRenderer)
-const IconRenderer: React.FC<{ iconName?: string }> = ({ iconName }) => {
-  return iconName ? <span style={{ marginRight: 4 }}>💳</span> : null
-}
+const { useBreakpoint } = Grid
 
 export const DebtManagementPage: React.FC = () => {
+  const screens = useBreakpoint()
+  const isMobile = !screens.md
+
   // Queries & Mutations
   const { data: debtListResponse, isLoading } = useGetFinance_Debt_List()
   const { data: walletListResponse, isLoading: isLoadingWallets } =
@@ -82,31 +50,6 @@ export const DebtManagementPage: React.FC = () => {
   const [isAdjustOpen, setIsAdjustOpen] = useState(false)
   const [isHistoryOpen, setIsHistoryOpen] = useState(false)
 
-  // Forms
-  const [formCreate] = Form.useForm()
-  const [formPayment] = Form.useForm()
-  const [formAdjust] = Form.useForm()
-
-  // Dynamic Options cho Select Ví
-  const walletOptions = wallets.map((w) => ({
-    value: w.id,
-    label: (
-      <Flex align="center" gap={8}>
-        <IconRenderer iconName={w.icon} />
-        <Text style={{ fontSize: 13 }}>{w.name}</Text>
-      </Flex>
-    ),
-  }))
-
-  // Statistics calculation
-  const totalLent = debts
-    .filter((d) => d.direction === FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING)
-    .reduce((sum, item) => sum + Number(item.outstandingAmount || 0), 0)
-
-  const totalBorrowed = debts
-    .filter((d) => d.direction === FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING)
-    .reduce((sum, item) => sum + Number(item.outstandingAmount || 0), 0)
-
   // Handlers
   const handleCreate = async (values: any) => {
     const payload = {
@@ -119,7 +62,6 @@ export const DebtManagementPage: React.FC = () => {
     }
     await mDebt_Create.mutateAsync({ body: payload })
     setIsCreateOpen(false)
-    formCreate.resetFields()
   }
 
   const handlePayment = async (values: any) => {
@@ -129,7 +71,6 @@ export const DebtManagementPage: React.FC = () => {
       body: values,
     })
     setIsPaymentOpen(false)
-    formPayment.resetFields()
   }
 
   const handleAdjust = async (values: any) => {
@@ -139,7 +80,6 @@ export const DebtManagementPage: React.FC = () => {
       body: values,
     })
     setIsAdjustOpen(false)
-    formAdjust.resetFields()
   }
 
   const handleSettle = async (id: number) => {
@@ -162,464 +102,108 @@ export const DebtManagementPage: React.FC = () => {
     })
   }
 
-  // Filtered List
-  const filteredDebts = debts.filter((item) => {
-    if (activeTab === 'ALL') return true
-    return item.direction === activeTab
-  })
+  // Filtered debts by active tab
+  const filteredDebts = useMemo(() => {
+    return debts.filter((item) => {
+      if (activeTab === 'ALL') return true
+      if (
+        activeTab === FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING ||
+        activeTab === FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING
+      ) {
+        return item.direction === activeTab
+      }
+      return item.status === activeTab
+    })
+  }, [debts, activeTab])
 
-  const columns = [
-    {
-      title: 'Tên khoản nợ / Đối tác',
-      key: 'nameInfo',
-      render: (_: any, record: IFinance_Debt) => (
-        <div>
-          <div style={{ fontWeight: 600 }}>{record.name}</div>
-          <div style={{ fontSize: 12, color: '#8c8c8c' }}>
-            Đối tác: {record.namePerson}
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: 'Phân loại',
-      key: 'category',
-      render: (_: any, record: IFinance_Debt) => (
-        <Space direction="vertical" size={2}>
-          <Tag color={FinancialDebtDirectionHelper.getColor(record.direction)}>
-            {FinancialDebtDirectionHelper.getLabel(record.direction)}
-          </Tag>
-          <Tag style={{ fontSize: 11 }}>{record.type}</Tag>
-        </Space>
-      ),
-    },
-    {
-      title: 'Số tiền gốc',
-      dataIndex: 'originalAmount',
-      key: 'originalAmount',
-      render: (val: number) => `${Number(val || 0).toLocaleString('vi-VN')} ₫`,
-    },
-    {
-      title: 'Còn lại',
-      dataIndex: 'outstandingAmount',
-      key: 'outstandingAmount',
-      render: (val: number) => (
-        <span style={{ fontWeight: 'bold', color: '#cf1322' }}>
-          {Number(val || 0).toLocaleString('vi-VN')} ₫
-        </span>
-      ),
-    },
-    {
-      title: 'Thời hạn',
-      key: 'dates',
-      render: (_: any, record: IFinance_Debt) => (
-        <div style={{ fontSize: 12 }}>
-          <div>Bắt đầu: {dayjs(record.startDate).format('DD/MM/YYYY')}</div>
-          {record.dueDate && (
-            <div
-              style={{
-                color: dayjs().isAfter(dayjs(record.dueDate))
-                  ? '#ff4d4f'
-                  : '#8c8c8c',
-              }}
-            >
-              Hạn trả: {dayjs(record.dueDate).format('DD/MM/YYYY')}
-            </div>
-          )}
-        </div>
-      ),
-    },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status: FINANCIAL_DEBT_STATUS_ENUM) => (
-        <Tag color={FinancialDebtStatusHelper.getColor(status)}>
-          {FinancialDebtStatusHelper.getLabel(status)}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Hành động',
-      key: 'actions',
-      render: (_: any, record: IFinance_Debt) => {
-        const isActive = record.status === FINANCIAL_DEBT_STATUS_ENUM.ACTIVE
-        return (
-          <Space size="small">
-            {isActive && (
-              <>
-                <Tooltip title="Thanh toán / Thu nợ">
-                  <Button
-                    type="primary"
-                    ghost
-                    size="small"
-                    icon={<Receipt size={14} />}
-                    onClick={() => {
-                      setSelectedDebt(record)
-                      setIsPaymentOpen(true)
-                    }}
-                  />
-                </Tooltip>
-                <Tooltip title="Điều chỉnh dư nợ">
-                  <Button
-                    size="small"
-                    icon={<Pencil size={14} />}
-                    onClick={() => {
-                      setSelectedDebt(record)
-                      formAdjust.setFieldsValue({
-                        outstandingAmount: record.outstandingAmount,
-                      })
-                      setIsAdjustOpen(true)
-                    }}
-                  />
-                </Tooltip>
-                <Tooltip title="Tất toán">
-                  <Popconfirm
-                    title="Xác nhận tất toán khoản nợ này?"
-                    onConfirm={() => handleSettle(record.id)}
-                  >
-                    <Button
-                      size="small"
-                      icon={<CheckCircle2 size={14} />}
-                      style={{ color: '#52c41a' }}
-                    />
-                  </Popconfirm>
-                </Tooltip>
-                <Tooltip title="Hủy bỏ">
-                  <Popconfirm
-                    title="Xác nhận hủy khoản nợ?"
-                    onConfirm={() => handleCancel(record.id)}
-                  >
-                    <Button size="small" danger icon={<XCircle size={14} />} />
-                  </Popconfirm>
-                </Tooltip>
-              </>
-            )}
-            <Tooltip title="Xem lịch sử">
-              <Button
-                size="small"
-                icon={<History size={14} />}
-                onClick={() => {
-                  setSelectedDebt(record)
-                  setIsHistoryOpen(true)
-                }}
-              />
-            </Tooltip>
-            <Popconfirm
-              title="Xóa khoản nợ này?"
-              onConfirm={() => handleDelete(record.id)}
-            >
-              <Button
-                size="small"
-                type="text"
-                danger
-                icon={<Trash2 size={14} />}
-              />
-            </Popconfirm>
-          </Space>
-        )
-      },
-    },
-  ]
+  const activeCount = debts.filter(
+    (d) => d.status === FINANCIAL_DEBT_STATUS_ENUM.ACTIVE,
+  ).length
 
   return (
-    <div style={{ padding: 24 }}>
-      {/* Thống kê tổng quan */}
-      <Row gutter={16} style={{ marginBottom: 24 }}>
-        <Col span={12}>
-          <Card bodyStyle={{ padding: 20 }}>
-            <Statistic
-              title="Cho vay (Cần thu về)"
-              value={totalLent}
-              precision={0}
-              valueStyle={{ color: '#3f8600', fontWeight: 'bold' }}
-              prefix={<ArrowUpRight size={20} style={{ marginRight: 4 }} />}
-              suffix="₫"
-            />
-          </Card>
-        </Col>
-        <Col span={12}>
-          <Card bodyStyle={{ padding: 20 }}>
-            <Statistic
-              title="Đi vay (Cần trả)"
-              value={totalBorrowed}
-              precision={0}
-              valueStyle={{ color: '#cf1322', fontWeight: 'bold' }}
-              prefix={<ArrowDownLeft size={20} style={{ marginRight: 4 }} />}
-              suffix="₫"
-            />
-          </Card>
-        </Col>
-      </Row>
+    <Space
+      direction="vertical"
+      size="middle"
+      style={{
+        width: '100%',
+        padding: isMobile ? 12 : 24,
+        boxSizing: 'border-box',
+        backgroundColor: '#f8fafc',
+        minHeight: '100vh',
+      }}
+    >
+      {/* 1. Header Component */}
+      <DebtHeader
+        isMobile={isMobile}
+        totalCount={debts.length}
+        activeCount={activeCount}
+        onOpenCreate={() => setIsCreateOpen(true)}
+      />
 
-      {/* Bảng danh sách sổ nợ */}
-      <Card
-        title="Quản lý Sổ Nợ"
-        extra={
-          <Button
-            type="primary"
-            icon={<Plus size={16} />}
-            onClick={() => setIsCreateOpen(true)}
-          >
-            Tạo khoản nợ mới
-          </Button>
-        }
-      >
-        <Tabs
-          activeKey={activeTab}
-          onChange={setActiveTab}
-          items={[
-            { key: 'ALL', label: 'Tất cả' },
-            { key: FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING, label: 'Cho vay' },
-            { key: FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING, label: 'Đi vay' },
-          ]}
-        />
-        <Table
-          rowKey="id"
-          loading={isLoading}
-          columns={columns}
-          dataSource={filteredDebts}
-        />
-      </Card>
+      {/* 2. Summary Statistics Cards */}
+      <DebtSummaryCards debts={debts} />
 
-      {/* Modal 1: Tạo khoản nợ mới */}
-      <Modal
-        title="Tạo khoản nợ mới"
+      {/* 3. Main Debt Table with Filtering Tabs */}
+      <DebtTable
+        debts={filteredDebts}
+        isLoading={isLoading}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onOpenPayment={(debt) => {
+          setSelectedDebt(debt)
+          setIsPaymentOpen(true)
+        }}
+        onOpenAdjust={(debt) => {
+          setSelectedDebt(debt)
+          setIsAdjustOpen(true)
+        }}
+        onOpenHistory={(debt) => {
+          setSelectedDebt(debt)
+          setIsHistoryOpen(true)
+        }}
+        onSettle={handleSettle}
+        onCancel={handleCancel}
+        onDelete={handleDelete}
+      />
+
+      {/* 4. Modal: Tạo mới khoản nợ */}
+      <DebtCreateModal
         open={isCreateOpen}
-        onCancel={() => setIsCreateOpen(false)}
-        onOk={() => formCreate.submit()}
-        destroyOnClose
-      >
-        <Form
-          form={formCreate}
-          layout="vertical"
-          onFinish={handleCreate}
-          initialValues={{
-            startDate: dayjs(),
-          }}
-        >
-          <Form.Item
-            name="name"
-            label="Tên khoản nợ"
-            rules={[{ required: true, message: 'Vui lòng nhập tên khoản nợ' }]}
-          >
-            <Input placeholder="Ví dụ: Vay mua xe, Cho Nam mượn tiền..." />
-          </Form.Item>
+        isLoadingWallets={isLoadingWallets}
+        wallets={wallets}
+        onClose={() => setIsCreateOpen(false)}
+        onSubmit={handleCreate}
+      />
 
-          <Form.Item
-            name="namePerson"
-            label="Tên đối tác / Người liên quan"
-            rules={[{ required: true, message: 'Vui lòng nhập tên đối tác' }]}
-          >
-            <Input placeholder="Nhập tên người vay / người cho vay" />
-          </Form.Item>
+      {/* 5. Modal: Thanh toán / Thu hồi nợ */}
+      {selectedDebt && (
+        <DebtPaymentModal
+          open={isPaymentOpen}
+          debt={selectedDebt}
+          wallets={wallets}
+          isLoadingWallets={isLoadingWallets}
+          onClose={() => setIsPaymentOpen(false)}
+          onSubmit={handlePayment}
+        />
+      )}
 
-          <Row gutter={12}>
-            <Col span={12}>
-              <Form.Item
-                name="direction"
-                label="Chiều nợ"
-                rules={[{ required: true, message: 'Vui lòng chọn chiều nợ' }]}
-              >
-                <Select
-                  options={FinancialDebtDirectionHelper.getOptions()}
-                  placeholder="Chọn chiều nợ"
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="type"
-                label="Loại nợ"
-                rules={[{ required: true, message: 'Vui lòng chọn loại nợ' }]}
-              >
-                <Select
-                  placeholder="Chọn phân loại"
-                  options={Object.values(FINANCIAL_DEBT_TYPE_ENUM).map(
-                    (val) => ({
-                      label: val,
-                      value: val,
-                    }),
-                  )}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={12}>
-            <Col span={12}>
-              <Form.Item
-                name="originalAmount"
-                label="Số tiền ban đầu"
-                rules={[{ required: true, message: 'Vui lòng nhập số tiền' }]}
-              >
-                <InputNumber
-                  style={{ width: '100%' }}
-                  min={1}
-                  formatter={(v) =>
-                    `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                  }
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                name="walletId"
-                label="Ví giao dịch"
-                rules={[{ required: true, message: 'Vui lòng chọn ví' }]}
-              >
-                <Select
-                  placeholder="Chọn ví"
-                  loading={isLoadingWallets}
-                  options={walletOptions}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row gutter={12}>
-            <Col span={12}>
-              <Form.Item
-                name="startDate"
-                label="Ngày bắt đầu"
-                rules={[{ required: true }]}
-              >
-                <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item name="dueDate" label="Hạn trả">
-                <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item name="description" label="Mô tả / Ghi chú">
-            <Input.TextArea
-              rows={3}
-              placeholder="Ghi chú chi tiết khoản nợ..."
-            />
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      {/* Modal 2: Thanh toán / Thu nợ */}
-      <Modal
-        title={`Thanh toán nợ: ${selectedDebt?.name || ''}`}
-        open={isPaymentOpen}
-        onCancel={() => setIsPaymentOpen(false)}
-        onOk={() => formPayment.submit()}
-        destroyOnClose
-      >
-        <Form form={formPayment} layout="vertical" onFinish={handlePayment}>
-          <Form.Item
-            name="walletId"
-            label="Chọn ví giao dịch"
-            rules={[{ required: true, message: 'Vui lòng chọn ví' }]}
-          >
-            <Select
-              placeholder="Chọn ví"
-              loading={isLoadingWallets}
-              options={walletOptions}
-            />
-          </Form.Item>
-          <Form.Item
-            name="amount"
-            label="Số tiền thanh toán"
-            rules={[{ required: true, message: 'Vui lòng nhập số tiền' }]}
-          >
-            <InputNumber
-              style={{ width: '100%' }}
-              max={selectedDebt?.outstandingAmount}
-              min={1}
-              formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            />
-          </Form.Item>
-          <Form.Item name="note" label="Ghi chú">
-            <Input.TextArea rows={2} />
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      {/* Modal 3: Điều chỉnh số tiền nợ */}
-      <Modal
-        title={`Điều chỉnh dư nợ: ${selectedDebt?.name || ''}`}
+      {/* 6. Modal: Điều chỉnh dư nợ */}
+      <DebtAdjustModal
         open={isAdjustOpen}
-        onCancel={() => setIsAdjustOpen(false)}
-        onOk={() => formAdjust.submit()}
-        destroyOnClose
-      >
-        <Form form={formAdjust} layout="vertical" onFinish={handleAdjust}>
-          <Form.Item
-            name="outstandingAmount"
-            label="Số nợ mới"
-            rules={[{ required: true }]}
-          >
-            <InputNumber
-              style={{ width: '100%' }}
-              min={0}
-              formatter={(v) => `${v}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            />
-          </Form.Item>
-          <Form.Item name="note" label="Lý do điều chỉnh">
-            <Input.TextArea rows={2} />
-          </Form.Item>
-        </Form>
-      </Modal>
+        debt={selectedDebt}
+        onClose={() => setIsAdjustOpen(false)}
+        onSubmit={handleAdjust}
+      />
 
-      {/* Modal 4: Lịch sử nợ */}
+      {/* 7. Modal: Lịch sử biến động nợ */}
       {selectedDebt && (
         <DebtHistoryModal
           debtId={selectedDebt.id}
+          debtName={selectedDebt.name}
           open={isHistoryOpen}
           onClose={() => setIsHistoryOpen(false)}
         />
       )}
-    </div>
-  )
-}
-
-// Sub-component: Modal xem lịch sử biến động khoản nợ
-const DebtHistoryModal: React.FC<{
-  debtId: number
-  open: boolean
-  onClose: () => void
-}> = ({ debtId, open, onClose }) => {
-  const { data: historiesResponse, isLoading } = useGetFinance_Debt_Histories({
-    id: debtId,
-  })
-  const histories = historiesResponse?.data || []
-
-  return (
-    <Modal
-      title="Lịch sử biến động khoản nợ"
-      open={open}
-      onCancel={onClose}
-      footer={null}
-      width={700}
-    >
-      <Table
-        rowKey="id"
-        loading={isLoading}
-        dataSource={histories}
-        pagination={{ pageSize: 5 }}
-        columns={[
-          { title: 'Loại', dataIndex: 'type', key: 'type' },
-          {
-            title: 'Số tiền tác động',
-            dataIndex: 'amount',
-            key: 'amount',
-            render: (v) => `${Number(v || 0).toLocaleString('vi-VN')} ₫`,
-          },
-          {
-            title: 'Dư nợ còn lại',
-            dataIndex: 'outstandingAmount',
-            key: 'outstandingAmount',
-            render: (v) => `${Number(v || 0).toLocaleString('vi-VN')} ₫`,
-          },
-          { title: 'Ghi chú', dataIndex: 'note', key: 'note' },
-        ]}
-      />
-    </Modal>
+    </Space>
   )
 }
