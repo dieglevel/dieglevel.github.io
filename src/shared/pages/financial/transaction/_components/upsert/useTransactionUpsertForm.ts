@@ -173,7 +173,6 @@ export function useTransactionUpsertForm({
   // Giá trị khởi tạo cho chế độ tạo mới
   useEffect(() => {
     if (isUpdateMode) return
-
     form.setFieldsValue({
       type: FINANCIAL_TRANSACTION_TYPE.INCOME,
       status: FINANCIAL_TRANSACTION_STATUS.COMPLETED,
@@ -299,6 +298,7 @@ export function useTransactionUpsertForm({
         case FINANCIAL_TRANSACTION_TYPE.REFUND:
           payload = {
             ...basePayload,
+            amount: calculatedTotalAmount,
             type: FINANCIAL_TRANSACTION_TYPE.REFUND,
             originalTransactionId: values.originalTransactionId,
             description: values.description,
