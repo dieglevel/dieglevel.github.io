@@ -1,12 +1,6 @@
 import React from 'react'
 import { Button, Card, Popconfirm, Space, Tag, Tooltip, message } from 'antd'
-import {
-  CopyOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  KeyOutlined,
-  LockOutlined,
-} from '@ant-design/icons'
+import { DeleteOutlined, EditOutlined, LockOutlined } from '@ant-design/icons'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import {
   FINANCIAL_WALLET_TYPE,
@@ -196,21 +190,6 @@ export const WalletCard: React.FC<WalletCardProps> = ({
 
         {/* Action Buttons */}
         <Space size={6} style={{ flexShrink: 0, marginLeft: 8 }}>
-          {wallet.apiKey && (
-            <Tooltip title="Sao chép API Key (Cho App điện thoại)">
-              <Button
-                type="text"
-                size="small"
-                icon={<KeyOutlined style={{ color: '#fff' }} />}
-                onClick={handleCopyApiKey}
-                style={{
-                  backgroundColor: 'rgba(255,255,255,0.2)',
-                  backdropFilter: 'blur(4px)',
-                }}
-              />
-            </Tooltip>
-          )}
-
           <Tooltip title="Chỉnh sửa">
             <Button
               type="text"
@@ -327,31 +306,6 @@ export const WalletCard: React.FC<WalletCardProps> = ({
           </div>
 
           {/* Quick API Key Copy Pill */}
-          {wallet.apiKey && (
-            <div
-              onClick={handleCopyApiKey}
-              style={{
-                cursor: 'pointer',
-                backgroundColor: 'rgba(0, 0, 0, 0.25)',
-                backdropFilter: 'blur(6px)',
-                padding: '4px 8px',
-                borderRadius: 8,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                fontSize: 11,
-                color: 'rgba(255, 255, 255, 0.9)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-              }}
-              title="Nhấn để sao chép API Key"
-            >
-              <KeyOutlined style={{ fontSize: 12, color: '#60a5fa' }} />
-              <span style={{ fontFamily: 'monospace' }}>
-                {wallet.apiKey.slice(0, 8)}...
-              </span>
-              <CopyOutlined size={10} />
-            </div>
-          )}
         </div>
 
         {/* Credit Card Specific Metrics */}

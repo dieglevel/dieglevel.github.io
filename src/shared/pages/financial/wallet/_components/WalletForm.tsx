@@ -24,6 +24,7 @@ import {
 import ColorPicker from '@/shared/components/color-picker'
 import { IconPicker } from '@/shared/components/icon-picker'
 import { InputWithComma } from '@/shared/components/input/utils'
+import { useMutationWallet } from '@/shared/api/financial/wallet/wallet.mutation'
 
 const { Text } = Typography
 
@@ -43,6 +44,8 @@ export function WalletModal({
   const [form] = Form.useForm()
   const watchColor = Form.useWatch('color', form)
   const watchType = Form.useWatch('type', form)
+
+  const { mWallet_ApiKey } = useMutationWallet()
 
   const isCreditCard = watchType === FINANCIAL_WALLET_TYPE.E_WALLET
   const isBankOrEwallet =
@@ -82,6 +85,22 @@ export function WalletModal({
     }
   }
 
+  const handleGenerateApiKey = async () => {
+    if (!wallet?.id) {
+      message.error('Không thể tạo API Key cho ví chưa được lưu!')
+      return
+    }
+
+    try {
+      await mWallet_ApiKey.mutateAsync({
+        pathParams: { id: wallet.id.toString() },
+      })
+      message.success('Đã tạo mới API Key thành công!')
+    } catch (error) {
+      message.error('Tạo API Key thất bại, vui lòng thử lại sau.')
+    }
+  }
+
   const handleCopyApiKey = () => {
     if (wallet?.apiKey) {
       navigator.clipboard.writeText(wallet.apiKey)
@@ -115,16 +134,6 @@ export function WalletModal({
                   <Text strong style={{ fontSize: 13 }}>
                     Record API Key (Cho App điện thoại):
                   </Text>
-                  <div
-                    style={{
-                      fontFamily: 'monospace',
-                      fontSize: 12,
-                      color: '#475569',
-                      marginTop: 2,
-                    }}
-                  >
-                    {wallet.apiKey}
-                  </div>
                 </Col>
                 <Col>
                   <Button
@@ -135,6 +144,34 @@ export function WalletModal({
                     onClick={handleCopyApiKey}
                   >
                     Sao chép
+                  </Button>
+                </Col>
+              </Row>
+            }
+          />
+        )}
+
+        {wallet && !wallet.apiKey && (
+          <Alert
+            style={{ marginBottom: 16, borderRadius: 10 }}
+            type="warning"
+            showIcon
+            message={
+              <Row justify="space-between" align="middle">
+                <Col>
+                  <Text strong style={{ fontSize: 13 }}>
+                    Ví chưa có API Key
+                  </Text>
+                </Col>
+                <Col>
+                  <Button
+                    size="small"
+                    type="primary"
+                    ghost
+                    icon={<KeyOutlined />}
+                    onClick={handleGenerateApiKey}
+                  >
+                    Tạo API Key
                   </Button>
                 </Col>
               </Row>

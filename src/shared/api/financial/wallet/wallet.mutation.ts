@@ -49,10 +49,21 @@ export const useMutationWallet = () => {
     queryKey: [walletKeys.list(), walletKeys.date()],
   })
 
+  const mWallet_ApiKey = useMutationPost<
+    void,
+    void,
+    'financial-wallet/:id/api-key',
+    { id: string }
+  >({
+    endPoint: 'financial-wallet/:id/api-key',
+    queryKey: [walletKeys.list(), walletKeys.date()],
+  })
+
   return {
     mWallet_Create,
     mWallet_Update,
     mWallet_Delete,
     mWallet_Transfer,
+    mWallet_ApiKey,
   }
 }
