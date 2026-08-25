@@ -206,7 +206,7 @@ export function useTransactionUpsertForm({
         detail.financialTransactionItems.length > 0
           ? detail.financialTransactionItems.map((item) => ({
               description: item.description,
-              amount: item.amount,
+              amount: Number(item.amount),
               categoryId: item.category?.id ?? item.categoryId,
             }))
           : [{ description: '', amount: 0, categoryId: undefined }],
@@ -226,7 +226,7 @@ export function useTransactionUpsertForm({
       financialTransactionItems: tx.financialTransactionItems?.length
         ? tx.financialTransactionItems.map((item) => ({
             description: item.description,
-            amount: item.amount,
+            amount: Number(item.amount),
             categoryId: item.categoryId,
           }))
         : [

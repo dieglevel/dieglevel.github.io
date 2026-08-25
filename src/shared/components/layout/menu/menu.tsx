@@ -107,6 +107,7 @@ export default function Menu() {
   const [activeSubmenuId, setActiveSubmenuId] = useState<string | null>(null)
 
   const screen = useBreakpoint()
+  const isMobile = !screen.md // Xác định xem có phải màn hình nhỏ hay không
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -156,10 +157,16 @@ export default function Menu() {
 
       <Flex
         style={{
+          width: '100%',
           background: '#3D1F10',
           padding: 12,
-          position: 'relative',
           zIndex: 999,
+          ...(!isMobile && {
+            position: 'sticky',
+            top: 0,
+            left: 0,
+            right: 0,
+          }),
         }}
         justify="space-between"
         align="center"

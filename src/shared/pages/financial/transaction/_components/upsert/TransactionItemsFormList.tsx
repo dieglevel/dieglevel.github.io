@@ -107,6 +107,12 @@ export const TransactionItemsFormList: React.FC<
                       <TreeSelect
                         allowClear
                         style={{ width: '100%' }}
+                        showSearch={{
+                          filterTreeNode: (input, treeNode) =>
+                            treeNode.name
+                              .toLowerCase()
+                              .includes(input.toLowerCase()),
+                        }}
                         styles={{
                           popup: {
                             root: {

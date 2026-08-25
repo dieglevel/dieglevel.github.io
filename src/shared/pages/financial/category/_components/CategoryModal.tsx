@@ -120,6 +120,10 @@ export default function CategoryModal({
         <Form.Item label="Parent Category" name="parentId">
           <TreeSelect
             allowClear
+            showSearch={{
+              filterTreeNode: (input, treeNode) =>
+                treeNode.name.toLowerCase().includes(input.toLowerCase()),
+            }}
             style={{ width: '100%' }}
             placeholder="None (Root Category)"
             treeData={categories}
