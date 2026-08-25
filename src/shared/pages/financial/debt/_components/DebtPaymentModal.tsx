@@ -35,7 +35,7 @@ const { Text } = Typography
 
 interface DebtPaymentModalProps {
   open: boolean
-  debt: IFinance_Debt
+  debt: IFinance_Debt | null
   wallets: Array<IFinance_Wallet>
   isLoadingWallets: boolean
   onClose: () => void
@@ -58,6 +58,10 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
 
   const paymentAmount = Form.useWatch('amount', form) || 0
   const selectedWalletId = Form.useWatch('walletId', form)
+
+  if (!debt) {
+    return null
+  }
 
   // Load Lịch sử khoản nợ
   const { data: historyResponse, isLoading: isLoadingHistory } =

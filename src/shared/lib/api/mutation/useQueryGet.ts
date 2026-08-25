@@ -32,8 +32,19 @@ export function useQueryGet<
   options,
   apiConfig,
 }: UseQueryGetProps<TResponse, TEndPoint, TQueryParams>) {
+  const buildQueryKey = (() => {
+    const key: Array<unknown> = [...queryKey]
+    if (pathParams) {
+      key.push(pathParams)
+    }
+    if (queryParams) {
+      key.push(queryParams)
+    }
+    return key as QueryKey
+  })()
+
   return useQuery({
-    queryKey: [...queryKey, pathParams, queryParams],
+    queryKey: buildQueryKey,
     queryFn: ({ signal }) => {
       const finalUrl = buildUrl(endPoint, pathParams)
 
