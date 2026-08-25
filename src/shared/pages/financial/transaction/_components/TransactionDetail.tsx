@@ -9,7 +9,6 @@ import {
   Skeleton,
   Space,
   Tag,
-  Typography,
 } from 'antd'
 import Text from 'antd/es/typography/Text'
 import Title from 'antd/es/typography/Title'
@@ -39,74 +38,75 @@ export function TransactionDetail({
     },
   })
 
-  // Trỏ đúng vào object data bên trong response API
   const transaction = response?.data
-
   const screens = useBreakpoint()
   const isMobile = !screens.md
 
   const handleClose = () => setViewTransaction(null)
 
-  const isIncome = transaction?.type === FINANCIAL_TRANSACTION_TYPE.INCOME
+  // 1. Phân loại chính xác các type thuộc nhóm "Dòng tiền vào" (Income / Refund)
+  const isPositiveFlow =
+    transaction?.type === FINANCIAL_TRANSACTION_TYPE.INCOME ||
+    transaction?.type === FINANCIAL_TRANSACTION_TYPE.REFUND
 
   return (
     <Modal
-      title="Transaction Details"
+      title="Chi tiết giao dịch"
       open={!!viewTransaction}
       onCancel={handleClose}
       footer={[
         <Button key="close" onClick={handleClose}>
-          Close
+          Đóng
         </Button>,
       ]}
-      width={560}
+      width={580}
       centered
     >
       {isLoading ? (
-        <Skeleton active paragraph={{ rows: 6 }} style={{ marginTop: 16 }} />
+        <Skeleton active paragraph={{ rows: 7 }} style={{ marginTop: 16 }} />
       ) : transaction ? (
         <Space
           direction="vertical"
           style={{ width: '100%', marginTop: 12 }}
-          size="large"
+          size="medium"
         >
-          {/* Tổng quan số tiền */}
+          {/* Card Tổng quan số tiền */}
           <Card
             size="small"
             style={{
               textAlign: 'center',
-              backgroundColor: isIncome ? '#f6ffed' : '#fff2f0',
-              borderColor: isIncome ? '#b7eb8f' : '#ffccc7',
+              backgroundColor: isPositiveFlow ? '#f6ffed' : '#fff2f0',
+              borderColor: isPositiveFlow ? '#b7eb8f' : '#ffccc7',
             }}
           >
-            <Text type="secondary" style={{ fontSize: 12 }}>
-              TOTAL AMOUNT
+            <Text type="secondary" style={{ fontSize: 11, letterSpacing: 0.5 }}>
+              TỔNG SỐ TIỀN
             </Text>
             <Title
               level={2}
               style={{
-                margin: 0,
-                color: isIncome ? '#52c41a' : '#ff4d4f',
+                margin: '2px 0 0 0',
+                color: isPositiveFlow ? '#52c41a' : '#ff4d4f',
               }}
             >
-              {isIncome ? '+' : '-'}
+              {isPositiveFlow ? '+' : '-'}
               {convertCurrency(transaction.amount)}
             </Title>
           </Card>
 
-          {/* Thông tin cơ bản */}
+          {/* Thông tin chi tiết */}
           <Descriptions column={isMobile ? 1 : 2} bordered size="small">
-            <Descriptions.Item label="Description" span={2}>
+            <Descriptions.Item label="Ghi chú" span={2}>
               <Text strong>{transaction.description || '-'}</Text>
             </Descriptions.Item>
 
-            <Descriptions.Item label="Type">
-              <Tag color={isIncome ? 'green' : 'volcano'}>
-                {transaction.type.toUpperCase() || '-'}
+            <Descriptions.Item label="Loại giao dịch">
+              <Tag color={isPositiveFlow ? 'green' : 'volcano'}>
+                {transaction.type}
               </Tag>
             </Descriptions.Item>
 
-            <Descriptions.Item label="Status">
+            <Descriptions.Item label="Trạng thái">
               <Tag
                 color={FinancialTransactionStatusHelper.getColor(
                   transaction.status,
@@ -116,56 +116,79 @@ export function TransactionDetail({
               </Tag>
             </Descriptions.Item>
 
-            <Descriptions.Item label="Wallet" span={2}>
+            <Descriptions.Item label="Ví thanh toán">
               <Flex align="center" gap={6}>
                 {transaction.wallet?.icon && (
-                  <IconRenderer iconName={transaction.wallet.icon} size={14} />
+                  <IconRenderer
+                    iconName={transaction.wallet.icon}
+                    size={14}
+                    color={transaction.wallet.color}
+                  />
                 )}
-                <span>{transaction.wallet?.name || '-'}</span>
+                <Text>{transaction.wallet?.name || '-'}</Text>
               </Flex>
             </Descriptions.Item>
 
-            <Descriptions.Item label="Date" span={2}>
+            <Descriptions.Item label="Đối tác / Merchant">
+              <Text>{transaction.merchant || '-'}</Text>
+            </Descriptions.Item>
+
+            <Descriptions.Item label="Thời gian" span={2}>
               {transaction.createdAt ? (
                 <Flex align="center" justify="space-between">
-                  <Typography.Text style={{ fontSize: 12 }}>
-                    {new Date(transaction.createdAt).toLocaleDateString()}
-                  </Typography.Text>
-                  <Typography.Text style={{ fontSize: 12 }}>
-                    {new Date(transaction.createdAt).toLocaleTimeString()}
-                  </Typography.Text>
+                  <Text style={{ fontSize: 12 }}>
+                    {new Date(transaction.createdAt).toLocaleDateString(
+                      'vi-VN',
+                    )}
+                  </Text>
+                  <Text style={{ fontSize: 12 }} type="secondary">
+                    {new Date(transaction.createdAt).toLocaleTimeString(
+                      'vi-VN',
+                    )}
+                  </Text>
                 </Flex>
               ) : (
                 '-'
               )}
             </Descriptions.Item>
+
+            {/* Hiển thị thông tin giao dịch gốc nếu đây là đơn Hoàn tiền (REFUND) */}
+            {transaction.originalTransaction && (
+              <Descriptions.Item label="Giao dịch gốc" span={2}>
+                <Flex align="center" justify="space-between">
+                  <Text>
+                    #{transaction.originalTransaction.id} -{' '}
+                    {transaction.originalTransaction.description}
+                  </Text>
+                  <Tag color="red">
+                    -{convertCurrency(transaction.originalTransaction.amount)}
+                  </Tag>
+                </Flex>
+              </Descriptions.Item>
+            )}
           </Descriptions>
 
-          {/* Danh sách các chi tiết hạng mục */}
+          {/* Danh sách các Item chi tiết */}
           {transaction.financialTransactionItems &&
             transaction.financialTransactionItems.length > 0 && (
               <div>
-                <Divider
-                  orientation="horizontal"
-                  style={{ margin: '12px 0', fontSize: 14 }}
-                >
-                  Breakdown Items (
+                <Divider style={{ margin: '16px 0 8px 0', fontSize: 13 }}>
+                  Danh sách hạng mục (
                   {transaction.financialTransactionItems.length})
                 </Divider>
 
                 <Table
                   size="small"
-                  footer={undefined}
                   rowKey="id"
                   dataSource={transaction.financialTransactionItems}
                   columns={[
                     {
-                      title: 'Item Description',
+                      title: 'Mô tả',
                       dataIndex: 'description',
                       key: 'description',
                     },
                     {
-                      title: 'Category',
+                      title: 'Danh mục',
                       dataIndex: 'category',
                       key: 'category',
                       render: (cat) =>
@@ -176,17 +199,20 @@ export function TransactionDetail({
                           </Flex>
                         ) : (
                           <Text type="secondary" style={{ fontSize: 12 }}>
-                            -
+                            Chưa phân loại
                           </Text>
                         ),
                     },
                     {
-                      title: 'Amount',
+                      title: 'Số tiền',
                       dataIndex: 'amount',
                       key: 'amount',
                       align: 'right',
-                      render: (amt: string | number) =>
-                        convertCurrency(Number(amt || 0)),
+                      render: (amt: string | number) => (
+                        <Text strong style={{ fontSize: 12 }}>
+                          {convertCurrency(Number(amt || 0))}
+                        </Text>
+                      ),
                     },
                   ]}
                 />
