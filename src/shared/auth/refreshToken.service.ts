@@ -6,7 +6,6 @@ import { AUTH_TOKEN_KEY } from './auth.type'
 export const RefreshTokenService = {
   set(token: string) {
     CookieService.set(AUTH_TOKEN_KEY.REFRESH_TOKEN, token, {
-      days: 1,
       secure: true,
       sameSite: 'Strict',
     })
