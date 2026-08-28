@@ -176,14 +176,16 @@ export const DebtManagementPage: React.FC = () => {
       />
 
       {/* 5. Modal: Thanh toán / Thu hồi nợ */}
-      <DebtPaymentModal
-        open={isPaymentOpen}
-        debt={selectedDebt}
-        wallets={wallets}
-        isLoadingWallets={isLoadingWallets}
-        onClose={() => setIsPaymentOpen(false)}
-        onSubmit={handlePayment}
-      />
+      {selectedDebt && (
+        <DebtPaymentModal
+          open={isPaymentOpen}
+          debt={selectedDebt}
+          wallets={wallets}
+          isLoadingWallets={isLoadingWallets}
+          onClose={() => setIsPaymentOpen(false)}
+          onSubmit={handlePayment}
+        />
+      )}
 
       {/* 6. Modal: Điều chỉnh dư nợ */}
       <DebtAdjustModal

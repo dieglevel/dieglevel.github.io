@@ -1,33 +1,78 @@
 import { create } from 'zustand'
-import { devtools } from 'zustand/middleware'
+import { devtools, persist } from 'zustand/middleware'
+import type { ApiBasePaginationRequest } from '../types/base-request'
 
 interface PaginateState {
-  current: number
-  pageSize: number
-  total: number
+  paginationMap: Record<string, ApiBasePaginationRequest>
 
-  setPaginate: (paginate: {
-    current: number
-    pageSize: number
-    total: number
-  }) => void
-  clearPaginate: () => void
+  getPaginate: (key: string) => ApiBasePaginationRequest
+
+  setPaginate: (
+    key: string,
+    paginate: Partial<ApiBasePaginationRequest>,
+  ) => void
+
+  resetPaginate: (key: string) => void
+
+  clearPaginate: (key: string) => void
+
+  clearAllPaginate: () => void
+}
+
+const DEFAULT_PAGINATION: ApiBasePaginationRequest = {
+  page: 1,
+  limit: 20,
 }
 
 export const usePaginateStore = create<PaginateState>()(
-  devtools((set) => ({
-    current: 1,
-    pageSize: 10,
-    total: 0,
+  devtools(
+    persist(
+      (set, get) => ({
+        paginationMap: {},
 
-    setPaginate: ({ current, pageSize, total }) =>
-      set({ current, pageSize, total }),
+        getPaginate: (key) => {
+          return get().paginationMap[key] ?? DEFAULT_PAGINATION
+        },
 
-    clearPaginate: () =>
-      set({
-        current: 1,
-        pageSize: 10,
-        total: 0,
+        setPaginate: (key, paginate) =>
+          set((state) => ({
+            paginationMap: {
+              ...state.paginationMap,
+              [key]: {
+                ...DEFAULT_PAGINATION,
+                ...state.paginationMap[key],
+                ...paginate,
+              },
+            },
+          })),
+
+        resetPaginate: (key) =>
+          set((state) => ({
+            paginationMap: {
+              ...state.paginationMap,
+              [key]: DEFAULT_PAGINATION,
+            },
+          })),
+
+        clearPaginate: (key) =>
+          set((state) => {
+            const paginationMap = { ...state.paginationMap }
+
+            delete paginationMap[key]
+
+            return {
+              paginationMap,
+            }
+          }),
+
+        clearAllPaginate: () =>
+          set({
+            paginationMap: {},
+          }),
       }),
-  })),
+      {
+        name: 'pagination-storage',
+      },
+    ),
+  ),
 )

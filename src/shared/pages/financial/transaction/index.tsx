@@ -17,8 +17,8 @@ import type { TabsProps } from 'antd'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import type { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
-import { useGetWallet_Transaction_Date } from '@/shared/api/financial/transaction/useGetFinance_Transaction_Date'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
+import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
 
 const { useBreakpoint } = Grid
 
@@ -37,8 +37,8 @@ export function Transactions() {
   const router = useRouter()
   const isMobile = !screens.md
 
-  const { data: dataTransaction } = useGetWallet_Transaction_Date({})
-  const transactions = dataTransaction?.data.transactions || []
+  const { data: dataTransaction } = useGetFinance_Transaction_List({})
+  const transactions = dataTransaction?.data.data || []
 
   const [activeTab, setActiveTab] = useState('all')
 
@@ -125,10 +125,10 @@ export function Transactions() {
   const tabFilteredTransactions = useMemo(() => {
     if (activeTab === 'all') return filtered
     if (activeTab === 'pending') {
-      return filtered.filter((t) => t.status?.toLowerCase() === 'pending')
+      return filtered.filter((t) => t.status.toLowerCase() === 'pending')
     }
     return filtered.filter(
-      (t) => t.type?.toLowerCase() === activeTab.toLowerCase(),
+      (t) => t.type.toLowerCase() === activeTab.toLowerCase(),
     )
   }, [activeTab, filtered])
 

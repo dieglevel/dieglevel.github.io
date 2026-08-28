@@ -198,7 +198,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
             placeholder="Chọn giao dịch gốc liên quan (nếu có)"
             allowClear
             loading={isLoadingOriginal}
-            options={originalTransactions?.data.map((t) => ({
+            options={originalTransactions?.data.data.map((t) => ({
               value: t.id,
               label: `#${t.id} - ${t.description} (${t.amount.toLocaleString('vi-VN')} đ)`,
             }))}

@@ -193,14 +193,14 @@ export const TransactionUpsertPage: React.FC<TransactionUpsertPageProps> = ({
                 selectedWalletId={selectedWalletId}
                 wallets={wallets?.data}
                 isLoadingWallets={isLoadingWallets}
-                originalTransactions={originalTransactions?.data}
+                originalTransactions={originalTransactions?.data.data || []}
                 isLoadingOriginal={isLoadingOriginal}
                 onSelectOriginalTransaction={handleSelectOriginalTransaction}
               />
 
               <TransactionAdditionalForm
                 selectedType={selectedType}
-                originalTransactions={originalTransactions?.data}
+                originalTransactions={originalTransactions?.data.data || []}
                 isLoadingOriginal={isLoadingOriginal}
               />
             </Flex>

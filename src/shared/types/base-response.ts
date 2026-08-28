@@ -6,9 +6,12 @@ export interface ApiBaseResponse<T> {
   data: T
 }
 
-export interface ApiBasePage {
-  number: number
-  size: number
-  totalElements: number
-  totalPages: number
+export interface ApiBaseResponseWithPagination<T> {
+  meta: {
+    total: number
+    page: number
+    limit: number
+    totalPages: number
+  }
+  data: T
 }

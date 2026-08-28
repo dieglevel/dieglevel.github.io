@@ -62,7 +62,7 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
       options: { enabled: !!goal?.id },
     })
   const historyList: Array<IFinance_GoalHistory> =
-    detailRes?.data?.histories || []
+    detailRes?.data.histories || []
 
   const { data: projectionRes } = useGetFinance_Goal_Projection({
     pathParams: { id: goal?.id || 0 },

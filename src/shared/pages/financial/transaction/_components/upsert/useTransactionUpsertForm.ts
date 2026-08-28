@@ -64,8 +64,9 @@ export function useTransactionUpsertForm({
 
   // Tìm giao dịch gốc khi tạo Hoàn tiền
   const selectedOriginalTx = useMemo(
-    () => originalTransactions?.data.find((t) => t.id === selectedOriginalId),
-    [originalTransactions?.data, selectedOriginalId],
+    () =>
+      originalTransactions?.data.data.find((t) => t.id === selectedOriginalId),
+    [originalTransactions?.data.data, selectedOriginalId],
   )
 
   // Tùy biến giao diện Banner theo loại giao dịch
@@ -214,7 +215,7 @@ export function useTransactionUpsertForm({
   }, [form, isUpdateMode, transactionDetail])
 
   const handleSelectOriginalTransaction = (txId: number) => {
-    const tx = originalTransactions?.data.find((t) => t.id === txId)
+    const tx = originalTransactions?.data.data.find((t) => t.id === txId)
     if (!tx) return
 
     form.setFieldsValue({
