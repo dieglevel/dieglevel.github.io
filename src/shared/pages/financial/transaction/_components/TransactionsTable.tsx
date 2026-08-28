@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, Card, Flex, Table, Tag, Typography } from 'antd'
 import { EyeOutlined } from '@ant-design/icons'
 import { useNavigate } from '@tanstack/react-router'
-import type { ColumnsType } from 'antd/es/table'
+import type { ColumnsType, TablePaginationConfig } from 'antd/es/table'
 import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
@@ -21,6 +21,8 @@ interface TransactionsTableProps {
   selectedKeys: Array<React.Key>
   onSelectChange: (selectedKeys: Array<React.Key>) => void
   onViewDetail: (transaction: IFinance_Transaction) => void
+  pagination?: TablePaginationConfig
+  onPageChange: (newPage: number) => void
 }
 
 export const TransactionsTable: React.FC<TransactionsTableProps> = ({
@@ -29,6 +31,8 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
   selectedKeys,
   onSelectChange,
   onViewDetail,
+  pagination,
+  onPageChange,
 }) => {
   const navigate = useNavigate()
 
@@ -222,7 +226,10 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
           onChange: onSelectChange,
         }}
         pagination={{
-          pageSize: 10,
+          onChange: (page) => onPageChange(page),
+          total: pagination?.total || 300,
+          current: pagination?.current || 1,
+          pageSize: pagination?.pageSize || 10,
           showSizeChanger: false,
           simple: isMobile,
           showTotal: isMobile

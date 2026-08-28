@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { FloatButton, Grid, Space, Tabs, Tag } from 'antd'
 import {
   ArrowDownOutlined,
@@ -12,7 +12,7 @@ import { TransactionsTable } from './_components/TransactionsTable'
 import { TransactionHeader } from './_components/TransactionHeader'
 import { TransactionSearch } from './_components/TransactionSearch'
 import { TransactionFilterModal } from './_components/TransactionFilterModal'
-import type { TabsProps } from 'antd'
+import type { TablePaginationConfig, TabsProps } from 'antd'
 
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
@@ -36,8 +36,28 @@ export function Transactions() {
   const screens = useBreakpoint()
   const router = useRouter()
   const isMobile = !screens.md
+  const [page, setPage] = useState(1)
+  const [pageData, setPageData] = useState<TablePaginationConfig>({
+    current: -1,
+    pageSize: 10,
+    total: 0,
+  })
 
-  const { data: dataTransaction } = useGetFinance_Transaction_List({})
+  const { data: dataTransaction } = useGetFinance_Transaction_List({
+    queryParams: {
+      page,
+    },
+  })
+
+  useEffect(() => {
+    if (dataTransaction?.data) {
+      setPageData({
+        current: dataTransaction.data.meta.page,
+        pageSize: dataTransaction.data.meta.limit,
+        total: dataTransaction.data.meta.total,
+      })
+    }
+  }, [dataTransaction])
   const transactions = dataTransaction?.data.data || []
 
   const [activeTab, setActiveTab] = useState('all')
@@ -209,6 +229,8 @@ export function Transactions() {
         selectedKeys={selectedKeys}
         onSelectChange={setSelectedKeys}
         onViewDetail={handleViewDetail}
+        pagination={pageData}
+        onPageChange={(newPage) => setPage(newPage)}
       />
 
       {/* 4. Search & Active Filters */}

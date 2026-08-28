@@ -1,6 +1,7 @@
+import { keepPreviousData } from '@tanstack/react-query'
 import { transactionKeys } from './transaction.keys'
-import type dayjs from 'dayjs'
 import type { UseQueryOptions } from '@tanstack/react-query'
+import type dayjs from 'dayjs'
 import type { IFinance_Transaction } from './transaction.type'
 import type {
   ApiBaseResponse,
@@ -76,6 +77,9 @@ export const useGetFinance_Transaction_List = (
     endPoint: `/financial-transaction/get`,
     queryKey: transactionKeys.list(queryParams),
     queryParams,
-    ...options,
+    options: {
+      placeholderData: keepPreviousData,
+      ...options,
+    },
   })
 }
