@@ -61,7 +61,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 }
 
 interface CategoryBreakdownChartProps {
-  categoryBreakdown: CategoryBreakdownItem[]
+  categoryBreakdown: Array<CategoryBreakdownItem>
 }
 
 export const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({

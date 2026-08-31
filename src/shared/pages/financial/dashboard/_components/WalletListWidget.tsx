@@ -12,7 +12,7 @@ const formatVND = (val: number) => {
 }
 
 interface WalletListWidgetProps {
-  wallets: WalletOverviewItem[]
+  wallets: Array<WalletOverviewItem>
   onNavigateToWallet: () => void
 }
 

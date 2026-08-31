@@ -2,16 +2,15 @@ import React, { useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import { Col, Row, Skeleton } from 'antd'
 
-import { useGetFinancialDashboard } from '@/shared/api/financial/dashboard/useGetFinancialDashboard'
-import { DashboardTimeFrame } from '@/shared/api/financial/dashboard/dashboard.type'
-import type { GetFinancialDashboardQueryParams } from '@/shared/api/financial/dashboard/dashboard.type'
-
 import { DashboardHeader } from './_components/DashboardHeader'
 import { DashboardSummaryCards } from './_components/DashboardSummaryCards'
 import { CashFlowChart } from './_components/CashFlowChart'
 import { CategoryBreakdownChart } from './_components/CategoryBreakdownChart'
 import { WalletListWidget } from './_components/WalletListWidget'
 import { RecentTransactionsWidget } from './_components/RecentTransactionsWidget'
+import type { GetFinancialDashboardQueryParams } from '@/shared/api/financial/dashboard/dashboard.type'
+import { DashboardTimeFrame } from '@/shared/api/financial/dashboard/dashboard.type'
+import { useGetFinancialDashboard } from '@/shared/api/financial/dashboard/useGetFinancialDashboard'
 
 export function Dashboard() {
   const router = useRouter()

@@ -1,8 +1,8 @@
 import React from 'react'
 import { Button, Select, Space, Typography } from 'antd'
 import { PlusCircle } from 'lucide-react'
-import { DashboardTimeFrame } from '@/shared/api/financial/dashboard/dashboard.type'
 import type { WalletOverviewItem } from '@/shared/api/financial/dashboard/dashboard.type'
+import { DashboardTimeFrame } from '@/shared/api/financial/dashboard/dashboard.type'
 
 const { Title, Text } = Typography
 
@@ -11,7 +11,7 @@ interface DashboardHeaderProps {
   setTimeFrame: (tf: DashboardTimeFrame) => void
   selectedWalletId?: number
   setSelectedWalletId: (id?: number) => void
-  wallets: WalletOverviewItem[]
+  wallets: Array<WalletOverviewItem>
   onNavigateToCreateTransaction: () => void
 }
 

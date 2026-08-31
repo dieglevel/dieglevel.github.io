@@ -58,7 +58,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 }
 
 interface CashFlowChartProps {
-  cashFlowTimeline: CashFlowTimelinePoint[]
+  cashFlowTimeline: Array<CashFlowTimelinePoint>
 }
 
 export const CashFlowChart: React.FC<CashFlowChartProps> = ({

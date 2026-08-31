@@ -13,7 +13,7 @@ const formatVND = (val: number) => {
 }
 
 interface RecentTransactionsWidgetProps {
-  recentTransactions: DashboardRecentTransactionItem[]
+  recentTransactions: Array<DashboardRecentTransactionItem>
   onNavigateToTransactions: () => void
 }
 
