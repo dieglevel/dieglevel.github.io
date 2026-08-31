@@ -2,7 +2,12 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Flex, Grid, Input, Typography } from 'antd'
-import { CalendarSync, GoalIcon, HandCoins } from 'lucide-react'
+import {
+  CalendarSync,
+  GoalIcon,
+  HandCoins,
+  LayoutDashboardIcon,
+} from 'lucide-react'
 import type { LinkProps } from '@tanstack/react-router'
 import { Brand } from '@/shared/assets/images'
 import {
@@ -30,6 +35,12 @@ export const menus: Array<MenuItem> = [
     label: 'Finance',
     icon: <IconArrowTopDown style={{ fontSize: 18 }} />,
     children: [
+      {
+        id: 'dashboard',
+        label: 'Dashboard',
+        icon: <LayoutDashboardIcon style={{ fontSize: 16 }} />,
+        link: '/financial/dashboard',
+      },
       {
         id: 'transaction',
         label: 'Transaction',

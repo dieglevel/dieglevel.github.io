@@ -42,7 +42,7 @@ export const useMutationTransaction = () => {
     'financial-transaction/create'
   >({
     endPoint: 'financial-transaction/create',
-    queryKey: [transactionKeys.list(), transactionKeys.date()],
+    queryKey: transactionKeys.all,
   })
 
   const mTransaction_Update = useMutationPost<

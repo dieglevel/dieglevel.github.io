@@ -1,7 +1,7 @@
 import type {
+  QueryClient,
   QueryKey,
   UseMutationOptions,
-  useQueryClient,
 } from '@tanstack/react-query'
 import type { AxiosRequestConfig } from 'axios'
 
@@ -31,18 +31,21 @@ export function buildUrl<T extends string>(
   return finalUrl
 }
 
-export function invalidate(
-  queryClient: ReturnType<typeof useQueryClient>,
+export const invalidate = (
+  queryClient: QueryClient,
   queryKey?: QueryKey | Array<QueryKey>,
-) {
+) => {
   if (!queryKey) return
 
-  if (Array.isArray(queryKey[0])) {
-    ;(queryKey as Array<QueryKey>).forEach((key) =>
-      queryClient.invalidateQueries({ queryKey: key }),
-    )
+  // Kiểm tra nếu queryKey là mảng các QueryKey (Mảng 2 chiều)
+  const isMultipleKeys = Array.isArray(queryKey) && Array.isArray(queryKey[0])
+
+  if (isMultipleKeys) {
+    ;(queryKey as Array<QueryKey>).forEach((key) => {
+      queryClient.invalidateQueries({ queryKey: key })
+    })
   } else {
-    queryClient.invalidateQueries({ queryKey })
+    queryClient.invalidateQueries({ queryKey: queryKey as QueryKey })
   }
 }
 
