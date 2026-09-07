@@ -139,11 +139,15 @@ export const TransactionUpsertPage: React.FC<TransactionUpsertPageProps> = ({
                     }
                     rules={[
                       { required: true, message: 'Vui lòng nhập số tiền' },
-                      {
-                        type: 'number',
-                        min: 0.01,
-                        message: 'Số tiền phải lớn hơn 0',
-                      },
+                      ...(selectedType === FINANCIAL_TRANSACTION_TYPE.TRANSFER
+                        ? [
+                            {
+                              type: 'number' as const,
+                              min: 0.01,
+                              message: 'Số tiền phải lớn hơn 0',
+                            },
+                          ]
+                        : []),
                     ]}
                   >
                     <InputNumber
