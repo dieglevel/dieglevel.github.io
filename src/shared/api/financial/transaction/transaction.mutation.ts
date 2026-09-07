@@ -52,11 +52,7 @@ export const useMutationTransaction = () => {
     { id: string }
   >({
     endPoint: 'financial-transaction/update/:id',
-    queryKey: [
-      transactionKeys.list(),
-      transactionKeys.date(),
-      transactionKeys.details(),
-    ],
+    queryKey: transactionKeys.all,
   })
 
   const mTransaction_Delete = useMutationDelete<
@@ -66,11 +62,7 @@ export const useMutationTransaction = () => {
     { id: string }
   >({
     endPoint: 'financial-transaction/delete/:id',
-    queryKey: [
-      transactionKeys.list(),
-      transactionKeys.date(),
-      transactionKeys.details(),
-    ],
+    queryKey: transactionKeys.all,
   })
 
   return {
