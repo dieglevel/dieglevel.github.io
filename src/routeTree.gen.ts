@@ -14,7 +14,9 @@ import { Route as R401RouteImport } from './routes/401'
 import { Route as publicRouteRouteImport } from './routes/(public)/route'
 import { Route as protectedRouteRouteImport } from './routes/(protected)/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as publicTestModelRouteImport } from './routes/(public)/test-model'
 import { Route as publicSignUpRouteImport } from './routes/(public)/sign-up'
+import { Route as publicNetworkRouteImport } from './routes/(public)/network'
 import { Route as publicMusicRouteImport } from './routes/(public)/music'
 import { Route as publicLoginRouteImport } from './routes/(public)/login'
 import { Route as protectedIconRouteImport } from './routes/(protected)/icon'
@@ -59,9 +61,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const publicTestModelRoute = publicTestModelRouteImport.update({
+  id: '/test-model',
+  path: '/test-model',
+  getParentRoute: () => publicRouteRoute,
+} as any)
 const publicSignUpRoute = publicSignUpRouteImport.update({
   id: '/sign-up',
   path: '/sign-up',
+  getParentRoute: () => publicRouteRoute,
+} as any)
+const publicNetworkRoute = publicNetworkRouteImport.update({
+  id: '/network',
+  path: '/network',
   getParentRoute: () => publicRouteRoute,
 } as any)
 const publicMusicRoute = publicMusicRouteImport.update({
@@ -184,7 +196,9 @@ export interface FileRoutesByFullPath {
   '/icon': typeof protectedIconRoute
   '/login': typeof publicLoginRoute
   '/music': typeof publicMusicRoute
+  '/network': typeof publicNetworkRoute
   '/sign-up': typeof publicSignUpRoute
+  '/test-model': typeof publicTestModelRoute
   '/demo/button': typeof protectedDemoButtonRoute
   '/demo/table': typeof protectedDemoTableRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
@@ -209,7 +223,9 @@ export interface FileRoutesByTo {
   '/icon': typeof protectedIconRoute
   '/login': typeof publicLoginRoute
   '/music': typeof publicMusicRoute
+  '/network': typeof publicNetworkRoute
   '/sign-up': typeof publicSignUpRoute
+  '/test-model': typeof publicTestModelRoute
   '/demo/button': typeof protectedDemoButtonRoute
   '/demo/table': typeof protectedDemoTableRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
@@ -238,7 +254,9 @@ export interface FileRoutesById {
   '/(protected)/icon': typeof protectedIconRoute
   '/(public)/login': typeof publicLoginRoute
   '/(public)/music': typeof publicMusicRoute
+  '/(public)/network': typeof publicNetworkRoute
   '/(public)/sign-up': typeof publicSignUpRoute
+  '/(public)/test-model': typeof publicTestModelRoute
   '/(protected)/demo/button': typeof protectedDemoButtonRoute
   '/(protected)/demo/table': typeof protectedDemoTableRoute
   '/(protected)/financial/category': typeof protectedFinancialCategoryRoute
@@ -266,7 +284,9 @@ export interface FileRouteTypes {
     | '/icon'
     | '/login'
     | '/music'
+    | '/network'
     | '/sign-up'
+    | '/test-model'
     | '/demo/button'
     | '/demo/table'
     | '/financial/category'
@@ -291,7 +311,9 @@ export interface FileRouteTypes {
     | '/icon'
     | '/login'
     | '/music'
+    | '/network'
     | '/sign-up'
+    | '/test-model'
     | '/demo/button'
     | '/demo/table'
     | '/financial/category'
@@ -319,7 +341,9 @@ export interface FileRouteTypes {
     | '/(protected)/icon'
     | '/(public)/login'
     | '/(public)/music'
+    | '/(public)/network'
     | '/(public)/sign-up'
+    | '/(public)/test-model'
     | '/(protected)/demo/button'
     | '/(protected)/demo/table'
     | '/(protected)/financial/category'
@@ -380,11 +404,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(public)/test-model': {
+      id: '/(public)/test-model'
+      path: '/test-model'
+      fullPath: '/test-model'
+      preLoaderRoute: typeof publicTestModelRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
     '/(public)/sign-up': {
       id: '/(public)/sign-up'
       path: '/sign-up'
       fullPath: '/sign-up'
       preLoaderRoute: typeof publicSignUpRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
+    '/(public)/network': {
+      id: '/(public)/network'
+      path: '/network'
+      fullPath: '/network'
+      preLoaderRoute: typeof publicNetworkRouteImport
       parentRoute: typeof publicRouteRoute
     }
     '/(public)/music': {
@@ -594,13 +632,17 @@ const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(
 interface publicRouteRouteChildren {
   publicLoginRoute: typeof publicLoginRoute
   publicMusicRoute: typeof publicMusicRoute
+  publicNetworkRoute: typeof publicNetworkRoute
   publicSignUpRoute: typeof publicSignUpRoute
+  publicTestModelRoute: typeof publicTestModelRoute
 }
 
 const publicRouteRouteChildren: publicRouteRouteChildren = {
   publicLoginRoute: publicLoginRoute,
   publicMusicRoute: publicMusicRoute,
+  publicNetworkRoute: publicNetworkRoute,
   publicSignUpRoute: publicSignUpRoute,
+  publicTestModelRoute: publicTestModelRoute,
 }
 
 const publicRouteRouteWithChildren = publicRouteRoute._addFileChildren(
