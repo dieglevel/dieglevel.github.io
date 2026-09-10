@@ -23,9 +23,9 @@ export const useMutationAuth = () => {
   const mLogout = useMutationPost<
     ApiBaseResponse<Response_Logout>,
     Request_Logout,
-    '/auth/logout'
+    '/auth/log-out'
   >({
-    endPoint: '/auth/logout',
+    endPoint: '/auth/log-out',
     queryKey: authKeys.logout(),
   })
 

@@ -4,13 +4,13 @@ import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Grid } from 'antd' // 1. Import Grid từ antd
 import type { Variants } from 'motion/react'
 
-import type { MenuItem } from '@/shared/components/layout/menu/menu'
+import type { AppMenuItem } from '@/shared/common/menu'
 import { background, colors } from '@/shared/common/design-token'
-import { menus } from '@/shared/components/layout/menu/menu'
+import { AppMenu } from '@/shared/common/menu'
 
 const { useBreakpoint } = Grid // 2. Lấy hook useBreakpoint
 
-const floatingMenus: Array<MenuItem> = menus[0].children || []
+const floatingMenus: Array<AppMenuItem> = AppMenu[0].children || []
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -54,7 +54,7 @@ export default function FloatingMenu() {
     return null
   }
 
-  const handleMenuClick = (e: React.MouseEvent, menu: MenuItem) => {
+  const handleMenuClick = (e: React.MouseEvent, menu: AppMenuItem) => {
     e.stopPropagation()
     setIsOpen(false)
     if (menu.link) {
