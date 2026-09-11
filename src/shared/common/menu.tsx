@@ -1,11 +1,14 @@
 import { AppstoreOutlined } from '@ant-design/icons'
 
 import {
+  AppWindow,
   CalendarSync,
   CirclePlay,
+  Gauge,
   GoalIcon,
   HandCoins,
   LayoutDashboardIcon,
+  Wallet,
 } from 'lucide-react'
 import {
   IconArrowTopDown,
@@ -62,14 +65,35 @@ export interface AppMenuItem {
   label: string
   icon?: React.ReactNode
   link?: LinkProps['to']
+  isAuthRequired?: boolean
   children?: Array<AppMenuItem>
 }
 
-export const AppMenu: Array<AppMenuItem> = [
+export const Menu: Array<AppMenuItem> = [
+  {
+    id: 'random',
+    label: 'Random',
+    icon: <AppWindow style={{ fontSize: 18 }} />,
+    children: [
+      {
+        id: 'music',
+        label: 'Music',
+        icon: <CirclePlay size={16} style={{ fontSize: 16 }} />,
+        link: '/music',
+      },
+      {
+        id: 'network',
+        label: 'Network',
+        icon: <Gauge size={16} style={{ fontSize: 16 }} />,
+        link: '/network',
+      },
+    ],
+  },
   {
     id: 'finance',
     label: 'Finance',
-    icon: <IconArrowTopDown style={{ fontSize: 18 }} />,
+    icon: <Wallet style={{ fontSize: 18 }} />,
+    isAuthRequired: true,
     children: [
       {
         id: 'dashboard',
@@ -121,17 +145,13 @@ export const AppMenu: Array<AppMenuItem> = [
       },
     ],
   },
-  {
-    id: 'random',
-    label: 'Random',
-    icon: <IconArrowTopDown style={{ fontSize: 18 }} />,
-    children: [
-      {
-        id: 'music',
-        label: 'Music',
-        icon: <CirclePlay size={16} style={{ fontSize: 16 }} />,
-        link: '/music',
-      },
-    ],
-  },
 ]
+
+export function getAppMenu(isAuthenticated: boolean) {
+  return Menu.filter((item) => {
+    if (item.isAuthRequired && !isAuthenticated) {
+      return false
+    }
+    return true
+  })
+}

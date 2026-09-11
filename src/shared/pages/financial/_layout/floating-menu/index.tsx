@@ -5,12 +5,10 @@ import { Grid } from 'antd' // 1. Import Grid từ antd
 import type { Variants } from 'motion/react'
 
 import type { AppMenuItem } from '@/shared/common/menu'
+import { Menu } from '@/shared/common/menu'
 import { background, colors } from '@/shared/common/design-token'
-import { AppMenu } from '@/shared/common/menu'
 
 const { useBreakpoint } = Grid // 2. Lấy hook useBreakpoint
-
-const floatingMenus: Array<AppMenuItem> = AppMenu[0].children || []
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -45,6 +43,8 @@ export default function FloatingMenu() {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+
+  const floatingMenus: Array<AppMenuItem> = Menu[0].children || []
 
   // 3. Kiểm tra kích thước màn hình
   const screen = useBreakpoint()

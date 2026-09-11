@@ -42,7 +42,8 @@ export function SmoothEnergyParticles() {
 
   useFrame(() => {
     if (!pointsRef.current) return
-    const positionAttribute = pointsRef.current.geometry.attributes.position as THREE.BufferAttribute
+    const positionAttribute = pointsRef.current.geometry.attributes
+      .position as THREE.BufferAttribute
     const positionValues = positionAttribute.array as Float32Array
 
     for (let index = 0; index < count; index++) {
@@ -50,7 +51,8 @@ export function SmoothEnergyParticles() {
       positionValues[positionIndex + 1] += speeds[index]
       angles[index] += 0.005
       const radius = Math.sqrt(
-        positionValues[positionIndex] ** 2 + positionValues[positionIndex + 2] ** 2
+        positionValues[positionIndex] ** 2 +
+          positionValues[positionIndex + 2] ** 2,
       )
       positionValues[positionIndex] = Math.cos(angles[index]) * radius
       positionValues[positionIndex + 2] = Math.sin(angles[index]) * radius

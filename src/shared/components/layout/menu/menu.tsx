@@ -12,6 +12,7 @@ import {
 import type { MenuProps } from 'antd'
 
 import type { AppMenuItem } from '@/shared/common/menu'
+import { getAppMenu } from '@/shared/common/menu'
 import { Brand } from '@/shared/assets/images'
 
 import { background, colors } from '@/shared/common/design-token'
@@ -19,7 +20,6 @@ import './menu.css'
 import { useAuthStore } from '@/shared/auth/auth.store'
 import { useMutationAuth } from '@/shared/api/auth/auth.mutation'
 import { LogoutService } from '@/shared/auth/logout.service'
-import { AppMenu } from '@/shared/common/menu'
 
 const { useBreakpoint } = Grid
 
@@ -53,6 +53,8 @@ export default function Menu() {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileExpandedId, setMobileExpandedId] = useState<string | null>(null)
+  const { isAuthenticated } = useAuthStore()
+  const AppMenu = getAppMenu(isAuthenticated)
 
   // Số mục cấp 1 hiển thị trực tiếp; phần còn lại gom vào nút "Thêm"
   const [visibleCount, setVisibleCount] = useState(AppMenu.length)
