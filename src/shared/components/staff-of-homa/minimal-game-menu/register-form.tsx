@@ -15,7 +15,7 @@ export function RegisterForm({ onBack, onSuccessToLogin }: RegisterFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const { message } = useApp()
 
-  const handleSubmit = (values: RequestRegister) => {
+  const handleSubmit = (_values: RequestRegister) => {
     setIsLoading(true)
     setTimeout(() => {
       message.success('Registration successful! Please login.')
