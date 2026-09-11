@@ -32,7 +32,7 @@ const handleLogout = () => {
       LOCAL_STORAGE_KEY.CURRENT_PAGE,
       window.location.pathname,
     )
-    window.location.href = '/login'
+    window.location.href = '/'
   }
 }
 
