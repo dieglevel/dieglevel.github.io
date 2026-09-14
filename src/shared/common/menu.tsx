@@ -7,7 +7,9 @@ import {
   Gauge,
   GoalIcon,
   HandCoins,
+  Key,
   LayoutDashboardIcon,
+  PencilRuler,
   Wallet,
 } from 'lucide-react'
 import {
@@ -90,14 +92,20 @@ export const Menu: Array<AppMenuItem> = [
       {
         id: 'icon',
         label: 'Icon',
-        icon: <AppstoreOutlined style={{ fontSize: 16 }} />,
+        icon: <AppstoreOutlined style={{ fontSize: 16 }} size={16} />,
         link: '/icon',
       },
       {
         id: 'demoComponent',
         label: 'Demo Component',
-        icon: <AppstoreOutlined style={{ fontSize: 16 }} />,
+        icon: <PencilRuler style={{ fontSize: 16 }} size={16} />,
         link: '/demoComponent',
+      },
+      {
+        id: 'Hash Id',
+        label: 'Hash Id',
+        icon: <Key style={{ fontSize: 16 }} size={16} />,
+        link: '/hashId',
       },
     ],
   },
