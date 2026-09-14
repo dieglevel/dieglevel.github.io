@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { Float, OrbitControls, Sparkles } from '@react-three/drei'
 import { Canvas, useThree } from '@react-three/fiber'
 import { Grid } from 'antd'
+import { EffectComposer, SelectiveBloom } from '@react-three/postprocessing'
 import { Lights } from './lights'
 import { StaffModel } from './staff-model'
 import MinimalGameMenu from './minimal-game-menu/minimal-game-menu'
@@ -41,7 +42,7 @@ export function StaffOfHoma() {
 
   // Điều chỉnh vị trí model 3D theo Responsive Breakpoint của Antd
   const modelPosition: [number, number, number] = screens.md
-    ? [-1, 0.1, 4]
+    ? [-0.6, 0.1, 4]
     : [0, -0.5, 2] // Căn giữa màn hình trên Mobile
 
   return (
@@ -67,24 +68,39 @@ export function StaffOfHoma() {
             <ResponsiveCamera />
             <Lights />
 
-            <group position={modelPosition}>
+            <group
+              position={modelPosition}
+              rotation={screens.md ? [0, -Math.PI / 1, 0.2] : [0, 0, 0]}
+            >
               <Float speed={4} rotationIntensity={0.1} floatIntensity={0.5}>
                 <StaffModel />
               </Float>
               <Sparkles
                 count={screens.md ? 400 : 200} // Giảm hạt trên mobile để tăng FPS
-                scale={[4, 5, 4]}
-                speed={0.6}
-                opacity={0.5}
-                color="#ffaa44"
+                scale={[7, 10, 10]}
+                speed={0.4}
+                opacity={0.8}
+                color="#c22f15"
+                size={3}
               />
             </group>
 
+            <EffectComposer>
+              <SelectiveBloom
+                intensity={1}
+                luminanceThreshold={1}
+                luminanceSmoothing={0.9}
+                mipmapBlur
+              />
+            </EffectComposer>
+
             <OrbitControls
               enableDamping
+              enabled={false}
               dampingFactor={0.05} // Tối ưu cảm giác mượt mà (chỉ số 0.05 tiêu chuẩn)
               target={screens.md ? [-1.8, 0, 0] : [0, 0, 0]}
               enableZoom={false}
+              enablePan={false}
             />
           </Canvas>
         </div>
