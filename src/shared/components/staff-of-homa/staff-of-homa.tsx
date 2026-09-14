@@ -17,10 +17,8 @@ function ResponsiveCamera() {
   useEffect(() => {
     // Màn hình nhỏ (Mobile/Tablet portrait) -> đẩy camera ra xa & tăng FOV
     if (!screens.md) {
-      camera.fov = 55
       camera.position.set(0, 1.5, 8)
     } else {
-      camera.fov = 45
       camera.position.set(0, 2, 6)
     }
     camera.updateProjectionMatrix()
