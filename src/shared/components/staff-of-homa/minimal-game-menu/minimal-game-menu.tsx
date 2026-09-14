@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { App } from 'antd'
+import { App, Grid } from 'antd'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronRight, LogIn, LogOut, UserPlus } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
@@ -12,12 +12,15 @@ import { useAuthStore } from '@/shared/auth/auth.store'
 import { LogoutService } from '@/shared/auth/logout.service'
 import { getAppMenu } from '@/shared/common/menu'
 
+const { useBreakpoint } = Grid
+
 export function MinimalGameMenu({
   onLoginSuccess,
   onRegisterSuccess,
 }: MinimalGameMenuProps) {
   const [openGroup, setOpenGroup] = useState<string | null>('finance')
   const [authView, setAuthView] = useState<AuthView>('menu')
+  const screens = useBreakpoint()
 
   const { isAuthenticated } = useAuthStore()
   const AppMenu = useMemo(() => getAppMenu(isAuthenticated), [isAuthenticated])
@@ -52,26 +55,27 @@ export function MinimalGameMenu({
     switchView('login')
   }, [onRegisterSuccess, switchView])
 
+  const isMobile = !screens.md
+
   return (
     <motion.div
       style={{
         position: 'absolute',
-        top: '60px',
-        right: '10%',
+        top: isMobile ? '70px' : '60px',
+        right: isMobile ? '16px' : '10%',
+        left: isMobile ? '16px' : 'auto',
         zIndex: 10,
-        width: 'max-content',
-        maxWidth: 'calc(100vw - 40px)',
+        width: isMobile ? 'auto' : 'max-content',
+        maxWidth: isMobile ? '100vw' : 'calc(100vw - 40px)',
         userSelect: 'none',
       }}
       initial={{
         opacity: 0,
         y: -20,
-        filter: 'blur(8px)',
       }}
       animate={{
         opacity: 1,
         y: 0,
-        filter: 'blur(0px)',
       }}
       transition={{
         duration: 0.5,
@@ -92,19 +96,21 @@ export function MinimalGameMenu({
       />
 
       <div
-        className="minimal-game-menu"
         style={{
           display: 'flex',
           flexDirection: 'column',
-          gap: '16px',
+          gap: isMobile ? '12px' : '16px',
           maxHeight: 'calc(100vh - 120px)',
           overflowY: 'auto',
-          overflowX: 'visible',
-          padding: '8px 12px 8px 30px',
+          overflowX: 'hidden',
+          padding: isMobile ? '12px' : '8px 12px 8px 30px',
           scrollbarWidth: 'none',
+          backgroundColor: isMobile ? 'rgba(0, 0, 0, 0.5)' : 'transparent',
+          backdropFilter: isMobile ? 'blur(10px)' : 'none',
+          borderRadius: isMobile ? '12px' : '0px',
         }}
       >
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence mode="wait">
           {authView === 'menu' && (
             <motion.nav
               key="main-menu"
@@ -115,7 +121,7 @@ export function MinimalGameMenu({
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '16px',
+                gap: isMobile ? '12px' : '16px',
               }}
             >
               {/* Mapping App Menu */}
@@ -145,11 +151,6 @@ export function MinimalGameMenu({
                       delay: index * 0.07,
                       ease: [0.22, 1, 0.36, 1],
                     }}
-                    onMouseEnter={() => {
-                      if (hasChildren) {
-                        setOpenGroup(group.id)
-                      }
-                    }}
                   >
                     <motion.button
                       type="button"
@@ -158,62 +159,54 @@ export function MinimalGameMenu({
                         background: 'none',
                         border: 'none',
                         outline: 'none',
-                        padding: '4px 0',
+                        padding: '6px 0',
                         cursor: hasChildren ? 'pointer' : 'default',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '8px',
-                        fontSize: '18px',
+                        fontSize: isMobile ? '16px' : '18px',
                         fontWeight: 800,
                         textTransform: 'uppercase',
                         letterSpacing: '1.5px',
                         userSelect: 'none',
                         color: 'white',
+                        width: '100%',
+                        textAlign: 'left',
                       }}
-                      whileHover={
-                        hasChildren
-                          ? {
-                              x: -5,
-                              scale: 1.04,
-                              transition: {
-                                duration: 0.2,
-                                ease: 'easeOut',
-                              },
-                            }
-                          : undefined
-                      }
-                      whileTap={hasChildren ? { scale: 0.98 } : undefined}
+                      whileTap={hasChildren ? { scale: 0.97 } : undefined}
                       onClick={() => {
                         if (!hasChildren) return
-
+                        // Chuyển đổi đóng/mở menu bằng click
                         setOpenGroup((current) =>
                           current === group.id ? null : group.id,
                         )
                       }}
                     >
                       {/* Active group indicator */}
-                      <motion.span
-                        style={{
-                          position: 'absolute',
-                          right: 'calc(100% + 12px)',
-                          width: '3px',
-                          borderRadius: '999px',
-                          background: '#ff4b2b',
-                          boxShadow: '0 0 12px rgba(255, 75, 43, 0.65)',
-                        }}
-                        initial={{
-                          height: 0,
-                          opacity: 0,
-                        }}
-                        animate={{
-                          height: isOpen ? 22 : 0,
-                          opacity: isOpen ? 1 : 0,
-                        }}
-                        transition={{
-                          duration: 0.25,
-                          ease: 'easeOut',
-                        }}
-                      />
+                      {!isMobile && (
+                        <motion.span
+                          style={{
+                            position: 'absolute',
+                            right: 'calc(100% + 12px)',
+                            width: '3px',
+                            borderRadius: '999px',
+                            background: '#ff4b2b',
+                            boxShadow: '0 0 12px rgba(255, 75, 43, 0.65)',
+                          }}
+                          initial={{
+                            height: 0,
+                            opacity: 0,
+                          }}
+                          animate={{
+                            height: isOpen ? 22 : 0,
+                            opacity: isOpen ? 1 : 0,
+                          }}
+                          transition={{
+                            duration: 0.25,
+                            ease: 'easeOut',
+                          }}
+                        />
+                      )}
 
                       <motion.div
                         animate={{
@@ -231,9 +224,9 @@ export function MinimalGameMenu({
                           display: 'flex',
                           alignItems: 'center',
                           gap: '8px',
+                          flex: 1,
                         }}
                       >
-                        {/* Icon micro animation */}
                         <motion.span
                           animate={{
                             scale: isOpen ? 1.08 : 1,
@@ -254,7 +247,7 @@ export function MinimalGameMenu({
                         <span>{group.label}</span>
                       </motion.div>
 
-                      {/* Chevron */}
+                      {/* Chevron icon xoay khi click */}
                       {hasChildren && (
                         <motion.span
                           style={{
@@ -283,8 +276,8 @@ export function MinimalGameMenu({
                           style={{
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: '10px',
-                            paddingLeft: '20px',
+                            gap: '8px',
+                            paddingLeft: isMobile ? '12px' : '20px',
                             overflow: 'hidden',
                             transformOrigin: 'top',
                           }}
@@ -297,7 +290,7 @@ export function MinimalGameMenu({
                           animate={{
                             opacity: 1,
                             height: 'auto',
-                            marginTop: 12,
+                            marginTop: 8,
                             scaleY: 1,
                           }}
                           exit={{
@@ -344,10 +337,10 @@ export function MinimalGameMenu({
                                   gap: '10px',
                                   color: 'rgba(255, 255, 255, 0.6)',
                                   textDecoration: 'none',
-                                  fontSize: '15px',
+                                  fontSize: isMobile ? '14px' : '15px',
                                   fontWeight: 500,
                                   letterSpacing: '0.5px',
-                                  padding: '3px 0',
+                                  padding: '4px 0',
                                 }}
                                 activeProps={{
                                   style: {
@@ -377,33 +370,30 @@ export function MinimalGameMenu({
                                       duration: 0.2,
                                       ease: 'easeOut',
                                     }}
-                                    whileHover={{
-                                      x: 9,
-                                      color: '#ff6b4b',
-                                    }}
+                                    whileTap={{ scale: 0.98 }}
                                   >
-                                    {/* Active item indicator */}
-                                    <motion.span
-                                      style={{
-                                        position: 'absolute',
-                                        right: 'calc(100% + 8px)',
-                                        width: '3px',
-                                        borderRadius: '999px',
-                                        background: '#ff4b2b',
-                                        boxShadow:
-                                          '0 0 8px rgba(255, 75, 43, 0.7)',
-                                      }}
-                                      initial={false}
-                                      animate={{
-                                        height: isActive ? 14 : 0,
-                                        opacity: isActive ? 1 : 0,
-                                      }}
-                                      transition={{
-                                        duration: 0.2,
-                                      }}
-                                    />
+                                    {!isMobile && (
+                                      <motion.span
+                                        style={{
+                                          position: 'absolute',
+                                          right: 'calc(100% + 8px)',
+                                          width: '3px',
+                                          borderRadius: '999px',
+                                          background: '#ff4b2b',
+                                          boxShadow:
+                                            '0 0 8px rgba(255, 75, 43, 0.7)',
+                                        }}
+                                        initial={false}
+                                        animate={{
+                                          height: isActive ? 14 : 0,
+                                          opacity: isActive ? 1 : 0,
+                                        }}
+                                        transition={{
+                                          duration: 0.2,
+                                        }}
+                                      />
+                                    )}
 
-                                    {/* Icon */}
                                     <motion.span
                                       animate={{
                                         scale: isActive ? 1.08 : 1,
@@ -421,31 +411,6 @@ export function MinimalGameMenu({
                                     </motion.span>
 
                                     <span>{item.label}</span>
-
-                                    {/* Hover underline sweep */}
-                                    <motion.span
-                                      style={{
-                                        position: 'absolute',
-                                        left: 0,
-                                        bottom: 0,
-                                        height: '1px',
-                                        width: '100%',
-                                        background: 'rgba(255, 107, 75, 0.65)',
-                                        transformOrigin: 'left',
-                                      }}
-                                      initial={{
-                                        scaleX: 0,
-                                        opacity: 0,
-                                      }}
-                                      whileHover={{
-                                        scaleX: 1,
-                                        opacity: 1,
-                                      }}
-                                      transition={{
-                                        duration: 0.25,
-                                        ease: 'easeOut',
-                                      }}
-                                    />
                                   </motion.div>
                                 )}
                               </Link>
@@ -464,7 +429,7 @@ export function MinimalGameMenu({
                   height: '1px',
                   background:
                     'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0) 100%)',
-                  margin: '8px 0',
+                  margin: '4px 0',
                 }}
               />
 
@@ -488,6 +453,7 @@ export function MinimalGameMenu({
                 style={{
                   display: 'flex',
                   gap: '8px',
+                  flexDirection: isMobile ? 'column' : 'row',
                 }}
               >
                 {!isAuthenticated ? (
@@ -514,15 +480,7 @@ export function MinimalGameMenu({
                         color: '#ff4b2b',
                         boxShadow: '0 0 10px rgba(255, 75, 43, 0.15)',
                       }}
-                      whileHover={{
-                        scale: 1.02,
-                        backgroundColor: 'rgba(255, 75, 43, 0.2)',
-                        borderColor: '#ff4b2b',
-                        boxShadow: '0 0 16px rgba(255, 75, 43, 0.4)',
-                        color: '#ffffff',
-                      }}
                       whileTap={{ scale: 0.97 }}
-                      transition={{ duration: 0.2, ease: 'easeOut' }}
                     >
                       <LogIn size={16} />
                       <span>Login</span>
@@ -549,13 +507,7 @@ export function MinimalGameMenu({
                         letterSpacing: '1px',
                         color: '#ffffff',
                       }}
-                      whileHover={{
-                        scale: 1.02,
-                        backgroundColor: 'rgba(255, 255, 255, 0.15)',
-                        borderColor: '#ffffff',
-                      }}
                       whileTap={{ scale: 0.97 }}
-                      transition={{ duration: 0.2, ease: 'easeOut' }}
                     >
                       <UserPlus size={16} />
                       <span>Register</span>
@@ -584,15 +536,7 @@ export function MinimalGameMenu({
                       color: '#ff4b2b',
                       boxShadow: '0 0 10px rgba(255, 75, 43, 0.15)',
                     }}
-                    whileHover={{
-                      scale: 1.02,
-                      backgroundColor: 'rgba(255, 75, 43, 0.2)',
-                      borderColor: '#ff4b2b',
-                      boxShadow: '0 0 16px rgba(255, 75, 43, 0.4)',
-                      color: '#ffffff',
-                    }}
                     whileTap={{ scale: 0.97 }}
-                    transition={{ duration: 0.2, ease: 'easeOut' }}
                   >
                     <LogOut size={16} />
                     <span>Log out</span>
