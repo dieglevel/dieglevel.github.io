@@ -44,7 +44,8 @@ export default function FloatingMenu() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const floatingMenus: Array<AppMenuItem> = Menu[0].children || []
+  const floatingMenus: Array<AppMenuItem> =
+    Menu.filter((menu) => menu.id === 'finance').at(0)?.children || []
 
   // 3. Kiểm tra kích thước màn hình
   const screen = useBreakpoint()
