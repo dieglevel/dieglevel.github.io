@@ -536,82 +536,86 @@ export default function Menu() {
 
           {/* Right Section */}
           {screen.md ? (
-            <Flex align="center" gap={12} style={{ flexShrink: 0 }}>
-              <Dropdown
-                menu={{ items }}
-                trigger={['click']}
-                placement="bottomRight"
-                open={open}
-                onOpenChange={setOpen}
-              >
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    cursor: 'pointer',
-                    padding: '4px 8px 4px 4px',
-                    borderRadius: 20,
-                    backgroundColor: open
-                      ? 'rgba(255, 255, 255, 0.1)'
-                      : 'transparent',
-                    border: `1px solid ${open ? '#B74C36' : 'transparent'}`,
-                    transition:
-                      'background-color 0.2s ease, border-color 0.2s ease',
-                  }}
-                >
-                  <div
-                    style={{
-                      position: 'relative',
-                      width: 36,
-                      height: 36,
-                      borderRadius: '50%',
-                      padding: 2,
-                      background: open
-                        ? 'linear-gradient(135deg, #B74C36, #B74C36)'
-                        : 'transparent',
-                    }}
+            <>
+              {isAuthenticated && (
+                <Flex align="center" gap={12} style={{ flexShrink: 0 }}>
+                  <Dropdown
+                    menu={{ items }}
+                    trigger={['click']}
+                    placement="bottomRight"
+                    open={open}
+                    onOpenChange={setOpen}
                   >
-                    <img
-                      src={Brand}
-                      alt={'User Avatar'}
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        borderRadius: '50%',
-                        background: '#B74C36',
-                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10,
+                        cursor: 'pointer',
+                        padding: '4px 8px 4px 4px',
+                        borderRadius: 20,
+                        backgroundColor: open
+                          ? 'rgba(255, 255, 255, 0.1)'
+                          : 'transparent',
+                        border: `1px solid ${open ? '#B74C36' : 'transparent'}`,
+                        transition:
+                          'background-color 0.2s ease, border-color 0.2s ease',
                       }}
-                    />
-                  </div>
+                    >
+                      <div
+                        style={{
+                          position: 'relative',
+                          width: 36,
+                          height: 36,
+                          borderRadius: '50%',
+                          padding: 2,
+                          background: open
+                            ? 'linear-gradient(135deg, #B74C36, #B74C36)'
+                            : 'transparent',
+                        }}
+                      >
+                        <img
+                          src={Brand}
+                          alt={'User Avatar'}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            borderRadius: '50%',
+                            background: '#B74C36',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                          }}
+                        />
+                      </div>
 
-                  <Flex vertical style={{ userSelect: 'none' }}>
-                    <Typography.Text
-                      style={{
-                        color: '#ffffff',
-                        fontSize: 13,
-                        fontWeight: 600,
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      {'Tài khoản'}
-                    </Typography.Text>
-                    <Typography.Text
-                      style={{
-                        color: 'rgba(255, 255, 255, 0.65)',
-                        fontSize: 11,
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      {'Thành viên'}
-                    </Typography.Text>
-                  </Flex>
-                </motion.div>
-              </Dropdown>
-            </Flex>
+                      <Flex vertical style={{ userSelect: 'none' }}>
+                        <Typography.Text
+                          style={{
+                            color: '#ffffff',
+                            fontSize: 13,
+                            fontWeight: 600,
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          {'Tài khoản'}
+                        </Typography.Text>
+                        <Typography.Text
+                          style={{
+                            color: 'rgba(255, 255, 255, 0.65)',
+                            fontSize: 11,
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          {'Thành viên'}
+                        </Typography.Text>
+                      </Flex>
+                    </motion.div>
+                  </Dropdown>
+                </Flex>
+              )}
+            </>
           ) : (
             <motion.div
               whileTap={{ scale: 0.92 }}

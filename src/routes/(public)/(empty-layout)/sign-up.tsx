@@ -9,7 +9,7 @@ import { AuthTokenService } from '@/shared/auth/authToken.service'
 import { useMutationAuth } from '@/shared/api/auth/auth.mutation'
 import { UserRoleEnum } from '@/shared/auth/auth.type'
 
-export const Route = createFileRoute('/(public)/sign-up')({
+export const Route = createFileRoute('/(public)/(empty-layout)/sign-up')({
   component: RouteComponent,
 })
 

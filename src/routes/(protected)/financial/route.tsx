@@ -1,7 +1,7 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 
 import { useAuthStore } from '@/shared/auth/auth.store'
-import { LoginComponent } from '@/routes/(public)/login'
+import { LoginComponent } from '@/routes/(public)/(empty-layout)/login'
 import WalletLayout from '@/shared/pages/financial/_layout'
 
 export const Route = createFileRoute('/(protected)/financial')({

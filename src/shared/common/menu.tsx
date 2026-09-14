@@ -87,6 +87,18 @@ export const Menu: Array<AppMenuItem> = [
         icon: <Gauge size={16} style={{ fontSize: 16 }} />,
         link: '/network',
       },
+      {
+        id: 'icon',
+        label: 'Icon',
+        icon: <AppstoreOutlined style={{ fontSize: 16 }} />,
+        link: '/icon',
+      },
+      {
+        id: 'demoComponent',
+        label: 'Demo Component',
+        icon: <AppstoreOutlined style={{ fontSize: 16 }} />,
+        link: '/demoComponent',
+      },
     ],
   },
   {

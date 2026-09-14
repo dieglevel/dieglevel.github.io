@@ -15,7 +15,7 @@ import {
   LocalStorageService,
 } from '@/shared/lib/service/local-storage'
 
-export const Route = createFileRoute('/(public)/login')({
+export const Route = createFileRoute('/(public)/(empty-layout)/login')({
   component: LoginComponent,
   beforeLoad: () => {
     const loadToken = AuthTokenService.loadTokens()

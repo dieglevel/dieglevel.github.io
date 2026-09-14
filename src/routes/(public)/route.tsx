@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
-import EmptyLayout from '@/shared/components/layout/empty-layout'
+import { Flex } from 'antd'
+import MainLayout from '@/shared/components/layout/layout'
 
 export const Route = createFileRoute('/(public)')({
   component: RouteComponent,
@@ -7,8 +8,10 @@ export const Route = createFileRoute('/(public)')({
 
 function RouteComponent() {
   return (
-    <EmptyLayout>
-      <Outlet />
-    </EmptyLayout>
+    <MainLayout>
+      <Flex flex={1} vertical style={{ overflowY: 'auto' }}>
+        <Outlet />
+      </Flex>
+    </MainLayout>
   )
 }
