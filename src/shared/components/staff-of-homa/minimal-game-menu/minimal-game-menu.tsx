@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
-import { App, Grid } from 'antd'
+import { App, Button, Grid } from 'antd'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronRight, LogIn, LogOut, UserPlus } from 'lucide-react'
+import { ChevronRight, LogIn, UserPlus } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 
 import { LoginForm } from './login-form'
@@ -498,39 +498,27 @@ export function MinimalGameMenu({
                     </motion.button>
                   </>
                 ) : (
-                  <motion.button
-                    type="button"
+                  <Button
+                    type="text"
+                    htmlType="submit"
                     onClick={handleLogout}
+                    icon={<LogIn size={16} />}
                     style={{
-                      width: '100%',
-                      position: 'relative',
-                      background: 'rgba(255, 75, 43, 0.1)',
-                      border: '1px solid rgba(255, 75, 43, 0.4)',
-                      borderRadius: '6px',
-                      padding: '8px 16px',
-                      cursor: 'pointer',
+                      padding: 0,
+                      height: 'auto',
+                      color: '#ff4b2b',
+                      fontSize: '14px',
+                      fontWeight: 800,
+                      letterSpacing: '1.5px',
+                      textTransform: 'uppercase',
+                      textShadow: '0 0 10px rgba(255, 75, 43, 0.5)',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center',
                       gap: '8px',
-                      fontSize: '14px',
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      letterSpacing: '1.2px',
-                      color: '#ff4b2b',
-                      boxShadow: '0 0 10px rgba(255, 75, 43, 0.15)',
                     }}
-                    whileHover={{
-                      scale: 1.02,
-                      background: 'rgba(255, 75, 43, 0.25)',
-                      borderColor: '#ff4b2b',
-                      boxShadow: '0 0 16px rgba(255, 75, 43, 0.45)',
-                    }}
-                    whileTap={{ scale: 0.97 }}
                   >
-                    <LogOut size={16} />
-                    <span>Log out</span>
-                  </motion.button>
+                    Logout
+                  </Button>
                 )}
               </motion.div>
             </motion.nav>

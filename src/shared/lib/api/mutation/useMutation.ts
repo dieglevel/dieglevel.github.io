@@ -3,6 +3,7 @@ import { customAxios } from '../axios'
 import { buildUrl, invalidate } from './helper'
 import type { BaseMutationProps, MutatePayload } from './helper'
 import { useLoadingStore } from '@/shared/store/loading.store'
+import { authKeys } from '@/shared/api/auth/auth.keys'
 
 function createMutationHook(method: 'POST' | 'PUT' | 'PATCH' | 'DELETE') {
   return function useCustomMutation<
@@ -32,7 +33,13 @@ function createMutationHook(method: 'POST' | 'PUT' | 'PATCH' | 'DELETE') {
       ...options,
 
       onMutate: (variables, context) => {
-        setLoading(true)
+        const currentKey = JSON.stringify(queryKey)
+
+        const ignoreLoading =
+          currentKey === JSON.stringify(authKeys.signIn()) ||
+          currentKey === JSON.stringify(authKeys.signUp())
+        setLoading(!ignoreLoading)
+
         if (options?.onMutate) {
           return options.onMutate(variables, context)
         }
@@ -58,7 +65,6 @@ function createMutationHook(method: 'POST' | 'PUT' | 'PATCH' | 'DELETE') {
         userOnSuccess?.(data, variables, context, mutation)
       },
 
-      // 2. Khi mutation KẾT THÚC (Dù Thành công hay Thất bại) -> Tắt loading
       onSettled(data, error, variables, onMutateResult, context) {
         setLoading(false)
         userOnSettled?.(data, error, variables, onMutateResult, context)

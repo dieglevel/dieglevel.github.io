@@ -35,7 +35,7 @@ export function StaffOfHoma() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowMenu(true)
-    }, 800)
+    }, 0)
 
     return () => clearTimeout(timer)
   }, [])
