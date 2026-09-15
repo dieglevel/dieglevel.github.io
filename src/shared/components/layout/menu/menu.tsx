@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLocation, useNavigate } from '@tanstack/react-router'
-import { Dropdown, Flex, Grid, Typography } from 'antd'
+import { Button, Dropdown, Flex, Grid, Typography } from 'antd'
 import { ChevronDown, Ellipsis, MenuIcon, XIcon } from 'lucide-react'
 import useApp from 'antd/es/app/useApp'
 import {
@@ -537,7 +537,7 @@ export default function Menu() {
           {/* Right Section */}
           {screen.md ? (
             <>
-              {isAuthenticated && (
+              {isAuthenticated ? (
                 <Flex align="center" gap={12} style={{ flexShrink: 0 }}>
                   <Dropdown
                     menu={{ items }}
@@ -613,6 +613,13 @@ export default function Menu() {
                       </Flex>
                     </motion.div>
                   </Dropdown>
+                </Flex>
+              ) : (
+                <Flex gap={8} style={{ flexShrink: 0 }}>
+                  <Button variant="solid" type="primary">
+                    Login
+                  </Button>
+                  <Button>Register</Button>
                 </Flex>
               )}
             </>
@@ -741,6 +748,12 @@ export default function Menu() {
                     </div>
                   )
                 })}
+                <Flex gap={8} style={{ flexShrink: 0 }}>
+                  <Button variant="solid" type="primary">
+                    Login
+                  </Button>
+                  <Button variant="solid">Register</Button>
+                </Flex>
               </Flex>
             </motion.div>
           )}

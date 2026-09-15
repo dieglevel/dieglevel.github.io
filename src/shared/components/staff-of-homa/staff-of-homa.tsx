@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom'
 import { Float, OrbitControls, Sparkles } from '@react-three/drei'
 import { Canvas, useThree } from '@react-three/fiber'
 import { Grid } from 'antd'
-import { EffectComposer, SelectiveBloom } from '@react-three/postprocessing'
 import { Lights } from './lights'
 import { StaffModel } from './staff-model'
 import MinimalGameMenu from './minimal-game-menu/minimal-game-menu'
@@ -64,6 +63,7 @@ export function StaffOfHoma() {
             camera={{ position: [0, 2, 6], fov: 45, far: 1000 }}
             gl={{ antialias: true, powerPreference: 'high-performance' }}
             resize={{ scroll: false }}
+            dpr={screens.md ? [1, 2] : [1, 1.5]}
           >
             <ResponsiveCamera />
             <Lights />
@@ -84,15 +84,17 @@ export function StaffOfHoma() {
                 size={3}
               />
             </group>
-
-            <EffectComposer>
-              <SelectiveBloom
-                intensity={1}
-                luminanceThreshold={1}
-                luminanceSmoothing={0.9}
-                mipmapBlur
-              />
-            </EffectComposer>
+            {/* 
+            {screens.md && (
+              <EffectComposer>
+                <SelectiveBloom
+                  intensity={1}
+                  luminanceThreshold={1}
+                  luminanceSmoothing={0.9}
+                  mipmapBlur
+                />
+              </EffectComposer>
+            )} */}
 
             <OrbitControls
               enableDamping
