@@ -175,7 +175,7 @@ export function useTransactionUpsertForm({
   useEffect(() => {
     if (isUpdateMode) return
     form.setFieldsValue({
-      type: FINANCIAL_TRANSACTION_TYPE.INCOME,
+      type: FINANCIAL_TRANSACTION_TYPE.EXPENSE,
       status: FINANCIAL_TRANSACTION_STATUS.COMPLETED,
       date: dayjs(),
       amount: 0,

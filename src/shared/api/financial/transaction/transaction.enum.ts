@@ -4,8 +4,8 @@ import { BaseEnumHelper } from '../../enum.abstract'
 // FINANCIAL_TRANSACTION_TYPE
 // ===========================================================================================
 export enum FINANCIAL_TRANSACTION_TYPE {
-  INCOME = 'INCOME',
   EXPENSE = 'EXPENSE',
+  INCOME = 'INCOME',
   REFUND = 'REFUND',
   ADJUSTMENT = 'ADJUSTMENT',
   TRANSFER = 'TRANSFER',
@@ -25,8 +25,8 @@ class FinancialTransactionTypeHelperImpl extends BaseEnumHelper<FINANCIAL_TRANSA
   }
 
   protected readonly labelMap: Record<FINANCIAL_TRANSACTION_TYPE, string> = {
-    [FINANCIAL_TRANSACTION_TYPE.INCOME]: 'Thu nhập',
     [FINANCIAL_TRANSACTION_TYPE.EXPENSE]: 'Chi tiêu',
+    [FINANCIAL_TRANSACTION_TYPE.INCOME]: 'Thu nhập',
     [FINANCIAL_TRANSACTION_TYPE.REFUND]: 'Hoàn tiền',
     [FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT]: 'Điều chỉnh số dư',
     [FINANCIAL_TRANSACTION_TYPE.TRANSFER]: 'Chuyển khoản',
