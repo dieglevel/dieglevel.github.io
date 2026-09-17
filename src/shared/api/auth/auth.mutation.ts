@@ -43,9 +43,9 @@ export const useMutationAuth = () => {
   const mRegister = useMutationPost<
     Response_Register,
     Request_Register,
-    '/auth/account/register'
+    '/account/register'
   >({
-    endPoint: '/auth/account/register',
+    endPoint: '/account/register',
     queryKey: authKeys.register(),
   })
 

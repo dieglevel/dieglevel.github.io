@@ -6,7 +6,6 @@ import { useRouter } from '@tanstack/react-router'
 import { ANTD_INPUT_STYLE } from './auth-menu-type'
 import type { Request_Register } from '@/shared/api/auth/auth.dto'
 import { useMutationAuth } from '@/shared/api/auth/auth.mutation'
-import { AuthTokenService } from '@/shared/auth/authToken.service'
 
 interface RegisterFormProps {
   onBack: () => void
@@ -36,22 +35,13 @@ export function RegisterForm({ onBack, onSuccessToLogin }: RegisterFormProps) {
             const response = data
 
             message.success('Sign up successful')
-
-            AuthTokenService.setTokens(
-              response.access_token,
-              response.refresh_token,
-              response.user,
-            )
-
-            router.navigate({
-              to: '/',
-              replace: true,
-            })
           },
         },
       )
     } catch (error) {
       message.error('Sign up failed. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
   }
 
