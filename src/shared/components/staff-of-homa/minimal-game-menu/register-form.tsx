@@ -2,8 +2,11 @@ import { useState } from 'react'
 import { Button, Form, Input } from 'antd'
 import useApp from 'antd/es/app/useApp'
 import { ArrowLeft, Lock, Mail, User, UserPlus, X } from 'lucide-react'
+import { useRouter } from '@tanstack/react-router'
 import { ANTD_INPUT_STYLE } from './auth-menu-type'
-import type { RequestRegister } from './auth-menu-type'
+import type { Request_Register } from '@/shared/api/auth/auth.dto'
+import { useMutationAuth } from '@/shared/api/auth/auth.mutation'
+import { AuthTokenService } from '@/shared/auth/authToken.service'
 
 interface RegisterFormProps {
   onBack: () => void
@@ -11,17 +14,45 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ onBack, onSuccessToLogin }: RegisterFormProps) {
-  const [form] = Form.useForm<RequestRegister>()
+  const [form] = Form.useForm<Request_Register>()
   const [isLoading, setIsLoading] = useState(false)
   const { message } = useApp()
+  const { mRegister } = useMutationAuth()
+  const router = useRouter()
 
-  const handleSubmit = (_values: RequestRegister) => {
+  const handleSubmit = (values: Request_Register) => {
     setIsLoading(true)
-    setTimeout(() => {
-      message.success('Registration successful! Please login.')
-      setIsLoading(false)
-      onSuccessToLogin()
-    }, 1000)
+    try {
+      mRegister.mutate(
+        {
+          body: {
+            email: values.email,
+            password: values.password,
+            username: values.username,
+          },
+        },
+        {
+          onSuccess(data) {
+            const response = data
+
+            message.success('Sign up successful')
+
+            AuthTokenService.setTokens(
+              response.access_token,
+              response.refresh_token,
+              response.user,
+            )
+
+            router.navigate({
+              to: '/',
+              replace: true,
+            })
+          },
+        },
+      )
+    } catch (error) {
+      message.error('Sign up failed. Please try again.')
+    }
   }
 
   return (

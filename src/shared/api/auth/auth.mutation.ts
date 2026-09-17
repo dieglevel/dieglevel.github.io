@@ -3,9 +3,11 @@ import type { ApiBaseResponse } from '../../types/base-response'
 import type {
   Request_Login,
   Request_Logout,
+  Request_Register,
   Request_SignUp,
   Response_Login,
   Response_Logout,
+  Response_Register,
   Response_SignUp,
 } from './auth.dto'
 import { useMutationPost } from '@/shared/lib/api/mutation/useMutation'
@@ -38,5 +40,14 @@ export const useMutationAuth = () => {
     queryKey: authKeys.signUp(),
   })
 
-  return { mLogin, mLogout, mSignup }
+  const mRegister = useMutationPost<
+    Response_Register,
+    Request_Register,
+    '/auth/account/register'
+  >({
+    endPoint: '/auth/account/register',
+    queryKey: authKeys.register(),
+  })
+
+  return { mLogin, mLogout, mSignup, mRegister }
 }

@@ -4,11 +4,6 @@ export interface MinimalGameMenuProps {
   onLoginSuccess?: () => void
   onRegisterSuccess?: () => void
 }
-export interface RequestRegister {
-  username: string
-  email: string
-  password: string
-}
 
 export const ANTD_INPUT_STYLE: React.CSSProperties = {
   background: 'transparent',

@@ -28,3 +28,18 @@ export interface Response_SignUp {
   refresh_token: string
   user: User
 }
+
+export interface Request_Register {
+  email: string
+  password: string
+  username: string
+}
+
+export interface Response_Register {
+  access_token: string
+  token_type: string
+  expires_in: number
+  expires_at: number
+  refresh_token: string
+  user: User
+}
