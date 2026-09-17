@@ -107,6 +107,12 @@ export const Menu: Array<AppMenuItem> = [
         icon: <Key style={{ fontSize: 16 }} size={16} />,
         link: '/hashId',
       },
+      {
+        id: 'motionDetector',
+        label: 'Motion Detector',
+        icon: <AppstoreOutlined style={{ fontSize: 16 }} size={16} />,
+        link: '/motion-detector',
+      },
     ],
   },
   {

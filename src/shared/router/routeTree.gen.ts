@@ -16,6 +16,7 @@ import { Route as protectedRouteRouteImport } from './../../routes/(protected)/r
 import { Route as IndexRouteImport } from './../../routes/index'
 import { Route as publicNetworkRouteImport } from './../../routes/(public)/network'
 import { Route as publicMusicRouteImport } from './../../routes/(public)/music'
+import { Route as publicMotionDetectorRouteImport } from './../../routes/(public)/motion-detector'
 import { Route as protectedIconRouteImport } from './../../routes/(protected)/icon'
 import { Route as protectedHashIdRouteImport } from './../../routes/(protected)/hashId'
 import { Route as protectedHanbiroTaskRouteImport } from './../../routes/(protected)/hanbiroTask'
@@ -69,6 +70,11 @@ const publicNetworkRoute = publicNetworkRouteImport.update({
 const publicMusicRoute = publicMusicRouteImport.update({
   id: '/music',
   path: '/music',
+  getParentRoute: () => publicRouteRoute,
+} as any)
+const publicMotionDetectorRoute = publicMotionDetectorRouteImport.update({
+  id: '/motion-detector',
+  path: '/motion-detector',
   getParentRoute: () => publicRouteRoute,
 } as any)
 const protectedIconRoute = protectedIconRouteImport.update({
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/hanbiroTask': typeof protectedHanbiroTaskRoute
   '/hashId': typeof protectedHashIdRoute
   '/icon': typeof protectedIconRoute
+  '/motion-detector': typeof publicMotionDetectorRoute
   '/music': typeof publicMusicRoute
   '/network': typeof publicNetworkRoute
   '/demo/button': typeof protectedDemoButtonRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByTo {
   '/hanbiroTask': typeof protectedHanbiroTaskRoute
   '/hashId': typeof protectedHashIdRoute
   '/icon': typeof protectedIconRoute
+  '/motion-detector': typeof publicMotionDetectorRoute
   '/music': typeof publicMusicRoute
   '/network': typeof publicNetworkRoute
   '/demo/button': typeof protectedDemoButtonRoute
@@ -250,6 +258,7 @@ export interface FileRoutesById {
   '/(protected)/hanbiroTask': typeof protectedHanbiroTaskRoute
   '/(protected)/hashId': typeof protectedHashIdRoute
   '/(protected)/icon': typeof protectedIconRoute
+  '/(public)/motion-detector': typeof publicMotionDetectorRoute
   '/(public)/music': typeof publicMusicRoute
   '/(public)/network': typeof publicNetworkRoute
   '/(protected)/demo/button': typeof protectedDemoButtonRoute
@@ -279,6 +288,7 @@ export interface FileRouteTypes {
     | '/hanbiroTask'
     | '/hashId'
     | '/icon'
+    | '/motion-detector'
     | '/music'
     | '/network'
     | '/demo/button'
@@ -305,6 +315,7 @@ export interface FileRouteTypes {
     | '/hanbiroTask'
     | '/hashId'
     | '/icon'
+    | '/motion-detector'
     | '/music'
     | '/network'
     | '/demo/button'
@@ -335,6 +346,7 @@ export interface FileRouteTypes {
     | '/(protected)/hanbiroTask'
     | '/(protected)/hashId'
     | '/(protected)/icon'
+    | '/(public)/motion-detector'
     | '/(public)/music'
     | '/(public)/network'
     | '/(protected)/demo/button'
@@ -411,6 +423,13 @@ declare module '@tanstack/react-router' {
       path: '/music'
       fullPath: '/music'
       preLoaderRoute: typeof publicMusicRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
+    '/(public)/motion-detector': {
+      id: '/(public)/motion-detector'
+      path: '/motion-detector'
+      fullPath: '/motion-detector'
+      preLoaderRoute: typeof publicMotionDetectorRouteImport
       parentRoute: typeof publicRouteRoute
     }
     '/(protected)/icon': {
@@ -642,12 +661,14 @@ const publicemptyLayoutRouteRouteWithChildren =
 
 interface publicRouteRouteChildren {
   publicemptyLayoutRouteRoute: typeof publicemptyLayoutRouteRouteWithChildren
+  publicMotionDetectorRoute: typeof publicMotionDetectorRoute
   publicMusicRoute: typeof publicMusicRoute
   publicNetworkRoute: typeof publicNetworkRoute
 }
 
 const publicRouteRouteChildren: publicRouteRouteChildren = {
   publicemptyLayoutRouteRoute: publicemptyLayoutRouteRouteWithChildren,
+  publicMotionDetectorRoute: publicMotionDetectorRoute,
   publicMusicRoute: publicMusicRoute,
   publicNetworkRoute: publicNetworkRoute,
 }
