@@ -19,6 +19,7 @@ import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import type { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
+import { useMutationTransaction } from '@/shared/api/financial/transaction/transaction.mutation'
 
 const { useBreakpoint } = Grid
 
@@ -48,6 +49,8 @@ export function Transactions() {
       page,
     },
   })
+
+  const { mTransaction_Delete } = useMutationTransaction()
 
   useEffect(() => {
     if (dataTransaction?.data) {
@@ -156,6 +159,18 @@ export function Transactions() {
     setViewTransactionId(transaction.id)
   }
 
+  const handleDeleteTransaction = (transactionId: number) => {
+    mTransaction_Delete.mutate(
+      { pathParams: { id: transactionId } },
+      {
+        onSuccess: () => {
+          // Refetch the transaction list after deletion
+          router.navigate({ to: '/financial/transaction' })
+        },
+      },
+    )
+  }
+
   const navigateToCreate = () => {
     router.navigate({ to: '/financial/transaction/create' })
   }
@@ -231,6 +246,7 @@ export function Transactions() {
         onViewDetail={handleViewDetail}
         pagination={pageData}
         onPageChange={(newPage) => setPage(newPage)}
+        onDelete={handleDeleteTransaction}
       />
 
       {/* 4. Search & Active Filters */}

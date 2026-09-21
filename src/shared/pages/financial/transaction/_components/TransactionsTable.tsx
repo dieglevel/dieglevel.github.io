@@ -1,6 +1,6 @@
 import React from 'react'
-import { Button, Card, Flex, Table, Tag, Typography } from 'antd'
-import { EyeOutlined } from '@ant-design/icons'
+import { Button, Card, Flex, Popconfirm, Table, Tag, Typography } from 'antd'
+import { DeleteOutlined, EyeOutlined } from '@ant-design/icons'
 import { useNavigate } from '@tanstack/react-router'
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table'
 import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
@@ -23,6 +23,7 @@ interface TransactionsTableProps {
   onViewDetail: (transaction: IFinance_Transaction) => void
   pagination?: TablePaginationConfig
   onPageChange: (newPage: number) => void
+  onDelete: (transactionId: number) => void
 }
 
 export const TransactionsTable: React.FC<TransactionsTableProps> = ({
@@ -33,6 +34,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
   onViewDetail,
   pagination,
   onPageChange,
+  onDelete,
 }) => {
   const navigate = useNavigate()
 
@@ -197,14 +199,35 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       width: 70,
       align: 'center',
       render: (_, record) => (
-        <Button
-          type="text"
-          icon={<EyeOutlined />}
-          onClick={(e) => {
-            e.stopPropagation()
-            onViewDetail(record)
-          }}
-        />
+        <Flex align="center" justify="center">
+          <Button
+            type="text"
+            icon={<EyeOutlined />}
+            onClick={(e) => {
+              e.stopPropagation()
+              onViewDetail(record)
+            }}
+          />
+          <Popconfirm
+            title="Xóa Transaction"
+            description="Bạn có chắc chắn muốn xóa cái này?"
+            onConfirm={(e) => {
+              e?.stopPropagation()
+              onDelete(record.id)
+            }}
+            onCancel={(e) => e?.stopPropagation()}
+            okText="Có"
+            cancelText="Không"
+          >
+            <Button
+              type="text"
+              danger
+              size="small"
+              icon={<DeleteOutlined />}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </Popconfirm>
+        </Flex>
       ),
     },
   ]
