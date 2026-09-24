@@ -1,4 +1,5 @@
 import { categoryKeys } from './category.keys'
+import type dayjs from 'dayjs'
 import type { UseQueryOptions } from '@tanstack/react-query'
 import type { IFinance_Category } from './category.type'
 import type { ApiBaseResponse } from '@/shared/types/base-response'
@@ -6,6 +7,10 @@ import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 
 // Get<Example><Type>Params
 export interface GetFinance_Category_List_Params {
+  queryParams?: {
+    amountMonth?: dayjs.Dayjs | string | Date
+  }
+
   options?: Omit<
     UseQueryOptions<ApiBaseResponse<Array<IFinance_Category>>>,
     'queryKey' | 'queryFn'
@@ -18,9 +23,10 @@ export const useGetFinance_Category_List = (
 ) =>
   useQueryGet<
     ApiBaseResponse<Array<IFinance_Category>>,
-    '/financial-category/all'
+    '/financial-category/list'
   >({
-    endPoint: `/financial-category/all`,
+    endPoint: `/financial-category/list`,
     queryKey: categoryKeys.list(),
+    queryParams: props.queryParams,
     ...props,
   })

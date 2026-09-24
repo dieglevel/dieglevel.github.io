@@ -19,8 +19,8 @@ class FinancialDebtDirectionHelperImpl extends BaseEnumHelper<FINANCIAL_DEBT_DIR
   }
 
   protected readonly labelMap: Record<FINANCIAL_DEBT_DIRECTION_ENUM, string> = {
-    [FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING]: 'Đi vay (Nợ phải trả)',
-    [FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING]: 'Cho vay (Nợ phải thu)',
+    [FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING]: 'Cho vay (Nợ phải thu)',
+    [FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING]: 'Đi vay (Nợ phải trả)',
   }
 }
 

@@ -14,6 +14,7 @@ import {
 } from 'antd'
 import {
   CheckCircle2,
+  Eraser,
   History,
   Pencil,
   Receipt,
@@ -47,6 +48,7 @@ interface DebtTableProps {
   onSettle: (id: number) => Promise<void>
   onCancel: (id: number) => Promise<void>
   onDelete: (id: number) => Promise<void>
+  onOpenCorrect: (debt: IFinance_Debt) => void
 }
 
 export const DebtTable: React.FC<DebtTableProps> = ({
@@ -60,6 +62,7 @@ export const DebtTable: React.FC<DebtTableProps> = ({
   onSettle,
   onCancel,
   onDelete,
+  onOpenCorrect,
 }) => {
   const columns: ColumnsType<IFinance_Debt> = [
     {
@@ -187,8 +190,8 @@ export const DebtTable: React.FC<DebtTableProps> = ({
       render: (_, record) => {
         const isOverdue =
           record.status === FINANCIAL_DEBT_STATUS_ENUM.ACTIVE &&
-          record.dueDate &&
-          dayjs().isAfter(dayjs(record.dueDate))
+          !!record.dueDate &&
+          dayjs().isAfter(dayjs(record.dueDate), 'day')
 
         return (
           <div style={{ fontSize: 12 }}>
@@ -262,6 +265,14 @@ export const DebtTable: React.FC<DebtTableProps> = ({
                   />
                 </Tooltip>
 
+                <Tooltip title="Sửa số tiền gốc (nhập nhầm)">
+                  <Button
+                    size="small"
+                    icon={<Eraser size={14} />}
+                    onClick={() => onOpenCorrect(record)}
+                  />
+                </Tooltip>
+
                 <Tooltip title="Tất toán / Miễn nợ">
                   <Popconfirm
                     title="Xác nhận tất toán khoản nợ này?"
@@ -281,7 +292,7 @@ export const DebtTable: React.FC<DebtTableProps> = ({
                 <Tooltip title="Hủy bỏ">
                   <Popconfirm
                     title="Xác nhận hủy khoản nợ?"
-                    description="Khoản nợ sẽ bị đánh dấu hủy."
+                    description="Khoản nợ sẽ bị đánh dấu hủy. Số dư ví đã thay đổi trước đó không được hoàn lại."
                     onConfirm={() => onCancel(record.id)}
                     okText="Hủy khoản nợ"
                     cancelText="Quay lại"
@@ -302,7 +313,7 @@ export const DebtTable: React.FC<DebtTableProps> = ({
 
             <Popconfirm
               title="Xóa khoản nợ này?"
-              description="Hành động này sẽ xóa hoàn toàn bản ghi khoản nợ."
+              description="Xóa toàn bộ khoản nợ và lịch sử. Số dư ví đã thay đổi không được hoàn lại."
               onConfirm={() => onDelete(record.id)}
               okText="Xóa"
               cancelText="Hủy"

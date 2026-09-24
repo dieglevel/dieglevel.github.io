@@ -8,7 +8,7 @@ import type {
   UpsertFinanceTransactionItemDto,
 } from '@/shared/api/financial/transaction/transaction.mutation'
 import { useMutationTransaction } from '@/shared/api/financial/transaction/transaction.mutation'
-import { useGetFinance_Category_Count } from '@/shared/api/financial/category/useGetFinance_Category_Count'
+import { useGetFinance_Category_List } from '@/shared/api/financial/category/useGetFinance_Category_List'
 import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
 import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 import { useGetFinance_Transaction_View } from '@/shared/api/financial/transaction/useGetFinance_Transaction_View'
@@ -50,7 +50,7 @@ export function useTransactionUpsertForm({
 
   const { data: wallets, isLoading: isLoadingWallets } =
     useGetFinance_Wallet_List({})
-  const { data: categories } = useGetFinance_Category_Count({})
+  const { data: categories } = useGetFinance_Category_List({})
   const { data: originalTransactions, isLoading: isLoadingOriginal } =
     useGetFinance_Transaction_List({})
 

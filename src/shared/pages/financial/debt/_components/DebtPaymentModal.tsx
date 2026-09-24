@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
   Card,
+  DatePicker,
   Descriptions,
   Divider,
   Flex,
@@ -9,29 +10,20 @@ import {
   InputNumber,
   Modal,
   Select,
-  Table,
   Tabs,
-  Tag,
   Typography,
 } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
-
-import type {
-  IFinance_Debt,
-  IFinance_DebtHistory,
-} from '@/shared/api/financial/debt/debt.type'
+import dayjs from 'dayjs'
+import { DebtHistoryTable } from './DebtHistoryTable'
+import type { IFinance_Debt } from '@/shared/api/financial/debt/debt.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
-import {
-  FINANCIAL_DEBT_DIRECTION_ENUM,
-  FinancialDebtHistoryTypeHelper,
-} from '@/shared/api/financial/debt/debt.enum'
-import { useGetFinance_Debt_Histories } from '@/shared/api/financial/debt/useGetDebtHistories'
+import { FINANCIAL_DEBT_DIRECTION_ENUM } from '@/shared/api/financial/debt/debt.enum'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
-import { DayjsHelper } from '@/shared/utils/helper/dayjs'
 import { InputWithComma } from '@/shared/components/input/utils'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 
 const { Text } = Typography
+const mono = "'JetBrains Mono', monospace"
 
 interface DebtPaymentModalProps {
   open: boolean
@@ -53,49 +45,30 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
   const [form] = Form.useForm()
   const [activeTabKey, setActiveTabKey] = useState<string>('payment')
 
-  const watch = Form.useWatch([], form)
-  console.log('watch', watch)
-
-  const paymentAmount = Form.useWatch('amount', form) || 0
+  const paymentAmount = Number(Form.useWatch('amount', form) || 0)
   const selectedWalletId = Form.useWatch('walletId', form)
 
-  if (!debt) {
-    return null
-  }
-
-  // Load Lịch sử khoản nợ
-  const { data: historyResponse, isLoading: isLoadingHistory } =
-    useGetFinance_Debt_Histories({
-      id: debt.id,
-    })
-  const histories = historyResponse?.data || []
-
   useEffect(() => {
-    if (open) {
+    if (open && debt) {
       form.resetFields()
       form.setFieldsValue({
         amount: Number(debt.outstandingAmount),
+        occurredAt: dayjs(),
       })
       setActiveTabKey('payment')
     }
   }, [open, debt, form])
 
+  if (!debt) return null
+
   const isIncoming = debt.direction === FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING
   const selectedWallet = wallets.find((w) => w.id === selectedWalletId)
 
-  // Tính toán Dư nợ còn lại
-  const paymentAmountNumber = Number(paymentAmount || 0)
-  const remainingDebt = Math.max(
-    0,
-    debt.outstandingAmount - paymentAmountNumber,
-  )
-
-  // Tính toán biến động ví
-  const currentWalletBalance = selectedWallet
-    ? Number(selectedWallet.balance || 0)
-    : 0
-  const walletChange = isIncoming ? paymentAmountNumber : -paymentAmountNumber
-  const projectedWalletBalance = currentWalletBalance + walletChange
+  const remainingDebt = Math.max(0, debt.outstandingAmount - paymentAmount)
+  const currentBalance = Number(selectedWallet?.balance || 0)
+  const projectedBalance =
+    currentBalance + (isIncoming ? paymentAmount : -paymentAmount)
+  const insufficient = !!selectedWallet && !isIncoming && projectedBalance < 0
 
   const walletOptions = wallets.map((w) => ({
     value: w.id,
@@ -116,81 +89,25 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
   }))
 
   const handleFinish = async (values: any) => {
-    await onSubmit(values)
+    await onSubmit({
+      ...values,
+      occurredAt: values.occurredAt.format('YYYY-MM-DD'),
+      walletId: values.walletId ?? undefined,
+    })
   }
 
-  // Columns cho bảng Lịch sử
-  const historyColumns: ColumnsType<IFinance_DebtHistory> = [
-    {
-      title: 'Thời gian',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      width: 140,
-      render: (date: string) => (
-        <Text
-          type="secondary"
-          style={{ fontSize: 11, fontFamily: 'monospace' }}
-        >
-          {DayjsHelper.formatDate(date, 'DD/MM/YYYY HH:mm')}
-        </Text>
-      ),
-    },
-    {
-      title: 'Hành động',
-      dataIndex: 'type',
-      key: 'type',
-      width: 130,
-      render: (type) => (
-        <Tag color={FinancialDebtHistoryTypeHelper.getColor(type)}>
-          {FinancialDebtHistoryTypeHelper.getLabel(type)}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Số tiền tác động',
-      dataIndex: 'amount',
-      key: 'amount',
-      align: 'right',
-      render: (val: number) => (
-        <Text strong style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-          {convertCurrency(val || 0)}
-        </Text>
-      ),
-    },
-    {
-      title: 'Dư nợ còn lại',
-      key: 'outstandingAmount',
-      align: 'right',
-      render: (_, record) => (
-        <Text strong style={{ color: '#1677ff', fontFamily: 'monospace' }}>
-          {convertCurrency(record.outstandingAmount)}
-        </Text>
-      ),
-    },
-    {
-      title: 'Ghi chú',
-      dataIndex: 'note',
-      key: 'note',
-      ellipsis: true,
-      render: (note: string) => note || <Text type="secondary">-</Text>,
-    },
-  ]
+  const isPaymentTab = activeTabKey === 'payment'
 
   return (
     <Modal
       title={isIncoming ? 'Thu hồi nợ (Nhận tiền)' : 'Thanh toán nợ (Trả tiền)'}
       open={open}
       onCancel={onClose}
-      onOk={() => {
-        if (activeTabKey === 'payment') {
-          form.submit()
-        } else {
-          onClose()
-        }
-      }}
-      okText={activeTabKey === 'payment' ? 'Xác nhận thanh toán' : 'Đóng'}
+      onOk={() => (isPaymentTab ? form.submit() : onClose())}
+      okText={isPaymentTab ? 'Xác nhận' : 'Đóng'}
+      okButtonProps={{ disabled: isPaymentTab && insufficient }}
       destroyOnClose
-      width={680}
+      width={720}
       centered
     >
       <Tabs
@@ -199,23 +116,19 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
         items={[
           {
             key: 'payment',
-            label: `Thực hiện ${isIncoming ? 'thu nợ' : 'thanh toán'}`,
+            label: isIncoming ? 'Thực hiện thu nợ' : 'Thực hiện thanh toán',
           },
-          {
-            key: 'history',
-            label: `Lịch sử biến động (${histories.length})`,
-          },
+          { key: 'history', label: 'Lịch sử biến động' },
         ]}
       />
 
-      {activeTabKey === 'payment' ? (
+      {isPaymentTab ? (
         <Form
           form={form}
           layout="vertical"
           onFinish={handleFinish}
           style={{ marginTop: 8 }}
         >
-          {/* Tóm tắt thông tin khoản nợ */}
           <Card
             size="small"
             style={{ backgroundColor: '#fafafa', marginBottom: 16 }}
@@ -235,103 +148,46 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
             </Descriptions>
           </Card>
 
-          {/* Chọn Ví */}
-          <Form.Item
-            name="walletId"
-            label="Ví giao dịch"
-            rules={[{ required: true, message: 'Vui lòng chọn ví' }]}
-          >
-            <Select
-              placeholder="Chọn ví thanh toán / nhận tiền"
-              loading={isLoadingWallets}
-              options={walletOptions}
-            />
-          </Form.Item>
-
-          {/* Hiển thị biến động Ví nếu đã chọn Ví */}
-          {selectedWallet && (
-            <Card
-              size="small"
-              style={{
-                marginBottom: 16,
-                backgroundColor: isIncoming ? '#f6ffed' : '#fff2f0',
-                borderColor: isIncoming ? '#b7eb8f' : '#ffccc7',
-              }}
+          <Flex gap={12} wrap>
+            <Form.Item
+              name="occurredAt"
+              label="Ngày giao dịch"
+              style={{ flex: 1, minWidth: 180 }}
+              rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}
             >
-              <Flex vertical gap={6}>
-                <Flex justify="space-between" align="center">
-                  <Text type="secondary" style={{ fontSize: 13 }}>
-                    Số dư ví hiện tại ({selectedWallet.name}):
-                  </Text>
-                  <Text
-                    strong
-                    style={{ fontFamily: "'JetBrains Mono', monospace" }}
-                  >
-                    {convertCurrency(currentWalletBalance)}
-                  </Text>
-                </Flex>
+              <DatePicker
+                style={{ width: '100%' }}
+                format="DD/MM/YYYY"
+                allowClear={false}
+                disabledDate={(d) => d.isBefore(dayjs(debt.startDate), 'day')}
+              />
+            </Form.Item>
 
-                {paymentAmountNumber > 0 && (
-                  <>
-                    <Flex justify="space-between" align="center">
-                      <Text type="secondary" style={{ fontSize: 13 }}>
-                        Biến động ví (
-                        {isIncoming ? 'Cộng tiền thu nợ' : 'Trừ tiền trả nợ'}):
-                      </Text>
-                      <Text
-                        strong
-                        style={{
-                          fontSize: 14,
-                          color: isIncoming ? '#52c41a' : '#ff4d4f',
-                          fontFamily: "'JetBrains Mono', monospace",
-                        }}
-                      >
-                        {isIncoming ? '+' : '-'}
-                        {convertCurrency(paymentAmountNumber)}
-                      </Text>
-                    </Flex>
+            <Form.Item
+              name="walletId"
+              label="Ví (không bắt buộc)"
+              style={{ flex: 2, minWidth: 220 }}
+              tooltip="Bỏ trống nếu không muốn thay đổi số dư ví."
+            >
+              <Select
+                allowClear
+                placeholder="Không dùng ví (chỉ ghi sổ)"
+                loading={isLoadingWallets}
+                options={walletOptions}
+              />
+            </Form.Item>
+          </Flex>
 
-                    <Divider style={{ margin: '4px 0' }} dashed />
-
-                    <Flex justify="space-between" align="center">
-                      <Text strong style={{ fontSize: 13 }}>
-                        Số dư ví dự kiến sau giao dịch:
-                      </Text>
-                      <Text
-                        strong
-                        style={{
-                          fontSize: 15,
-                          color:
-                            !isIncoming && projectedWalletBalance < 0
-                              ? '#dc2626'
-                              : '#1677ff',
-                          fontFamily: "'JetBrains Mono', monospace",
-                        }}
-                      >
-                        {convertCurrency(projectedWalletBalance)}
-                      </Text>
-                    </Flex>
-                  </>
-                )}
-              </Flex>
-            </Card>
-          )}
-
-          {/* Số tiền thanh toán */}
           <Form.Item
             name="amount"
-            label="Số tiền thanh toán"
+            label="Số tiền"
             rules={[
               { required: true, message: 'Vui lòng nhập số tiền' },
-              {
-                type: 'number',
-                min: 0.01,
-                message: 'Số tiền phải lớn hơn 0',
-              },
+              { type: 'number', min: 0.01, message: 'Số tiền phải lớn hơn 0' },
               {
                 type: 'number',
                 max: debt.outstandingAmount,
-                message: 'Số tiền không được vượt quá dư nợ còn lại',
+                message: 'Không được vượt quá dư nợ còn lại',
               },
             ]}
           >
@@ -343,7 +199,64 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
             />
           </Form.Item>
 
-          {/* Preview dư nợ còn lại của Khoản nợ */}
+          {selectedWallet && paymentAmount > 0 && (
+            <Card
+              size="small"
+              style={{
+                marginBottom: 16,
+                backgroundColor: isIncoming ? '#f6ffed' : '#fff2f0',
+                borderColor: isIncoming ? '#b7eb8f' : '#ffccc7',
+              }}
+            >
+              <Flex vertical gap={6}>
+                <Flex justify="space-between">
+                  <Text type="secondary" style={{ fontSize: 13 }}>
+                    Số dư ví ({selectedWallet.name}):
+                  </Text>
+                  <Text strong style={{ fontFamily: mono }}>
+                    {convertCurrency(currentBalance)}
+                  </Text>
+                </Flex>
+                <Flex justify="space-between">
+                  <Text type="secondary" style={{ fontSize: 13 }}>
+                    Biến động ví ({isIncoming ? 'nhận tiền' : 'trả tiền'}):
+                  </Text>
+                  <Text
+                    strong
+                    style={{
+                      color: isIncoming ? '#52c41a' : '#ff4d4f',
+                      fontFamily: mono,
+                    }}
+                  >
+                    {isIncoming ? '+' : '-'}
+                    {convertCurrency(paymentAmount)}
+                  </Text>
+                </Flex>
+                <Divider style={{ margin: '4px 0' }} dashed />
+                <Flex justify="space-between">
+                  <Text strong style={{ fontSize: 13 }}>
+                    Số dư ví dự kiến:
+                  </Text>
+                  <Text
+                    strong
+                    style={{
+                      fontSize: 15,
+                      color: insufficient ? '#dc2626' : '#1677ff',
+                      fontFamily: mono,
+                    }}
+                  >
+                    {convertCurrency(projectedBalance)}
+                  </Text>
+                </Flex>
+                {insufficient && (
+                  <Text type="danger" style={{ fontSize: 12 }}>
+                    Số dư ví không đủ.
+                  </Text>
+                )}
+              </Flex>
+            </Card>
+          )}
+
           <Card
             size="small"
             style={{
@@ -353,39 +266,31 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
             }}
           >
             <Flex justify="space-between" align="center">
-              <Text type="secondary">Dư nợ khoản nợ còn lại:</Text>
+              <Text type="secondary">Dư nợ còn lại sau giao dịch:</Text>
               <Text
                 strong
                 style={{
                   color: remainingDebt === 0 ? '#52c41a' : '#1677ff',
                   fontSize: 15,
-                  fontFamily: "'JetBrains Mono', monospace",
+                  fontFamily: mono,
                 }}
               >
                 {convertCurrency(remainingDebt)}{' '}
-                {remainingDebt === 0 ? '(Hoàn tất nợ)' : ''}
+                {remainingDebt === 0 && '(Hoàn tất nợ)'}
               </Text>
             </Flex>
           </Card>
 
-          <Form.Item name="note" label="Ghi chú thanh toán">
+          <Form.Item name="note" label="Ghi chú">
             <Input.TextArea
               rows={2}
-              placeholder="Nội dung/ghi chú thanh toán..."
+              maxLength={500}
+              placeholder="Nội dung/ghi chú..."
             />
           </Form.Item>
         </Form>
       ) : (
-        /* Tab Lịch sử biến động khoản nợ */
-        <Table<IFinance_DebtHistory>
-          rowKey="id"
-          loading={isLoadingHistory}
-          columns={historyColumns}
-          dataSource={histories}
-          pagination={{ pageSize: 5, showSizeChanger: false }}
-          size="small"
-          style={{ marginTop: 12 }}
-        />
+        <DebtHistoryTable debtId={debt.id} />
       )}
     </Modal>
   )

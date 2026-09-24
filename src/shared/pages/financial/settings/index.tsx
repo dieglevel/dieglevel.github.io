@@ -52,8 +52,8 @@ export function Settings() {
   })
 
   return (
-    <Flex flex={1} style={{ maxWidth: 680, margin: '0 auto', padding: 24 }}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+    <Flex flex={1} style={{ minWidth: 320, width: 'auto', padding: 24 }}>
+      <Space vertical size="large" style={{ width: '100%' }}>
         {/* Header */}
         <div>
           <Title level={2} style={{ marginBottom: 4 }}>
@@ -84,7 +84,7 @@ export function Settings() {
         {/* Footer info */}
         <div style={{ textAlign: 'center', paddingTop: 12 }}>
           <Text type="secondary" style={{ fontSize: 12 }}>
-            FinanceOS v2.0.1 · Built with ♥ for your financial freedom
+            FinanceOS v0.1 · Control your money, control your life.
           </Text>
         </div>
       </Space>

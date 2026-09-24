@@ -1,5 +1,15 @@
 import React, { useEffect } from 'react'
-import { Card, Flex, Form, Input, InputNumber, Modal, Typography } from 'antd'
+import {
+  Card,
+  DatePicker,
+  Flex,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Typography /* thêm */,
+} from 'antd'
+import dayjs from 'dayjs'
 import type { IFinance_Debt } from '@/shared/api/financial/debt/debt.type'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { InputWithComma } from '@/shared/components/input/utils'
@@ -24,9 +34,9 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
 
   useEffect(() => {
     if (open && debt) {
-      form.resetFields()
       form.setFieldsValue({
-        outstandingAmount: debt.outstandingAmount,
+        outstandingAmount: Number(debt.outstandingAmount),
+        occurredAt: dayjs(),
       })
     }
   }, [open, debt, form])
@@ -36,7 +46,10 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
   const diff = Number(newOutstandingAmount ?? 0) - debt.outstandingAmount
 
   const handleFinish = async (values: any) => {
-    await onSubmit(values)
+    await onSubmit({
+      ...values,
+      occurredAt: values.occurredAt.format('YYYY-MM-DD'),
+    })
   }
 
   return (
@@ -105,6 +118,17 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
             </Flex>
           </Card>
         )}
+        <Form.Item
+          name="occurredAt"
+          label="Ngày điều chỉnh"
+          rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}
+        >
+          <DatePicker
+            style={{ width: '100%' }}
+            format="DD/MM/YYYY"
+            allowClear={false}
+          />
+        </Form.Item>
 
         <Form.Item
           name="note"

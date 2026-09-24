@@ -6,6 +6,7 @@ import type {
   FINANCIAL_DEBT_STATUS_ENUM,
   FINANCIAL_DEBT_TYPE_ENUM,
 } from './debt.enum'
+import type { IFinance_Wallet } from '../wallet/wallet.type'
 
 export interface IFinance_Debt extends IBaseEntity {
   name: string
@@ -19,7 +20,7 @@ export interface IFinance_Debt extends IBaseEntity {
   note?: string | null
   accountId: number
   account?: User
-  startDate: string | Date
+  startDate: string // 'YYYY-MM-DD'
 }
 
 export interface IFinance_DebtHistory extends IBaseEntity {
@@ -29,6 +30,9 @@ export interface IFinance_DebtHistory extends IBaseEntity {
   previousOutstandingAmount: number
   outstandingAmount: number
   note?: string | null
+  occurredAt: string // 'YYYY-MM-DD'
+  walletId?: number | null
+  wallet?: IFinance_Wallet | null
 }
 
 export interface IFinance_DebtPayment_Request {

@@ -33,7 +33,7 @@ export const SettingsAppearance: React.FC<Props> = ({ isDark, toggleDark }) => {
           }
         >
           <List.Item.Meta
-            title="Color Theme"
+            title="Dark Mode"
             description={
               <Text type="secondary">
                 Switch between light and dark interface

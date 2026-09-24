@@ -17,6 +17,11 @@ import type { TablePaginationConfig, TabsProps } from 'antd'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import type { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
+import {
+  FINANCIAL_TRANSACTION_STATUS,
+  FinancialTransactionStatusHelper,
+} from '@/shared/api/financial/wallet/wallet.enum'
+import { FinancialTransactionTypeHelper } from '@/shared/api/financial/transaction/transaction.enum'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
 import { useMutationTransaction } from '@/shared/api/financial/transaction/transaction.mutation'
@@ -25,12 +30,14 @@ const { useBreakpoint } = Grid
 
 const tabsData: TabsProps['items'] = [
   { key: 'all', label: 'Tất cả' },
-  { key: 'income', label: 'Thu nhập' },
-  { key: 'expense', label: 'Chi tiêu' },
-  { key: 'transfer', label: 'Chuyển khoản' },
-  { key: 'refund', label: 'Hoàn tiền' },
-  { key: 'adjustment', label: 'Điều chỉnh' },
-  { key: 'pending', label: 'Đang chờ' },
+  ...FinancialTransactionTypeHelper.getOptions().map((option) => ({
+    key: option.value,
+    label: option.label,
+  })),
+  ...FinancialTransactionStatusHelper.getOptions().map((option) => ({
+    key: option.value,
+    label: option.label,
+  })),
 ]
 
 export function Transactions() {
@@ -63,7 +70,9 @@ export function Transactions() {
   }, [dataTransaction])
   const transactions = dataTransaction?.data.data || []
 
-  const [activeTab, setActiveTab] = useState('all')
+  const [activeTab, setActiveTab] = useState<
+    'all' | FINANCIAL_TRANSACTION_TYPE | FINANCIAL_TRANSACTION_STATUS
+  >('all')
 
   // State Bộ lọc & Tìm kiếm
   const [search, setSearch] = useState('')
@@ -147,7 +156,7 @@ export function Transactions() {
   // Sub-filtering by active tab
   const tabFilteredTransactions = useMemo(() => {
     if (activeTab === 'all') return filtered
-    if (activeTab === 'pending') {
+    if (activeTab === FINANCIAL_TRANSACTION_STATUS.PENDING) {
       return filtered.filter((t) => t.status.toLowerCase() === 'pending')
     }
     return filtered.filter(
@@ -199,7 +208,14 @@ export function Transactions() {
       <Tabs
         items={tabsData}
         activeKey={activeTab}
-        onChange={setActiveTab}
+        onChange={(activeKey) => {
+          setActiveTab(
+            activeKey as
+              | 'all'
+              | FINANCIAL_TRANSACTION_TYPE
+              | FINANCIAL_TRANSACTION_STATUS,
+          )
+        }}
         tabBarExtraContent={{
           right: (
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>

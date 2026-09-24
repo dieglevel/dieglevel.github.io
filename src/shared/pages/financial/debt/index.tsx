@@ -8,14 +8,15 @@ import { DebtCreateModal } from './_components/DebtCreateModal'
 import { DebtPaymentModal } from './_components/DebtPaymentModal'
 import { DebtAdjustModal } from './_components/DebtAdjustModal'
 import { DebtHistoryModal } from './_components/DebtHistoryModal'
+import { DebtCorrectModal } from './_components/DebtCorrectModal'
 import type { IFinance_Debt } from '@/shared/api/financial/debt/debt.type'
 import {
   FINANCIAL_DEBT_DIRECTION_ENUM,
   FINANCIAL_DEBT_STATUS_ENUM,
 } from '@/shared/api/financial/debt/debt.enum'
-import { useMutationFinanceDebt } from '@/shared/api/financial/debt/useMutationDebt'
+import { useMutationFinanceDebt } from '@/shared/api/financial/debt/debt.mutation'
 import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
-import { useGetFinance_Debt_List } from '@/shared/api/financial/debt/useGetDebtList'
+import { useGetFinance_Debt_List } from '@/shared/api/financial/debt/useGetFinance_Debt_List'
 
 const { useBreakpoint } = Grid
 
@@ -38,6 +39,7 @@ export const DebtManagementPage: React.FC = () => {
     mDebt_Adjust,
     mDebt_Settle,
     mDebt_Cancel,
+    mDebt_Correct,
   } = useMutationFinanceDebt()
 
   // Local States
@@ -49,18 +51,11 @@ export const DebtManagementPage: React.FC = () => {
   const [isPaymentOpen, setIsPaymentOpen] = useState(false)
   const [isAdjustOpen, setIsAdjustOpen] = useState(false)
   const [isHistoryOpen, setIsHistoryOpen] = useState(false)
+  const [isCorrectOpen, setIsCorrectOpen] = useState(false)
 
   // Handlers
   const handleCreate = async (values: any) => {
-    const payload = {
-      ...values,
-      startDate: values.startDate
-        ? values.startDate.toISOString()
-        : new Date().toISOString(),
-      dueDate: values.dueDate ? values.dueDate.toISOString() : null,
-      status: FINANCIAL_DEBT_STATUS_ENUM.ACTIVE,
-    }
-    await mDebt_Create.mutateAsync({ body: payload })
+    await mDebt_Create.mutateAsync({ body: values })
     setIsCreateOpen(false)
   }
 
@@ -102,6 +97,15 @@ export const DebtManagementPage: React.FC = () => {
     })
   }
 
+  const handleCorrect = async (values: any) => {
+    if (!selectedDebt) return
+    await mDebt_Correct.mutateAsync({
+      pathParams: { id: String(selectedDebt.id) },
+      body: values,
+    })
+    setIsCorrectOpen(false)
+  }
+
   // Filtered debts by active tab
   const filteredDebts = useMemo(() => {
     return debts.filter((item) => {
@@ -122,7 +126,7 @@ export const DebtManagementPage: React.FC = () => {
 
   return (
     <Space
-      direction="vertical"
+      vertical
       size="middle"
       style={{
         width: '100%',
@@ -164,6 +168,10 @@ export const DebtManagementPage: React.FC = () => {
         onSettle={handleSettle}
         onCancel={handleCancel}
         onDelete={handleDelete}
+        onOpenCorrect={(debt) => {
+          setSelectedDebt(debt)
+          setIsCorrectOpen(true)
+        }}
       />
 
       {/* 4. Modal: Tạo mới khoản nợ */}
@@ -204,6 +212,14 @@ export const DebtManagementPage: React.FC = () => {
           onClose={() => setIsHistoryOpen(false)}
         />
       )}
+
+      {/* 8. Modal: Chỉnh sửa số tiền gốc */}
+      <DebtCorrectModal
+        open={isCorrectOpen}
+        debt={selectedDebt}
+        onClose={() => setIsCorrectOpen(false)}
+        onSubmit={handleCorrect}
+      />
     </Space>
   )
 }

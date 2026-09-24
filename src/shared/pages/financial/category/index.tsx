@@ -1,13 +1,22 @@
 import { useMemo, useState } from 'react'
-import { Button, DatePicker, Flex, Spin, Tree, Typography } from 'antd'
+import {
+  Button,
+  DatePicker,
+  Flex,
+  Progress,
+  Spin,
+  Tree,
+  Typography,
+} from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 
 import dayjs from 'dayjs'
 import CategoryModal from './_components/CategoryModal'
 import CategoryTreeNode from './_components/CategoryTreeNode'
+import CategoryDetailModal from './_components/CategoryDetailModal'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import { useMutationFinanceCategory } from '@/shared/api/financial/category/category.mutation'
-import { useGetFinance_Category_Count } from '@/shared/api/financial/category/useGetFinance_Category_Count'
+import { useGetFinance_Category_List } from '@/shared/api/financial/category/useGetFinance_Category_List'
 
 const { Title, Text } = Typography
 
@@ -18,9 +27,9 @@ export interface ExtendedFinanceCategory extends IFinance_Category {
 export default function Categories() {
   const [selectedMonth, setSelectedMonth] = useState<dayjs.Dayjs>(dayjs())
 
-  const { data: apiResponse, isPending } = useGetFinance_Category_Count({
+  const { data: apiResponse, isPending } = useGetFinance_Category_List({
     queryParams: {
-      date: dayjs(selectedMonth).format('YYYY-MM'),
+      amountMonth: dayjs(selectedMonth).format('YYYY-MM'),
     },
   })
   const rawCategories: Array<ExtendedFinanceCategory> = apiResponse?.data || []
@@ -36,6 +45,10 @@ export default function Categories() {
   const [mode, setMode] = useState<'add' | 'edit'>('add')
   const [editing, setEditing] = useState<IFinance_Category | null>(null)
   const [selectedParentId, setSelectedParentId] = useState<number | null>(null)
+  const [detailModalCategoryId, setDetailModalCategoryId] = useState<
+    number | null
+  >(null)
+  const [detailModalOpen, setDetailModalOpen] = useState(false)
 
   // 0. Lọc bỏ các node con nằm ở Root Level (tránh trùng lặp do API trả về cả root lẫn children)
   const categories = useMemo(() => {
@@ -69,7 +82,7 @@ export default function Categories() {
 
     const calculateTotal = (nodes: Array<ExtendedFinanceCategory>) => {
       nodes.forEach((node) => {
-        if (!node.archived) {
+        if (!node.archived || node.id === 0) {
           budget += node.monthlyBudget ?? 0
           spent += node.totalAmount ?? 0
         }
@@ -109,6 +122,11 @@ export default function Categories() {
     setEditing(category)
     setSelectedParentId(null)
     setOpen(true)
+  }
+
+  function openDetail(categoryId: number) {
+    setDetailModalCategoryId(categoryId)
+    setDetailModalOpen(true)
   }
 
   function findCategoryById(
@@ -199,27 +217,31 @@ export default function Categories() {
         </div>
 
         <Flex gap={12} wrap="wrap" justify="center" align="center">
-          <Text type="secondary" style={{ fontSize: '13px' }}>
-            {`Total Budget: `}
-            <Text style={{ fontWeight: 'bold', color: 'red' }}>
-              {totalBudget.toLocaleString()}
-            </Text>
-          </Text>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => openAdd(null)}
-          >
-            Add Category
-          </Button>
-          <DatePicker
-            style={{ width: '180px' }}
-            picker="month"
-            value={selectedMonth}
-            onChange={(date) => {
-              setSelectedMonth(date ?? dayjs())
-            }}
-          />
+          <Flex flex={1} style={{ minWidth: 240 }}>
+            <Progress
+              percent={Math.floor(
+                totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0,
+              )}
+              strokeColor="red"
+            />
+          </Flex>
+          <Flex gap={8} justify="center" align="center">
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => openAdd(null)}
+            >
+              Add Category
+            </Button>
+            <DatePicker
+              style={{ width: '180px' }}
+              picker="month"
+              value={selectedMonth}
+              onChange={(date) => {
+                setSelectedMonth(date ?? dayjs())
+              }}
+            />
+          </Flex>
         </Flex>
       </Flex>
 
@@ -255,6 +277,7 @@ export default function Categories() {
                 onEdit={openEdit}
                 onArchive={archive}
                 onDelete={remove}
+                onDetail={openDetail}
               />
             )}
           />
@@ -273,6 +296,15 @@ export default function Categories() {
           setSelectedParentId(null)
         }}
         onSubmit={save}
+      />
+      <CategoryDetailModal
+        amountMonth={selectedMonth}
+        categoryId={detailModalCategoryId}
+        open={detailModalOpen}
+        onCancel={() => {
+          setDetailModalCategoryId(null)
+          setDetailModalOpen(false)
+        }}
       />
     </Flex>
   )

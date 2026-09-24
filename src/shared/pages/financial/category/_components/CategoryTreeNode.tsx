@@ -22,6 +22,7 @@ interface CategoryTreeNodeProps {
   onEdit: (category: IFinance_Category) => void
   onArchive: (id: number) => void
   onDelete: (id: number) => void
+  onDetail: (id: number) => void
 }
 
 export default function CategoryTreeNode({
@@ -30,6 +31,7 @@ export default function CategoryTreeNode({
   onEdit,
   onArchive,
   onDelete,
+  onDetail,
 }: CategoryTreeNodeProps) {
   const screens = useBreakpoint()
   const isMobile = !screens.md
@@ -257,6 +259,9 @@ export default function CategoryTreeNode({
         borderRadius: 8,
         transition: 'all 0.2s ease',
         opacity: node.archived ? 0.5 : 1,
+      }}
+      onClick={() => {
+        onDetail(node.id)
       }}
     >
       <Flex

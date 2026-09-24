@@ -26,6 +26,7 @@ import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const { Text } = Typography
+const DATE_FMT = 'YYYY-MM-DD'
 
 interface DebtCreateModalProps {
   open: boolean
@@ -79,19 +80,30 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
     ),
   }))
 
-  const handleFinish = async (values: any) => {
-    await onSubmit(values)
-  }
-
-  const isOutgoing =
+  // OUTGOING = mình nợ người khác → tiền VÀO ví
+  // INCOMING = người khác nợ mình → tiền RA khỏi ví
+  const isBorrowing =
     selectedDirection === FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING
-  const currentBalance = selectedWallet
-    ? Number(selectedWallet.balance || 0)
-    : 0
+  const currentBalance = Number(selectedWallet?.balance || 0)
   const amountNumber = Number(originalAmount || 0)
-  const projectedBalance = isOutgoing
-    ? currentBalance - amountNumber
-    : currentBalance + amountNumber
+  const walletChange = isBorrowing ? amountNumber : -amountNumber
+  const projectedBalance = currentBalance + walletChange
+  const insufficient = !!selectedWallet && projectedBalance < 0
+
+  const alertMessage = !selectedWallet
+    ? 'Chỉ ghi sổ nợ, không thay đổi số dư ví nào.'
+    : isBorrowing
+      ? 'Bạn đang đi vay: số tiền sẽ được cộng vào ví đã chọn.'
+      : 'Bạn cho vay: số tiền sẽ được trừ khỏi ví đã chọn.'
+
+  const handleFinish = async (values: any) => {
+    await onSubmit({
+      ...values,
+      startDate: values.startDate.format(DATE_FMT),
+      dueDate: values.dueDate ? values.dueDate.format(DATE_FMT) : undefined,
+      walletId: values.walletId ?? undefined,
+    })
+  }
 
   return (
     <Modal
@@ -99,6 +111,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
       open={open}
       onCancel={onClose}
       onOk={() => form.submit()}
+      okButtonProps={{ disabled: insufficient }}
       destroyOnClose
       width={600}
       centered
@@ -110,27 +123,24 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
         style={{ marginTop: 16 }}
       >
         <Alert
-          type={isOutgoing ? 'warning' : 'info'}
+          type={selectedWallet ? (isBorrowing ? 'info' : 'warning') : 'info'}
           showIcon
           style={{ marginBottom: 12 }}
-          message={
-            isOutgoing
-              ? 'Số tiền nợ sẽ được trừ trực tiếp từ ví đã chọn.'
-              : 'Số tiền nợ sẽ được cộng trực tiếp vào ví đã chọn.'
-          }
+          message={alertMessage}
+          description="Khoản nợ không tạo giao dịch nên không tính vào chi tiêu hằng tháng."
         />
 
-        {selectedWallet && (
+        {selectedWallet && amountNumber > 0 && (
           <Card
             size="small"
             style={{
               marginBottom: 16,
-              backgroundColor: isOutgoing ? '#fff2f0' : '#f6ffed',
-              borderColor: isOutgoing ? '#ffccc7' : '#b7eb8f',
+              backgroundColor: isBorrowing ? '#f6ffed' : '#fff2f0',
+              borderColor: isBorrowing ? '#b7eb8f' : '#ffccc7',
             }}
           >
             <Flex vertical gap={6}>
-              <Flex justify="space-between" align="center">
+              <Flex justify="space-between">
                 <Text type="secondary" style={{ fontSize: 13 }}>
                   Số dư ví hiện tại ({selectedWallet.name}):
                 </Text>
@@ -141,53 +151,43 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
                   {convertCurrency(currentBalance)}
                 </Text>
               </Flex>
-
-              {amountNumber > 0 && (
-                <>
-                  <Flex justify="space-between" align="center">
-                    <Text type="secondary" style={{ fontSize: 13 }}>
-                      Số tiền thay đổi ví khi tạo nợ:
-                    </Text>
-                    <Text
-                      strong
-                      style={{
-                        fontSize: 14,
-                        color: isOutgoing ? '#ff4d4f' : '#52c41a',
-                        fontFamily: "'JetBrains Mono', monospace",
-                      }}
-                    >
-                      {isOutgoing ? '-' : '+'}
-                      {convertCurrency(amountNumber)}
-                    </Text>
-                  </Flex>
-
-                  <Flex
-                    justify="space-between"
-                    align="center"
-                    style={{
-                      borderTop: '1px dashed #cbd5e1',
-                      paddingTop: 6,
-                      marginTop: 2,
-                    }}
-                  >
-                    <Text strong style={{ fontSize: 13 }}>
-                      Số dư dự kiến sau tạo nợ:
-                    </Text>
-                    <Text
-                      strong
-                      style={{
-                        fontSize: 15,
-                        color:
-                          isOutgoing && projectedBalance < 0
-                            ? '#dc2626'
-                            : '#1677ff',
-                        fontFamily: "'JetBrains Mono', monospace",
-                      }}
-                    >
-                      {convertCurrency(projectedBalance)}
-                    </Text>
-                  </Flex>
-                </>
+              <Flex justify="space-between">
+                <Text type="secondary" style={{ fontSize: 13 }}>
+                  Biến động ví:
+                </Text>
+                <Text
+                  strong
+                  style={{
+                    color: isBorrowing ? '#52c41a' : '#ff4d4f',
+                    fontFamily: "'JetBrains Mono', monospace",
+                  }}
+                >
+                  {isBorrowing ? '+' : '-'}
+                  {convertCurrency(amountNumber)}
+                </Text>
+              </Flex>
+              <Flex
+                justify="space-between"
+                style={{ borderTop: '1px dashed #cbd5e1', paddingTop: 6 }}
+              >
+                <Text strong style={{ fontSize: 13 }}>
+                  Số dư dự kiến:
+                </Text>
+                <Text
+                  strong
+                  style={{
+                    fontSize: 15,
+                    color: insufficient ? '#dc2626' : '#1677ff',
+                    fontFamily: "'JetBrains Mono', monospace",
+                  }}
+                >
+                  {convertCurrency(projectedBalance)}
+                </Text>
+              </Flex>
+              {insufficient && (
+                <Text type="danger" style={{ fontSize: 12 }}>
+                  Số dư ví không đủ để cho vay khoản này.
+                </Text>
               )}
             </Flex>
           </Card>
@@ -208,7 +208,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
           <Col xs={24} sm={12}>
             <Form.Item
               name="namePerson"
-              label="Tên đối tác / Người vay hoặc cho vay"
+              label="Đối tác (người vay / cho vay)"
               rules={[{ required: true, message: 'Vui lòng nhập tên đối tác' }]}
             >
               <Input placeholder="Vd: Nguyen Van A..." />
@@ -223,10 +223,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
               label="Chiều nợ"
               rules={[{ required: true, message: 'Vui lòng chọn chiều nợ' }]}
             >
-              <Select
-                options={FinancialDebtDirectionHelper.getOptions()}
-                placeholder="Chọn chiều nợ"
-              />
+              <Select options={FinancialDebtDirectionHelper.getOptions()} />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
@@ -235,10 +232,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
               label="Loại nợ"
               rules={[{ required: true, message: 'Vui lòng chọn loại nợ' }]}
             >
-              <Select
-                placeholder="Chọn loại nợ"
-                options={FinancialDebtTypeHelper.getOptions()}
-              />
+              <Select options={FinancialDebtTypeHelper.getOptions()} />
             </Form.Item>
           </Col>
         </Row>
@@ -250,7 +244,11 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
               label="Số tiền ban đầu"
               rules={[
                 { required: true, message: 'Vui lòng nhập số tiền' },
-                { type: 'number', min: 1, message: 'Số tiền phải lớn hơn 0' },
+                {
+                  type: 'number',
+                  min: 0.01,
+                  message: 'Số tiền phải lớn hơn 0',
+                },
               ]}
             >
               <InputNumber
@@ -264,11 +262,12 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
           <Col xs={24} sm={12}>
             <Form.Item
               name="walletId"
-              label="Ví giao dịch liên quan"
-              rules={[{ required: true, message: 'Vui lòng chọn ví' }]}
+              label="Ví liên quan (không bắt buộc)"
+              tooltip="Bỏ trống nếu chỉ muốn ghi sổ, không thay đổi số dư ví nào."
             >
               <Select
-                placeholder="Chọn ví"
+                allowClear
+                placeholder="Không dùng ví (chỉ ghi sổ)"
                 loading={isLoadingWallets}
                 options={walletOptions}
               />
@@ -285,11 +284,31 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
                 { required: true, message: 'Vui lòng chọn ngày bắt đầu' },
               ]}
             >
-              <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
+              <DatePicker
+                style={{ width: '100%' }}
+                format="DD/MM/YYYY"
+                allowClear={false}
+              />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
-            <Form.Item name="dueDate" label="Hạn trả (nếu có)">
+            <Form.Item
+              name="dueDate"
+              label="Hạn trả (nếu có)"
+              dependencies={['startDate']}
+              rules={[
+                ({ getFieldValue }) => ({
+                  validator: (_, v) =>
+                    !v ||
+                    !getFieldValue('startDate') ||
+                    !v.isBefore(getFieldValue('startDate'), 'day')
+                      ? Promise.resolve()
+                      : Promise.reject(
+                          new Error('Hạn trả không được trước ngày bắt đầu'),
+                        ),
+                }),
+              ]}
+            >
               <DatePicker style={{ width: '100%' }} format="DD/MM/YYYY" />
             </Form.Item>
           </Col>

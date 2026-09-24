@@ -80,6 +80,15 @@ export const useMutationFinanceDebt = () => {
     endPoint: 'financial-debt/:id/cancel',
     queryKey: [debtKeys.list()],
   })
+  const mDebt_Correct = useMutationPost<
+    void,
+    IFinance_DebtAction_Request,
+    'financial-debt/:id/correct',
+    { id: string }
+  >({
+    endPoint: 'financial-debt/:id/correct',
+    queryKey: [debtKeys.list()],
+  })
 
   return {
     mDebt_Create,
@@ -89,5 +98,6 @@ export const useMutationFinanceDebt = () => {
     mDebt_Adjust,
     mDebt_Settle,
     mDebt_Cancel,
+    mDebt_Correct,
   }
 }

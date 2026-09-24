@@ -4,7 +4,7 @@ import type { IFinance_Category } from '../../category/category.type'
 
 export interface IFinance_TransactionItem extends IBaseEntity {
   description: string
-  amount: number
+  amount: string
   transaction: IFinance_Transaction
   category: IFinance_Category | null
   categoryId: number | null

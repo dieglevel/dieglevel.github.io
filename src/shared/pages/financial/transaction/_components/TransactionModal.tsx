@@ -17,7 +17,7 @@ import {
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
 
-import { useGetFinance_Category_Count } from '@/shared/api/financial/category/useGetFinance_Category_Count'
+import { useGetFinance_Category_List } from '@/shared/api/financial/category/useGetFinance_Category_List'
 import {
   FINANCIAL_TRANSACTION_STATUS,
   FINANCIAL_TRANSACTION_TYPE,
@@ -49,7 +49,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
     })
 
   const { data: categories, isLoading: isLoadingCategories } =
-    useGetFinance_Category_Count({
+    useGetFinance_Category_List({
       options: { enabled: open },
     })
 

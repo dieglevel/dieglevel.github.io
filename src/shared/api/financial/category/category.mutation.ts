@@ -12,7 +12,7 @@ export const useMutationFinanceCategory = () => {
     'financial-category/create'
   >({
     endPoint: 'financial-category/create',
-    queryKey: [categoryKeys.list(), categoryKeys.count()],
+    queryKey: [categoryKeys.list()],
   })
 
   const mCategory_Update = useMutationPost<
@@ -22,7 +22,7 @@ export const useMutationFinanceCategory = () => {
     { id: string }
   >({
     endPoint: 'financial-category/update/:id',
-    queryKey: [categoryKeys.list(), categoryKeys.count()],
+    queryKey: [categoryKeys.list()],
   })
 
   const mCategory_Delete = useMutationDelete<
@@ -32,7 +32,7 @@ export const useMutationFinanceCategory = () => {
     { id: string }
   >({
     endPoint: 'financial-category/delete/:id',
-    queryKey: [categoryKeys.list(), categoryKeys.count()],
+    queryKey: [categoryKeys.list()],
   })
 
   const mCategory_Archive = useMutationPost<
@@ -42,7 +42,7 @@ export const useMutationFinanceCategory = () => {
     { categoryId: string }
   >({
     endPoint: 'financial-category/archive/:categoryId',
-    queryKey: [categoryKeys.list(), categoryKeys.count()],
+    queryKey: [categoryKeys.list()],
   })
 
   return {

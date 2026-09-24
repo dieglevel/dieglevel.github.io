@@ -27,17 +27,6 @@ export const DebtHeader: React.FC<DebtHeaderProps> = ({
     >
       <div>
         <Flex align="center" gap={10}>
-          {/* <div
-            style={{
-              padding: 8,
-              borderRadius: 10,
-              backgroundColor: '#e6f4ff',
-              color: '#1677ff',
-              display: 'flex',
-            }}
-          >
-            <WalletCards size={22} />
-          </div> */}
           <div>
             <Title level={isMobile ? 4 : 3} style={{ margin: 0 }}>
               Quản lý Sổ Nợ & Khoản Vay
