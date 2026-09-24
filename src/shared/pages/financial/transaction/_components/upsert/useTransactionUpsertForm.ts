@@ -89,13 +89,8 @@ export function useTransactionUpsertForm({
   }, [categories?.data, selectedType])
 
   // Tính tổng số tiền từ danh sách hạng mục
-  const calculatedTotalAmount = useMemo(
-    () =>
-      items.reduce(
-        (sum: number, item: { amount?: number }) =>
-          sum + (Number(item.amount) || 0),
-        0,
-      ),
+  const calculatedTotalAmount: number = useMemo(
+    () => items.reduce((sum, item) => sum + (Number(item.amount) || 0), 0),
     [items],
   )
 
@@ -181,7 +176,7 @@ export function useTransactionUpsertForm({
       amount: 0,
       transferFee: 0,
       financialTransactionItems: [
-        { description: '', amount: 0, categoryId: undefined },
+        { description: '', amount: undefined, categoryId: undefined },
       ],
     })
   }, [form, isUpdateMode])
@@ -207,10 +202,10 @@ export function useTransactionUpsertForm({
         detail.financialTransactionItems.length > 0
           ? detail.financialTransactionItems.map((item) => ({
               description: item.description,
-              amount: Number(item.amount),
+              amount: String(item.amount),
               categoryId: item.category?.id ?? item.categoryId,
             }))
-          : [{ description: '', amount: 0, categoryId: undefined }],
+          : [{ description: '', amount: undefined, categoryId: undefined }],
     })
   }, [form, isUpdateMode, transactionDetail])
 
@@ -227,13 +222,13 @@ export function useTransactionUpsertForm({
       financialTransactionItems: tx.financialTransactionItems?.length
         ? tx.financialTransactionItems.map((item) => ({
             description: item.description,
-            amount: Number(item.amount),
+            amount: String(item.amount),
             categoryId: item.categoryId,
           }))
         : [
             {
               description: tx.description ?? undefined,
-              amount: tx.amount,
+              amount: String(tx.amount),
               categoryId: undefined,
             },
           ],
@@ -260,13 +255,13 @@ export function useTransactionUpsertForm({
       const mapItems = (
         list?: Array<{
           description?: string
-          amount?: number
+          amount?: number | string
           categoryId?: number | null
         }>,
       ): Array<UpsertFinanceTransactionItemDto> =>
         list?.map((item) => ({
           description: item.description ?? '',
-          amount: Number(item.amount),
+          amount: String(item.amount ?? 0),
           categoryId: item.categoryId ?? undefined,
         })) ?? []
 
@@ -368,7 +363,7 @@ export function useTransactionUpsertForm({
   }
 
   // Xác định số tiền hiển thị trên Banner
-  const displayAmount =
+  const displayAmount: number =
     selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT ||
     selectedType === FINANCIAL_TRANSACTION_TYPE.TRANSFER
       ? (Number(directAmount) || 0) +
