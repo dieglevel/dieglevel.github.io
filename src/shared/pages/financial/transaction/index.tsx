@@ -1,10 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { FloatButton, Grid, Space, Tabs, Tag } from 'antd'
-import {
-  ArrowDownOutlined,
-  ArrowUpOutlined,
-  PlusOutlined,
-} from '@ant-design/icons'
+import { FloatButton, Grid, Space, Tabs } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
 import { useRouter } from '@tanstack/react-router'
 import { TransactionModal } from './_components/TransactionModal'
 import { TransactionDetail } from './_components/TransactionDetail'
@@ -24,7 +20,6 @@ import {
   FINANCIAL_TRANSACTION_STATUS,
   FinancialTransactionStatusHelper,
 } from '@/shared/api/financial/wallet/wallet.enum'
-import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
 import { useMutationTransaction } from '@/shared/api/financial/transaction/transaction.mutation'
 
@@ -180,7 +175,7 @@ export function Transactions() {
       <TransactionHeader
         isMobile={isMobile}
         filteredCount={transactions.length}
-        totalCount={transactions.length}
+        totalCount={dataTransaction?.data.meta.total || 0}
         selectedCount={selectedKeys.length}
         onDeleteSelected={() => setSelectedKeys([])}
         onOpenAddModal={navigateToCreate}
@@ -198,41 +193,7 @@ export function Transactions() {
               | FINANCIAL_TRANSACTION_STATUS,
           )
         }}
-        tabBarExtraContent={{
-          right: (
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <Tag
-                color="red"
-                style={{
-                  fontSize: 14,
-                  fontWeight: 500,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  padding: '2px 8px',
-                }}
-              >
-                <ArrowDownOutlined />
-                {convertCurrency(dataTransaction?.data.totalExpense || 0)}
-              </Tag>
-
-              <Tag
-                color="green"
-                style={{
-                  fontSize: 14,
-                  fontWeight: 500,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  padding: '2px 8px',
-                }}
-              >
-                <ArrowUpOutlined />
-                {convertCurrency(dataTransaction?.data.totalIncome || 0)}
-              </Tag>
-            </div>
-          ),
-        }}
+        tabBarExtraContent={{}}
       />
 
       {/* 3. Transactions Table */}

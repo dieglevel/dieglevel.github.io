@@ -11,6 +11,8 @@ import {
   getValuePropsUploadFileList,
 } from '@/shared/utils/helper/other'
 import FormUpload from '@/shared/components/form/upload'
+import GuideBookModal from '@/shared/components/book-modal'
+import { DEFAULT_SECTIONS } from '@/shared/components/book-modal/mock'
 
 export const Route = createFileRoute('/(protected)/demoComponent')({
   component: RouteComponent,
@@ -19,6 +21,7 @@ export const Route = createFileRoute('/(protected)/demoComponent')({
 function RouteComponent() {
   const topRef = useRef<HTMLDivElement>(null)
   const [targetOffset, setTargetOffset] = useState<number>()
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     setTargetOffset(topRef.current?.clientHeight)
@@ -80,7 +83,14 @@ function RouteComponent() {
 
           <Button onClick={handleUpload}>Upload</Button>
         </Form>
+        <Button onClick={() => setOpen(true)}>Open Guide Book Modal</Button>
       </Flex>
+
+      <GuideBookModal
+        open={open}
+        onClose={() => setOpen(false)}
+        sections={DEFAULT_SECTIONS}
+      />
     </Flex>
   )
 }
