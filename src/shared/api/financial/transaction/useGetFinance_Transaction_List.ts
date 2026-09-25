@@ -32,7 +32,7 @@ export interface GetFinance_Transaction_QueryParams {
   limit?: number
   search?: string
   type?: FINANCIAL_TRANSACTION_TYPE
-  status?: FINANCIAL_TRANSACTION_STATUS
+  status?: FINANCIAL_TRANSACTION_STATUS | 'all'
   walletId?: number
   minAmount?: number
   maxAmount?: number

@@ -10,12 +10,14 @@ import { convertCurrency } from '@/shared/utils/helper/format-money'
 import {
   FINANCIAL_TRANSACTION_TYPE,
   FinancialTransactionStatusHelper,
+  FinancialTransactionTypeHelper,
 } from '@/shared/api/financial/transaction/transaction.enum'
 import { DayjsHelper } from '@/shared/utils/helper/dayjs'
 
 const { Text } = Typography
 
 interface TransactionsTableProps {
+  isFetching: boolean
   dataSource: Array<IFinance_Transaction>
   isMobile: boolean
   selectedKeys: Array<React.Key>
@@ -27,6 +29,7 @@ interface TransactionsTableProps {
 }
 
 export const TransactionsTable: React.FC<TransactionsTableProps> = ({
+  isFetching,
   dataSource,
   isMobile,
   selectedKeys,
@@ -81,7 +84,6 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
         return (
           <Text
             style={{
-              fontFamily: "'JetBrains Mono', monospace",
               color: isIncome ? '#10b981' : undefined,
               fontWeight: 600,
             }}
@@ -170,12 +172,12 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       dataIndex: 'type',
       key: 'type',
       responsive: ['lg'],
-      render: (type: 'income' | 'expense') => (
+      render: (type) => (
         <Tag
           color={type === 'income' ? 'green' : 'volcano'}
           style={{ textTransform: 'capitalize' }}
         >
-          {type}
+          {FinancialTransactionTypeHelper.getLabel(type) || type}
         </Tag>
       ),
     },
@@ -233,8 +235,14 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
   ]
 
   return (
-    <Card bodyStyle={{ padding: 0 }} style={{ overflow: 'hidden' }}>
+    <Card
+      styles={{
+        body: { padding: 0 },
+      }}
+      style={{ overflow: 'hidden' }}
+    >
       <Table<IFinance_Transaction>
+        loading={isFetching}
         rowKey="id"
         size={isMobile ? 'small' : 'medium'}
         columns={columns}

@@ -16,12 +16,14 @@ import type { TablePaginationConfig, TabsProps } from 'antd'
 
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
-import type { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
+import {
+  FINANCIAL_TRANSACTION_TYPE,
+  FinancialTransactionTypeHelper,
+} from '@/shared/api/financial/transaction/transaction.enum'
 import {
   FINANCIAL_TRANSACTION_STATUS,
   FinancialTransactionStatusHelper,
 } from '@/shared/api/financial/wallet/wallet.enum'
-import { FinancialTransactionTypeHelper } from '@/shared/api/financial/transaction/transaction.enum'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
 import { useMutationTransaction } from '@/shared/api/financial/transaction/transaction.mutation'
@@ -40,6 +42,11 @@ const tabsData: TabsProps['items'] = [
   })),
 ]
 
+type ActiveTab =
+  | 'all'
+  | FINANCIAL_TRANSACTION_TYPE
+  | FINANCIAL_TRANSACTION_STATUS
+
 export function Transactions() {
   const screens = useBreakpoint()
   const router = useRouter()
@@ -47,32 +54,13 @@ export function Transactions() {
   const [page, setPage] = useState(1)
   const [pageData, setPageData] = useState<TablePaginationConfig>({
     current: -1,
-    pageSize: 10,
+    pageSize: 20,
     total: 0,
-  })
-
-  const { data: dataTransaction } = useGetFinance_Transaction_List({
-    queryParams: {
-      page,
-    },
   })
 
   const { mTransaction_Delete } = useMutationTransaction()
 
-  useEffect(() => {
-    if (dataTransaction?.data) {
-      setPageData({
-        current: dataTransaction.data.meta.page,
-        pageSize: dataTransaction.data.meta.limit,
-        total: dataTransaction.data.meta.total,
-      })
-    }
-  }, [dataTransaction])
-  const transactions = dataTransaction?.data.data || []
-
-  const [activeTab, setActiveTab] = useState<
-    'all' | FINANCIAL_TRANSACTION_TYPE | FINANCIAL_TRANSACTION_STATUS
-  >('all')
+  const [activeTab, setActiveTab] = useState<ActiveTab>('all')
 
   // State Bộ lọc & Tìm kiếm
   const [search, setSearch] = useState('')
@@ -90,6 +78,37 @@ export function Transactions() {
   const [viewTransactionId, setViewTransactionId] = useState<number | null>(
     null,
   )
+
+  const isType = (value: ActiveTab): value is FINANCIAL_TRANSACTION_TYPE =>
+    Object.values(FINANCIAL_TRANSACTION_TYPE).includes(
+      value as FINANCIAL_TRANSACTION_TYPE,
+    )
+
+  const isStatus = (value: ActiveTab): value is FINANCIAL_TRANSACTION_STATUS =>
+    Object.values(FINANCIAL_TRANSACTION_STATUS).includes(
+      value as FINANCIAL_TRANSACTION_STATUS,
+    )
+
+  const { data: dataTransaction, isFetching } = useGetFinance_Transaction_List({
+    queryParams: {
+      page,
+      limit: pageData.pageSize || 20,
+      type: isType(activeTab) ? activeTab : undefined,
+      status: isStatus(activeTab) ? activeTab : undefined,
+      walletId: walletFilter === 'all' ? undefined : walletFilter,
+    },
+  })
+
+  useEffect(() => {
+    if (dataTransaction?.data) {
+      setPageData({
+        current: dataTransaction.data.meta.page,
+        pageSize: dataTransaction.data.meta.limit,
+        total: dataTransaction.data.meta.total,
+      })
+    }
+  }, [dataTransaction])
+  const transactions = dataTransaction?.data.data || []
 
   // Options Select
   const walletOptions = useMemo(() => {
@@ -127,43 +146,6 @@ export function Transactions() {
     setStatusFilter('all')
   }
 
-  // Filter Logic
-  const filtered = useMemo(() => {
-    return transactions.filter((t) => {
-      if (
-        search &&
-        ![t.description, t.amount.toString()]
-          .join(' ')
-          .toLowerCase()
-          .includes(search.toLowerCase())
-      ) {
-        return false
-      }
-      if (typeFilter !== 'all' && t.type !== typeFilter) return false
-      if (walletFilter !== 'all' && t.wallet?.id !== walletFilter) return false
-      if (statusFilter !== 'all' && t.status !== statusFilter) return false
-
-      if (catFilter !== 'all') {
-        const hasCategory = t.financialTransactionItems?.some(
-          (item) => item.categoryId === catFilter,
-        )
-        if (!hasCategory) return false
-      }
-      return true
-    })
-  }, [transactions, search, typeFilter, walletFilter, catFilter, statusFilter])
-
-  // Sub-filtering by active tab
-  const tabFilteredTransactions = useMemo(() => {
-    if (activeTab === 'all') return filtered
-    if (activeTab === FINANCIAL_TRANSACTION_STATUS.PENDING) {
-      return filtered.filter((t) => t.status.toLowerCase() === 'pending')
-    }
-    return filtered.filter(
-      (t) => t.type.toLowerCase() === activeTab.toLowerCase(),
-    )
-  }, [activeTab, filtered])
-
   const handleViewDetail = (transaction: { id: number }) => {
     setViewTransactionId(transaction.id)
   }
@@ -197,7 +179,7 @@ export function Transactions() {
       {/* 1. Header Section */}
       <TransactionHeader
         isMobile={isMobile}
-        filteredCount={filtered.length}
+        filteredCount={transactions.length}
         totalCount={transactions.length}
         selectedCount={selectedKeys.length}
         onDeleteSelected={() => setSelectedKeys([])}
@@ -255,7 +237,8 @@ export function Transactions() {
 
       {/* 3. Transactions Table */}
       <TransactionsTable
-        dataSource={tabFilteredTransactions}
+        isFetching={isFetching}
+        dataSource={transactions}
         isMobile={isMobile}
         selectedKeys={selectedKeys}
         onSelectChange={setSelectedKeys}
