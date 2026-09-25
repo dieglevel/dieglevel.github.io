@@ -202,7 +202,7 @@ export function useTransactionUpsertForm({
         detail.financialTransactionItems.length > 0
           ? detail.financialTransactionItems.map((item) => ({
               description: item.description,
-              amount: String(item.amount),
+              amount: item.amount,
               categoryId: item.category?.id ?? item.categoryId,
             }))
           : [{ description: '', amount: undefined, categoryId: undefined }],
@@ -222,13 +222,13 @@ export function useTransactionUpsertForm({
       financialTransactionItems: tx.financialTransactionItems?.length
         ? tx.financialTransactionItems.map((item) => ({
             description: item.description,
-            amount: String(item.amount),
+            amount: item.amount,
             categoryId: item.categoryId,
           }))
         : [
             {
               description: tx.description ?? undefined,
-              amount: String(tx.amount),
+              amount: tx.amount,
               categoryId: undefined,
             },
           ],
@@ -261,7 +261,7 @@ export function useTransactionUpsertForm({
       ): Array<UpsertFinanceTransactionItemDto> =>
         list?.map((item) => ({
           description: item.description ?? '',
-          amount: String(item.amount ?? 0),
+          amount: item.amount || 0,
           categoryId: item.categoryId ?? undefined,
         })) ?? []
 
