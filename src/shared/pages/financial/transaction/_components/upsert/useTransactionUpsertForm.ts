@@ -202,7 +202,7 @@ export function useTransactionUpsertForm({
         detail.financialTransactionItems.length > 0
           ? detail.financialTransactionItems.map((item) => ({
               description: item.description,
-              amount: item.amount,
+              amount: item.amount || 0,
               categoryId: item.category?.id ?? item.categoryId,
             }))
           : [{ description: '', amount: undefined, categoryId: undefined }],
@@ -222,7 +222,7 @@ export function useTransactionUpsertForm({
       financialTransactionItems: tx.financialTransactionItems?.length
         ? tx.financialTransactionItems.map((item) => ({
             description: item.description,
-            amount: item.amount,
+            amount: item.amount || 0,
             categoryId: item.categoryId,
           }))
         : [
@@ -255,7 +255,7 @@ export function useTransactionUpsertForm({
       const mapItems = (
         list?: Array<{
           description?: string
-          amount?: number | string
+          amount?: number
           categoryId?: number | null
         }>,
       ): Array<UpsertFinanceTransactionItemDto> =>
@@ -375,6 +375,8 @@ export function useTransactionUpsertForm({
   const isSubmitting = isUpdateMode
     ? mTransaction_Update.isPending
     : mTransaction_Create.isPending
+
+  console.log('form', form.getFieldsValue())
 
   return {
     form,
