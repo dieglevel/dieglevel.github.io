@@ -61,7 +61,7 @@ export default function CategoryDetailModal({
   // Tính tổng số tiền giao dịch
   const totalAmount = useMemo(() => {
     return transactionItems.reduce((sum, item) => {
-      const amount = parseFloat(item.amount) || 0
+      const amount = parseInt(String(item.amount)) || 0
       return sum + (isNaN(amount) ? 0 : amount)
     }, 0)
   }, [transactionItems])
