@@ -106,7 +106,7 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
       onOk={() => (isPaymentTab ? form.submit() : onClose())}
       okText={isPaymentTab ? 'Xác nhận' : 'Đóng'}
       okButtonProps={{ disabled: isPaymentTab && insufficient }}
-      destroyOnClose
+      destroyOnHidden
       width={720}
       centered
     >

@@ -14,6 +14,11 @@ export interface FinancialCategory_GetTransactionCategory_Response {
       category: Partial<IFinance_Category>
     }
   >
+  overcomeTransactionItems: Array<
+    Omit<IFinance_TransactionItem, 'category'> & {
+      category: Partial<IFinance_Category>
+    }
+  >
 }
 
 export interface GetFinance_Category_Transaction_Params {

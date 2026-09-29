@@ -282,7 +282,7 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
       footer={null}
       width={680}
       centered
-      destroyOnClose
+      destroyOnHidden
       title={
         <Space size="middle">
           <Avatar

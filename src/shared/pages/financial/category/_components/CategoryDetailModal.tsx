@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import {
+  Button,
   Card,
   Col,
   Divider,
@@ -16,6 +17,7 @@ import {
 } from 'antd'
 import {
   CheckCircleOutlined,
+  CloseOutlined,
   DollarOutlined,
   NodeIndexOutlined,
   StopOutlined,
@@ -26,11 +28,17 @@ import type { ColumnsType } from 'antd/es/table'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import type { IFinance_TransactionItem } from '@/shared/api/financial/transaction/transaction-item/transaction-item.type'
 import { useGetFinance_Category_Transaction } from '@/shared/api/financial/category/useGetFinance_Category_Transaction'
-import BaseModal from '@/shared/components/modal'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
+import { DoubleCardModal } from '@/shared/components/modal/double-modal'
+
+// Component DoubleCardModal đã tạo ở bước trước (đổi đường dẫn cho phù hợp)
 
 const { Text, Title } = Typography
+
+type TransactionRow = Omit<IFinance_TransactionItem, 'category'> & {
+  category: Partial<IFinance_Category>
+}
 
 interface CategoryDetailModalProps {
   amountMonth?: dayjs.Dayjs | string | Date
@@ -45,18 +53,21 @@ export default function CategoryDetailModal({
   open,
   onCancel,
 }: CategoryDetailModalProps) {
+  const monthKey = dayjs(amountMonth).format('YYYY-MM')
+
   const { data, isLoading } = useGetFinance_Category_Transaction({
     pathParams: {
       categoryId: categoryId || 0,
     },
     queryParams: {
-      amountMonth: dayjs(amountMonth).format('YYYY-MM'),
+      amountMonth: monthKey,
     },
   })
 
   const parentCategory = data?.data.parent
   const childrenCategories = data?.data.children || []
   const transactionItems = data?.data.transactionItems || []
+  const overcomeTransactionItems = data?.data.overcomeTransactionItems || []
 
   // Tính tổng số tiền giao dịch
   const totalAmount = useMemo(() => {
@@ -66,12 +77,27 @@ export default function CategoryDetailModal({
     }, 0)
   }, [transactionItems])
 
-  // Cấu hình bảng danh sách giao dịch (Table Columns)
-  const columns: ColumnsType<
-    Omit<IFinance_TransactionItem, 'category'> & {
-      category: Partial<IFinance_Category>
+  const aboveAvg = useMemo(() => {
+    if (transactionItems.length === 0) {
+      return { average: 0, items: [] }
     }
-  > = [
+
+    const total = transactionItems.reduce((sum, item) => {
+      const amount = parseInt(String(item.amount)) || 0
+      return sum + (isNaN(amount) ? 0 : amount)
+    }, 0)
+
+    const average = total / transactionItems.length
+
+    const itemsAboveAvg = transactionItems.filter(
+      (item) => parseInt(String(item.amount)) > average,
+    )
+
+    return { average, items: itemsAboveAvg }
+  }, [transactionItems])
+
+  // Cấu hình bảng danh sách giao dịch (Table Columns)
+  const columns: ColumnsType<TransactionRow> = [
     {
       title: 'Mô tả',
       dataIndex: 'description',
@@ -115,13 +141,14 @@ export default function CategoryDetailModal({
     },
   ]
 
-  return (
-    <BaseModal
-      open={open}
-      showButtonOk={false}
-      title={
+  /* ------------------------- CARD CHÍNH ------------------------- */
+  const main = (
+    <>
+      <div className="dc-card__header">
         <Space>
-          <span>{parentCategory?.name || 'Chi tiết danh mục'}</span>
+          <Title level={4} style={{ margin: 0 }}>
+            {parentCategory?.name || 'Chi tiết danh mục'}
+          </Title>
           {parentCategory?.archived ? (
             <Tag icon={<StopOutlined />} color="error">
               Đã lưu trữ
@@ -132,15 +159,16 @@ export default function CategoryDetailModal({
             </Tag>
           )}
         </Space>
-      }
-      onCancel={onCancel}
-      footer={null}
-      width={800}
-      loading={isLoading}
-    >
-      {data ? (
+        <Button type="text" icon={<CloseOutlined />} onClick={onCancel} />
+      </div>
+
+      {isLoading || !data ? (
+        <Flex justify="center" align="center" style={{ height: 200 }}>
+          <Spin />
+        </Flex>
+      ) : (
         <Space vertical style={{ width: '100%' }}>
-          {/* --- KHU VỰC THỐNG KÊ (CARDS) --- */}
+          {/* --- KHU VỰC THỐNG KÊ --- */}
           <Row gutter={[16, 16]}>
             <Col span={8}>
               <Card size="small">
@@ -190,11 +218,7 @@ export default function CategoryDetailModal({
                     <Card
                       size="small"
                       style={{ borderRadius: 6 }}
-                      styles={{
-                        body: {
-                          padding: '4px 4px',
-                        },
-                      }}
+                      styles={{ body: { padding: '4px 4px' } }}
                     >
                       <Space vertical style={{ width: '100%' }}>
                         <Space
@@ -247,11 +271,7 @@ export default function CategoryDetailModal({
             <Title level={5}>
               Danh sách giao dịch ({transactionItems.length})
             </Title>
-            <Table<
-              Omit<IFinance_TransactionItem, 'category'> & {
-                category: Partial<IFinance_Category>
-              }
-            >
+            <Table<TransactionRow>
               rowKey="id"
               columns={columns}
               dataSource={transactionItems}
@@ -261,11 +281,75 @@ export default function CategoryDetailModal({
             />
           </div>
         </Space>
-      ) : (
-        <Flex justify="center" align="center" style={{ height: 200 }}>
-          <Spin />
-        </Flex>
       )}
-    </BaseModal>
+    </>
+  )
+
+  /* ------------------------- CARD PHỤ ------------------------- */
+  const side = (
+    <>
+      <Title level={5} style={{ margin: 0 }}>
+        Vượt mức trung bình
+      </Title>
+      <Text type="secondary" style={{ fontSize: 13 }}>
+        Trung bình: {convertCurrency(aboveAvg.average)} / giao dịch
+      </Text>
+      <Divider style={{ margin: '12px 0' }} />
+
+      <List<
+        Omit<IFinance_TransactionItem, 'category'> & {
+          category: Partial<IFinance_Category>
+        }
+      >
+        loading={isLoading}
+        dataSource={overcomeTransactionItems}
+        locale={{
+          emptyText: (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description="Không có giao dịch vượt mức"
+            />
+          ),
+        }}
+        style={{ maxHeight: '600px', overflowY: 'auto' }}
+        renderItem={(item) => {
+          const overPercent = Math.round(
+            ((item.amount - aboveAvg.average) / aboveAvg.average) * 100,
+          )
+          return (
+            <List.Item style={{ padding: '10px 0' }}>
+              <Flex vertical gap={2} style={{ width: '100%' }}>
+                <Flex justify="space-between" align="center" gap={8}>
+                  <Text ellipsis style={{ flex: 1, minWidth: 0 }}>
+                    {item.description}
+                  </Text>
+                  <Text strong style={{ color: '#cf1322', flexShrink: 0 }}>
+                    {convertCurrency(item.amount)}
+                  </Text>
+                </Flex>
+                <Flex justify="space-between" align="center">
+                  <Text type="secondary" style={{ fontSize: 12 }}>
+                    {dayjs(item.createdAt).format('DD/MM/YYYY')}
+                  </Text>
+                  <Tag color="volcano" style={{ margin: 0 }}>
+                    +{overPercent}% so với TB
+                  </Tag>
+                </Flex>
+              </Flex>
+            </List.Item>
+          )
+        }}
+      />
+    </>
+  )
+
+  return (
+    <DoubleCardModal
+      open={open}
+      onClose={onCancel}
+      main={main}
+      side={side}
+      width={1120}
+    />
   )
 }

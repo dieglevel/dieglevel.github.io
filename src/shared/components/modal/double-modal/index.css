@@ -1,0 +1,79 @@
+/* Bỏ nền trắng mặc định của Modal để hai card tự đứng riêng */
+.dc-modal .ant-modal-content {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.dc-body {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+}
+
+.dc-card {
+  border-radius: 12px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Card chính */
+.dc-card--main {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Card phụ */
+.dc-card--side {
+  flex: 0 0 300px;
+  background: #f4f7fb;
+  border: 1px solid #dbe3ee;
+}
+
+.dc-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.dc-card__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.dc-card__desc {
+  margin: 4px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.dc-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #374151;
+}
+
+.dc-row--total {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Mobile: xếp chồng, card phụ nằm dưới */
+@media (max-width: 768px) {
+  .dc-body {
+    flex-direction: column;
+  }
+
+  .dc-card--side {
+    flex: 0 0 auto;
+  }
+}

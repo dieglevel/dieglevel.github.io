@@ -50,8 +50,7 @@ const sampleTracks: Array<Track> = TRACK_MUSIC
 
 // Hàm trích xuất YouTube Video ID từ link Embed/Watch
 const extractVideoId = (url: string) => {
-  const regExp =
-    /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
   const match = url.match(regExp)
   return match && match[2].length === 11 ? match[2] : ''
 }
@@ -90,7 +89,6 @@ export default function MusicPlayerPage() {
   }, [selectedTrack, filteredTracks, tracks, isShuffle, isPlaying])
 
   // Logic chuyển bài tiếp theo
-  // 1. Định nghĩa logic Next/Prev bọc trong useCallback và lấy state từ stateRef
   const playNextTrack = useCallback(() => {
     const {
       selectedTrack: currentTrack,
@@ -145,11 +143,10 @@ export default function MusicPlayerPage() {
     }
   }, [])
 
-  // 2. Đăng ký MediaSession Handler với OS
+  // Đăng ký MediaSession Handler với OS
   useEffect(() => {
     if (!('mediaSession' in navigator)) return
 
-    // Cập nhật Metadata cho OS/Notification
     navigator.mediaSession.metadata = new MediaMetadata({
       title: selectedTrack.name,
       artist: `Rank #${selectedTrack.ranking}`,
@@ -162,7 +159,6 @@ export default function MusicPlayerPage() {
       ],
     })
 
-    // Đăng ký các handler
     const actionHandlers: Array<
       [MediaSessionAction, MediaSessionActionHandler]
     > = [
@@ -185,7 +181,7 @@ export default function MusicPlayerPage() {
     for (const [action, handler] of actionHandlers) {
       try {
         navigator.mediaSession.setActionHandler(action, handler)
-      } catch (error) {
+      } catch {
         console.warn(`The media session action "${action}" is not supported.`)
       }
     }
@@ -220,22 +216,17 @@ export default function MusicPlayerPage() {
             setIsPlaying(true)
           },
           onStateChange: (event: any) => {
-            // YT.PlayerState.PLAYING === 1
             if (event.data === 1) {
               setIsPlaying(true)
               if ('mediaSession' in navigator) {
                 navigator.mediaSession.playbackState = 'playing'
               }
-            }
-            // YT.PlayerState.PAUSED === 2
-            else if (event.data === 2) {
+            } else if (event.data === 2) {
               setIsPlaying(false)
               if ('mediaSession' in navigator) {
                 navigator.mediaSession.playbackState = 'paused'
               }
-            }
-            // YT.PlayerState.ENDED === 0
-            else if (event.data === 0) {
+            } else if (event.data === 0) {
               setIsPlaying(false)
               playNextTrack()
             }
@@ -277,66 +268,11 @@ export default function MusicPlayerPage() {
     }
   }, [selectedTrack])
 
-  // Cấu hình MediaSession API của Hệ Điều Hành / Trình Duyệt
-  useEffect(() => {
-    if (!('mediaSession' in navigator)) return
-
-    // Cập nhật thông tin Bài hát đang phát hiển thị trên OS / Lock screen
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: selectedTrack.name,
-      artist: `Rank #${selectedTrack.ranking}`,
-      artwork: [
-        {
-          src: selectedTrack.resourceUrl,
-          sizes: '512x512',
-          type: 'image/png',
-        },
-      ],
-    })
-
-    // Đăng ký Action Handlers cho các phím chức năng của Hệ Điều Hành / Tai nghe
-    navigator.mediaSession.setActionHandler('play', () => {
-      if (
-        playerRef.current &&
-        typeof playerRef.current.playVideo === 'function'
-      ) {
-        playerRef.current.playVideo()
-      }
-    })
-
-    navigator.mediaSession.setActionHandler('pause', () => {
-      if (
-        playerRef.current &&
-        typeof playerRef.current.pauseVideo === 'function'
-      ) {
-        playerRef.current.pauseVideo()
-      }
-    })
-
-    navigator.mediaSession.setActionHandler('previoustrack', () => {
-      playPrevTrack()
-    })
-
-    navigator.mediaSession.setActionHandler('nexttrack', () => {
-      playNextTrack()
-    })
-
-    navigator.mediaSession.setActionHandler('stop', () => {
-      if (
-        playerRef.current &&
-        typeof playerRef.current.stopVideo === 'function'
-      ) {
-        playerRef.current.stopVideo()
-      }
-    })
-  }, [selectedTrack])
-
   return (
     <div
       style={{
         padding: 24,
         height: '100vh',
-        background: '#0f172a',
         display: 'flex',
         flexDirection: 'column',
         boxSizing: 'border-box',
@@ -350,7 +286,7 @@ export default function MusicPlayerPage() {
         style={{ marginBottom: 16, flexShrink: 0 }}
       >
         <Col>
-          <Title level={2} style={{ color: '#fff', margin: 0 }}>
+          <Title level={2} style={{ margin: 0 }}>
             🎵 Youtube Music Player
           </Title>
         </Col>
@@ -363,12 +299,7 @@ export default function MusicPlayerPage() {
                 type={isShuffle ? 'primary' : 'default'}
                 icon={<BarsOutlined />}
                 onClick={() => setIsShuffle(!isShuffle)}
-                style={{
-                  borderRadius: 20,
-                  backgroundColor: isShuffle ? '#6366f1' : '#1e293b',
-                  borderColor: isShuffle ? '#6366f1' : '#334155',
-                  color: '#fff',
-                }}
+                style={{ borderRadius: 20 }}
               >
                 {isShuffle ? 'Shuffle On' : 'Shuffle Off'}
               </Button>
@@ -396,8 +327,6 @@ export default function MusicPlayerPage() {
         >
           <Card
             style={{
-              background: '#1e293b',
-              borderColor: '#334155',
               height: '100%',
               display: 'flex',
               flexDirection: 'column',
@@ -452,11 +381,7 @@ export default function MusicPlayerPage() {
                 {/* Visual Control Buttons */}
                 <Row justify="space-between" align="middle">
                   <Col>
-                    <Title
-                      level={4}
-                      style={{ color: '#fff', margin: 0 }}
-                      ellipsis
-                    >
+                    <Title level={4} style={{ margin: 0 }} ellipsis>
                       {selectedTrack.name}
                     </Title>
                   </Col>
@@ -469,11 +394,6 @@ export default function MusicPlayerPage() {
                           size="large"
                           icon={<StepBackwardOutlined />}
                           onClick={playPrevTrack}
-                          style={{
-                            backgroundColor: '#334155',
-                            borderColor: '#475569',
-                            color: '#fff',
-                          }}
                         />
                       </Tooltip>
 
@@ -491,8 +411,6 @@ export default function MusicPlayerPage() {
                           }
                           onClick={togglePlay}
                           style={{
-                            backgroundColor: '#6366f1',
-                            borderColor: '#6366f1',
                             width: 48,
                             height: 48,
                           }}
@@ -505,11 +423,6 @@ export default function MusicPlayerPage() {
                           size="large"
                           icon={<StepForwardOutlined />}
                           onClick={playNextTrack}
-                          style={{
-                            backgroundColor: '#334155',
-                            borderColor: '#475569',
-                            color: '#fff',
-                          }}
                         />
                       </Tooltip>
                     </Space>
@@ -547,24 +460,19 @@ export default function MusicPlayerPage() {
           <Card
             title={
               <Row justify="space-between" align="middle">
-                <Text style={{ color: '#fff' }}>
-                  Danh sách phát ({filteredTracks.length})
-                </Text>
+                <Text>Danh sách phát ({filteredTracks.length})</Text>
                 {isShuffle && (
-                  <Text style={{ color: '#a855f7', fontSize: 12 }}>
+                  <Text type="secondary" style={{ fontSize: 12 }}>
                     🔀 Ngẫu nhiên
                   </Text>
                 )}
               </Row>
             }
             style={{
-              background: '#1e293b',
-              borderColor: '#334155',
               height: '100%',
               display: 'flex',
               flexDirection: 'column',
             }}
-            headStyle={{ borderColor: '#334155', flexShrink: 0 }}
             bodyStyle={{
               padding: '12px 16px',
               flex: 1,
@@ -588,18 +496,14 @@ export default function MusicPlayerPage() {
                         borderRadius: 8,
                         cursor: 'pointer',
                         marginBottom: 8,
-                        background: isActive ? '#334155' : 'transparent',
-                        border: isActive
-                          ? '1px solid #6366f1'
-                          : '1px solid transparent',
                         transition: 'all 0.2s',
                         display: 'flex',
                         alignItems: 'center',
                       }}
                     >
                       <Text
+                        type={isActive ? 'warning' : 'secondary'}
                         style={{
-                          color: isActive ? '#818cf8' : '#64748b',
                           fontWeight: 'bold',
                           width: 28,
                           fontSize: 14,
@@ -626,7 +530,6 @@ export default function MusicPlayerPage() {
                                   top: '50%',
                                   left: '50%',
                                   transform: 'translate(-50%, -50%)',
-                                  color: '#818cf8',
                                   fontSize: 18,
                                 }}
                               />
@@ -637,7 +540,6 @@ export default function MusicPlayerPage() {
                           <Text
                             ellipsis
                             style={{
-                              color: isActive ? '#818cf8' : '#e2e8f0',
                               fontWeight: isActive ? 600 : 400,
                               display: 'block',
                             }}
@@ -646,13 +548,11 @@ export default function MusicPlayerPage() {
                           </Text>
                         }
                         description={
-                          <Space
-                            split={<Text style={{ color: '#64748b' }}>•</Text>}
-                          >
-                            <Text style={{ color: '#94a3b8', fontSize: 12 }}>
+                          <Space split={<Text type="secondary">•</Text>}>
+                            <Text type="secondary" style={{ fontSize: 12 }}>
                               Rank #{track.ranking}
                             </Text>
-                            <Text style={{ color: '#94a3b8', fontSize: 12 }}>
+                            <Text type="secondary" style={{ fontSize: 12 }}>
                               Win: {(track.winLossRatio * 100).toFixed(0)}%
                             </Text>
                           </Space>

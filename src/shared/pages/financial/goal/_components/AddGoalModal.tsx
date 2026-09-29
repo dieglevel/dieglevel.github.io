@@ -160,7 +160,7 @@ export function AddGoalModal({
       cancelText="Hủy"
       width={650}
       centered
-      destroyOnClose
+      destroyOnHidden
       okButtonProps={{ disabled: isSubmitting }}
     >
       <Form

@@ -1,22 +1,22 @@
 import React from 'react'
 import { Card, List, Select, Space, Typography } from 'antd'
 import { GlobalOutlined } from '@ant-design/icons'
-import { CURRENCIES, LANGUAGES } from './types'
+import type { IFinance_Setting } from '@/shared/api/financial/setting/setting.type'
+import {
+  FinancialSettingCurrencyHelper,
+  FinancialSettingLanguageHelper,
+} from '@/shared/api/financial/setting/setting.enum'
 
 const { Text } = Typography
 
 interface Props {
-  currency: string | null
-  setCurrency: (val: string) => void
-  language: string | null
-  setLanguage: (val: string) => void
+  setting: IFinance_Setting
+  onUpdate: (data: Partial<IFinance_Setting>) => void
 }
 
 export const SettingsLocalization: React.FC<Props> = ({
-  currency,
-  setCurrency,
-  language,
-  setLanguage,
+  setting,
+  onUpdate,
 }) => {
   return (
     <Card
@@ -31,13 +31,10 @@ export const SettingsLocalization: React.FC<Props> = ({
         <List.Item
           extra={
             <Select
-              value={currency}
-              onChange={setCurrency}
+              value={setting.currency}
+              onChange={(val) => onUpdate({ currency: val })}
               style={{ width: 220 }}
-              options={CURRENCIES.map((c) => ({
-                value: c.code,
-                label: `${c.symbol} ${c.code} — ${c.name}`,
-              }))}
+              options={FinancialSettingCurrencyHelper.getOptions()}
             />
           }
         >
@@ -52,10 +49,10 @@ export const SettingsLocalization: React.FC<Props> = ({
         <List.Item
           extra={
             <Select
-              value={language}
-              onChange={setLanguage}
+              value={setting.language}
+              onChange={(val) => onUpdate({ language: val })}
               style={{ width: 160 }}
-              options={LANGUAGES.map((l) => ({ value: l, label: l }))}
+              options={FinancialSettingLanguageHelper.getOptions()}
             />
           }
         >

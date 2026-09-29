@@ -3,7 +3,6 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useForm, useWatch } from 'antd/es/form/Form'
 import axios from 'axios'
 import { useEffect, useRef, useState } from 'react'
-import type { MenuProps } from 'antd'
 import Pagination from '@/shared/components/pagination'
 import Select from '@/shared/components/select'
 import {
@@ -11,8 +10,8 @@ import {
   getValuePropsUploadFileList,
 } from '@/shared/utils/helper/other'
 import FormUpload from '@/shared/components/form/upload'
-import GuideBookModal from '@/shared/components/book-modal'
-import { DEFAULT_SECTIONS } from '@/shared/components/book-modal/mock'
+import GuideBookModal from '@/shared/components/modal/book-modal'
+import { DEFAULT_SECTIONS } from '@/shared/components/modal/book-modal/mock'
 
 export const Route = createFileRoute('/(protected)/demoComponent')({
   component: RouteComponent,
@@ -52,17 +51,9 @@ function RouteComponent() {
     console.log(res.data)
   }
 
-  type MenuItem = Required<MenuProps>['items'][number]
-  const menuItems: Array<MenuItem> = [
-    {
-      key: '1',
-      label: 'Table',
-    },
-  ]
-
   return (
     <Flex>
-      <Flex vertical flex={1}>
+      <Flex vertical flex={1} gap={16} ref={topRef}>
         <Pagination total={100} />
         <Select />
 

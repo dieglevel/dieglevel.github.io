@@ -1,16 +1,19 @@
 import React, { useState } from 'react'
 import { Flex, Space, Typography } from 'antd'
 
+import { useSettingStore } from '../_store/setting.store'
 import { SettingsAppearance } from './SettingsAppearance'
 import { SettingsLocalization } from './SettingsLocalization'
 import { SettingsNotifications } from './SettingsNotifications'
 import { SettingsSecurity } from './SettingsSecurity'
 import { SettingsDataManagement } from './SettingsDataManagement'
 import type { NotificationSettings, SecuritySettings } from './types'
+import type { IFinance_Setting } from '@/shared/api/financial/setting/setting.type'
 import {
   LOCAL_STORAGE_KEY,
   LocalStorageService,
 } from '@/shared/lib/service/local-storage'
+import { useMutationFinanceSetting } from '@/shared/api/financial/setting/setting.mutation'
 
 const { Title, Text } = Typography
 
@@ -51,6 +54,39 @@ export function Settings() {
     sessionTimeout: '30min',
   })
 
+  const setting = useSettingStore((state) => state.setting)
+
+  const { mUpdate } = useMutationFinanceSetting()
+
+  const handleSaveSettings = async (data: Partial<IFinance_Setting>) => {
+    try {
+      await mUpdate.mutateAsync({
+        body: data,
+      })
+      console.log('Settings saved successfully:', data)
+    } catch (error) {
+      console.error('Error saving settings:', error)
+    }
+  }
+
+  if (setting === null) {
+    return (
+      <Flex flex={1} style={{ minWidth: 320, width: 'auto', padding: 24 }}>
+        <Space vertical size="large" style={{ width: '100%' }}>
+          <div>
+            <Title level={2} style={{ marginBottom: 4 }}>
+              Settings
+            </Title>
+            <Text type="secondary">Manage your preferences and account</Text>
+          </div>
+          <Text type="secondary" style={{ fontSize: 12 }}>
+            Loading settings...
+          </Text>
+        </Space>
+      </Flex>
+    )
+  }
+
   return (
     <Flex flex={1} style={{ minWidth: 320, width: 'auto', padding: 24 }}>
       <Space vertical size="large" style={{ width: '100%' }}>
@@ -65,12 +101,7 @@ export function Settings() {
         {/* Sections */}
         <SettingsAppearance isDark={isDark} toggleDark={toggleDark} />
 
-        <SettingsLocalization
-          currency={currency}
-          setCurrency={handleCurrencyChange}
-          language={language}
-          setLanguage={handleLanguageChange}
-        />
+        <SettingsLocalization setting={setting} onUpdate={handleSaveSettings} />
 
         <SettingsNotifications
           notifications={notifications}

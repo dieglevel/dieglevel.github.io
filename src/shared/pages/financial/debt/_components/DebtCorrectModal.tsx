@@ -55,7 +55,7 @@ export const DebtCorrectModal: React.FC<Props> = ({
       onCancel={onClose}
       onOk={() => form.submit()}
       okButtonProps={{ disabled: diff === 0 || newOutstanding < 0 }}
-      destroyOnClose
+      destroyOnHidden
       width={480}
       centered
     >

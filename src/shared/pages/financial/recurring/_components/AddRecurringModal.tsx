@@ -90,7 +90,7 @@ export function AddRecurringModal({
       cancelText="Hủy"
       width={640}
       centered
-      destroyOnClose
+      destroyOnHidden
     >
       <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
         {/* Tên & Loại Giao dịch */}

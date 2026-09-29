@@ -116,7 +116,7 @@ export function WalletModal({
       cancelText="Hủy"
       onCancel={onCancel}
       onOk={handleOk}
-      destroyOnClose
+      destroyOnHidden
       width={560}
       centered
     >

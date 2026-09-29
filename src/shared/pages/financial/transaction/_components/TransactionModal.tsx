@@ -109,7 +109,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
       onOk={handleSave}
       okText="Lưu Giao Dịch"
       cancelText="Hủy"
-      destroyOnClose
+      destroyOnHidden
       width={720}
       style={{ top: 20 }}
       styles={{

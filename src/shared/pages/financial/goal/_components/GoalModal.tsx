@@ -109,7 +109,7 @@ export const GoalModal: React.FC<GoalModalProps> = ({
       confirmLoading={isLoading}
       okText={initial ? 'Lưu thay đổi' : 'Tạo mục tiêu'}
       cancelText="Hủy"
-      destroyOnClose
+      destroyOnHidden
     >
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
         <Form.Item

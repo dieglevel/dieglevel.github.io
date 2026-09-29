@@ -58,7 +58,7 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
       open={open}
       onCancel={onClose}
       onOk={() => form.submit()}
-      destroyOnClose
+      destroyOnHidden
       width={480}
       centered
     >

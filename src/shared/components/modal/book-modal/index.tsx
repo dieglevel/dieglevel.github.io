@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Modal, Tooltip } from 'antd'
 import { AnimatePresence, motion } from 'motion/react'
-import { ChevronRight, Lightbulb, X } from 'lucide-react'
+import { ChevronRight, X } from 'lucide-react'
 import { DEFAULT_SECTIONS } from './mock'
 import type { FC } from 'react'
 import type { BookSection } from './type'
@@ -66,27 +66,6 @@ const GuideBookModal: FC<GuideBookModalProps> = ({
     }
   }, [activeKey, activeSection])
 
-  // Phím tắt mũi tên ← → chuyển tab (chỉ áp dụng ở màn hình đủ rộng,
-  // trên mobile các mũi tên không có ý nghĩa thao tác)
-  useEffect(() => {
-    if (!open || isMobile) return
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight' && activeIndex < sections.length - 1) {
-        setActiveKey(sections[activeIndex + 1].key)
-      }
-      if (e.key === 'ArrowLeft' && activeIndex > 0) {
-        setActiveKey(sections[activeIndex - 1].key)
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [open, isMobile, activeIndex, sections])
-
-  // Lấy ra sub-item đang chọn hiện tại
-  const currentSubItem = activeSection.items?.find(
-    (i) => i.key === activeSubKey,
-  )
-
   return (
     <>
       <Modal
@@ -100,7 +79,7 @@ const GuideBookModal: FC<GuideBookModalProps> = ({
               ? 'min(720px, 94vw)'
               : 'min(1080px, 95vw)'
         }
-        destroyOnClose
+        destroyOnHidden
         closeIcon={null}
         centered={!isMobile}
         style={
@@ -434,19 +413,6 @@ const GuideBookModal: FC<GuideBookModalProps> = ({
                       {activeSection.badge}
                     </span>
                   )}
-                  <span
-                    style={{
-                      fontSize: 12,
-                      color: '#8C8C8C',
-                      marginLeft: 'auto',
-                    }}
-                  >
-                    Mục{' '}
-                    <strong style={{ color: '#262626' }}>
-                      {activeIndex + 1}
-                    </strong>{' '}
-                    / {sections.length}
-                  </span>
                 </div>
 
                 {/* Tiêu đề Tab chính */}
@@ -462,75 +428,6 @@ const GuideBookModal: FC<GuideBookModalProps> = ({
                   >
                     {activeSection.title}
                   </h2>
-                )}
-
-                {/* Subtitle / Tiêu đề mục con */}
-                {currentSubItem ? (
-                  <h4
-                    style={{
-                      margin: '0 0 18px',
-                      fontSize: 15,
-                      fontWeight: 600,
-                      color: '#1677FF',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 6,
-                    }}
-                  >
-                    <ChevronRight size={16} />
-                    {currentSubItem.label}
-                  </h4>
-                ) : (
-                  activeSection.subtitle && (
-                    <p
-                      style={{
-                        margin: '0 0 18px',
-                        fontSize: 14,
-                        color: '#8C8C8C',
-                      }}
-                    >
-                      {activeSection.subtitle}
-                    </p>
-                  )
-                )}
-
-                {/* Khối hiển thị Nội dung chính */}
-                <div style={{ flex: 1, marginBottom: 20 }}>
-                  {activeSection.items && activeSection.items.length > 0
-                    ? (currentSubItem?.content ?? currentSubItem?.body)
-                    : activeSection.content}
-                </div>
-
-                {/* Tip Callout ở chân trang */}
-                {activeSection.tip && (
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: 12,
-                      padding: '12px 16px',
-                      borderRadius: 8,
-                      background: '#FAFAFA',
-                      border: '1px solid #F0F0F0',
-                      marginTop: 'auto',
-                    }}
-                  >
-                    <Lightbulb
-                      size={18}
-                      color="#FAAD14"
-                      style={{ flexShrink: 0, marginTop: 1 }}
-                    />
-                    <div
-                      style={{
-                        fontSize: 13,
-                        color: '#595959',
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      <strong style={{ color: '#262626' }}>Gợi ý: </strong>
-                      {activeSection.tip}
-                    </div>
-                  </div>
                 )}
               </motion.div>
             </AnimatePresence>
