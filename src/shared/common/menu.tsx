@@ -73,8 +73,8 @@ export interface AppMenuItem {
 
 export const Menu: Array<AppMenuItem> = [
   {
-    id: 'random',
-    label: 'Random',
+    id: 'service',
+    label: 'Service',
     icon: <AppWindow style={{ fontSize: 18 }} />,
     children: [
       {

@@ -38,11 +38,6 @@ export default function Categories() {
       .date(cycleDay)
       .subtract(1, 'millisecond')
 
-    console.log('params', {
-      startDate: start.toISOString(),
-      endDate: end.toISOString(),
-    })
-
     return {
       startDate: start.toISOString(),
       endDate: end.toISOString(),
@@ -237,13 +232,16 @@ export default function Categories() {
         </div>
 
         <Flex gap={12} wrap="wrap" justify="center" align="center">
-          <Flex flex={1} style={{ minWidth: 240 }}>
+          <Flex flex={1} gap={8} style={{ minWidth: 240 }}>
             <Progress
               percent={Math.floor(
                 totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0,
               )}
+              status="active"
               strokeColor="red"
+              showInfo={false}
             />
+            {Math.floor((totalSpent / totalBudget) * 100)}%
           </Flex>
           <Flex gap={8} justify="center" align="center">
             <Button
