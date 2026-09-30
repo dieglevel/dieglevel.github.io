@@ -63,6 +63,29 @@ export const SettingsLocalization: React.FC<Props> = ({
             }
           />
         </List.Item>
+
+        <List.Item
+          extra={
+            <Select
+              value={setting.cycleStartDate}
+              onChange={(val) => onUpdate({ cycleStartDate: val })}
+              style={{ width: 160 }}
+              options={Array.from({ length: 31 }, (_, i) => ({
+                label: `${i + 1}`,
+                value: i + 1,
+              }))}
+            />
+          }
+        >
+          <List.Item.Meta
+            title="Cycle Start Date"
+            description={
+              <Text type="secondary">
+                The date when each financial cycle starts
+              </Text>
+            }
+          />
+        </List.Item>
       </List>
     </Card>
   )

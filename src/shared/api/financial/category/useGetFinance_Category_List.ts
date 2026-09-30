@@ -8,7 +8,8 @@ import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 // Get<Example><Type>Params
 export interface GetFinance_Category_List_Params {
   queryParams?: {
-    amountMonth?: dayjs.Dayjs | string | Date
+    startDate?: dayjs.Dayjs | string | Date
+    endDate?: dayjs.Dayjs | string | Date
   }
 
   options?: Omit<

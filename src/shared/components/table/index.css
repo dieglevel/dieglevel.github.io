@@ -1,3 +1,9 @@
 .custom-table .ant-table-cell::before {
   display: none;
 }
+
+.custom-table .ant-table-body {
+  overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}

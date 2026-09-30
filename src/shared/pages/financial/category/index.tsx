@@ -11,6 +11,7 @@ import {
 import { PlusOutlined } from '@ant-design/icons'
 
 import dayjs from 'dayjs'
+import { useSettingStore } from '../_store/setting.store'
 import CategoryModal from './_components/CategoryModal'
 import CategoryTreeNode from './_components/CategoryTreeNode'
 import CategoryDetailModal from './_components/CategoryDetailModal'
@@ -25,12 +26,31 @@ export interface ExtendedFinanceCategory extends IFinance_Category {
 }
 
 export default function Categories() {
-  const [selectedMonth, setSelectedMonth] = useState<dayjs.Dayjs>(dayjs())
+  const [selectDate, setSelectDate] = useState<dayjs.Dayjs>(dayjs())
+  const setting = useSettingStore.getState().setting
+
+  const params = useMemo(() => {
+    const cycleDay = setting?.cycleStartDate || 1
+    const start = selectDate.date(cycleDay).startOf('day')
+
+    const end = selectDate
+      .add(1, 'month')
+      .date(cycleDay)
+      .subtract(1, 'millisecond')
+
+    console.log('params', {
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
+    })
+
+    return {
+      startDate: start.toISOString(),
+      endDate: end.toISOString(),
+    }
+  }, [selectDate, setting?.cycleStartDate])
 
   const { data: apiResponse, isPending } = useGetFinance_Category_List({
-    queryParams: {
-      amountMonth: dayjs(selectedMonth).format('YYYY-MM'),
-    },
+    queryParams: params,
   })
   const rawCategories: Array<ExtendedFinanceCategory> = apiResponse?.data || []
 
@@ -236,9 +256,9 @@ export default function Categories() {
             <DatePicker
               style={{ width: '180px' }}
               picker="month"
-              value={selectedMonth}
+              value={selectDate}
               onChange={(date) => {
-                setSelectedMonth(date ?? dayjs())
+                setSelectDate(date ?? dayjs())
               }}
             />
           </Flex>
@@ -298,7 +318,7 @@ export default function Categories() {
         onSubmit={save}
       />
       <CategoryDetailModal
-        amountMonth={selectedMonth}
+        params={params}
         categoryId={detailModalCategoryId}
         open={detailModalOpen}
         onCancel={() => {

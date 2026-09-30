@@ -11,7 +11,6 @@ import {
   Space,
   Spin,
   Statistic,
-  Table,
   Tag,
   Typography,
 } from 'antd'
@@ -31,6 +30,7 @@ import { useGetFinance_Category_Transaction } from '@/shared/api/financial/categ
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { DoubleCardModal } from '@/shared/components/modal/double-modal'
+import Table from '@/shared/components/table'
 
 // Component DoubleCardModal đã tạo ở bước trước (đổi đường dẫn cho phù hợp)
 
@@ -41,27 +41,26 @@ type TransactionRow = Omit<IFinance_TransactionItem, 'category'> & {
 }
 
 interface CategoryDetailModalProps {
-  amountMonth?: dayjs.Dayjs | string | Date
+  params: {
+    startDate: string
+    endDate: string
+  }
   categoryId: number | null
   open: boolean
   onCancel: () => void
 }
 
 export default function CategoryDetailModal({
-  amountMonth,
+  params,
   categoryId,
   open,
   onCancel,
 }: CategoryDetailModalProps) {
-  const monthKey = dayjs(amountMonth).format('YYYY-MM')
-
   const { data, isLoading } = useGetFinance_Category_Transaction({
     pathParams: {
       categoryId: categoryId || 0,
     },
-    queryParams: {
-      amountMonth: monthKey,
-    },
+    queryParams: params,
   })
 
   const parentCategory = data?.data.parent
@@ -275,8 +274,8 @@ export default function CategoryDetailModal({
               rowKey="id"
               columns={columns}
               dataSource={transactionItems}
-              pagination={{ pageSize: 10, showSizeChanger: false }}
               size="small"
+              pagination="Scroll"
               bordered={false}
             />
           </div>

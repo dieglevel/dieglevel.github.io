@@ -9,10 +9,7 @@ import { SettingsSecurity } from './SettingsSecurity'
 import { SettingsDataManagement } from './SettingsDataManagement'
 import type { NotificationSettings, SecuritySettings } from './types'
 import type { IFinance_Setting } from '@/shared/api/financial/setting/setting.type'
-import {
-  LOCAL_STORAGE_KEY,
-  LocalStorageService,
-} from '@/shared/lib/service/local-storage'
+
 import { useMutationFinanceSetting } from '@/shared/api/financial/setting/setting.mutation'
 
 const { Title, Text } = Typography
@@ -22,22 +19,6 @@ export function Settings() {
 
   const toggleDark = () => {
     setIsDark((prev) => !prev)
-  }
-  const [currency, setCurrency] = useState<string | null>(
-    LocalStorageService.get(LOCAL_STORAGE_KEY.CURRENCY, 'VND'),
-  )
-  const [language, setLanguage] = useState<string | null>(
-    LocalStorageService.get(LOCAL_STORAGE_KEY.LANGUAGE, 'English'),
-  )
-
-  const handleCurrencyChange = (newCurrency: string) => {
-    setCurrency(newCurrency)
-    LocalStorageService.set(LOCAL_STORAGE_KEY.CURRENCY, newCurrency)
-  }
-
-  const handleLanguageChange = (newLanguage: string) => {
-    setLanguage(newLanguage)
-    LocalStorageService.set(LOCAL_STORAGE_KEY.LANGUAGE, newLanguage)
   }
 
   const [notifications, setNotifications] = useState<NotificationSettings>({

@@ -1,10 +1,13 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 
+import { Flex } from 'antd'
+import { useEffect } from 'react'
 import { useAuthStore } from '@/shared/auth/auth.store'
 import { LoginComponent } from '@/routes/(public)/(empty-layout)/login'
 import WalletLayout from '@/shared/pages/financial/_layout'
 import { useGetFinance_Setting_Get } from '@/shared/api/financial/setting/useGetFinance_Setting_Get'
 import { useSettingStore } from '@/shared/pages/financial/_store/setting.store'
+import SakuraBranch from '@/shared/components/sakura-branch'
 
 export const Route = createFileRoute('/(protected)/financial')({
   component: () => {
@@ -19,10 +22,18 @@ export const Route = createFileRoute('/(protected)/financial')({
 export function RouteComponent() {
   const { data } = useGetFinance_Setting_Get({})
 
+  useEffect(() => {
+    if (data?.data) {
+      useSettingStore.getState().set(data.data)
+    }
+  }, [data])
+
   if (!data) {
-    return <div>Loading...</div>
-  } else {
-    useSettingStore.getState().set(data.data)
+    return (
+      <Flex justify="center" align="center" style={{ height: '100%' }}>
+        <SakuraBranch size={160} />
+      </Flex>
+    )
   }
 
   return (

@@ -23,10 +23,11 @@ export interface FinancialCategory_GetTransactionCategory_Response {
 
 export interface GetFinance_Category_Transaction_Params {
   pathParams: {
-    categoryId: number
+    categoryId?: number
   }
   queryParams: {
-    amountMonth?: dayjs.Dayjs | string | Date
+    startDate?: dayjs.Dayjs | string | Date
+    endDate?: dayjs.Dayjs | string | Date
   }
   options?: Omit<
     UseQueryOptions<
@@ -51,4 +52,8 @@ export const useGetFinance_Category_Transaction = (
       ...props.options,
     },
     ...props,
+    pathParams: {
+      ...props.pathParams,
+      categoryId: props.pathParams.categoryId ?? '',
+    },
   })
