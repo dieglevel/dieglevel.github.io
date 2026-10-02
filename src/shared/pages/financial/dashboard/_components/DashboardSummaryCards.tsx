@@ -8,16 +8,9 @@ import {
   TrendingUp,
   Wallet,
 } from 'lucide-react'
+import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const { Text } = Typography
-
-const formatVND = (val: number) => {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-    maximumFractionDigits: 0,
-  }).format(val || 0)
-}
 
 interface DashboardSummaryCardsProps {
   summary: {
@@ -39,9 +32,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
       <Col xs={24} sm={12} lg={6}>
         <Card
           style={{
-            background: '#ffffff',
             borderRadius: '12px',
-            border: '1px solid #e2e8f0',
             boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
           }}
           styles={{ body: { padding: '20px' } }}
@@ -68,7 +59,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
                   color: '#16a34a',
                 }}
               >
-                {formatVND(summary.totalIncome)}
+                {convertCurrency(summary.totalIncome)}
               </h2>
             </div>
             <div
@@ -106,9 +97,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
       <Col xs={24} sm={12} lg={6}>
         <Card
           style={{
-            background: '#ffffff',
             borderRadius: '12px',
-            border: '1px solid #e2e8f0',
             boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
           }}
           styles={{ body: { padding: '20px' } }}
@@ -135,7 +124,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
                   color: '#dc2626',
                 }}
               >
-                {formatVND(summary.totalExpense)}
+                {convertCurrency(summary.totalExpense)}
               </h2>
             </div>
             <div
@@ -173,9 +162,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
       <Col xs={24} sm={12} lg={6}>
         <Card
           style={{
-            background: '#ffffff',
             borderRadius: '12px',
-            border: '1px solid #e2e8f0',
             boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
           }}
           styles={{ body: { padding: '20px' } }}
@@ -202,7 +189,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
                   color: summary.netBalance >= 0 ? '#0284c7' : '#dc2626',
                 }}
               >
-                {formatVND(summary.netBalance)}
+                {convertCurrency(summary.netBalance)}
               </h2>
             </div>
             <div
@@ -231,8 +218,8 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
             }}
           >
             <span>Tổng số dư các ví:</span>
-            <span style={{ fontWeight: 600, color: '#0f172a' }}>
-              {formatVND(summary.totalWalletBalance)}
+            <span style={{ fontWeight: 600 }}>
+              {convertCurrency(summary.totalWalletBalance)}
             </span>
           </div>
         </Card>
@@ -242,9 +229,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
       <Col xs={24} sm={12} lg={6}>
         <Card
           style={{
-            background: '#ffffff',
             borderRadius: '12px',
-            border: '1px solid #e2e8f0',
             boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
           }}
           styles={{ body: { padding: '20px' } }}
@@ -294,7 +279,6 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
               percent={summary.savingsRate}
               showInfo={false}
               strokeColor="#4f46e5"
-              trailColor="#f1f5f9"
             />
           </div>
         </Card>

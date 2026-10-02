@@ -11,16 +11,16 @@ import type { NotificationSettings, SecuritySettings } from './types'
 import type { IFinance_Setting } from '@/shared/api/financial/setting/setting.type'
 
 import { useMutationFinanceSetting } from '@/shared/api/financial/setting/setting.mutation'
+import { FINANCIAL_SETTING_THEME_MODE } from '@/shared/api/financial/setting/setting.enum'
+import {
+  LOCAL_STORAGE_KEY,
+  LocalStorageService,
+} from '@/shared/lib/service/local-storage'
+import { useThemeMode } from '@/shared/provider/antd-theme.provider'
 
 const { Title, Text } = Typography
-
-export function Settings() {
-  const [isDark, setIsDark] = useState(false)
-
-  const toggleDark = () => {
-    setIsDark((prev) => !prev)
-  }
-
+const Settings = () => {
+  const { toggle } = useThemeMode()
   const [notifications, setNotifications] = useState<NotificationSettings>({
     budgetAlerts: true,
     largeTransactions: true,
@@ -39,12 +39,24 @@ export function Settings() {
 
   const { mUpdate } = useMutationFinanceSetting()
 
-  const handleSaveSettings = async (data: Partial<IFinance_Setting>) => {
+  const handleSaveSettings = async (request: Partial<IFinance_Setting>) => {
     try {
-      await mUpdate.mutateAsync({
-        body: data,
-      })
-      console.log('Settings saved successfully:', data)
+      await mUpdate.mutateAsync(
+        {
+          body: request,
+        },
+        {
+          onSuccess(data, variables, onMutateResult, context) {
+            if (request.themeMode) {
+              toggle()
+              LocalStorageService.set(
+                LOCAL_STORAGE_KEY.THEME,
+                request.themeMode,
+              )
+            }
+          },
+        },
+      )
     } catch (error) {
       console.error('Error saving settings:', error)
     }
@@ -80,7 +92,17 @@ export function Settings() {
         </div>
 
         {/* Sections */}
-        <SettingsAppearance isDark={isDark} toggleDark={toggleDark} />
+        <SettingsAppearance
+          setting={setting}
+          toggle={() =>
+            handleSaveSettings({
+              themeMode:
+                setting.themeMode === FINANCIAL_SETTING_THEME_MODE.LIGHT
+                  ? FINANCIAL_SETTING_THEME_MODE.DARK
+                  : FINANCIAL_SETTING_THEME_MODE.LIGHT,
+            })
+          }
+        />
 
         <SettingsLocalization setting={setting} onUpdate={handleSaveSettings} />
 
@@ -103,5 +125,4 @@ export function Settings() {
     </Flex>
   )
 }
-
 export default Settings

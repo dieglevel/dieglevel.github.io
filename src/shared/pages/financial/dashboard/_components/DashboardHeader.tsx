@@ -3,8 +3,17 @@ import { Button, Select, Space, Typography } from 'antd'
 import { PlusCircle } from 'lucide-react'
 import type { WalletOverviewItem } from '@/shared/api/financial/dashboard/dashboard.type'
 import { DashboardTimeFrame } from '@/shared/api/financial/dashboard/dashboard.type'
+import { useThemeMode } from '@/shared/provider/antd-theme.provider'
+import { getTokens } from '@/shared/common/design-token'
+// Chỉnh lại đường dẫn import cho đúng với project của bạn
 
 const { Title, Text } = Typography
+
+const TIME_FRAMES = [
+  { key: DashboardTimeFrame.WEEKLY, label: 'Tuần này' },
+  { key: DashboardTimeFrame.MONTHLY, label: 'Tháng này' },
+  { key: DashboardTimeFrame.YEARLY, label: 'Năm nay' },
+]
 
 interface DashboardHeaderProps {
   timeFrame: DashboardTimeFrame
@@ -23,6 +32,9 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   wallets,
   onNavigateToCreateTransaction,
 }) => {
+  const { mode } = useThemeMode()
+  const { border, state, shadow, radius } = getTokens(mode)
+
   return (
     <div
       style={{
@@ -33,20 +45,14 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         gap: 16,
         marginBottom: 24,
         padding: '20px 24px',
-        borderRadius: '12px',
-        background: '#ffffff',
-        border: '1px solid #e2e8f0',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+        borderRadius: radius.lg,
       }}
     >
       <div>
-        <Title
-          level={3}
-          style={{ margin: 0, color: '#0f172a', fontWeight: 700 }}
-        >
+        <Title level={3} style={{ margin: 0, fontWeight: 700 }}>
           Dashboard Tổng Quan Tài Chính
         </Title>
-        <Text type="secondary" style={{ fontSize: '13px' }}>
+        <Text type="secondary" style={{ fontSize: 13 }}>
           Theo dõi dòng tiền, thu chi và tình hình tài chính của bạn theo thời
           gian thực.
         </Text>
@@ -56,35 +62,33 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         {/* Timeframe Filter Buttons */}
         <div
           style={{
-            background: '#f1f5f9',
-            padding: '4px',
-            borderRadius: '8px',
-            border: '1px solid #e2e8f0',
+            background: state.hover,
+            padding: 4,
+            borderRadius: radius.md,
+            border: `1px solid ${border.base}`,
             display: 'flex',
             gap: 4,
           }}
         >
-          {[
-            { key: DashboardTimeFrame.WEEKLY, label: 'Tuần này' },
-            { key: DashboardTimeFrame.MONTHLY, label: 'Tháng này' },
-            { key: DashboardTimeFrame.YEARLY, label: 'Năm nay' },
-          ].map((tf) => (
-            <Button
-              key={tf.key}
-              type={timeFrame === tf.key ? 'primary' : 'text'}
-              size="small"
-              onClick={() => setTimeFrame(tf.key)}
-              style={{
-                borderRadius: '6px',
-                fontWeight: 500,
-                fontSize: '13px',
-                boxShadow:
-                  timeFrame === tf.key ? '0 1px 2px rgba(0,0,0,0.1)' : 'none',
-              }}
-            >
-              {tf.label}
-            </Button>
-          ))}
+          {TIME_FRAMES.map((tf) => {
+            const active = timeFrame === tf.key
+            return (
+              <Button
+                key={tf.key}
+                type={active ? 'primary' : 'text'}
+                size="small"
+                onClick={() => setTimeFrame(tf.key)}
+                style={{
+                  borderRadius: radius.sm,
+                  fontWeight: 500,
+                  fontSize: 13,
+                  boxShadow: active ? shadow.button : 'none',
+                }}
+              >
+                {tf.label}
+              </Button>
+            )
+          })}
         </div>
 
         {/* Wallet Selector */}
@@ -106,8 +110,8 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           icon={<PlusCircle size={16} />}
           onClick={onNavigateToCreateTransaction}
           style={{
-            borderRadius: '8px',
-            height: '36px',
+            borderRadius: radius.md,
+            height: 36,
             fontWeight: 600,
             display: 'inline-flex',
             alignItems: 'center',

@@ -9,7 +9,7 @@ import './styles.css'
 import '@/shared/css/App.css'
 
 import reportWebVitals from './reportWebVitals.ts'
-import { ConfigAntd } from './shared/common/antd-config-provider.constant.ts'
+import { ConfigAntd } from './shared/common/antd-config-provider.constant.tsx'
 import { queryClient } from './shared/lib/api/query-client.ts'
 import { routeTree } from './shared/router/routeTree.gen.ts'
 

@@ -310,7 +310,7 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
             label: '📊 Tổng quan & Dự phóng',
             children: (
               <Space
-                direction="vertical"
+                vertical
                 style={{ width: '100%', marginTop: 8 }}
                 size="middle"
               >
@@ -402,7 +402,7 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
             label: `📜 Lịch sử tích lũy (${historyList.length})`,
             children: (
               <Space
-                direction="vertical"
+                vertical
                 style={{ width: '100%', marginTop: 8 }}
                 size="middle"
               >

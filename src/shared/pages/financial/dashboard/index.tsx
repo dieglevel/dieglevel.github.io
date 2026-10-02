@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
-import { Col, Row, Skeleton } from 'antd'
+import { Col, Flex, Row, Spin } from 'antd'
 
 import { DashboardHeader } from './_components/DashboardHeader'
 import { DashboardSummaryCards } from './_components/DashboardSummaryCards'
@@ -29,7 +29,7 @@ export function Dashboard() {
     walletId: selectedWalletId,
   }
 
-  const { data: response, isLoading } = useGetFinancialDashboard({
+  const { data: response, isFetching } = useGetFinancialDashboard({
     queryParams,
   })
 
@@ -54,8 +54,6 @@ export function Dashboard() {
       style={{
         padding: '24px',
         minHeight: '100vh',
-        background: '#f8fafc',
-        color: '#0f172a',
       }}
     >
       {/* Header & Filter Toolbar */}
@@ -70,8 +68,10 @@ export function Dashboard() {
         }
       />
 
-      {isLoading ? (
-        <Skeleton active paragraph={{ rows: 10 }} />
+      {isFetching ? (
+        <Flex align="center" justify="center" style={{ height: '100%' }}>
+          <Spin />
+        </Flex>
       ) : (
         <>
           {/* Top 4 KPI Metrics Cards */}

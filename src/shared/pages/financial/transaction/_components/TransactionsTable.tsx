@@ -258,9 +258,9 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
         }}
         pagination={{
           onChange: (page) => onPageChange(page),
-          total: pagination?.total || 300,
-          current: pagination?.current || 1,
-          pageSize: pagination?.pageSize || 10,
+          total: pagination?.total,
+          current: pagination?.current,
+          pageSize: pagination?.pageSize,
           showSizeChanger: false,
           simple: isMobile,
           showTotal: isMobile

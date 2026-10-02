@@ -9,6 +9,7 @@ import type { QueryClient } from '@tanstack/react-query'
 import { SpinGlobal } from '@/shared/components/spin-global'
 import NotFound from '@/shared/pages/_global/notFound'
 import GlobalLoading from '@/shared/components/loading/global-loading'
+import { AppThemeProvider } from '@/shared/provider/antd-theme.provider'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -20,23 +21,25 @@ Spin.setDefaultIndicator(SpinGlobal)
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
     <header>
-      <GlobalLoading />
-      <Outlet />
-      <TanStackDevtools
-        config={{
-          position: 'middle-right',
-        }}
-        plugins={[
-          {
-            name: 'Tanstack Router',
-            render: <TanStackRouterDevtoolsPanel />,
-          },
-          {
-            name: 'Tanstack Query',
-            render: <ReactQueryDevtoolsPanel />,
-          },
-        ]}
-      />
+      <AppThemeProvider>
+        <GlobalLoading />
+        <Outlet />
+        <TanStackDevtools
+          config={{
+            position: 'middle-right',
+          }}
+          plugins={[
+            {
+              name: 'Tanstack Router',
+              render: <TanStackRouterDevtoolsPanel />,
+            },
+            {
+              name: 'Tanstack Query',
+              render: <ReactQueryDevtoolsPanel />,
+            },
+          ]}
+        />
+      </AppThemeProvider>
     </header>
   ),
   notFoundComponent: () => <NotFound />,

@@ -3,6 +3,7 @@ import { Card, Empty, Progress } from 'antd'
 import { PieChart as PieChartIcon } from 'lucide-react'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import type { CategoryBreakdownItem } from '@/shared/api/financial/dashboard/dashboard.type'
+import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const CATEGORY_COLORS = [
   '#4f46e5', // Indigo
@@ -14,14 +15,6 @@ const CATEGORY_COLORS = [
   '#06b6d4', // Cyan
   '#f43f5e', // Rose
 ]
-
-const formatVND = (val: number) => {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-    maximumFractionDigits: 0,
-  }).format(val || 0)
-}
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -51,7 +44,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
             }}
           >
             <span>{entry.name}:</span>
-            <span style={{ fontWeight: 600 }}>{formatVND(entry.value)}</span>
+            <span style={{ fontWeight: 600 }}>
+              {convertCurrency(entry.value)}
+            </span>
           </div>
         ))}
       </div>
@@ -72,7 +67,6 @@ export const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
       title={
         <span
           style={{
-            color: '#0f172a',
             fontSize: '16px',
             fontWeight: 600,
             display: 'flex',
@@ -84,9 +78,7 @@ export const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
         </span>
       }
       style={{
-        background: '#ffffff',
         borderRadius: '12px',
-        border: '1px solid #e2e8f0',
         boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
       }}
     >
@@ -141,11 +133,9 @@ export const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
                     marginBottom: 4,
                   }}
                 >
-                  <span style={{ color: '#0f172a', fontWeight: 500 }}>
-                    {cat.categoryName}
-                  </span>
+                  <span style={{ fontWeight: 500 }}>{cat.categoryName}</span>
                   <span style={{ color: '#64748b' }}>
-                    {formatVND(cat.amount)} ({cat.percentage}%)
+                    {convertCurrency(cat.amount)} ({cat.percentage}%)
                   </span>
                 </div>
                 <Progress
@@ -155,7 +145,6 @@ export const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
                     cat.categoryColor ||
                     CATEGORY_COLORS[idx % CATEGORY_COLORS.length]
                   }
-                  trailColor="#f1f5f9"
                   size="small"
                 />
               </div>

@@ -2,14 +2,7 @@ import React from 'react'
 import { Button, Card, Empty } from 'antd'
 import { Wallet } from 'lucide-react'
 import type { WalletOverviewItem } from '@/shared/api/financial/dashboard/dashboard.type'
-
-const formatVND = (val: number) => {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-    maximumFractionDigits: 0,
-  }).format(val || 0)
-}
+import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 interface WalletListWidgetProps {
   wallets: Array<WalletOverviewItem>
@@ -25,7 +18,6 @@ export const WalletListWidget: React.FC<WalletListWidgetProps> = ({
       title={
         <span
           style={{
-            color: '#0f172a',
             fontSize: '16px',
             fontWeight: 600,
             display: 'flex',
@@ -47,9 +39,7 @@ export const WalletListWidget: React.FC<WalletListWidgetProps> = ({
         </Button>
       }
       style={{
-        background: '#ffffff',
         borderRadius: '12px',
-        border: '1px solid #e2e8f0',
         boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
       }}
     >
@@ -72,8 +62,6 @@ export const WalletListWidget: React.FC<WalletListWidgetProps> = ({
                 justifyContent: 'space-between',
                 padding: '12px 16px',
                 borderRadius: '10px',
-                background: '#f8fafc',
-                border: '1px solid #e2e8f0',
               }}
             >
               <div
@@ -102,7 +90,6 @@ export const WalletListWidget: React.FC<WalletListWidgetProps> = ({
                   <div
                     style={{
                       fontWeight: 600,
-                      color: '#0f172a',
                       fontSize: 14,
                     }}
                   >
@@ -121,7 +108,7 @@ export const WalletListWidget: React.FC<WalletListWidgetProps> = ({
                     fontSize: 15,
                   }}
                 >
-                  {formatVND(w.balance)}
+                  {convertCurrency(w.balance)}
                 </div>
               </div>
             </div>

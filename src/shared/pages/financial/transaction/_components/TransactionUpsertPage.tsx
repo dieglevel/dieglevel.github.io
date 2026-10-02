@@ -59,7 +59,7 @@ export const TransactionUpsertPage: React.FC<TransactionUpsertPageProps> = ({
   if (isUpdateMode && isLoadingDetail) {
     return (
       <Flex justify="center" align="center" style={{ minHeight: '100vh' }}>
-        <Spin size="large" tip="Đang tải thông tin giao dịch..." />
+        <Spin size="large" description="Đang tải thông tin giao dịch..." />
       </Flex>
     )
   }

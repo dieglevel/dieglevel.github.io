@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLocation, useNavigate } from '@tanstack/react-router'
-import { Grid } from 'antd' // 1. Import Grid từ antd
+import { Grid } from 'antd'
 import type { Variants } from 'motion/react'
 
 import type { AppMenuItem } from '@/shared/common/menu'
 import { Menu } from '@/shared/common/menu'
 import { background, colors } from '@/shared/common/design-token'
 
-const { useBreakpoint } = Grid // 2. Lấy hook useBreakpoint
+const { useBreakpoint } = Grid
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -47,10 +47,8 @@ export default function FloatingMenu() {
   const floatingMenus: Array<AppMenuItem> =
     Menu.filter((menu) => menu.id === 'finance').at(0)?.children || []
 
-  // 3. Kiểm tra kích thước màn hình
   const screen = useBreakpoint()
 
-  // 4. Nếu là mobile (xs), không hiển thị Floating Menu
   if (screen.xs) {
     return null
   }
@@ -209,19 +207,20 @@ export default function FloatingMenu() {
             strokeWidth="2.5"
             strokeLinecap="round"
           >
+            {/* Top Line */}
             <motion.line
               x1="4"
               y1="6"
               x2="20"
               y2="6"
               animate={{
-                y1: isOpen ? 12 : 6,
-                y2: isOpen ? 12 : 6,
+                y: isOpen ? 6 : 0,
                 rotate: isOpen ? 45 : 0,
               }}
               transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-              style={{ transformOrigin: 'center' }}
+              style={{ transformOrigin: '12px 6px' }}
             />
+            {/* Middle Line */}
             <motion.line
               x1="4"
               y1="12"
@@ -230,18 +229,18 @@ export default function FloatingMenu() {
               animate={{ opacity: isOpen ? 0 : 1, scale: isOpen ? 0 : 1 }}
               transition={{ duration: 0.15 }}
             />
+            {/* Bottom Line */}
             <motion.line
               x1="4"
               y1="18"
               x2="20"
               y2="18"
               animate={{
-                y1: isOpen ? 12 : 18,
-                y2: isOpen ? 12 : 18,
+                y: isOpen ? -6 : 0,
                 rotate: isOpen ? -45 : 0,
               }}
               transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-              style={{ transformOrigin: 'center' }}
+              style={{ transformOrigin: '12px 18px' }}
             />
           </svg>
         </motion.div>

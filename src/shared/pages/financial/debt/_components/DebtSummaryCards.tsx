@@ -7,6 +7,8 @@ import {
   FinancialDebtDirectionHelper,
 } from '@/shared/api/financial/debt/debt.enum'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
+import { useThemeMode } from '@/shared/provider/antd-theme.provider'
+import { getTokens } from '@/shared/common/design-token'
 
 const { Text, Title } = Typography
 
@@ -17,6 +19,9 @@ interface DebtSummaryCardsProps {
 export const DebtSummaryCards: React.FC<DebtSummaryCardsProps> = ({
   debts,
 }) => {
+  const { mode } = useThemeMode()
+  const { colors, background, radius } = getTokens(mode)
+
   // Cho vay (Phải thu - INCOMING)
   const incomingDebts = debts.filter(
     (d) => d.direction === FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING,
@@ -61,10 +66,10 @@ export const DebtSummaryCards: React.FC<DebtSummaryCardsProps> = ({
         <Card
           size="small"
           style={{
-            borderRadius: 12,
-            border: '1px solid #dcfce7',
-            background: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)',
-            boxShadow: '0 2px 8px rgba(16, 185, 129, 0.08)',
+            borderRadius: radius.lg,
+            border: `1px solid ${colors.success.soft}`,
+            background: `linear-gradient(135deg, ${background.base} 0%, ${colors.success[50]} 100%)`,
+            boxShadow: `0 2px 8px rgba(${colors.success.rgb}, 0.08)`,
           }}
         >
           <Flex
@@ -112,10 +117,10 @@ export const DebtSummaryCards: React.FC<DebtSummaryCardsProps> = ({
         <Card
           size="small"
           style={{
-            borderRadius: 12,
-            border: '1px solid #ffe4e6',
-            background: 'linear-gradient(135deg, #ffffff 0%, #fff1f2 100%)',
-            boxShadow: '0 2px 8px rgba(225, 29, 72, 0.08)',
+            borderRadius: radius.lg,
+            border: `1px solid ${colors.error.soft}`,
+            background: `linear-gradient(135deg, ${background.base} 0%, ${colors.error[50]} 100%)`,
+            boxShadow: `0 2px 8px rgba(${colors.error.rgb}, 0.08)`,
           }}
         >
           <Flex
@@ -163,10 +168,10 @@ export const DebtSummaryCards: React.FC<DebtSummaryCardsProps> = ({
         <Card
           size="small"
           style={{
-            borderRadius: 12,
-            border: '1px solid #e2e8f0',
-            background: '#ffffff',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+            borderRadius: radius.lg,
+            border: `1px solid ${colors.neutral[300]}`,
+            background: `${background.base}`,
+            boxShadow: `0 2px 8px rgba(0,0,0,0.04)`,
           }}
         >
           <Flex
@@ -214,10 +219,10 @@ export const DebtSummaryCards: React.FC<DebtSummaryCardsProps> = ({
         <Card
           size="small"
           style={{
-            borderRadius: 12,
-            border: '1px solid #e0f2fe',
-            background: 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%)',
-            boxShadow: '0 2px 8px rgba(2, 132, 199, 0.08)',
+            borderRadius: radius.lg,
+            border: `1px solid ${colors.primary[300]}`,
+            background: `linear-gradient(135deg, ${background.base} 0%, ${colors.primary[50]} 100%)`,
+            boxShadow: `0 2px 8px rgba(${colors.primary.rgb}, 0.08)`,
           }}
         >
           <Flex

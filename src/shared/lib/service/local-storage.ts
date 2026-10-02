@@ -1,6 +1,6 @@
 export enum LOCAL_STORAGE_KEY {
   CURRENCY = 'currency',
-  THEME = 'theme',
+  THEME = 'theme-mode',
   LANGUAGE = 'language',
   CURRENT_PAGE = 'currentPage',
 }

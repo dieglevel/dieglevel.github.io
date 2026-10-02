@@ -132,7 +132,6 @@ export const DebtManagementPage: React.FC = () => {
         width: '100%',
         padding: isMobile ? 12 : 24,
         boxSizing: 'border-box',
-        backgroundColor: '#f8fafc',
         minHeight: '100vh',
       }}
     >

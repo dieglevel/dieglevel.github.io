@@ -66,11 +66,7 @@ export function TransactionDetail({
       {isLoading ? (
         <Skeleton active paragraph={{ rows: 7 }} style={{ marginTop: 16 }} />
       ) : transaction ? (
-        <Space
-          direction="vertical"
-          style={{ width: '100%', marginTop: 12 }}
-          size="medium"
-        >
+        <Space vertical style={{ width: '100%', marginTop: 12 }} size="medium">
           {/* Card Tổng quan số tiền */}
           <Card
             size="small"

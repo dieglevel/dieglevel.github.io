@@ -11,14 +11,7 @@ import {
   YAxis,
 } from 'recharts'
 import type { CashFlowTimelinePoint } from '@/shared/api/financial/dashboard/dashboard.type'
-
-const formatVND = (val: number) => {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-    maximumFractionDigits: 0,
-  }).format(val || 0)
-}
+import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -48,7 +41,9 @@ const CustomTooltip = ({ active, payload, label }: any) => {
             }}
           >
             <span>{entry.name}:</span>
-            <span style={{ fontWeight: 600 }}>{formatVND(entry.value)}</span>
+            <span style={{ fontWeight: 600 }}>
+              {convertCurrency(entry.value)}
+            </span>
           </div>
         ))}
       </div>
@@ -69,7 +64,6 @@ export const CashFlowChart: React.FC<CashFlowChartProps> = ({
       title={
         <span
           style={{
-            color: '#0f172a',
             fontSize: '16px',
             fontWeight: 600,
             display: 'flex',
@@ -77,13 +71,11 @@ export const CashFlowChart: React.FC<CashFlowChartProps> = ({
             gap: 8,
           }}
         >
-          <Calendar size={18} color="#0284c7" /> Biểu Đồ Dòng Tiền Thu / Chi
+          <Calendar size={18} /> Biểu Đồ Dòng Tiền Thu / Chi
         </span>
       }
       style={{
-        background: '#ffffff',
         borderRadius: '12px',
-        border: '1px solid #e2e8f0',
         boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
       }}
     >

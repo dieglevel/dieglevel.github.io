@@ -1,15 +1,20 @@
 import React from 'react'
 import { Card, List, Segmented, Space, Typography } from 'antd'
 import { BgColorsOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons'
+import type { IFinance_Setting } from '@/shared/api/financial/setting/setting.type'
+import { FINANCIAL_SETTING_THEME_MODE } from '@/shared/api/financial/setting/setting.enum'
 
 const { Text } = Typography
 
 interface Props {
-  isDark: boolean
-  toggleDark: () => void
+  setting: IFinance_Setting
+  toggle: () => void
 }
 
-export const SettingsAppearance: React.FC<Props> = ({ isDark, toggleDark }) => {
+export const SettingsAppearance: React.FC<Props> = ({
+  setting,
+  toggle,
+}: Props) => {
   return (
     <Card
       title={
@@ -23,11 +28,19 @@ export const SettingsAppearance: React.FC<Props> = ({ isDark, toggleDark }) => {
         <List.Item
           extra={
             <Segmented
-              value={isDark ? 'dark' : 'light'}
-              onChange={toggleDark}
+              value={setting.themeMode}
+              onChange={toggle}
               options={[
-                { label: 'Light', value: 'light', icon: <SunOutlined /> },
-                { label: 'Dark', value: 'dark', icon: <MoonOutlined /> },
+                {
+                  label: 'Light',
+                  value: FINANCIAL_SETTING_THEME_MODE.LIGHT,
+                  icon: <SunOutlined />,
+                },
+                {
+                  label: 'Dark',
+                  value: FINANCIAL_SETTING_THEME_MODE.DARK,
+                  icon: <MoonOutlined />,
+                },
               ]}
             />
           }

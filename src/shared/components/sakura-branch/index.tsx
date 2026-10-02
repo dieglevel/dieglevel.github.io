@@ -79,7 +79,7 @@ const Flower: React.FC<{ variants: Variants }> = ({ variants }) => (
 
 export const SakuraBranch: React.FC<SakuraBranchProps> = ({
   className = '',
-  size = 400,
+  size = 700,
 }) => {
   return (
     <div

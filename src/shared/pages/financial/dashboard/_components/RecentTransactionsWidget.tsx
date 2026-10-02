@@ -3,14 +3,7 @@ import { Button, Card, Empty } from 'antd'
 import { ArrowDownRight, ArrowUpRight, Clock, Wallet } from 'lucide-react'
 import dayjs from 'dayjs'
 import type { DashboardRecentTransactionItem } from '@/shared/api/financial/dashboard/dashboard.type'
-
-const formatVND = (val: number) => {
-  return new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-    maximumFractionDigits: 0,
-  }).format(val || 0)
-}
+import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 interface RecentTransactionsWidgetProps {
   recentTransactions: Array<DashboardRecentTransactionItem>
@@ -25,7 +18,6 @@ export const RecentTransactionsWidget: React.FC<
       title={
         <span
           style={{
-            color: '#0f172a',
             fontSize: '16px',
             fontWeight: 600,
             display: 'flex',
@@ -47,9 +39,7 @@ export const RecentTransactionsWidget: React.FC<
         </Button>
       }
       style={{
-        background: '#ffffff',
         borderRadius: '12px',
-        border: '1px solid #e2e8f0',
         boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
       }}
     >
@@ -75,8 +65,6 @@ export const RecentTransactionsWidget: React.FC<
                   justifyContent: 'space-between',
                   padding: '12px 16px',
                   borderRadius: '10px',
-                  background: '#f8fafc',
-                  border: '1px solid #e2e8f0',
                 }}
               >
                 <div
@@ -118,7 +106,6 @@ export const RecentTransactionsWidget: React.FC<
                     <div
                       style={{
                         fontWeight: 600,
-                        color: '#0f172a',
                         fontSize: 14,
                       }}
                     >
@@ -160,7 +147,7 @@ export const RecentTransactionsWidget: React.FC<
                     }}
                   >
                     {isIncome ? '+' : isExpense ? '-' : ''}
-                    {formatVND(tx.amount)}
+                    {convertCurrency(tx.amount)}
                   </div>
                 </div>
               </div>

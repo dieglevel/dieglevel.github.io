@@ -376,8 +376,6 @@ export function useTransactionUpsertForm({
     ? mTransaction_Update.isPending
     : mTransaction_Create.isPending
 
-  console.log('form', form.getFieldsValue())
-
   return {
     form,
     isUpdateMode,

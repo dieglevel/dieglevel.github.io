@@ -73,7 +73,7 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
       width={420}
     >
       <Space
-        direction="vertical"
+        vertical
         size="middle"
         style={{ width: '100%', marginTop: 16 }}
       >

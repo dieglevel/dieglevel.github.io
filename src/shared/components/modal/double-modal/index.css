@@ -28,7 +28,6 @@
 /* Card phụ */
 .dc-card--side {
   flex: 0 0 300px;
-  background: #f4f7fb;
   border: 1px solid #dbe3ee;
 }
 

@@ -182,7 +182,7 @@ export function Goals() {
 
   return (
     <Space
-      direction="vertical"
+      vertical
       size={isMobile ? 'small' : 'middle'}
       style={{
         width: '100%',
@@ -302,11 +302,7 @@ export function Goals() {
         width={380}
         centered
       >
-        <Space
-          direction="vertical"
-          size="middle"
-          style={{ width: '100%', marginTop: 16 }}
-        >
+        <Space vertical size="middle" style={{ width: '100%', marginTop: 16 }}>
           <div>
             <Text
               strong
@@ -390,7 +386,7 @@ export function Goals() {
 
             return (
               <Space
-                direction="vertical"
+                vertical
                 style={{ width: '100%', marginTop: 12 }}
                 size="middle"
               >

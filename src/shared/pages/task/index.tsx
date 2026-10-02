@@ -314,7 +314,7 @@ export default function TaskPage() {
         statusOptions={statusOptions}
       />
 
-      <Spin spinning={isTasksLoading} tip="Loading tasks...">
+      <Spin spinning={isTasksLoading} description="Loading tasks...">
         <Card>
           <Table
             rowKey={(item) => String(item.no)}

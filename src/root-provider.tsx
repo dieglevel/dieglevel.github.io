@@ -1,6 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query'
 import { App, ConfigProvider } from 'antd'
-import { AntdProvider } from './shared/provider/antd-provider'
+import { AntdProvider } from './shared/provider/antd.provider'
 import type { ConfigProviderProps } from 'antd'
 import type { QueryClient } from '@tanstack/react-query'
 

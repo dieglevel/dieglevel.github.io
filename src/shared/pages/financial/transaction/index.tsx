@@ -95,11 +95,12 @@ export function Transactions() {
   })
 
   useEffect(() => {
-    if (dataTransaction?.data) {
+    if (dataTransaction?.data.meta) {
+      console.log('dataTransaction', dataTransaction)
       setPageData({
-        current: dataTransaction.data.meta.page,
-        pageSize: dataTransaction.data.meta.limit,
-        total: dataTransaction.data.meta.total,
+        current: dataTransaction.data.meta.page || 1,
+        pageSize: dataTransaction.data.meta.limit || 20,
+        total: dataTransaction.data.meta.total || 0,
       })
     }
   }, [dataTransaction])
@@ -163,7 +164,7 @@ export function Transactions() {
 
   return (
     <Space
-      direction="vertical"
+      vertical
       size={isMobile ? 'small' : 'middle'}
       style={{
         width: '100%',

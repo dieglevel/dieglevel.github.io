@@ -18,6 +18,8 @@ import CategoryDetailModal from './_components/CategoryDetailModal'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import { useMutationFinanceCategory } from '@/shared/api/financial/category/category.mutation'
 import { useGetFinance_Category_List } from '@/shared/api/financial/category/useGetFinance_Category_List'
+import { useThemeMode } from '@/shared/provider/antd-theme.provider'
+import { getTokens } from '@/shared/common/design-token'
 
 const { Title, Text } = Typography
 
@@ -26,14 +28,23 @@ export interface ExtendedFinanceCategory extends IFinance_Category {
 }
 
 export default function Categories() {
+  const { mode: themeMode } = useThemeMode()
+  const { colors } = getTokens(themeMode)
+
   const [selectDate, setSelectDate] = useState<dayjs.Dayjs>(dayjs())
   const setting = useSettingStore.getState().setting
 
   const params = useMemo(() => {
     const cycleDay = setting?.cycleStartDate || 1
-    const start = selectDate.date(cycleDay).startOf('day')
 
-    const end = selectDate
+    const baseDate =
+      selectDate.date() < cycleDay
+        ? selectDate.subtract(1, 'month')
+        : selectDate
+
+    const start = baseDate.date(cycleDay).startOf('day')
+
+    const end = baseDate
       .add(1, 'month')
       .date(cycleDay)
       .subtract(1, 'millisecond')
@@ -265,17 +276,21 @@ export default function Categories() {
 
       {/* Tree Structure */}
       {isPending ? (
-        <Spin />
+        <Flex
+          justify="center"
+          align="center"
+          style={{ width: '100%', height: '100%' }}
+        >
+          <Spin />
+        </Flex>
       ) : (
         <Flex
           vertical
           gap={8}
           style={{
             width: '100%',
-            background: '#fff',
             padding: '12px 16px',
             borderRadius: '12px',
-            border: '1px solid #f0f0f0',
           }}
         >
           <Tree

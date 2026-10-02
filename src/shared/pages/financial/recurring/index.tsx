@@ -196,7 +196,7 @@ export function RecurringTransactions() {
       key: 'name',
       sorter: (a, b) => a.name.localeCompare(b.name),
       render: (name: string, record) => (
-        <Space direction="vertical" size={2}>
+        <Space vertical size={2}>
           <Text strong>{name}</Text>
           <Space size={4} wrap>
             <Tag color="blue">{record.recurringType}</Tag>
@@ -318,7 +318,7 @@ export function RecurringTransactions() {
 
   return (
     <Space
-      direction="vertical"
+      vertical
       size={isMobile ? 'small' : 'middle'}
       style={{
         width: '100%',
@@ -502,11 +502,7 @@ export function RecurringTransactions() {
         centered
         width={420}
       >
-        <Space
-          direction="vertical"
-          size="middle"
-          style={{ width: '100%', marginTop: 16 }}
-        >
+        <Space vertical size="middle" style={{ width: '100%', marginTop: 16 }}>
           <div>
             <Text
               strong
@@ -583,11 +579,7 @@ export function RecurringTransactions() {
         centered
       >
         {viewRule && (
-          <Space
-            direction="vertical"
-            style={{ width: '100%', marginTop: 12 }}
-            size="large"
-          >
+          <Space vertical style={{ width: '100%', marginTop: 12 }} size="large">
             <Card
               size="small"
               style={{
