@@ -1,9 +1,9 @@
 import { settingKeys } from './setting.keys'
 import type { IFinance_Setting } from './setting.type'
-import { useMutationPost } from '@/shared/lib/api/mutation/useMutation'
+import { useMutationPatch } from '@/shared/lib/api/mutation/useMutation'
 
 export const useMutationFinanceSetting = () => {
-  const mUpdate = useMutationPost<
+  const mUpdate = useMutationPatch<
     void,
     Partial<Omit<IFinance_Setting, 'id' | 'created_at'>>,
     'financial-setting'
