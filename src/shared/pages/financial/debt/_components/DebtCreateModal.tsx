@@ -24,6 +24,8 @@ import {
 import { InputWithComma } from '@/shared/components/input/utils'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
+import { useThemeMode } from '@/shared/provider/antd-theme.provider'
+import { getTokens } from '@/shared/common/design-token'
 
 const { Text } = Typography
 const DATE_FMT = 'YYYY-MM-DD'
@@ -43,6 +45,9 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const { mode } = useThemeMode()
+  const { colors } = getTokens(mode)
+
   const [form] = Form.useForm()
 
   const selectedDirection = Form.useWatch('direction', form)
@@ -135,8 +140,12 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
             size="small"
             style={{
               marginBottom: 16,
-              backgroundColor: isBorrowing ? '#f6ffed' : '#fff2f0',
-              borderColor: isBorrowing ? '#b7eb8f' : '#ffccc7',
+              backgroundColor: isBorrowing
+                ? colors.success.soft
+                : colors.error.soft,
+              borderColor: isBorrowing
+                ? colors.success.base
+                : colors.error.base,
             }}
           >
             <Flex vertical gap={6}>

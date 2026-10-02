@@ -249,7 +249,7 @@ export default function Menu() {
           backgroundColor: isChildSelected
             ? colors.primary.base
             : 'transparent',
-          color: isChildSelected ? '#ffffff' : colors.primary.base,
+          color: isChildSelected ? '#ffffff' : colors.primary.soft,
           transition: 'background-color 0.2s ease',
         }}
       >
@@ -665,7 +665,6 @@ export default function Menu() {
                 gap={4}
                 style={{
                   padding: '4px 12px 12px',
-                  backgroundColor: background.base,
                   borderTop: `1px solid ${colors.primary.base}30`,
                   // Menu dài trên mobile thì scroll dọc trong panel
                   maxHeight: 'calc(100vh - 80px)',
@@ -694,7 +693,7 @@ export default function Menu() {
                           padding: '10px 12px',
                           borderRadius: 8,
                           cursor: 'pointer',
-                          color: colors.primary.base,
+                          color: colors.primary.soft,
                           backgroundColor:
                             selected || expanded
                               ? `${colors.primary.base}15`

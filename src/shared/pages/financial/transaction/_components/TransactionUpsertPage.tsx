@@ -1,7 +1,6 @@
 import React from 'react'
 import {
   Alert,
-  Button,
   Card,
   Col,
   Flex,
@@ -11,7 +10,6 @@ import {
   Segmented,
   Spin,
 } from 'antd'
-import { SaveOutlined } from '@ant-design/icons'
 
 import { useTransactionUpsertForm } from './upsert/useTransactionUpsertForm'
 import { TransactionUpsertHeader } from './upsert/TransactionUpsertHeader'
@@ -75,7 +73,6 @@ export const TransactionUpsertPage: React.FC<TransactionUpsertPageProps> = ({
         width: '100%',
         minHeight: '100vh',
         boxSizing: 'border-box',
-        backgroundColor: '#f5f5f5',
       }}
     >
       {/* Header */}
@@ -213,7 +210,7 @@ export const TransactionUpsertPage: React.FC<TransactionUpsertPageProps> = ({
       </Form>
 
       {/* Fixed Footer Bar */}
-      <div
+      {/* <div
         style={{
           position: 'fixed',
           bottom: 0,
@@ -236,7 +233,7 @@ export const TransactionUpsertPage: React.FC<TransactionUpsertPageProps> = ({
             {isUpdateMode ? 'Cập Nhật Giao Dịch' : 'Lưu Giao Dịch'}
           </Button>
         </Flex>
-      </div>
+      </div> */}
     </div>
   )
 }

@@ -21,6 +21,8 @@ import { FINANCIAL_DEBT_DIRECTION_ENUM } from '@/shared/api/financial/debt/debt.
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { InputWithComma } from '@/shared/components/input/utils'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
+import { useThemeMode } from '@/shared/provider/antd-theme.provider'
+import { getTokens } from '@/shared/common/design-token'
 
 const { Text } = Typography
 const mono = "'JetBrains Mono', monospace"
@@ -42,6 +44,9 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const { mode } = useThemeMode()
+  const { colors } = getTokens(mode)
+
   const [form] = Form.useForm()
   const [activeTabKey, setActiveTabKey] = useState<string>('payment')
 
@@ -129,10 +134,7 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
           onFinish={handleFinish}
           style={{ marginTop: 8 }}
         >
-          <Card
-            size="small"
-            style={{ backgroundColor: '#fafafa', marginBottom: 16 }}
-          >
+          <Card size="small" style={{ marginBottom: 16 }}>
             <Descriptions column={2} size="small">
               <Descriptions.Item label="Khoản nợ" span={2}>
                 <Text strong>{debt.name}</Text>
@@ -204,8 +206,12 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
               size="small"
               style={{
                 marginBottom: 16,
-                backgroundColor: isIncoming ? '#f6ffed' : '#fff2f0',
-                borderColor: isIncoming ? '#b7eb8f' : '#ffccc7',
+                backgroundColor: isIncoming
+                  ? colors.success.soft
+                  : colors.error.soft,
+                borderColor: isIncoming
+                  ? colors.success.base
+                  : colors.error.base,
               }}
             >
               <Flex vertical gap={6}>
@@ -260,8 +266,10 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
           <Card
             size="small"
             style={{
-              backgroundColor: remainingDebt === 0 ? '#f6ffed' : '#e6f7ff',
-              borderColor: remainingDebt === 0 ? '#b7eb8f' : '#91caff',
+              backgroundColor:
+                remainingDebt === 0 ? colors.success.soft : colors.error.soft,
+              borderColor:
+                remainingDebt === 0 ? colors.success.base : colors.error.base,
               marginBottom: 16,
             }}
           >

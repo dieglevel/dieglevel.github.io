@@ -13,6 +13,7 @@ import FormUpload from '@/shared/components/form/upload'
 import GuideBookModal from '@/shared/components/modal/book-modal'
 import { DEFAULT_SECTIONS } from '@/shared/components/modal/book-modal/mock'
 import SakuraBranch from '@/shared/components/sakura-branch'
+import BreathingCore from '@/shared/components/feranmut-heart'
 
 export const Route = createFileRoute('/(protected)/demoComponent')({
   component: RouteComponent,
@@ -83,7 +84,8 @@ function RouteComponent() {
         onClose={() => setOpen(false)}
         sections={DEFAULT_SECTIONS}
       />
-      <SakuraBranch />
+      <SakuraBranch size={100} />
+      <BreathingCore />
     </Flex>
   )
 }

@@ -13,6 +13,8 @@ import dayjs from 'dayjs'
 import type { IFinance_Debt } from '@/shared/api/financial/debt/debt.type'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { InputWithComma } from '@/shared/components/input/utils'
+import { useThemeMode } from '@/shared/provider/antd-theme.provider'
+import { getTokens } from '@/shared/common/design-token'
 
 const { Text } = Typography
 
@@ -29,6 +31,9 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const { mode } = useThemeMode()
+  const { colors } = getTokens(mode)
+
   const [form] = Form.useForm()
   const newOutstandingAmount = Form.useWatch('outstandingAmount', form)
 
@@ -68,10 +73,7 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
         onFinish={handleFinish}
         style={{ marginTop: 16 }}
       >
-        <Card
-          size="small"
-          style={{ backgroundColor: '#fafafa', marginBottom: 16 }}
-        >
+        <Card size="small" style={{ marginBottom: 16 }}>
           <Flex justify="space-between" align="center">
             <Text type="secondary">Dư nợ hiện tại:</Text>
             <Text strong type="danger">
@@ -104,8 +106,9 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
           <Card
             size="small"
             style={{
-              backgroundColor: diff > 0 ? '#fff2f0' : '#f6ffed',
-              borderColor: diff > 0 ? '#ffccc7' : '#b7eb8f',
+              backgroundColor:
+                diff > 0 ? colors.error.soft : colors.success.soft,
+              borderColor: diff > 0 ? colors.error.base : colors.success.base,
               marginBottom: 16,
             }}
           >

@@ -123,10 +123,8 @@ export default function CategoryTreeNode({
           width: '100%',
           padding: '10px 12px',
           borderRadius: 8,
-          background: '#fff',
           transition: 'all 0.2s ease',
           opacity: node.archived ? 0.5 : 1,
-          border: '1px solid #f0f0f0',
         }}
       >
         {/* Hàng 1: Icon + Tên + Nhãn + Action Buttons */}

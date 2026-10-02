@@ -48,10 +48,7 @@ export const TransactionItemsFormList: React.FC<
               <Card
                 key={key}
                 size="small"
-                style={{
-                  background: '#fafafa',
-                  borderColor: '#f0f0f0',
-                }}
+                style={{}}
                 styles={{ body: { padding: 12 } }}
               >
                 <Row gutter={[12, 12]} align="top">

@@ -72,10 +72,7 @@ export const DebtCorrectModal: React.FC<Props> = ({
           message="Dùng khi nhập sai số tiền lúc tạo. Số đã thu/trả được giữ nguyên, ví (nếu có dùng lúc tạo) sẽ tự bù chênh lệch."
         />
 
-        <Card
-          size="small"
-          style={{ backgroundColor: '#fafafa', marginBottom: 16 }}
-        >
+        <Card size="small" style={{ marginBottom: 16 }}>
           <Flex vertical gap={4}>
             <Flex justify="space-between">
               <Text type="secondary">Gốc hiện tại:</Text>

@@ -348,9 +348,7 @@ export function WalletModal({
               alignItems: 'center',
               justifyContent: 'space-between',
               padding: '10px 14px',
-              border: '1px solid #f0f0f0',
               borderRadius: 10,
-              background: '#fafafa',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

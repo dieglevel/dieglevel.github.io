@@ -21,6 +21,8 @@ import {
   FinancialTransactionTypeHelper,
 } from '@/shared/api/financial/transaction/transaction.enum'
 import { useGetFinance_Transaction_View } from '@/shared/api/financial/transaction/useGetFinance_Transaction_View'
+import { getTokens } from '@/shared/common/design-token'
+import { useThemeMode } from '@/shared/provider/antd-theme.provider'
 
 const { useBreakpoint } = Grid
 
@@ -33,6 +35,9 @@ export function TransactionDetail({
   viewTransaction,
   setViewTransaction,
 }: TransactionDetailProps) {
+  const { mode } = useThemeMode()
+  const { colors } = getTokens(mode)
+
   const { data: response, isLoading } = useGetFinance_Transaction_View({
     pathParams: {
       id: viewTransaction || 0,
@@ -72,11 +77,16 @@ export function TransactionDetail({
             size="small"
             style={{
               textAlign: 'center',
-              backgroundColor: isPositiveFlow ? '#f6ffed' : '#fff2f0',
-              borderColor: isPositiveFlow ? '#b7eb8f' : '#ffccc7',
+              backgroundColor: isPositiveFlow
+                ? colors.success.soft
+                : colors.error.soft,
+              borderColor: isPositiveFlow
+                ? colors.success.base
+                : colors.error.base,
+              color: isPositiveFlow ? colors.success.text : colors.error.text,
             }}
           >
-            <Text type="secondary" style={{ fontSize: 11, letterSpacing: 0.5 }}>
+            <Text style={{ fontSize: 11, letterSpacing: 0.5 }}>
               TỔNG SỐ TIỀN
             </Text>
             <Title

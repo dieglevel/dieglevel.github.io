@@ -3,6 +3,8 @@ import { Card, Col, Flex, Row, Typography } from 'antd'
 import { CreditCard, Lock, TrendingUp, Wallet } from 'lucide-react'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
+import { useThemeMode } from '@/shared/provider/antd-theme.provider'
+import { getTokens } from '@/shared/common/design-token'
 
 const { Text, Title } = Typography
 
@@ -13,6 +15,9 @@ interface WalletSummaryCardsProps {
 export const WalletSummaryCards: React.FC<WalletSummaryCardsProps> = ({
   wallets,
 }) => {
+  const { mode } = useThemeMode()
+  const { colors } = getTokens(mode)
+
   const totalBalance = wallets.reduce((s, w) => s + Number(w.balance || 0), 0)
 
   const availableBalance = wallets
@@ -39,8 +44,8 @@ export const WalletSummaryCards: React.FC<WalletSummaryCardsProps> = ({
           size="small"
           style={{
             borderRadius: 14,
-            border: '1px solid #e2e8f0',
-            background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+            border: `1px solid ${colors.primary.soft}`,
+            background: `linear-gradient(135deg, ${colors.primary.soft} 0%, ${colors.primary.base} 100%)`,
             boxShadow: '0 2px 10px rgba(0,0,0,0.03)',
           }}
         >
@@ -53,10 +58,7 @@ export const WalletSummaryCards: React.FC<WalletSummaryCardsProps> = ({
               <Text type="secondary" style={{ fontSize: 12, fontWeight: 600 }}>
                 TỔNG TÀI SẢN VÍ
               </Text>
-              <Title
-                level={4}
-                style={{ margin: '4px 0 0 0', color: '#0f172a' }}
-              >
+              <Title level={4} style={{ margin: '4px 0 0 0' }}>
                 {convertCurrency(totalBalance)}
               </Title>
             </div>
@@ -64,8 +66,8 @@ export const WalletSummaryCards: React.FC<WalletSummaryCardsProps> = ({
               style={{
                 padding: 10,
                 borderRadius: 10,
-                backgroundColor: '#eff6ff',
-                color: '#2563eb',
+                backgroundColor: colors.primary.soft,
+                color: colors.primary.text,
                 display: 'flex',
               }}
             >
@@ -74,7 +76,9 @@ export const WalletSummaryCards: React.FC<WalletSummaryCardsProps> = ({
           </Flex>
           <Text type="secondary" style={{ fontSize: 12 }}>
             Tổng số ví active:{' '}
-            <strong style={{ color: '#0f172a' }}>{wallets.length} ví</strong>
+            <strong style={{ color: colors.primary.text }}>
+              {wallets.length} ví
+            </strong>
           </Text>
         </Card>
       </Col>
@@ -85,8 +89,8 @@ export const WalletSummaryCards: React.FC<WalletSummaryCardsProps> = ({
           size="small"
           style={{
             borderRadius: 14,
-            border: '1px solid #dcfce7',
-            background: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)',
+            border: `1px solid ${colors.success.soft}`,
+            background: `linear-gradient(135deg, ${colors.success.soft} 0%, ${colors.success.base} 100%)`,
             boxShadow: '0 2px 10px rgba(16, 185, 129, 0.06)',
           }}
         >
@@ -96,7 +100,7 @@ export const WalletSummaryCards: React.FC<WalletSummaryCardsProps> = ({
             style={{ marginBottom: 8 }}
           >
             <div>
-              <Text type="secondary" style={{ fontSize: 12, fontWeight: 600 }}>
+              <Text style={{ fontSize: 12, fontWeight: 600 }}>
                 KHẢ DỤNG CHI TIÊU
               </Text>
               <Title
@@ -132,8 +136,8 @@ export const WalletSummaryCards: React.FC<WalletSummaryCardsProps> = ({
           size="small"
           style={{
             borderRadius: 14,
-            border: '1px solid #ffedd5',
-            background: 'linear-gradient(135deg, #ffffff 0%, #fff7ed 100%)',
+            border: `1px solid ${colors.warning.soft}`,
+            background: `linear-gradient(135deg, ${colors.warning.soft} 0%, ${colors.warning.base} 100%)`,
             boxShadow: '0 2px 10px rgba(249, 115, 22, 0.06)',
           }}
         >
@@ -177,8 +181,8 @@ export const WalletSummaryCards: React.FC<WalletSummaryCardsProps> = ({
           size="small"
           style={{
             borderRadius: 14,
-            border: '1px solid #ffe4e6',
-            background: 'linear-gradient(135deg, #ffffff 0%, #fff1f2 100%)',
+            border: `1px solid ${colors.error.soft}`,
+            background: `linear-gradient(135deg, ${colors.error.soft} 0%, ${colors.error.base} 100%)`,
             boxShadow: '0 2px 10px rgba(225, 29, 72, 0.06)',
           }}
         >

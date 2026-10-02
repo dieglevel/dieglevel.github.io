@@ -1,8 +1,8 @@
 import { AppstoreOutlined } from '@ant-design/icons'
 
 import {
-  AppWindow,
   CalendarSync,
+  CircleDollarSign,
   CirclePlay,
   Gauge,
   GoalIcon,
@@ -10,7 +10,7 @@ import {
   Key,
   LayoutDashboardIcon,
   PencilRuler,
-  Wallet,
+  ToolCase,
 } from 'lucide-react'
 import {
   IconArrowTopDown,
@@ -73,9 +73,9 @@ export interface AppMenuItem {
 
 export const Menu: Array<AppMenuItem> = [
   {
-    id: 'service',
-    label: 'Service',
-    icon: <AppWindow style={{ fontSize: 18 }} />,
+    id: 'tools',
+    label: 'Tools',
+    icon: <ToolCase style={{ fontSize: 18 }} />,
     children: [
       {
         id: 'music',
@@ -112,7 +112,7 @@ export const Menu: Array<AppMenuItem> = [
   {
     id: 'finance',
     label: 'Finance',
-    icon: <Wallet style={{ fontSize: 18 }} />,
+    icon: <CircleDollarSign style={{ fontSize: 18 }} />,
     isAuthRequired: true,
     children: [
       {

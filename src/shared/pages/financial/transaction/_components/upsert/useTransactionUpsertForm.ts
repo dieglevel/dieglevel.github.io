@@ -17,6 +17,8 @@ import {
   FINANCIAL_TRANSACTION_TYPE,
 } from '@/shared/api/financial/transaction/transaction.enum'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
+import { useThemeMode } from '@/shared/provider/antd-theme.provider'
+import { getTokens } from '@/shared/common/design-token'
 
 const { useBreakpoint } = Grid
 
@@ -34,6 +36,9 @@ export function useTransactionUpsertForm({
   transactionId,
 }: UseTransactionUpsertFormProps) {
   const isUpdateMode = mode === 'update' && Number.isFinite(transactionId)
+
+  const { mode: themeMode } = useThemeMode()
+  const { colors } = getTokens(themeMode)
 
   const screens = useBreakpoint()
   const isMobile = !screens.sm
@@ -74,11 +79,23 @@ export function useTransactionUpsertForm({
     switch (selectedType) {
       case FINANCIAL_TRANSACTION_TYPE.INCOME:
       case FINANCIAL_TRANSACTION_TYPE.REFUND:
-        return { bg: '#f6ffed', border: '#b7eb8f', color: '#52c41a' }
+        return {
+          bg: colors.success.soft,
+          border: colors.success.base,
+          color: colors.success.text,
+        }
       case FINANCIAL_TRANSACTION_TYPE.EXPENSE:
-        return { bg: '#fff2f0', border: '#ffccc7', color: '#ff4d4f' }
+        return {
+          bg: colors.error.soft,
+          border: colors.error.base,
+          color: colors.error.text,
+        }
       default:
-        return { bg: '#e6f7ff', border: '#91caff', color: '#1677ff' }
+        return {
+          bg: colors.warning.soft,
+          border: colors.warning.base,
+          color: colors.warning.text,
+        }
     }
   }, [selectedType])
 
