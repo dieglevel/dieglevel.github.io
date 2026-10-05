@@ -1,0 +1,80 @@
+{
+  "page": {
+    "title": "설정",
+    "subtitle": "환경설정과 계정을 관리하세요",
+    "loading": "설정을 불러오는 중...",
+    "footer": "FinanceOS v0.1 · 자산을 관리하고 삶을 관리하세요."
+  },
+  "appearance": {
+    "title": "화면 설정",
+    "darkMode": "다크 모드",
+    "darkModeDescription": "밝은 화면과 어두운 화면 전환",
+    "light": "라이트",
+    "dark": "다크"
+  },
+  "localization": {
+    "title": "지역 설정",
+    "currency": "통화",
+    "currencyDescription": "표시할 기본 통화",
+    "language": "언어",
+    "languageDescription": "인터페이스 표시 언어",
+    "cycleStartDate": "주기 시작일",
+    "cycleStartDateDescription": "각 금융 주기가 시작되는 날짜"
+  },
+  "notifications": {
+    "title": "알림",
+    "budgetAlerts": {
+      "label": "예산 알림",
+      "description": "카테고리 예산을 80% 이상 사용하면 알림"
+    },
+    "largeTransactions": {
+      "label": "대규모 거래",
+      "description": "$200 초과 거래 알림"
+    },
+    "weeklyReport": {
+      "label": "주간 요약",
+      "description": "매주 월요일 아침 요약"
+    },
+    "monthlyReport": {
+      "label": "월간 보고서",
+      "description": "월말 금융 요약"
+    },
+    "unusualActivity": {
+      "label": "이상 활동",
+      "description": "AI가 감지한 지출 이상 내역"
+    }
+  },
+  "security": {
+    "title": "보안",
+    "twoFactor": "2단계 인증",
+    "twoFactorDescription": "보안 계층 추가",
+    "biometric": "생체 인증 로그인",
+    "biometricDescription": "지문 또는 Face ID 사용",
+    "sessionTimeout": "세션 시간 제한",
+    "sessionTimeoutDescription": "비활성 상태 후 자동 로그아웃",
+    "changePassword": "비밀번호 변경",
+    "changePasswordDescription": "45일 전에 변경됨",
+    "update": "수정",
+    "minutes": "{{count}}분",
+    "hour": "1시간",
+    "never": "사용 안 함"
+  },
+  "dataManagement": {
+    "title": "데이터 관리",
+    "export": "내보내기",
+    "import": "가져오기",
+    "backup": "백업",
+    "exportExcel": "Excel로 내보내기",
+    "exportExcelDescription": "모든 거래를 .xlsx로 다운로드",
+    "exportPdf": "PDF로 내보내기",
+    "exportPdfDescription": "서식이 적용된 금융 보고서 다운로드",
+    "importData": "데이터 가져오기",
+    "importDataDescription": "은행 CSV에서 거래 업로드",
+    "backupRestore": "백업 및 복원",
+    "backupRestoreDescription": "마지막 백업: 2025년 7월 13일 09:14",
+    "exportStarted": "내보내기를 시작했습니다. 곧 파일이 다운로드됩니다",
+    "pdfGenerated": "PDF 보고서가 생성되었습니다",
+    "openFilePicker": "가져올 파일을 선택하세요",
+    "backupCompleted": "백업이 완료되었습니다"
+  }
+}

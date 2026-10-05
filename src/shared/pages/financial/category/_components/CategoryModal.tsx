@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Flex,
   Form,
@@ -45,6 +46,7 @@ export default function CategoryModal({
   onCancel,
   onSubmit,
 }: CategoryModalProps) {
+  const { t } = useTranslation('finance')
   const [form] = Form.useForm<IFinance_Category>()
   const watchColor = Form.useWatch('color', form)
 
@@ -96,7 +98,7 @@ export default function CategoryModal({
   return (
     <BaseModal
       open={open}
-      title={mode === 'add' ? 'Add Category' : 'Edit Category'}
+      title={mode === 'add' ? t('category.add') : t('common.edit')}
       onCancel={onCancel}
       onOk={handleOk}
       width={600}
@@ -104,7 +106,7 @@ export default function CategoryModal({
       <Form form={form} layout="vertical">
         {/* Category Name */}
         <Form.Item
-          label="Category Name"
+          label={t('category.name')}
           name="name"
           rules={[
             {
@@ -113,11 +115,11 @@ export default function CategoryModal({
             },
           ]}
         >
-          <Input placeholder="Enter category name" />
+          <Input placeholder={t('category.namePlaceholder')} />
         </Form.Item>
 
         {/* Parent Category Select */}
-        <Form.Item label="Parent Category" name="parentId">
+        <Form.Item label={t('category.parent')} name="parentId">
           <TreeSelect
             allowClear
             showSearch={{
@@ -125,7 +127,7 @@ export default function CategoryModal({
                 treeNode.name.toLowerCase().includes(input.toLowerCase()),
             }}
             style={{ width: '100%' }}
-            placeholder="None (Root Category)"
+            placeholder={t('category.root')}
             treeData={categories}
             fieldNames={{
               label: 'name',
@@ -172,7 +174,7 @@ export default function CategoryModal({
         {/* Budget & Icon */}
         <Flex gap={16} align="center">
           <Form.Item
-            label="Monthly Budget"
+            label={t('category.monthlyBudget')}
             name="monthlyBudget"
             style={{ flex: 1 }}
           >
@@ -184,13 +186,13 @@ export default function CategoryModal({
             />
           </Form.Item>
 
-          <Form.Item label="Icon" name="icon" required>
+          <Form.Item label={t('category.icon')} name="icon" required>
             <IconPicker color={watchColor} />
           </Form.Item>
         </Flex>
 
         {/* Color Picker */}
-        <Form.Item label="Color" shouldUpdate required>
+        <Form.Item label={t('category.color')} shouldUpdate required>
           <Form.Item noStyle name="color">
             <ColorPicker />
           </Form.Item>

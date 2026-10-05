@@ -3,6 +3,7 @@ import { Button, Form, Input } from 'antd'
 import useApp from 'antd/es/app/useApp'
 import { ArrowLeft, Lock, Mail, User, UserPlus, X } from 'lucide-react'
 import { useRouter } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { ANTD_INPUT_STYLE } from './auth-menu-type'
 import type { Request_Register } from '@/shared/api/auth/auth.dto'
 import { useMutationAuth } from '@/shared/api/auth/auth.mutation'
@@ -13,6 +14,8 @@ interface RegisterFormProps {
 }
 
 export function RegisterForm({ onBack, onSuccessToLogin }: RegisterFormProps) {
+  const { t } = useTranslation()
+
   const [form] = Form.useForm<Request_Register>()
   const [isLoading, setIsLoading] = useState(false)
   const { message } = useApp()
@@ -87,7 +90,7 @@ export function RegisterForm({ onBack, onSuccessToLogin }: RegisterFormProps) {
             textTransform: 'uppercase',
           }}
         >
-          REGISTER
+          {t('auth.register')}
         </span>
         <button
           type="button"
@@ -120,11 +123,13 @@ export function RegisterForm({ onBack, onSuccessToLogin }: RegisterFormProps) {
                 textTransform: 'uppercase',
               }}
             >
-              Username
+              {t('auth.username')}
             </span>
           }
           name="username"
-          rules={[{ required: true, message: 'Please input username!' }]}
+          rules={[
+            { required: true, message: t('auth.please-enter-username') + '!' },
+          ]}
           style={{ marginBottom: 10 }}
         >
           <Input
@@ -135,7 +140,7 @@ export function RegisterForm({ onBack, onSuccessToLogin }: RegisterFormProps) {
                 style={{ marginRight: 8 }}
               />
             }
-            placeholder="Username"
+            placeholder={t('auth.username')}
             style={ANTD_INPUT_STYLE}
           />
         </Form.Item>
@@ -150,13 +155,13 @@ export function RegisterForm({ onBack, onSuccessToLogin }: RegisterFormProps) {
                 textTransform: 'uppercase',
               }}
             >
-              Email
+              {t('auth.email')}
             </span>
           }
           name="email"
           rules={[
-            { required: true, message: 'Please input email!' },
-            { type: 'email', message: 'Invalid email!' },
+            { required: true, message: t('auth.please-enter-email') + '!' },
+            { type: 'email', message: t('auth.invalid-email') },
           ]}
           style={{ marginBottom: 10 }}
         >
@@ -168,7 +173,7 @@ export function RegisterForm({ onBack, onSuccessToLogin }: RegisterFormProps) {
                 style={{ marginRight: 8 }}
               />
             }
-            placeholder="Email address"
+            placeholder={t('auth.email')}
             style={ANTD_INPUT_STYLE}
           />
         </Form.Item>
@@ -183,11 +188,13 @@ export function RegisterForm({ onBack, onSuccessToLogin }: RegisterFormProps) {
                 textTransform: 'uppercase',
               }}
             >
-              Password
+              {t('auth.password')}
             </span>
           }
           name="password"
-          rules={[{ required: true, message: 'Please input password!' }]}
+          rules={[
+            { required: true, message: t('auth.please-enter-password') + '!' },
+          ]}
           style={{ marginBottom: 16 }}
         >
           <Input.Password
@@ -223,7 +230,7 @@ export function RegisterForm({ onBack, onSuccessToLogin }: RegisterFormProps) {
               gap: '8px',
             }}
           >
-            CREATE ACCOUNT
+            {t('auth.create-account')}
           </Button>
         </Form.Item>
       </Form>

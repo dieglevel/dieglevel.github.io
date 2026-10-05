@@ -1,0 +1,17 @@
+{
+  "title": "Quản lý ví và tài khoản",
+  "subtitle": "Theo dõi số dư, loại tiền và thông báo ngân hàng",
+  "history": "Lịch sử chuyển tiền",
+  "transfer": "Chuyển tiền",
+  "add": "Thêm ví",
+  "all": "Tất cả ví",
+  "bank": "Ngân hàng",
+  "eWallet": "Ví điện tử",
+  "cash": "Tiền mặt",
+  "locked": "Ví đã khóa",
+  "searchPlaceholder": "Tìm theo tên ví hoặc ngân hàng...",
+  "empty": "Không tìm thấy ví phù hợp với bộ lọc",
+  "from": "Ví chuyển đi",
+  "to": "Ví nhận tiền",
+  "fee": "Phí chuyển tiền"
+}

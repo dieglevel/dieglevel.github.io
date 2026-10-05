@@ -1,5 +1,6 @@
 import React from 'react'
 import { Card, Empty, Progress } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { PieChart as PieChartIcon } from 'lucide-react'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import type { CategoryBreakdownItem } from '@/shared/api/financial/dashboard/dashboard.type'
@@ -62,6 +63,8 @@ interface CategoryBreakdownChartProps {
 export const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
   categoryBreakdown,
 }) => {
+  const { t } = useTranslation('dashboard')
+
   return (
     <Card
       title={
@@ -74,7 +77,8 @@ export const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
             gap: 8,
           }}
         >
-          <PieChartIcon size={18} color="#ec4899" /> Cơ Cấu Chi Tiêu
+          <PieChartIcon size={18} color="#ec4899" />{' '}
+          {t('categoryBreakdown.title')}
         </span>
       }
       style={{
@@ -83,7 +87,7 @@ export const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
       }}
     >
       {categoryBreakdown.length === 0 ? (
-        <Empty description="Chưa có dữ liệu chi tiêu" />
+        <Empty description={t('categoryBreakdown.empty')} />
       ) : (
         <div>
           <div style={{ width: '100%', height: 180 }}>

@@ -1,0 +1,20 @@
+{
+  "title": "Transactions",
+  "create": "New Transaction",
+  "all": "All",
+  "allTypes": "All Types",
+  "income": "Income",
+  "expense": "Expense",
+  "refund": "Refund",
+  "adjustment": "Balance Adjustment",
+  "transfer": "Transfer",
+  "allWallets": "All Wallets",
+  "allCategories": "All Categories",
+  "allStatuses": "All Statuses",
+  "completed": "Completed",
+  "pending": "Pending",
+  "failed": "Failed",
+  "searchPlaceholder": "Search transactions...",
+  "detail": "Transaction Details",
+  "advancedCreate": "Create Advanced Transaction"
+}

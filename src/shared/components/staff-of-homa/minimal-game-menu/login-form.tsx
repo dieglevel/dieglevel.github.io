@@ -3,6 +3,7 @@ import { Button, Form, Input } from 'antd'
 import useApp from 'antd/es/app/useApp'
 import { useRouter } from '@tanstack/react-router'
 import { ArrowLeft, Lock, LogIn, User, X } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { ANTD_INPUT_STYLE } from './auth-menu-type'
 import type { Request_Login } from '@/shared/api/auth/auth.dto'
 import { useMutationAuth } from '@/shared/api/auth/auth.mutation'
@@ -15,6 +16,9 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ onBack, onSuccess }: LoginFormProps) {
+  const { t, i18n } = useTranslation()
+  console.log('language:', i18n.language)
+
   const [form] = Form.useForm<Request_Login>()
   const [isLoading, setIsLoading] = useState(false)
   const { mLogin } = useMutationAuth()
@@ -96,7 +100,7 @@ export function LoginForm({ onBack, onSuccess }: LoginFormProps) {
             textTransform: 'uppercase',
           }}
         >
-          LOGIN
+          {t('auth.login')}
         </span>
         <button
           type="button"
@@ -129,11 +133,16 @@ export function LoginForm({ onBack, onSuccess }: LoginFormProps) {
                 textTransform: 'uppercase',
               }}
             >
-              Identifier
+              {t('auth.identity')}
             </span>
           }
           name="identifier"
-          rules={[{ required: true, message: 'Please input identifier!' }]}
+          rules={[
+            {
+              required: true,
+              message: t('auth.please-enter-username-or-email'),
+            },
+          ]}
           style={{ marginBottom: 12 }}
         >
           <Input
@@ -144,7 +153,7 @@ export function LoginForm({ onBack, onSuccess }: LoginFormProps) {
                 style={{ marginRight: 8 }}
               />
             }
-            placeholder="Username / Email"
+            placeholder={t('auth.username/email')}
             style={ANTD_INPUT_STYLE}
             autoComplete="username"
           />
@@ -160,11 +169,11 @@ export function LoginForm({ onBack, onSuccess }: LoginFormProps) {
                 textTransform: 'uppercase',
               }}
             >
-              Password
+              {t('auth.password')}
             </span>
           }
           name="password"
-          rules={[{ required: true, message: 'Please input password!' }]}
+          rules={[{ required: true, message: t('auth.please-enter-password') }]}
           style={{ marginBottom: 16 }}
         >
           <Input.Password
@@ -201,7 +210,7 @@ export function LoginForm({ onBack, onSuccess }: LoginFormProps) {
               gap: '8px',
             }}
           >
-            SUBMIT LOGIN
+            {t('auth.submit-login')}
           </Button>
         </Form.Item>
       </Form>

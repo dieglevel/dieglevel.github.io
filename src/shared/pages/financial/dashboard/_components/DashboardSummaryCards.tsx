@@ -1,5 +1,6 @@
 import React from 'react'
 import { Card, Col, Progress, Row, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -26,6 +27,8 @@ interface DashboardSummaryCardsProps {
 export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
   summary,
 }) => {
+  const { t } = useTranslation('dashboard')
+
   return (
     <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
       {/* Total Income Card */}
@@ -49,7 +52,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
                 type="secondary"
                 style={{ fontSize: '13px', fontWeight: 500 }}
               >
-                Tổng Thu Nhập
+                {t('summary.totalIncome')}
               </Text>
               <h2
                 style={{
@@ -88,7 +91,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
             }}
           >
             <TrendingUp size={14} />
-            <span>Dòng tiền thu vào trong kỳ</span>
+            <span>{t('summary.incomeDescription')}</span>
           </div>
         </Card>
       </Col>
@@ -114,7 +117,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
                 type="secondary"
                 style={{ fontSize: '13px', fontWeight: 500 }}
               >
-                Tổng Chi Tiêu
+                {t('summary.totalExpense')}
               </Text>
               <h2
                 style={{
@@ -153,7 +156,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
             }}
           >
             <TrendingDown size={14} />
-            <span>Dòng tiền chi ra trong kỳ</span>
+            <span>{t('summary.expenseDescription')}</span>
           </div>
         </Card>
       </Col>
@@ -179,7 +182,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
                 type="secondary"
                 style={{ fontSize: '13px', fontWeight: 500 }}
               >
-                Số Dư Ròng
+                {t('summary.netBalance')}
               </Text>
               <h2
                 style={{
@@ -217,7 +220,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
               justifyContent: 'space-between',
             }}
           >
-            <span>Tổng số dư các ví:</span>
+            <span>{t('summary.totalWalletBalance')}</span>
             <span style={{ fontWeight: 600 }}>
               {convertCurrency(summary.totalWalletBalance)}
             </span>
@@ -246,7 +249,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
                 type="secondary"
                 style={{ fontSize: '13px', fontWeight: 500 }}
               >
-                Tỷ Lệ Tích Lũy
+                {t('summary.savingsRate')}
               </Text>
               <h2
                 style={{

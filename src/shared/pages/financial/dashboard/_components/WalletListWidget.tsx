@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Card, Empty } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { Wallet } from 'lucide-react'
 import type { WalletOverviewItem } from '@/shared/api/financial/dashboard/dashboard.type'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
@@ -13,6 +14,8 @@ export const WalletListWidget: React.FC<WalletListWidgetProps> = ({
   wallets,
   onNavigateToWallet,
 }) => {
+  const { t } = useTranslation('dashboard')
+
   return (
     <Card
       title={
@@ -25,7 +28,7 @@ export const WalletListWidget: React.FC<WalletListWidgetProps> = ({
             gap: 8,
           }}
         >
-          <Wallet size={18} color="#4f46e5" /> Danh Sách Ví Tài Chính
+          <Wallet size={18} color="#4f46e5" /> {t('wallets.title')}
         </span>
       }
       extra={
@@ -35,7 +38,7 @@ export const WalletListWidget: React.FC<WalletListWidgetProps> = ({
           onClick={onNavigateToWallet}
           style={{ color: '#4f46e5', fontSize: 13 }}
         >
-          Quản lý ví
+          {t('wallets.manage')}
         </Button>
       }
       style={{
@@ -44,7 +47,7 @@ export const WalletListWidget: React.FC<WalletListWidgetProps> = ({
       }}
     >
       {wallets.length === 0 ? (
-        <Empty description="Chưa tạo ví tài chính nào" />
+        <Empty description={t('wallets.empty')} />
       ) : (
         <div
           style={{
@@ -96,7 +99,7 @@ export const WalletListWidget: React.FC<WalletListWidgetProps> = ({
                     {w.name}
                   </div>
                   <div style={{ color: '#64748b', fontSize: 12 }}>
-                    {w.type || 'Ví chung'}
+                    {w.type || t('wallets.defaultType')}
                   </div>
                 </div>
               </div>

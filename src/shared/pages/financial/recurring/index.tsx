@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Badge,
   Button,
@@ -65,6 +66,7 @@ const { Title, Text } = Typography
 const { useBreakpoint } = Grid
 
 export function RecurringTransactions() {
+  const { t } = useTranslation('finance')
   const screens = useBreakpoint()
   const isMobile = !screens.md
 
@@ -386,7 +388,7 @@ export function RecurringTransactions() {
       <Card size="small" styles={{ body: { padding: 12 } }}>
         <Flex gap={10} align="center">
           <Input
-            placeholder="Tìm kiếm giao dịch định kỳ..."
+            placeholder={t('recurring.searchPlaceholder')}
             prefix={<SearchOutlined />}
             value={search}
             onChange={(e) => setSearch(e.target.value)}

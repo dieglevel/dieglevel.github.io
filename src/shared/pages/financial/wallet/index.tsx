@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Empty, Flex } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { AnimatedGrid } from '../../../components/animated-grid/AnimatedGrid'
 import TransferHistory from './_components/TransferHistory'
 import { WalletCard } from './_components/WalletCard'
@@ -12,6 +13,7 @@ import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 
 export function Wallets() {
+  const { t } = useTranslation('finance')
   const { data, isFetching } = useGetFinance_Wallet_List({})
   const wallets: Array<IFinance_Wallet> = data?.data || []
 
@@ -98,7 +100,7 @@ export function Wallets() {
       <div style={{ width: '100%' }}>
         {filteredWallets.length === 0 && !isFetching ? (
           <Empty
-            description="Không tìm thấy ví nào phù hợp với bộ lọc"
+            description={t('wallet.empty')}
             style={{ margin: '40px 0' }}
           />
         ) : (

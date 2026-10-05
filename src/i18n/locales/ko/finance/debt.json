@@ -1,0 +1,12 @@
+{
+  "title": "부채 및 대출 관리",
+  "subtitle": "총 {{total}}건의 부채 추적 중 (활성 {{active}}건)",
+  "create": "새 부채 만들기",
+  "name": "부채 / 상대방 이름",
+  "direction": "부채 방향",
+  "originalAmount": "초기 금액",
+  "currentBalance": "현재 잔액",
+  "history": "내역",
+  "settle": "정산",
+  "cancelDebt": "부채 취소"
+}

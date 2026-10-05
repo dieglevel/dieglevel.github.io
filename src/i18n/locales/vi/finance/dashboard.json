@@ -1,0 +1,43 @@
+{
+  "header": {
+    "title": "Tổng Quan Tài Chính",
+    "subtitle": "Theo dõi dòng tiền, thu chi và tình hình tài chính theo thời gian thực.",
+    "thisWeek": "Tuần này",
+    "thisMonth": "Tháng này",
+    "thisYear": "Năm nay",
+    "allWallets": "Tất cả ví",
+    "newTransaction": "Giao dịch mới"
+  },
+  "summary": {
+    "totalIncome": "Tổng thu nhập",
+    "incomeDescription": "Tiền thu vào trong kỳ",
+    "totalExpense": "Tổng chi tiêu",
+    "expenseDescription": "Tiền chi ra trong kỳ",
+    "netBalance": "Số dư ròng",
+    "totalWalletBalance": "Tổng số dư các ví:",
+    "savingsRate": "Tỷ lệ tích lũy"
+  },
+  "cashFlow": {
+    "title": "Biểu đồ dòng tiền thu / chi",
+    "empty": "Chưa có dữ liệu giao dịch",
+    "income": "Thu nhập",
+    "expense": "Chi tiêu"
+  },
+  "categoryBreakdown": {
+    "title": "Cơ cấu chi tiêu",
+    "empty": "Chưa có dữ liệu chi tiêu"
+  },
+  "wallets": {
+    "title": "Danh sách ví tài chính",
+    "manage": "Quản lý ví",
+    "empty": "Chưa tạo ví tài chính nào",
+    "defaultType": "Ví"
+  },
+  "transactions": {
+    "title": "Giao dịch gần đây",
+    "viewAll": "Xem tất cả",
+    "empty": "Chưa có giao dịch nào",
+    "defaultDescription": "Giao dịch",
+    "defaultWallet": "Ví"
+  }
+}

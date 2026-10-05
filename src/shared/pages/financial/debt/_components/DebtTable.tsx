@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Button,
   Card,
@@ -64,9 +65,10 @@ export const DebtTable: React.FC<DebtTableProps> = ({
   onDelete,
   onOpenCorrect,
 }) => {
+  const { t } = useTranslation('finance')
   const columns: ColumnsType<IFinance_Debt> = [
     {
-      title: 'Tên khoản nợ / Đối tác',
+      title: t('debt.name'),
       key: 'nameInfo',
       ellipsis: true,
       render: (_, record) => (
@@ -98,7 +100,7 @@ export const DebtTable: React.FC<DebtTableProps> = ({
               {record.name}
             </Text>
             <Text type="secondary" style={{ fontSize: 12 }}>
-              Đối tác:{' '}
+              {t('debt.name')}:{' '}
               <strong style={{ color: '#475569' }}>{record.namePerson}</strong>
             </Text>
           </div>
@@ -106,7 +108,7 @@ export const DebtTable: React.FC<DebtTableProps> = ({
       ),
     },
     {
-      title: 'Phân loại',
+      title: t('common.type'),
       key: 'category',
       width: 170,
       render: (_, record) => (
@@ -124,7 +126,7 @@ export const DebtTable: React.FC<DebtTableProps> = ({
       ),
     },
     {
-      title: 'Tiến độ thu/trả',
+      title: t('debt.history'),
       key: 'progress',
       width: 180,
       render: (_, record) => {
@@ -164,7 +166,7 @@ export const DebtTable: React.FC<DebtTableProps> = ({
       },
     },
     {
-      title: 'Dư nợ còn lại',
+      title: t('debt.currentBalance'),
       dataIndex: 'outstandingAmount',
       key: 'outstandingAmount',
       align: 'right',
@@ -184,7 +186,7 @@ export const DebtTable: React.FC<DebtTableProps> = ({
       ),
     },
     {
-      title: 'Thời hạn',
+      title: t('common.date'),
       key: 'dates',
       width: 150,
       render: (_, record) => {
@@ -219,7 +221,7 @@ export const DebtTable: React.FC<DebtTableProps> = ({
       },
     },
     {
-      title: 'Trạng thái',
+      title: t('common.status'),
       dataIndex: 'status',
       key: 'status',
       width: 120,
@@ -230,7 +232,7 @@ export const DebtTable: React.FC<DebtTableProps> = ({
       ),
     },
     {
-      title: 'Thao tác',
+      title: t('common.actions'),
       key: 'actions',
       width: 180,
       align: 'center',
@@ -338,7 +340,7 @@ export const DebtTable: React.FC<DebtTableProps> = ({
           activeKey={activeTab}
           onChange={onTabChange}
           items={[
-            { key: 'ALL', label: 'Tất cả khoản nợ' },
+            { key: 'ALL', label: t('common.all') },
             ...Object.values(FINANCIAL_DEBT_STATUS_ENUM).map((status) => ({
               key: status,
               label: (

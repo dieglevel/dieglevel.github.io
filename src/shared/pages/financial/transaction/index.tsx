@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { FloatButton, Grid, Space, Tabs } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { useRouter } from '@tanstack/react-router'
@@ -25,24 +26,13 @@ import { useMutationTransaction } from '@/shared/api/financial/transaction/trans
 
 const { useBreakpoint } = Grid
 
-const tabsData: TabsProps['items'] = [
-  { key: 'all', label: 'Tất cả' },
-  ...FinancialTransactionTypeHelper.getOptions().map((option) => ({
-    key: option.value,
-    label: option.label,
-  })),
-  ...FinancialTransactionStatusHelper.getOptions().map((option) => ({
-    key: option.value,
-    label: option.label,
-  })),
-]
-
 type ActiveTab =
   | 'all'
   | FINANCIAL_TRANSACTION_TYPE
   | FINANCIAL_TRANSACTION_STATUS
 
 export function Transactions() {
+  const { t } = useTranslation('finance')
   const screens = useBreakpoint()
   const router = useRouter()
   const isMobile = !screens.md
@@ -73,6 +63,32 @@ export function Transactions() {
   const [viewTransactionId, setViewTransactionId] = useState<number | null>(
     null,
   )
+
+  const tabsData: TabsProps['items'] = [
+    { key: 'all', label: t('transaction.all') },
+    ...FinancialTransactionTypeHelper.getOptions().map((option) => ({
+      key: option.value,
+      label:
+        option.value === FINANCIAL_TRANSACTION_TYPE.INCOME
+          ? t('transaction.income')
+          : option.value === FINANCIAL_TRANSACTION_TYPE.EXPENSE
+            ? t('transaction.expense')
+            : option.value === FINANCIAL_TRANSACTION_TYPE.REFUND
+              ? t('transaction.refund')
+              : option.value === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT
+                ? t('transaction.adjustment')
+                : t('transaction.transfer'),
+    })),
+    ...FinancialTransactionStatusHelper.getOptions().map((option) => ({
+      key: option.value,
+      label:
+        option.value === FINANCIAL_TRANSACTION_STATUS.COMPLETED
+          ? t('transaction.completed')
+          : option.value === FINANCIAL_TRANSACTION_STATUS.PENDING
+            ? t('transaction.pending')
+            : t('transaction.failed'),
+    })),
+  ]
 
   const isType = (value: ActiveTab): value is FINANCIAL_TRANSACTION_TYPE =>
     Object.values(FINANCIAL_TRANSACTION_TYPE).includes(

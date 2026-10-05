@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Card, List, Space, Typography, message } from 'antd'
+import { useTranslation } from 'react-i18next'
 import {
   CloudSyncOutlined,
   DatabaseOutlined,
@@ -10,6 +11,7 @@ import {
 const { Text } = Typography
 
 export const SettingsDataManagement: React.FC = () => {
+  const { t } = useTranslation('settings')
   const [messageApi, contextHolder] = message.useMessage()
 
   const handleAction = (msg: string) => {
@@ -23,7 +25,7 @@ export const SettingsDataManagement: React.FC = () => {
         title={
           <Space>
             <DatabaseOutlined style={{ color: '#1677ff' }} />
-            <span>Data Management</span>
+            <span>{t('dataManagement.title')}</span>
           </Space>
         }
       >
@@ -33,17 +35,19 @@ export const SettingsDataManagement: React.FC = () => {
               <Button
                 icon={<DownloadOutlined />}
                 onClick={() =>
-                  handleAction('Export started — file will download shortly')
+                  handleAction(t('dataManagement.exportStarted'))
                 }
               >
-                Export
+                {t('dataManagement.export')}
               </Button>
             }
           >
             <List.Item.Meta
-              title="Export to Excel"
+              title={t('dataManagement.exportExcel')}
               description={
-                <Text type="secondary">Download all transactions as .xlsx</Text>
+                <Text type="secondary">
+                  {t('dataManagement.exportExcelDescription')}
+                </Text>
               }
             />
           </List.Item>
@@ -52,17 +56,17 @@ export const SettingsDataManagement: React.FC = () => {
             extra={
               <Button
                 icon={<DownloadOutlined />}
-                onClick={() => handleAction('PDF report generated')}
+                onClick={() => handleAction(t('dataManagement.pdfGenerated'))}
               >
-                Export
+                {t('dataManagement.export')}
               </Button>
             }
           >
             <List.Item.Meta
-              title="Export to PDF"
+              title={t('dataManagement.exportPdf')}
               description={
                 <Text type="secondary">
-                  Download a formatted financial report
+                  {t('dataManagement.exportPdfDescription')}
                 </Text>
               }
             />
@@ -73,17 +77,19 @@ export const SettingsDataManagement: React.FC = () => {
               <Button
                 icon={<UploadOutlined />}
                 onClick={() =>
-                  handleAction('Open your file picker to import data')
+                  handleAction(t('dataManagement.openFilePicker'))
                 }
               >
-                Import
+                {t('dataManagement.import')}
               </Button>
             }
           >
             <List.Item.Meta
-              title="Import Data"
+              title={t('dataManagement.importData')}
               description={
-                <Text type="secondary">Upload transactions from bank CSV</Text>
+                <Text type="secondary">
+                  {t('dataManagement.importDataDescription')}
+                </Text>
               }
             />
           </List.Item>
@@ -94,14 +100,16 @@ export const SettingsDataManagement: React.FC = () => {
                 icon={<CloudSyncOutlined />}
                 onClick={() => handleAction('Backup completed successfully')}
               >
-                Backup
+                {t('dataManagement.backup')}
               </Button>
             }
           >
             <List.Item.Meta
-              title="Backup & Restore"
+              title={t('dataManagement.backupRestore')}
               description={
-                <Text type="secondary">Last backup: Jul 13, 2025 at 09:14</Text>
+                <Text type="secondary">
+                  {t('dataManagement.backupRestoreDescription')}
+                </Text>
               }
             />
           </List.Item>

@@ -1,0 +1,80 @@
+{
+  "page": {
+    "title": "Settings",
+    "subtitle": "Manage your preferences and account",
+    "loading": "Loading settings...",
+    "footer": "FinanceOS v0.1 · Control your money, control your life."
+  },
+  "appearance": {
+    "title": "Appearance",
+    "darkMode": "Dark Mode",
+    "darkModeDescription": "Switch between light and dark interface",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "localization": {
+    "title": "Localization",
+    "currency": "Currency",
+    "currencyDescription": "Default currency for display",
+    "language": "Language",
+    "languageDescription": "Interface display language",
+    "cycleStartDate": "Cycle Start Date",
+    "cycleStartDateDescription": "The date when each financial cycle starts"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "budgetAlerts": {
+      "label": "Budget Alerts",
+      "description": "Notify when category budget is 80%+ used"
+    },
+    "largeTransactions": {
+      "label": "Large Transactions",
+      "description": "Alert for transactions over $200"
+    },
+    "weeklyReport": {
+      "label": "Weekly Summary",
+      "description": "Every Monday morning digest"
+    },
+    "monthlyReport": {
+      "label": "Monthly Report",
+      "description": "End-of-month financial summary"
+    },
+    "unusualActivity": {
+      "label": "Unusual Activity",
+      "description": "AI-detected spending anomalies"
+    }
+  },
+  "security": {
+    "title": "Security",
+    "twoFactor": "Two-Factor Authentication",
+    "twoFactorDescription": "Add an extra layer of security",
+    "biometric": "Biometric Login",
+    "biometricDescription": "Use fingerprint or Face ID",
+    "sessionTimeout": "Session Timeout",
+    "sessionTimeoutDescription": "Auto-logout after inactivity",
+    "changePassword": "Change Password",
+    "changePasswordDescription": "Last changed 45 days ago",
+    "update": "Update",
+    "minutes": "{{count}} minutes",
+    "hour": "1 hour",
+    "never": "Never"
+  },
+  "dataManagement": {
+    "title": "Data Management",
+    "export": "Export",
+    "import": "Import",
+    "backup": "Backup",
+    "exportExcel": "Export to Excel",
+    "exportExcelDescription": "Download all transactions as .xlsx",
+    "exportPdf": "Export to PDF",
+    "exportPdfDescription": "Download a formatted financial report",
+    "importData": "Import Data",
+    "importDataDescription": "Upload transactions from bank CSV",
+    "backupRestore": "Backup & Restore",
+    "backupRestoreDescription": "Last backup: Jul 13, 2025 at 09:14",
+    "exportStarted": "Export started — file will download shortly",
+    "pdfGenerated": "PDF report generated",
+    "openFilePicker": "Open your file picker to import data",
+    "backupCompleted": "Backup completed successfully"
+  }
+}

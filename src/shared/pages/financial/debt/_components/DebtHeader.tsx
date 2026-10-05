@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Flex, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { Plus } from 'lucide-react'
 
 const { Title, Text } = Typography
@@ -17,6 +18,8 @@ export const DebtHeader: React.FC<DebtHeaderProps> = ({
   activeCount,
   onOpenCreate,
 }) => {
+  const { t } = useTranslation('finance')
+
   return (
     <Flex
       vertical={isMobile}
@@ -29,11 +32,10 @@ export const DebtHeader: React.FC<DebtHeaderProps> = ({
         <Flex align="center" gap={10}>
           <div>
             <Title level={isMobile ? 4 : 3} style={{ margin: 0 }}>
-              Quản lý Sổ Nợ & Khoản Vay
+              {t('debt.title')}
             </Title>
             <Text type="secondary" style={{ fontSize: 13 }}>
-              Theo dõi chi tiết {totalCount} khoản nợ ({activeCount} khoản đang
-              hoạt động)
+              {t('debt.subtitle', { total: totalCount, active: activeCount })}
             </Text>
           </div>
         </Flex>
@@ -49,7 +51,7 @@ export const DebtHeader: React.FC<DebtHeaderProps> = ({
           boxShadow: '0 4px 12px rgba(22, 119, 255, 0.25)',
         }}
       >
-        Tạo khoản nợ mới
+        {t('debt.create')}
       </Button>
     </Flex>
   )

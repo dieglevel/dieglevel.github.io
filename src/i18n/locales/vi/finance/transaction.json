@@ -1,0 +1,20 @@
+{
+  "title": "Giao dịch",
+  "create": "Giao dịch mới",
+  "all": "Tất cả",
+  "allTypes": "Tất cả loại",
+  "income": "Thu nhập",
+  "expense": "Chi phí",
+  "refund": "Hoàn tiền",
+  "adjustment": "Điều chỉnh số dư",
+  "transfer": "Chuyển khoản",
+  "allWallets": "Tất cả ví",
+  "allCategories": "Tất cả danh mục",
+  "allStatuses": "Tất cả trạng thái",
+  "completed": "Hoàn tất",
+  "pending": "Đang chờ",
+  "failed": "Thất bại",
+  "searchPlaceholder": "Tìm kiếm giao dịch...",
+  "detail": "Chi tiết giao dịch",
+  "advancedCreate": "Tạo giao dịch nâng cao"
+}

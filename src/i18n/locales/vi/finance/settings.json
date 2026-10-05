@@ -1,0 +1,80 @@
+{
+  "page": {
+    "title": "Cài đặt",
+    "subtitle": "Quản lý tùy chọn và tài khoản của bạn",
+    "loading": "Đang tải cài đặt...",
+    "footer": "FinanceOS v0.1 · Làm chủ tiền bạc, làm chủ cuộc sống."
+  },
+  "appearance": {
+    "title": "Giao diện",
+    "darkMode": "Chế độ tối",
+    "darkModeDescription": "Chuyển đổi giữa giao diện sáng và tối",
+    "light": "Sáng",
+    "dark": "Tối"
+  },
+  "localization": {
+    "title": "Khu vực",
+    "currency": "Tiền tệ",
+    "currencyDescription": "Tiền tệ mặc định để hiển thị",
+    "language": "Ngôn ngữ",
+    "languageDescription": "Ngôn ngữ hiển thị giao diện",
+    "cycleStartDate": "Ngày bắt đầu chu kỳ",
+    "cycleStartDateDescription": "Ngày bắt đầu mỗi chu kỳ tài chính"
+  },
+  "notifications": {
+    "title": "Thông báo",
+    "budgetAlerts": {
+      "label": "Cảnh báo ngân sách",
+      "description": "Thông báo khi đã dùng từ 80% ngân sách danh mục"
+    },
+    "largeTransactions": {
+      "label": "Giao dịch lớn",
+      "description": "Cảnh báo giao dịch trên $200"
+    },
+    "weeklyReport": {
+      "label": "Tóm tắt hàng tuần",
+      "description": "Tóm tắt vào sáng thứ Hai hàng tuần"
+    },
+    "monthlyReport": {
+      "label": "Báo cáo hàng tháng",
+      "description": "Tóm tắt tài chính cuối tháng"
+    },
+    "unusualActivity": {
+      "label": "Hoạt động bất thường",
+      "description": "Bất thường chi tiêu được AI phát hiện"
+    }
+  },
+  "security": {
+    "title": "Bảo mật",
+    "twoFactor": "Xác thực hai yếu tố",
+    "twoFactorDescription": "Thêm một lớp bảo mật",
+    "biometric": "Đăng nhập sinh trắc học",
+    "biometricDescription": "Sử dụng vân tay hoặc Face ID",
+    "sessionTimeout": "Thời gian chờ phiên",
+    "sessionTimeoutDescription": "Tự động đăng xuất khi không hoạt động",
+    "changePassword": "Đổi mật khẩu",
+    "changePasswordDescription": "Đã đổi 45 ngày trước",
+    "update": "Cập nhật",
+    "minutes": "{{count}} phút",
+    "hour": "1 giờ",
+    "never": "Không bao giờ"
+  },
+  "dataManagement": {
+    "title": "Quản lý dữ liệu",
+    "export": "Xuất",
+    "import": "Nhập",
+    "backup": "Sao lưu",
+    "exportExcel": "Xuất sang Excel",
+    "exportExcelDescription": "Tải tất cả giao dịch dưới dạng .xlsx",
+    "exportPdf": "Xuất sang PDF",
+    "exportPdfDescription": "Tải báo cáo tài chính có định dạng",
+    "importData": "Nhập dữ liệu",
+    "importDataDescription": "Tải giao dịch từ CSV ngân hàng",
+    "backupRestore": "Sao lưu và khôi phục",
+    "backupRestoreDescription": "Sao lưu gần nhất: 13/07/2025 lúc 09:14",
+    "exportStarted": "Đã bắt đầu xuất, tệp sẽ sớm được tải xuống",
+    "pdfGenerated": "Đã tạo báo cáo PDF",
+    "openFilePicker": "Mở trình chọn tệp để nhập dữ liệu",
+    "backupCompleted": "Sao lưu hoàn tất"
+  }
+}

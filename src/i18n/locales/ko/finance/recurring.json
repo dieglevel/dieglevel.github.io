@@ -1,0 +1,12 @@
+{
+  "title": "반복 거래",
+  "add": "반복 거래 추가",
+  "searchPlaceholder": "반복 거래 검색...",
+  "name": "설정 이름",
+  "frequency": "반복 주기",
+  "monthly": "매월",
+  "weekly": "매주",
+  "customDays": "사용자 지정 일수",
+  "income": "수입",
+  "expense": "지출"
+}

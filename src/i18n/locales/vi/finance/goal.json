@@ -1,0 +1,16 @@
+{
+  "title": "Mục tiêu tài chính",
+  "add": "Thêm mục tiêu",
+  "searchPlaceholder": "Tìm kiếm tên hoặc mô tả mục tiêu...",
+  "allTypes": "Tất cả loại",
+  "allStatuses": "Tất cả trạng thái",
+  "emergency": "Quỹ khẩn cấp",
+  "saving": "Tiết kiệm",
+  "investment": "Đầu tư",
+  "debtPayment": "Trả nợ",
+  "other": "Khác",
+  "active": "Đang thực hiện",
+  "completed": "Hoàn thành",
+  "cancelled": "Đã hủy",
+  "inactive": "Không hoạt động"
+}

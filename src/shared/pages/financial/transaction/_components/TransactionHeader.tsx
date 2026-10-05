@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Flex, Space, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
 
 const { Title, Text } = Typography
@@ -21,6 +22,8 @@ export const TransactionHeader: React.FC<TransactionHeaderProps> = ({
   onDeleteSelected,
   onOpenAddModal,
 }) => {
+  const { t } = useTranslation('finance')
+
   return (
     <Flex
       vertical={isMobile}
@@ -30,10 +33,10 @@ export const TransactionHeader: React.FC<TransactionHeaderProps> = ({
     >
       <div>
         <Title level={isMobile ? 4 : 3} style={{ margin: 0 }}>
-          Transactions
+          {t('transaction.title')}
         </Title>
         <Text type="secondary" style={{ fontSize: 13 }}>
-          Showing {filteredCount} of {totalCount} records
+          {filteredCount} / {totalCount}
         </Text>
       </div>
       <Space
@@ -47,7 +50,7 @@ export const TransactionHeader: React.FC<TransactionHeaderProps> = ({
             onClick={onDeleteSelected}
             style={{ flex: 1 }}
           >
-            Delete ({selectedCount})
+            {t('common.delete')} ({selectedCount})
           </Button>
         )}
         {!isMobile && (
@@ -56,7 +59,7 @@ export const TransactionHeader: React.FC<TransactionHeaderProps> = ({
             icon={<PlusOutlined />}
             onClick={onOpenAddModal}
           >
-            Add Transaction
+            {t('transaction.create')}
           </Button>
         )}
       </Space>

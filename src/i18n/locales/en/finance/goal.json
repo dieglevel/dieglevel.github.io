@@ -1,0 +1,16 @@
+{
+  "title": "Financial Goals",
+  "add": "Add Goal",
+  "searchPlaceholder": "Search goal name or description...",
+  "allTypes": "All types",
+  "allStatuses": "All statuses",
+  "emergency": "Emergency Fund",
+  "saving": "Savings",
+  "investment": "Investment",
+  "debtPayment": "Debt Payment",
+  "other": "Other",
+  "active": "Active",
+  "completed": "Completed",
+  "cancelled": "Cancelled",
+  "inactive": "Inactive"
+}

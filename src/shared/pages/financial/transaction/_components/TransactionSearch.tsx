@@ -1,5 +1,6 @@
 import React from 'react'
 import { Badge, Button, Card, Flex, Input, Tag, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { FilterOutlined, SearchOutlined } from '@ant-design/icons'
 import type { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
 
@@ -47,11 +48,13 @@ export const TransactionSearch: React.FC<TransactionSearchProps> = ({
   onClearStatus,
   onResetAll,
 }) => {
+  const { t } = useTranslation('finance')
+
   return (
     <Card size="small" styles={{ body: { padding: 12 } }}>
       <Flex gap={10} align="center">
         <Input
-          placeholder="Search transactions…"
+          placeholder={t('transaction.searchPlaceholder')}
           prefix={<SearchOutlined />}
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
@@ -60,7 +63,7 @@ export const TransactionSearch: React.FC<TransactionSearchProps> = ({
         />
         <Badge count={activeFilterCount} color="#1677ff" offset={[-2, 2]}>
           <Button icon={<FilterOutlined />} onClick={onOpenFilterModal}>
-            {!isMobile && 'Filters'}
+            {!isMobile && t('common.allTypes')}
           </Button>
         </Badge>
       </Flex>
@@ -69,29 +72,29 @@ export const TransactionSearch: React.FC<TransactionSearchProps> = ({
       {activeFilterCount > 0 && (
         <Flex wrap gap={6} style={{ marginTop: 10 }}>
           <Text type="secondary" style={{ fontSize: 12, marginRight: 4 }}>
-            Active Filters:
+            {t('common.actions')}:
           </Text>
 
           {typeFilter !== 'all' && (
             <Tag closable onClose={onClearType} color="blue">
-              Type: {typeFilter}
+              {t('common.type')}: {typeFilter}
             </Tag>
           )}
           {walletFilter !== 'all' && (
             <Tag closable onClose={onClearWallet} color="blue">
-              Wallet:{' '}
+              {t('common.wallet')}:{' '}
               {walletOptions.find((w) => w.value === walletFilter)?.label}
             </Tag>
           )}
           {catFilter !== 'all' && (
             <Tag closable onClose={onClearCat} color="blue">
-              Category:{' '}
+              {t('common.category')}:{' '}
               {categoryOptions.find((c) => c.value === catFilter)?.label}
             </Tag>
           )}
           {statusFilter !== 'all' && (
             <Tag closable onClose={onClearStatus} color="blue">
-              Status: {statusFilter}
+              {t('common.status')}: {statusFilter}
             </Tag>
           )}
 
@@ -101,7 +104,7 @@ export const TransactionSearch: React.FC<TransactionSearchProps> = ({
             onClick={onResetAll}
             style={{ padding: 0, fontSize: 12 }}
           >
-            Clear all
+            {t('common.delete')}
           </Button>
         </Flex>
       )}

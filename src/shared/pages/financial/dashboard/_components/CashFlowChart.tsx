@@ -1,5 +1,6 @@
 import React from 'react'
 import { Card, Empty } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { Calendar } from 'lucide-react'
 import {
   Area,
@@ -59,6 +60,8 @@ interface CashFlowChartProps {
 export const CashFlowChart: React.FC<CashFlowChartProps> = ({
   cashFlowTimeline,
 }) => {
+  const { t } = useTranslation('dashboard')
+
   return (
     <Card
       title={
@@ -71,7 +74,7 @@ export const CashFlowChart: React.FC<CashFlowChartProps> = ({
             gap: 8,
           }}
         >
-          <Calendar size={18} /> Biểu Đồ Dòng Tiền Thu / Chi
+          <Calendar size={18} /> {t('cashFlow.title')}
         </span>
       }
       style={{
@@ -80,7 +83,7 @@ export const CashFlowChart: React.FC<CashFlowChartProps> = ({
       }}
     >
       {cashFlowTimeline.length === 0 ? (
-        <Empty description="Chưa có dữ liệu giao dịch" />
+        <Empty description={t('cashFlow.empty')} />
       ) : (
         <div style={{ width: '100%', height: 320 }}>
           <ResponsiveContainer width="100%" height="100%">
@@ -123,7 +126,7 @@ export const CashFlowChart: React.FC<CashFlowChartProps> = ({
               <Area
                 type="monotone"
                 dataKey="income"
-                name="Thu nhập"
+                name={t('cashFlow.income')}
                 stroke="#16a34a"
                 strokeWidth={2}
                 fillOpacity={1}
@@ -132,7 +135,7 @@ export const CashFlowChart: React.FC<CashFlowChartProps> = ({
               <Area
                 type="monotone"
                 dataKey="expense"
-                name="Chi tiêu"
+                name={t('cashFlow.expense')}
                 stroke="#dc2626"
                 strokeWidth={2}
                 fillOpacity={1}

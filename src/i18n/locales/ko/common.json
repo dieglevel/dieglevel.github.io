@@ -1,0 +1,38 @@
+{
+  "auth": {
+    "login": "로그인",
+    "register": "회원가입",
+    "identity": "아이디/계정",
+    "username/email": "사용자 이름 / 이메일",
+    "please-enter-username-or-email": "사용자 이름 또는 이메일을 입력하세요",
+    "username": "사용자 이름",
+    "please-enter-username": "사용자 이름을 입력하세요",
+    "email": "이메일",
+    "please-enter-email": "이메일을 입력하세요",
+    "invalid-email": "유효하지 않은 이메일입니다",
+    "password": "비밀번호",
+    "please-enter-password": "비밀번호를 입력하세요",
+    "submit-login": "로그인",
+    "create-account": "계정 생성",
+    "logout": "로그아웃"
+  },
+  "menu": {
+    "tools": "도구",
+    "music": "음악",
+    "demo-component": "데모 컴포넌트",
+    "network": "네트워크",
+    "icon": "아이콘",
+    "hash-id": "해시 ID",
+    "finance": {
+      "finnance": "금융",
+      "dashboard": "대시보드",
+      "transaction": "거래 내역",
+      "category": "카테고리",
+      "wallet": "지갑",
+      "debt": "부채",
+      "goal": "목표",
+      "recurring": "정기 결제",
+      "settings": "설정"
+    }
+  }
+}

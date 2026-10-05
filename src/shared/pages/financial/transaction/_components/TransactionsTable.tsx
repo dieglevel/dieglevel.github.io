@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Card, Flex, Popconfirm, Table, Tag, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { DeleteOutlined, EyeOutlined } from '@ant-design/icons'
 import { useNavigate } from '@tanstack/react-router'
 import type { ColumnsType, TablePaginationConfig } from 'antd/es/table'
@@ -39,12 +40,13 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
   onPageChange,
   onDelete,
 }) => {
+  const { t } = useTranslation('finance')
   const navigate = useNavigate()
 
   // Cấu hình Cột Bảng
   const columns: ColumnsType<IFinance_Transaction> = [
     {
-      title: 'Date',
+      title: t('common.date'),
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 90,
@@ -59,7 +61,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       ),
     },
     {
-      title: 'Description',
+      title: t('common.description'),
       dataIndex: 'description',
       key: 'description',
       ellipsis: true,
@@ -72,7 +74,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       render: (desc: string) => <Text strong>{desc}</Text>,
     },
     {
-      title: 'Amount',
+      title: t('common.amount'),
       dataIndex: 'amount',
       key: 'amount',
       align: 'right',
@@ -101,7 +103,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       },
     },
     {
-      title: 'Wallet',
+      title: t('common.wallet'),
       dataIndex: 'wallet',
       key: 'walletId',
       responsive: ['sm'],
@@ -124,7 +126,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       ),
     },
     {
-      title: 'Category',
+      title: t('common.category'),
       key: 'categories',
       responsive: ['md'],
       render: (_, record) => {
@@ -168,7 +170,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       },
     },
     {
-      title: 'Type',
+      title: t('common.type'),
       dataIndex: 'type',
       key: 'type',
       responsive: ['lg'],
@@ -182,7 +184,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       ),
     },
     {
-      title: 'Status',
+      title: t('common.status'),
       dataIndex: 'status',
       key: 'status',
       responsive: ['md'],
@@ -196,7 +198,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
       ),
     },
     {
-      title: 'Action',
+      title: t('common.actions'),
       key: 'action',
       width: 70,
       align: 'center',
@@ -211,15 +213,15 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
             }}
           />
           <Popconfirm
-            title="Xóa Transaction"
-            description="Bạn có chắc chắn muốn xóa cái này?"
+            title={t('common.delete')}
+            description={t('category.deleteDescription')}
             onConfirm={(e) => {
               e?.stopPropagation()
               onDelete(record.id)
             }}
             onCancel={(e) => e?.stopPropagation()}
-            okText="Có"
-            cancelText="Không"
+            okText={t('common.delete')}
+            cancelText={t('common.cancel')}
           >
             <Button
               type="text"

@@ -1,0 +1,17 @@
+{
+  "title": "카테고리",
+  "activeArchived": "활성 {{active}}개 · 보관 {{archived}}개",
+  "add": "카테고리 추가",
+  "name": "카테고리 이름",
+  "namePlaceholder": "카테고리 이름을 입력하세요",
+  "parent": "상위 카테고리",
+  "root": "없음 (최상위 카테고리)",
+  "monthlyBudget": "총 예산",
+  "totalSpent": "총 지출",
+  "remaining": "잔액",
+  "icon": "아이콘",
+  "color": "색상",
+  "deleteTitle": "카테고리 삭제",
+  "deleteDescription": "이 카테고리를 삭제하시겠습니까?",
+  "noChildren": "하위 카테고리가 없습니다"
+}

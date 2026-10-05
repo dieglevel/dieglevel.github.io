@@ -1,0 +1,17 @@
+{
+  "title": "Wallets & Accounts",
+  "subtitle": "Track balances, currencies, and bank notifications",
+  "history": "Transfer History",
+  "transfer": "Transfer Money",
+  "add": "Add Wallet",
+  "all": "All Wallets",
+  "bank": "Bank",
+  "eWallet": "E-wallet",
+  "cash": "Cash",
+  "locked": "Locked Wallet",
+  "searchPlaceholder": "Search by wallet or bank name...",
+  "empty": "No wallets match the current filters",
+  "from": "From Wallet",
+  "to": "To Wallet",
+  "fee": "Transfer Fee"
+}

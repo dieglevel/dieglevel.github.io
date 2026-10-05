@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Badge,
   Button,
@@ -41,6 +42,7 @@ const { Title, Text } = Typography
 const { useBreakpoint } = Grid
 
 export function Goals() {
+  const { t } = useTranslation('finance')
   const screens = useBreakpoint()
   const isMobile = !screens.md
 
@@ -199,10 +201,10 @@ export function Goals() {
       >
         <div>
           <Title level={isMobile ? 4 : 3} style={{ margin: 0 }}>
-            Mục tiêu Tài chính
+            {t('goal.title')}
           </Title>
           <Text type="secondary" style={{ fontSize: 13 }}>
-            Quản lý và theo dõi tiến độ tích lũy các kế hoạch tài chính
+            {t('goal.title')}
           </Text>
         </div>
         {!isMobile && (
@@ -214,7 +216,7 @@ export function Goals() {
               setShowAddModal(true)
             }}
           >
-            Thêm mục tiêu
+            {t('goal.add')}
           </Button>
         )}
       </Flex>
@@ -226,7 +228,7 @@ export function Goals() {
       <Card size="small" styles={{ body: { padding: 12 } }}>
         <Flex gap={10} align="center">
           <Input
-            placeholder="Tìm kiếm tên, mô tả mục tiêu..."
+            placeholder={t('goal.searchPlaceholder')}
             prefix={<SearchOutlined />}
             value={search}
             onChange={(e) => setSearch(e.target.value)}

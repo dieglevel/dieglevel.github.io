@@ -1,5 +1,6 @@
 import React from 'react'
 import { Card, List, Space, Switch, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { BellOutlined } from '@ant-design/icons'
 import type { NotificationSettings } from './types'
 
@@ -10,33 +11,35 @@ interface Props {
   setNotifications: React.Dispatch<React.SetStateAction<NotificationSettings>>
 }
 
-const NOTIFICATION_LABELS: Record<
-  keyof NotificationSettings,
-  { label: string; sub: string }
-> = {
+const NOTIFICATION_LABELS = {
   budgetAlerts: {
-    label: 'Budget Alerts',
-    sub: 'Notify when category budget is 80%+ used',
+    label: 'notifications.budgetAlerts.label',
+    description: 'notifications.budgetAlerts.description',
   },
   largeTransactions: {
-    label: 'Large Transactions',
-    sub: 'Alert for transactions over $200',
+    label: 'notifications.largeTransactions.label',
+    description: 'notifications.largeTransactions.description',
   },
-  weeklyReport: { label: 'Weekly Summary', sub: 'Every Monday morning digest' },
+  weeklyReport: {
+    label: 'notifications.weeklyReport.label',
+    description: 'notifications.weeklyReport.description',
+  },
   monthlyReport: {
-    label: 'Monthly Report',
-    sub: 'End-of-month financial summary',
+    label: 'notifications.monthlyReport.label',
+    description: 'notifications.monthlyReport.description',
   },
   unusualActivity: {
-    label: 'Unusual Activity',
-    sub: 'AI-detected spending anomalies',
+    label: 'notifications.unusualActivity.label',
+    description: 'notifications.unusualActivity.description',
   },
-}
+} as const
 
 export const SettingsNotifications: React.FC<Props> = ({
   notifications,
   setNotifications,
 }) => {
+  const { t } = useTranslation('settings')
+
   const handleToggle = (key: keyof NotificationSettings) => {
     setNotifications((prev) => ({ ...prev, [key]: !prev[key] }))
   }
@@ -46,7 +49,7 @@ export const SettingsNotifications: React.FC<Props> = ({
       title={
         <Space>
           <BellOutlined style={{ color: '#1677ff' }} />
-          <span>Notifications</span>
+          <span>{t('notifications.title')}</span>
         </Space>
       }
     >
@@ -66,8 +69,10 @@ export const SettingsNotifications: React.FC<Props> = ({
               }
             >
               <List.Item.Meta
-                title={info.label}
-                description={<Text type="secondary">{info.sub}</Text>}
+                title={t(info.label)}
+                description={
+                  <Text type="secondary">{t(info.description)}</Text>
+                }
               />
             </List.Item>
           )

@@ -1,4 +1,5 @@
 import { Card, Col, Row, Statistic } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 interface SummaryCardsProps {
@@ -10,6 +11,7 @@ export default function SummaryCards({
   totalBudget,
   totalSpent,
 }: SummaryCardsProps) {
+  const { t } = useTranslation('finance')
   const remaining = totalBudget - totalSpent
 
   return (
@@ -17,7 +19,7 @@ export default function SummaryCards({
       <Col xs={12} md={8}>
         <Card variant="borderless" size="small">
           <Statistic
-            title="Total Budget"
+            title={t('category.monthlyBudget')}
             value={convertCurrency(totalBudget)}
             precision={2}
             valueStyle={{ color: '#1677ff' }}
@@ -28,7 +30,7 @@ export default function SummaryCards({
       <Col xs={12} md={8}>
         <Card variant="borderless" size="small">
           <Statistic
-            title="Total Spent"
+            title={t('category.totalSpent')}
             value={convertCurrency(totalSpent)}
             precision={2}
             valueStyle={{ color: '#ff4d4f' }}
@@ -39,7 +41,7 @@ export default function SummaryCards({
       <Col xs={24} md={8}>
         <Card variant="borderless" size="small">
           <Statistic
-            title="Remaining"
+            title={t('category.remaining')}
             value={convertCurrency(remaining)}
             precision={2}
             valueStyle={{

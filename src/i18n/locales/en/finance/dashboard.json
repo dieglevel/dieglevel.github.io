@@ -1,0 +1,43 @@
+{
+  "header": {
+    "title": "Financial Overview Dashboard",
+    "subtitle": "Track your cash flow, income, expenses, and financial position in real time.",
+    "thisWeek": "This week",
+    "thisMonth": "This month",
+    "thisYear": "This year",
+    "allWallets": "All wallets",
+    "newTransaction": "New transaction"
+  },
+  "summary": {
+    "totalIncome": "Total Income",
+    "incomeDescription": "Money received during the period",
+    "totalExpense": "Total Expenses",
+    "expenseDescription": "Money spent during the period",
+    "netBalance": "Net Balance",
+    "totalWalletBalance": "Total wallet balance:",
+    "savingsRate": "Savings Rate"
+  },
+  "cashFlow": {
+    "title": "Cash Flow In / Out",
+    "empty": "No transaction data",
+    "income": "Income",
+    "expense": "Expenses"
+  },
+  "categoryBreakdown": {
+    "title": "Spending Breakdown",
+    "empty": "No spending data"
+  },
+  "wallets": {
+    "title": "Financial Wallets",
+    "manage": "Manage wallets",
+    "empty": "No financial wallets created",
+    "defaultType": "Wallet"
+  },
+  "transactions": {
+    "title": "Recent Transactions",
+    "viewAll": "View all",
+    "empty": "No transactions",
+    "defaultDescription": "Transaction",
+    "defaultWallet": "Wallet"
+  }
+}

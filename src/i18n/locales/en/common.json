@@ -1,0 +1,40 @@
+{
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "identity": "Identity",
+    "username/email": "Username / Email",
+    "please-enter-username-or-email": "Please enter your username or email",
+    "username": "Username",
+    "please-enter-username": "Please enter your username",
+    "email": "Email",
+    "please-enter-email": "Please enter your email",
+    "invalid-email": "Invalid email",
+    "password": "Password",
+    "please-enter-password": "Please enter your password",
+    "submit-login": "submit",
+    "create-account": "Create an account",
+    "logout": "Logout",
+    "profile": "Profile",
+    "change-password": "Change Password"
+  },
+  "menu": {
+    "tools": "Tools",
+    "music": "Music",
+    "demo-component": "Demo Component",
+    "network": "Network",
+    "icon": "Icon",
+    "hash-id": "Hash Id",
+    "finance": {
+      "finnance": "Finance",
+      "dashboard": "Dashboard",
+      "transaction": "Transaction",
+      "category": "Category",
+      "wallet": "Wallet",
+      "debt": "Debt",
+      "goal": "Goal",
+      "recurring": "Recurring",
+      "settings": "Settings"
+    }
+  }
+}

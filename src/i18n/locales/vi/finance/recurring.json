@@ -1,0 +1,12 @@
+{
+  "title": "Giao dịch định kỳ",
+  "add": "Thêm giao dịch định kỳ",
+  "searchPlaceholder": "Tìm kiếm giao dịch định kỳ...",
+  "name": "Tên thiết lập",
+  "frequency": "Chu kỳ lặp",
+  "monthly": "Hàng tháng",
+  "weekly": "Hàng tuần",
+  "customDays": "Số ngày tùy chỉnh",
+  "income": "Thu nhập",
+  "expense": "Chi phí"
+}

@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronRight, LogIn, UserPlus } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 
+import { useTranslation } from 'react-i18next'
 import { LoginForm } from './login-form'
 import { RegisterForm } from './register-form'
 import type { AuthView, MinimalGameMenuProps } from './auth-menu-type'
@@ -19,6 +20,8 @@ export function MinimalGameMenu({
   onLoginSuccess,
   onRegisterSuccess,
 }: MinimalGameMenuProps) {
+  const { t, i18n } = useTranslation()
+
   const { selectedMenu } = Route.useSearch()
   const nagivate = useNavigate()
 
@@ -34,7 +37,10 @@ export function MinimalGameMenu({
   const screens = useBreakpoint()
 
   const { isAuthenticated } = useAuthStore()
-  const AppMenu = useMemo(() => getAppMenu(isAuthenticated), [isAuthenticated])
+  const AppMenu = useMemo(
+    () => getAppMenu(isAuthenticated),
+    [isAuthenticated, i18n.language],
+  )
 
   const { mLogout } = useMutationAuth()
   const { message } = App.useApp()
@@ -88,7 +94,7 @@ export function MinimalGameMenu({
         right: isMobile ? '16px' : '10%',
         left: isMobile ? '16px' : 'auto',
         zIndex: 10,
-        width: isMobile ? 'auto' : 'max-content',
+        width: isMobile ? 'auto' : 'auto',
         maxWidth: isMobile ? '100vw' : 'calc(100vw - 40px)',
         userSelect: 'none',
       }}
@@ -245,7 +251,7 @@ export function MinimalGameMenu({
                           {group.icon}
                         </motion.span>
 
-                        <span>{group.label}</span>
+                        <span>{t(group.label)}</span>
                       </motion.div>
 
                       {/* Chevron icon */}
@@ -411,7 +417,7 @@ export function MinimalGameMenu({
                                     <motion.span
                                       whileHover={{ color: '#ffffff' }}
                                     >
-                                      {item.label}
+                                      {t(item.label)}
                                     </motion.span>
                                   </motion.div>
                                 )}
@@ -473,6 +479,7 @@ export function MinimalGameMenu({
                         letterSpacing: '1px',
                         color: '#ff4b2b',
                         boxShadow: '0 0 10px rgba(255, 75, 43, 0.15)',
+                        whiteSpace: 'nowrap',
                       }}
                       whileHover={{
                         scale: 1.02,
@@ -483,7 +490,7 @@ export function MinimalGameMenu({
                       whileTap={{ scale: 0.97 }}
                     >
                       <LogIn size={16} />
-                      <span>Login</span>
+                      <span>{t('auth.login')}</span>
                     </motion.button>
 
                     <motion.button
@@ -506,6 +513,7 @@ export function MinimalGameMenu({
                         textTransform: 'uppercase',
                         letterSpacing: '1px',
                         color: '#ffffff',
+                        whiteSpace: 'nowrap',
                       }}
                       whileHover={{
                         scale: 1.02,
@@ -516,7 +524,7 @@ export function MinimalGameMenu({
                       whileTap={{ scale: 0.97 }}
                     >
                       <UserPlus size={16} />
-                      <span>Register</span>
+                      <span>{t('auth.register')}</span>
                     </motion.button>
                   </>
                 ) : (
@@ -539,7 +547,7 @@ export function MinimalGameMenu({
                       gap: '8px',
                     }}
                   >
-                    Logout
+                    {t('auth.logout')}
                   </Button>
                 )}
               </motion.div>

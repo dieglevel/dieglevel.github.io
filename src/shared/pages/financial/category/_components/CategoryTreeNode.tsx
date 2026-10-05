@@ -1,4 +1,5 @@
 import { Button, Flex, Grid, Popconfirm, Progress, Tag, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import {
   DeleteOutlined,
   EditOutlined,
@@ -33,6 +34,7 @@ export default function CategoryTreeNode({
   onDelete,
   onDetail,
 }: CategoryTreeNodeProps) {
+  const { t } = useTranslation('finance')
   const screens = useBreakpoint()
   const isMobile = !screens.md
 
@@ -91,15 +93,15 @@ export default function CategoryTreeNode({
       />
 
       <Popconfirm
-        title="Xóa danh mục"
-        description="Bạn có chắc chắn muốn xóa danh mục này?"
+        title={t('category.deleteTitle')}
+        description={t('category.deleteDescription')}
         onConfirm={(e) => {
           e?.stopPropagation()
           onDelete(node.id)
         }}
         onCancel={(e) => e?.stopPropagation()}
-        okText="Có"
-        cancelText="Không"
+        okText={t('common.delete')}
+        cancelText={t('common.cancel')}
       >
         <Button
           type="text"

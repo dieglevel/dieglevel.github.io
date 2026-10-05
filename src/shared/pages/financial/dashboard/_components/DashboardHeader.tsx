@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Select, Space, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { PlusCircle } from 'lucide-react'
 import type { WalletOverviewItem } from '@/shared/api/financial/dashboard/dashboard.type'
 import { DashboardTimeFrame } from '@/shared/api/financial/dashboard/dashboard.type'
@@ -8,12 +9,6 @@ import { getTokens } from '@/shared/common/design-token'
 // Chỉnh lại đường dẫn import cho đúng với project của bạn
 
 const { Title, Text } = Typography
-
-const TIME_FRAMES = [
-  { key: DashboardTimeFrame.WEEKLY, label: 'Tuần này' },
-  { key: DashboardTimeFrame.MONTHLY, label: 'Tháng này' },
-  { key: DashboardTimeFrame.YEARLY, label: 'Năm nay' },
-]
 
 interface DashboardHeaderProps {
   timeFrame: DashboardTimeFrame
@@ -32,8 +27,15 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   wallets,
   onNavigateToCreateTransaction,
 }) => {
+  const { t } = useTranslation('dashboard')
   const { mode } = useThemeMode()
   const { border, state, shadow, radius } = getTokens(mode)
+
+  const timeFrames = [
+    { key: DashboardTimeFrame.WEEKLY, label: t('header.thisWeek') },
+    { key: DashboardTimeFrame.MONTHLY, label: t('header.thisMonth') },
+    { key: DashboardTimeFrame.YEARLY, label: t('header.thisYear') },
+  ]
 
   return (
     <div
@@ -50,11 +52,10 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     >
       <div>
         <Title level={3} style={{ margin: 0, fontWeight: 700 }}>
-          Dashboard Tổng Quan Tài Chính
+          {t('header.title')}
         </Title>
         <Text type="secondary" style={{ fontSize: 13 }}>
-          Theo dõi dòng tiền, thu chi và tình hình tài chính của bạn theo thời
-          gian thực.
+          {t('header.subtitle')}
         </Text>
       </div>
 
@@ -70,7 +71,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             gap: 4,
           }}
         >
-          {TIME_FRAMES.map((tf) => {
+          {timeFrames.map((tf) => {
             const active = timeFrame === tf.key
             return (
               <Button
@@ -93,13 +94,13 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
         {/* Wallet Selector */}
         <Select
-          placeholder="Tất cả ví"
+          placeholder={t('header.allWallets')}
           allowClear
           value={selectedWalletId}
           onChange={(val) => setSelectedWalletId(val)}
           style={{ width: 160 }}
           options={[
-            { value: undefined, label: 'Tất cả các ví' },
+            { value: undefined, label: t('header.allWallets') },
             ...wallets.map((w) => ({ value: w.id, label: w.name })),
           ]}
         />
@@ -118,7 +119,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             gap: 6,
           }}
         >
-          Giao dịch mới
+          {t('header.newTransaction')}
         </Button>
       </Space>
     </div>

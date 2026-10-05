@@ -2,7 +2,6 @@ import { useLocation, useNavigate } from '@tanstack/react-router'
 import { ConfigProvider, Menu } from 'antd'
 import { useCallback, useMemo } from 'react'
 import type { MenuItem } from '@/shared/common/menu'
-import { menuItems } from '@/shared/common/menu'
 import { background, colors } from '@/shared/common/design-token'
 import './menu.css'
 
@@ -31,7 +30,7 @@ export default function Body() {
       }
     }
 
-    build(menuItems)
+    // build(menuItems)
     return map
   }, [])
 
@@ -55,7 +54,7 @@ export default function Body() {
         className="ant-menu-custom"
         mode="inline"
         selectedKeys={[currentPath]}
-        items={menuItems}
+        // items={menuItems}
         onClick={(info) => {
           const item = menuMap.get(info.key)
           if (item?.path) {

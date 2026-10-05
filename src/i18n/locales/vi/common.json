@@ -1,0 +1,38 @@
+{
+  "auth": {
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "identity": "Tài khoản",
+    "username/email": "Tên đăng nhập / Email",
+    "please-enter-username-or-email": "Vui lòng nhập tên đăng nhập hoặc email",
+    "username": "Tên đăng nhập",
+    "please-enter-username": "Vui lòng nhập tên đăng nhập",
+    "email": "Email",
+    "please-enter-email": "Vui lòng nhập email",
+    "invalid-email": "Email không hợp lệ",
+    "password": "Mật khẩu",
+    "please-enter-password": "Vui lòng nhập mật khẩu",
+    "submit-login": "ĐĂNG NHẬP",
+    "create-account": "Tạo tài khoản",
+    "logout": "Đăng xuất"
+  },
+  "menu": {
+    "tools": "Công cụ",
+    "music": "Âm nhạc",
+    "demo-component": "Demo Component",
+    "network": "Mạng",
+    "icon": "Biểu tượng",
+    "hash-id": "Hash Id",
+    "finance": {
+      "finnance": "Tài chính",
+      "dashboard": "Tổng quan",
+      "transaction": "Giao dịch",
+      "category": "Danh mục",
+      "wallet": "Ví",
+      "debt": "Khoản nợ",
+      "goal": "Mục tiêu",
+      "recurring": "Định kỳ",
+      "settings": "Cài đặt"
+    }
+  }
+}

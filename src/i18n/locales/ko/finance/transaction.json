@@ -1,0 +1,20 @@
+{
+  "title": "거래",
+  "create": "새 거래",
+  "all": "전체",
+  "allTypes": "모든 유형",
+  "income": "수입",
+  "expense": "지출",
+  "refund": "환불",
+  "adjustment": "잔액 조정",
+  "transfer": "이체",
+  "allWallets": "모든 지갑",
+  "allCategories": "모든 카테고리",
+  "allStatuses": "모든 상태",
+  "completed": "완료",
+  "pending": "대기 중",
+  "failed": "실패",
+  "searchPlaceholder": "거래 검색...",
+  "detail": "거래 상세",
+  "advancedCreate": "고급 거래 생성"
+}

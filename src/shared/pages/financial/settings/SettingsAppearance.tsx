@@ -1,5 +1,6 @@
 import React from 'react'
 import { Card, List, Segmented, Space, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { BgColorsOutlined, MoonOutlined, SunOutlined } from '@ant-design/icons'
 import type { IFinance_Setting } from '@/shared/api/financial/setting/setting.type'
 import { FINANCIAL_SETTING_THEME_MODE } from '@/shared/api/financial/setting/setting.enum'
@@ -15,12 +16,14 @@ export const SettingsAppearance: React.FC<Props> = ({
   setting,
   toggle,
 }: Props) => {
+  const { t } = useTranslation('settings')
+
   return (
     <Card
       title={
         <Space>
           <BgColorsOutlined style={{ color: '#1677ff' }} />
-          <span>Appearance</span>
+          <span>{t('appearance.title')}</span>
         </Space>
       }
     >
@@ -32,12 +35,12 @@ export const SettingsAppearance: React.FC<Props> = ({
               onChange={toggle}
               options={[
                 {
-                  label: 'Light',
+                  label: t('appearance.light'),
                   value: FINANCIAL_SETTING_THEME_MODE.LIGHT,
                   icon: <SunOutlined />,
                 },
                 {
-                  label: 'Dark',
+                  label: t('appearance.dark'),
                   value: FINANCIAL_SETTING_THEME_MODE.DARK,
                   icon: <MoonOutlined />,
                 },
@@ -46,10 +49,10 @@ export const SettingsAppearance: React.FC<Props> = ({
           }
         >
           <List.Item.Meta
-            title="Dark Mode"
+            title={t('appearance.darkMode')}
             description={
               <Text type="secondary">
-                Switch between light and dark interface
+                {t('appearance.darkModeDescription')}
               </Text>
             }
           />

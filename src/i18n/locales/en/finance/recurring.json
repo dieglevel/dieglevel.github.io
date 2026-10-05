@@ -1,0 +1,12 @@
+{
+  "title": "Recurring Transactions",
+  "add": "Add Recurring Transaction",
+  "searchPlaceholder": "Search recurring transactions...",
+  "name": "Configuration Name",
+  "frequency": "Frequency",
+  "monthly": "Monthly",
+  "weekly": "Weekly",
+  "customDays": "Custom days",
+  "income": "Income",
+  "expense": "Expense"
+}

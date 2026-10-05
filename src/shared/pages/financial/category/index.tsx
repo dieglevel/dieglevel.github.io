@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Button,
   DatePicker,
@@ -28,6 +29,7 @@ export interface ExtendedFinanceCategory extends IFinance_Category {
 }
 
 export default function Categories() {
+  const { t } = useTranslation('finance')
   const { mode: themeMode } = useThemeMode()
   const { colors } = getTokens(themeMode)
 
@@ -235,10 +237,13 @@ export default function Categories() {
       <Flex justify="space-between" align="center" wrap="wrap" gap={16}>
         <div>
           <Title level={3} style={{ margin: 0 }}>
-            Categories
+            {t('category.title')}
           </Title>
           <Text type="secondary" style={{ fontSize: '13px' }}>
-            {activeCount} Active · {archivedCount} Archived
+            {t('category.activeArchived', {
+              active: activeCount,
+              archived: archivedCount,
+            })}
           </Text>
         </div>
 
@@ -260,7 +265,7 @@ export default function Categories() {
               icon={<PlusOutlined />}
               onClick={() => openAdd(null)}
             >
-              Add Category
+              {t('category.add')}
             </Button>
             <DatePicker
               style={{ width: '180px' }}

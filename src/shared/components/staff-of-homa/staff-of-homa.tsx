@@ -6,6 +6,7 @@ import { Grid } from 'antd'
 import { Lights } from './lights'
 import { StaffModel } from './staff-model'
 import MinimalGameMenu from './minimal-game-menu/minimal-game-menu'
+import { LanguageSelector } from './minimal-game-menu/language'
 
 const { useBreakpoint } = Grid
 
@@ -47,6 +48,7 @@ export function StaffOfHoma() {
   return (
     <>
       {showMenu && createPortal(<MinimalGameMenu />, document.body)}
+      {showMenu && createPortal(<LanguageSelector />, document.body)}
 
       <div
         style={{

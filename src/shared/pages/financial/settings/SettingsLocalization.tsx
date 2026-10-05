@@ -1,11 +1,10 @@
 import React from 'react'
 import { Card, List, Select, Space, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { GlobalOutlined } from '@ant-design/icons'
 import type { IFinance_Setting } from '@/shared/api/financial/setting/setting.type'
-import {
-  FinancialSettingCurrencyHelper,
-  FinancialSettingLanguageHelper,
-} from '@/shared/api/financial/setting/setting.enum'
+import { FinancialSettingCurrencyHelper } from '@/shared/api/financial/setting/setting.enum'
+import { LanguageHelper } from '@/i18n/enum'
 
 const { Text } = Typography
 
@@ -18,12 +17,14 @@ export const SettingsLocalization: React.FC<Props> = ({
   setting,
   onUpdate,
 }) => {
+  const { t } = useTranslation('settings')
+
   return (
     <Card
       title={
         <Space>
           <GlobalOutlined style={{ color: '#1677ff' }} />
-          <span>Localization</span>
+          <span>{t('localization.title')}</span>
         </Space>
       }
     >
@@ -39,9 +40,11 @@ export const SettingsLocalization: React.FC<Props> = ({
           }
         >
           <List.Item.Meta
-            title="Currency"
+            title={t('localization.currency')}
             description={
-              <Text type="secondary">Default currency for display</Text>
+              <Text type="secondary">
+                {t('localization.currencyDescription')}
+              </Text>
             }
           />
         </List.Item>
@@ -52,14 +55,16 @@ export const SettingsLocalization: React.FC<Props> = ({
               value={setting.language}
               onChange={(val) => onUpdate({ language: val })}
               style={{ width: 160 }}
-              options={FinancialSettingLanguageHelper.getOptions()}
+              options={LanguageHelper.getOptions()}
             />
           }
         >
           <List.Item.Meta
-            title="Language"
+            title={t('localization.language')}
             description={
-              <Text type="secondary">Interface display language</Text>
+              <Text type="secondary">
+                {t('localization.languageDescription')}
+              </Text>
             }
           />
         </List.Item>
@@ -78,10 +83,10 @@ export const SettingsLocalization: React.FC<Props> = ({
           }
         >
           <List.Item.Meta
-            title="Cycle Start Date"
+            title={t('localization.cycleStartDate')}
             description={
               <Text type="secondary">
-                The date when each financial cycle starts
+                {t('localization.cycleStartDateDescription')}
               </Text>
             }
           />

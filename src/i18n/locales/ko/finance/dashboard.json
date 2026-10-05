@@ -1,0 +1,43 @@
+{
+  "header": {
+    "title": "재무 현황 대시보드",
+    "subtitle": "현금 흐름, 수입, 지출 및 재무 상태를 실시간으로 확인하세요.",
+    "thisWeek": "이번 주",
+    "thisMonth": "이번 달",
+    "thisYear": "올해",
+    "allWallets": "모든 지갑",
+    "newTransaction": "새 거래"
+  },
+  "summary": {
+    "totalIncome": "총수입",
+    "incomeDescription": "기간 내 들어온 금액",
+    "totalExpense": "총지출",
+    "expenseDescription": "기간 내 사용한 금액",
+    "netBalance": "순잔액",
+    "totalWalletBalance": "전체 지갑 잔액:",
+    "savingsRate": "저축률"
+  },
+  "cashFlow": {
+    "title": "현금 흐름 수입 / 지출",
+    "empty": "거래 데이터가 없습니다",
+    "income": "수입",
+    "expense": "지출"
+  },
+  "categoryBreakdown": {
+    "title": "지출 구성",
+    "empty": "지출 데이터가 없습니다"
+  },
+  "wallets": {
+    "title": "금융 지갑 목록",
+    "manage": "지갑 관리",
+    "empty": "생성된 금융 지갑이 없습니다",
+    "defaultType": "지갑"
+  },
+  "transactions": {
+    "title": "최근 거래",
+    "viewAll": "모두 보기",
+    "empty": "거래가 없습니다",
+    "defaultDescription": "거래",
+    "defaultWallet": "지갑"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "title": "재무 목표",
+  "add": "목표 추가",
+  "searchPlaceholder": "목표 이름 또는 설명 검색...",
+  "allTypes": "모든 유형",
+  "allStatuses": "모든 상태",
+  "emergency": "비상금",
+  "saving": "저축",
+  "investment": "투자",
+  "debtPayment": "부채 상환",
+  "other": "기타",
+  "active": "진행 중",
+  "completed": "완료",
+  "cancelled": "취소됨",
+  "inactive": "비활성"
+}

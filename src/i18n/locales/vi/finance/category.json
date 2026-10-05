@@ -1,0 +1,17 @@
+{
+  "title": "Danh mục",
+  "activeArchived": "{{active}} đang hoạt động · {{archived}} đã lưu trữ",
+  "add": "Thêm danh mục",
+  "name": "Tên danh mục",
+  "namePlaceholder": "Nhập tên danh mục",
+  "parent": "Danh mục cha",
+  "root": "Không có (Danh mục gốc)",
+  "monthlyBudget": "Tổng ngân sách",
+  "totalSpent": "Tổng đã chi",
+  "remaining": "Còn lại",
+  "icon": "Biểu tượng",
+  "color": "Màu sắc",
+  "deleteTitle": "Xóa danh mục",
+  "deleteDescription": "Bạn có chắc muốn xóa danh mục này không?",
+  "noChildren": "Không có danh mục con"
+}

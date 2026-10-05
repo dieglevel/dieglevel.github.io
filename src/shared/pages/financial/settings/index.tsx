@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Flex, Space, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 
 import { useSettingStore } from '../_store/setting.store'
 import { SettingsAppearance } from './SettingsAppearance'
@@ -20,6 +21,7 @@ import { useThemeMode } from '@/shared/provider/antd-theme.provider'
 
 const { Title, Text } = Typography
 const Settings = () => {
+  const { t, i18n } = useTranslation('settings')
   const { toggle } = useThemeMode()
   const [notifications, setNotifications] = useState<NotificationSettings>({
     budgetAlerts: true,
@@ -54,6 +56,13 @@ const Settings = () => {
                 request.themeMode,
               )
             }
+            if (request.language) {
+              i18n.changeLanguage(request.language)
+              LocalStorageService.set(
+                LOCAL_STORAGE_KEY.LANGUAGE,
+                request.language,
+              )
+            }
           },
         },
       )
@@ -68,12 +77,12 @@ const Settings = () => {
         <Space vertical size="large" style={{ width: '100%' }}>
           <div>
             <Title level={2} style={{ marginBottom: 4 }}>
-              Settings
+              {t('page.title')}
             </Title>
-            <Text type="secondary">Manage your preferences and account</Text>
+            <Text type="secondary">{t('page.subtitle')}</Text>
           </div>
           <Text type="secondary" style={{ fontSize: 12 }}>
-            Loading settings...
+            {t('page.loading')}
           </Text>
         </Space>
       </Flex>
@@ -86,9 +95,9 @@ const Settings = () => {
         {/* Header */}
         <div>
           <Title level={2} style={{ marginBottom: 4 }}>
-            Settings
+            {t('page.title')}
           </Title>
-          <Text type="secondary">Manage your preferences and account</Text>
+          <Text type="secondary">{t('page.subtitle')}</Text>
         </div>
 
         {/* Sections */}
@@ -118,7 +127,7 @@ const Settings = () => {
         {/* Footer info */}
         <div style={{ textAlign: 'center', paddingTop: 12 }}>
           <Text type="secondary" style={{ fontSize: 12 }}>
-            FinanceOS v0.1 · Control your money, control your life.
+            {t('page.footer')}
           </Text>
         </div>
       </Space>

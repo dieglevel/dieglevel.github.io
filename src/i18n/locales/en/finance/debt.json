@@ -1,0 +1,12 @@
+{
+  "title": "Debt & Loan Management",
+  "subtitle": "Tracking {{total}} debts ({{active}} active)",
+  "create": "Create New Debt",
+  "name": "Debt / Partner Name",
+  "direction": "Debt Direction",
+  "originalAmount": "Original Amount",
+  "currentBalance": "Current Balance",
+  "history": "History",
+  "settle": "Settle",
+  "cancelDebt": "Cancel Debt"
+}

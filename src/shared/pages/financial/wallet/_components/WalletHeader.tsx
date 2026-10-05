@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Flex, Input, Segmented, Space, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import {
   HistoryOutlined,
   PlusOutlined,
@@ -29,27 +30,29 @@ export const WalletHeader: React.FC<WalletHeaderProps> = ({
   onOpenTransfer,
   onOpenAdd,
 }) => {
+  const { t } = useTranslation('finance')
+
   return (
     <Flex vertical gap={16}>
       <Flex justify="space-between" align="center" wrap="wrap" gap={16}>
         <div>
           <Title level={3} style={{ margin: 0 }}>
-            Quản lý Ví &amp; Tài khoản
+            {t('wallet.title')}
           </Title>
           <Text type="secondary">
-            Theo dõi số dư, phân loại loại tiền và đồng bộ thông báo ngân hàng
+            {t('wallet.subtitle')}
           </Text>
         </div>
 
         <Space size={8} wrap style={{ justifyContent: 'flex-end' }}>
           <Button icon={<HistoryOutlined />} onClick={onToggleHistory}>
-            Lịch sử chuyển tiền
+            {t('wallet.history')}
           </Button>
           <Button icon={<SwapOutlined />} onClick={onOpenTransfer}>
-            Chuyển tiền
+            {t('wallet.transfer')}
           </Button>
           <Button type="primary" icon={<PlusOutlined />} onClick={onOpenAdd}>
-            Thêm ví mới
+            {t('wallet.add')}
           </Button>
         </Space>
       </Flex>
@@ -60,16 +63,16 @@ export const WalletHeader: React.FC<WalletHeaderProps> = ({
           value={activeTab}
           onChange={(val) => onTabChange(val)}
           options={[
-            { label: 'Tất cả ví', value: 'ALL' },
-            { label: 'Ngân hàng', value: FINANCIAL_WALLET_TYPE.BANK },
-            { label: 'Ví điện tử', value: FINANCIAL_WALLET_TYPE.E_WALLET },
-            { label: 'Tiền mặt', value: FINANCIAL_WALLET_TYPE.CASH },
-            { label: 'Ví đã khóa', value: 'LOCKED' },
+            { label: t('wallet.all'), value: 'ALL' },
+            { label: t('wallet.bank'), value: FINANCIAL_WALLET_TYPE.BANK },
+            { label: t('wallet.eWallet'), value: FINANCIAL_WALLET_TYPE.E_WALLET },
+            { label: t('wallet.cash'), value: FINANCIAL_WALLET_TYPE.CASH },
+            { label: t('wallet.locked'), value: 'LOCKED' },
           ]}
         />
 
         <Input
-          placeholder="Tìm theo tên ví / ngân hàng..."
+          placeholder={t('wallet.searchPlaceholder')}
           prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}

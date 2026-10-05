@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Card, List, Select, Space, Switch, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { RightOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
 import type { SecuritySettings } from './types'
 
@@ -14,12 +15,14 @@ export const SettingsSecurity: React.FC<Props> = ({
   security,
   setSecurity,
 }) => {
+  const { t } = useTranslation('settings')
+
   return (
     <Card
       title={
         <Space>
           <SafetyCertificateOutlined style={{ color: '#1677ff' }} />
-          <span>Security</span>
+          <span>{t('security.title')}</span>
         </Space>
       }
     >
@@ -33,9 +36,9 @@ export const SettingsSecurity: React.FC<Props> = ({
           }
         >
           <List.Item.Meta
-            title="Two-Factor Authentication"
+            title={t('security.twoFactor')}
             description={
-              <Text type="secondary">Add an extra layer of security</Text>
+              <Text type="secondary">{t('security.twoFactorDescription')}</Text>
             }
           />
         </List.Item>
@@ -49,9 +52,9 @@ export const SettingsSecurity: React.FC<Props> = ({
           }
         >
           <List.Item.Meta
-            title="Biometric Login"
+            title={t('security.biometric')}
             description={
-              <Text type="secondary">Use fingerprint or Face ID</Text>
+              <Text type="secondary">{t('security.biometricDescription')}</Text>
             }
           />
         </List.Item>
@@ -65,18 +68,20 @@ export const SettingsSecurity: React.FC<Props> = ({
               }
               style={{ width: 140 }}
               options={[
-                { value: '15min', label: '15 minutes' },
-                { value: '30min', label: '30 minutes' },
-                { value: '1hr', label: '1 hour' },
-                { value: 'never', label: 'Never' },
+                { value: '15min', label: t('security.minutes', { count: 15 }) },
+                { value: '30min', label: t('security.minutes', { count: 30 }) },
+                { value: '1hr', label: t('security.hour') },
+                { value: 'never', label: t('security.never') },
               ]}
             />
           }
         >
           <List.Item.Meta
-            title="Session Timeout"
+            title={t('security.sessionTimeout')}
             description={
-              <Text type="secondary">Auto-logout after inactivity</Text>
+              <Text type="secondary">
+                {t('security.sessionTimeoutDescription')}
+              </Text>
             }
           />
         </List.Item>
@@ -84,13 +89,17 @@ export const SettingsSecurity: React.FC<Props> = ({
         <List.Item
           extra={
             <Button type="link">
-              Update <RightOutlined />
+              {t('security.update')} <RightOutlined />
             </Button>
           }
         >
           <List.Item.Meta
-            title="Change Password"
-            description={<Text type="secondary">Last changed 45 days ago</Text>}
+            title={t('security.changePassword')}
+            description={
+              <Text type="secondary">
+                {t('security.changePasswordDescription')}
+              </Text>
+            }
           />
         </List.Item>
       </List>

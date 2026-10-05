@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Button, Dropdown, Flex, Grid, Typography } from 'antd'
@@ -9,6 +9,7 @@ import {
   SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons'
+import { useTranslation } from 'react-i18next'
 import type { MenuProps } from 'antd'
 
 import type { AppMenuItem } from '@/shared/common/menu'
@@ -51,13 +52,18 @@ const itemVariants = {
 }
 
 export default function Menu() {
+  const { t, i18n } = useTranslation()
+
   const { mode } = useThemeMode()
   const { background } = getTokens(mode)
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileExpandedId, setMobileExpandedId] = useState<string | null>(null)
   const { isAuthenticated } = useAuthStore()
-  const AppMenu = getAppMenu(isAuthenticated)
+  const AppMenu = useMemo(
+    () => getAppMenu(isAuthenticated),
+    [isAuthenticated, i18n.language],
+  )
 
   // Số mục cấp 1 hiển thị trực tiếp; phần còn lại gom vào nút "Thêm"
   const [visibleCount, setVisibleCount] = useState(AppMenu.length)
@@ -130,12 +136,12 @@ export default function Menu() {
     {
       key: 'profile',
       icon: <UserOutlined />,
-      label: 'Thông tin cá nhân',
+      label: t('auth.profile'),
     },
     {
       key: 'settings',
       icon: <SettingOutlined />,
-      label: 'Đổi mật khẩu',
+      label: t('auth.change-password'),
     },
     {
       type: 'divider',
@@ -144,7 +150,7 @@ export default function Menu() {
       key: 'logout',
       icon: <LogoutOutlined />,
       danger: true,
-      label: 'Đăng xuất',
+      label: t('auth.logout'),
       onClick: () => {
         handleLogout()
       },
@@ -217,7 +223,7 @@ export default function Menu() {
         </span>
       )}
       <span style={{ fontSize: 14, fontWeight: selected ? 600 : 500 }}>
-        {menu.label}
+        {t(menu.label)}
       </span>
       {withChevron && (
         <motion.span
@@ -262,7 +268,7 @@ export default function Menu() {
           </span>
         )}
         <span style={{ fontSize: 13, fontWeight: isChildSelected ? 600 : 500 }}>
-          {child.label}
+          {t(child.label)}
         </span>
       </motion.div>
     )
@@ -518,7 +524,7 @@ export default function Menu() {
                                   }}
                                 >
                                   {menu.icon}
-                                  {menu.label}
+                                  {t(menu.label)}
                                 </Flex>
                                 {menu.children.map((child) => (
                                   <ChildItem key={child.id} child={child} />
@@ -620,9 +626,9 @@ export default function Menu() {
               ) : (
                 <Flex gap={8} style={{ flexShrink: 0 }}>
                   <Button variant="solid" type="primary">
-                    Login
+                    {t('auth.login')}
                   </Button>
-                  <Button>Register</Button>
+                  <Button>{t('auth.register')}</Button>
                 </Flex>
               )}
             </>
@@ -712,7 +718,7 @@ export default function Menu() {
                               fontWeight: selected ? 600 : 500,
                             }}
                           >
-                            {menu.label}
+                            {t(menu.label)}
                           </span>
                         </Flex>
                         {hasChildren && (
@@ -757,7 +763,7 @@ export default function Menu() {
                     block
                     danger
                   >
-                    Đăng xuất
+                    {t('auth.logout')}
                   </Button>
                 ) : (
                   <Flex gap={8} style={{ marginTop: 8 }}>
@@ -769,7 +775,7 @@ export default function Menu() {
                       }
                       block
                     >
-                      Login
+                      {t('auth.login')}
                     </Button>
                     <Button
                       onClick={() =>
@@ -782,7 +788,7 @@ export default function Menu() {
                       }
                       block
                     >
-                      Register
+                      {t('auth.register')}
                     </Button>
                   </Flex>
                 )}

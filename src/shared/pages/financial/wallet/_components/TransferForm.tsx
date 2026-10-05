@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Button, Form, InputNumber, Select, Space, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import { InputWithComma } from '@/shared/components/input/utils'
 
@@ -17,6 +18,7 @@ export function TransferForm({
   ) => void
   onClose: () => void
 }) {
+  const { t } = useTranslation('finance')
   const [form] = Form.useForm()
 
   const fromWalletId = Form.useWatch('fromWalletId', form)
@@ -66,7 +68,7 @@ export function TransferForm({
     >
       {/* Cần đặt thuộc tính "name" trùng khớp với DTO nhận ở Backend */}
       <Form.Item
-        label="From Wallet"
+        label={t('wallet.from')}
         name="fromWalletId"
         rules={[{ required: true, message: 'Please select source wallet' }]}
       >
@@ -79,7 +81,7 @@ export function TransferForm({
       </Form.Item>
 
       <Form.Item
-        label="To Wallet"
+        label={t('wallet.to')}
         name="toWalletId"
         rules={[
           { required: true, message: 'Please select destination wallet' },
@@ -96,7 +98,7 @@ export function TransferForm({
       </Form.Item>
 
       <Form.Item
-        label="Amount"
+        label={t('common.amount')}
         name="amount"
         rules={[
           {
@@ -138,7 +140,7 @@ export function TransferForm({
       </Form.Item>
 
       <Form.Item
-        label="Transfer Fee"
+        label={t('wallet.fee')}
         name="transferFee"
         rules={[
           {

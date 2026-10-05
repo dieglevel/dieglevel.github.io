@@ -1,0 +1,12 @@
+{
+  "title": "Quản lý sổ nợ và khoản vay",
+  "subtitle": "Theo dõi {{total}} khoản nợ ({{active}} đang hoạt động)",
+  "create": "Tạo khoản nợ mới",
+  "name": "Tên khoản nợ / đối tác",
+  "direction": "Chiều nợ",
+  "originalAmount": "Số tiền ban đầu",
+  "currentBalance": "Dư nợ hiện tại",
+  "history": "Lịch sử",
+  "settle": "Tất toán",
+  "cancelDebt": "Hủy khoản nợ"
+}

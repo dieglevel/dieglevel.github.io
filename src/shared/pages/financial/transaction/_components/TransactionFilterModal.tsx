@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Flex, Modal, Select, Space, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { ReloadOutlined } from '@ant-design/icons'
 import type { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
 
@@ -43,6 +44,8 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
   categoryOptions,
   onResetFilter,
 }) => {
+  const { t } = useTranslation('finance')
+
   return (
     <Modal
       title={
@@ -51,7 +54,7 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
           align="center"
           style={{ paddingRight: 24 }}
         >
-          <span>Filter Transactions</span>
+          <span>{t('transaction.title')}</span>
           {activeFilterCount > 0 && (
             <Button
               type="link"
@@ -59,7 +62,7 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
               icon={<ReloadOutlined />}
               onClick={onResetFilter}
             >
-              Reset
+              {t('common.cancel')}
             </Button>
           )}
         </Flex>
@@ -67,8 +70,8 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
       open={open}
       onCancel={onClose}
       onOk={onClose}
-      okText="Apply Filters"
-      cancelText="Close"
+      okText={t('common.save')}
+      cancelText={t('common.close')}
       centered
       width={420}
     >
@@ -82,16 +85,16 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
             strong
             style={{ fontSize: 13, display: 'block', marginBottom: 6 }}
           >
-            Transaction Type
+            {t('common.type')}
           </Text>
           <Select
             value={typeFilter}
             onChange={setTypeFilter}
             style={{ width: '100%' }}
             options={[
-              { value: 'all', label: 'All Types' },
-              { value: 'income', label: 'Income' },
-              { value: 'expense', label: 'Expense' },
+              { value: 'all', label: t('transaction.allTypes') },
+              { value: 'income', label: t('transaction.income') },
+              { value: 'expense', label: t('transaction.expense') },
             ]}
           />
         </div>
@@ -101,13 +104,13 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
             strong
             style={{ fontSize: 13, display: 'block', marginBottom: 6 }}
           >
-            Wallet
+            {t('common.wallet')}
           </Text>
           <Select
             value={walletFilter}
             onChange={setWalletFilter}
             style={{ width: '100%' }}
-            options={[{ value: 'all', label: 'All Wallets' }, ...walletOptions]}
+            options={[{ value: 'all', label: t('transaction.allWallets') }, ...walletOptions]}
           />
         </div>
 
@@ -116,14 +119,14 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
             strong
             style={{ fontSize: 13, display: 'block', marginBottom: 6 }}
           >
-            Category
+            {t('common.category')}
           </Text>
           <Select
             value={catFilter}
             onChange={setCatFilter}
             style={{ width: '100%' }}
             options={[
-              { value: 'all', label: 'All Categories' },
+              { value: 'all', label: t('transaction.allCategories') },
               ...categoryOptions,
             ]}
           />
@@ -134,17 +137,17 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
             strong
             style={{ fontSize: 13, display: 'block', marginBottom: 6 }}
           >
-            Status
+            {t('common.status')}
           </Text>
           <Select
             value={statusFilter}
             onChange={setStatusFilter}
             style={{ width: '100%' }}
             options={[
-              { value: 'all', label: 'All Status' },
-              { value: 'completed', label: 'Completed' },
-              { value: 'pending', label: 'Pending' },
-              { value: 'failed', label: 'Failed' },
+              { value: 'all', label: t('transaction.allStatuses') },
+              { value: 'completed', label: t('transaction.completed') },
+              { value: 'pending', label: t('transaction.pending') },
+              { value: 'failed', label: t('transaction.failed') },
             ]}
           />
         </div>

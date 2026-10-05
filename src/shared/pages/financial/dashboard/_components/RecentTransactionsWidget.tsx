@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Card, Empty } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { ArrowDownRight, ArrowUpRight, Clock, Wallet } from 'lucide-react'
 import dayjs from 'dayjs'
 import type { DashboardRecentTransactionItem } from '@/shared/api/financial/dashboard/dashboard.type'
@@ -13,6 +14,8 @@ interface RecentTransactionsWidgetProps {
 export const RecentTransactionsWidget: React.FC<
   RecentTransactionsWidgetProps
 > = ({ recentTransactions, onNavigateToTransactions }) => {
+  const { t } = useTranslation('dashboard')
+
   return (
     <Card
       title={
@@ -25,7 +28,7 @@ export const RecentTransactionsWidget: React.FC<
             gap: 8,
           }}
         >
-          <Clock size={18} color="#16a34a" /> Giao Dịch Gần Đây
+          <Clock size={18} color="#16a34a" /> {t('transactions.title')}
         </span>
       }
       extra={
@@ -35,7 +38,7 @@ export const RecentTransactionsWidget: React.FC<
           onClick={onNavigateToTransactions}
           style={{ color: '#16a34a', fontSize: 13 }}
         >
-          Xem tất cả
+          {t('transactions.viewAll')}
         </Button>
       }
       style={{
@@ -44,7 +47,7 @@ export const RecentTransactionsWidget: React.FC<
       }}
     >
       {recentTransactions.length === 0 ? (
-        <Empty description="Chưa có giao dịch nào" />
+        <Empty description={t('transactions.empty')} />
       ) : (
         <div
           style={{
@@ -109,7 +112,7 @@ export const RecentTransactionsWidget: React.FC<
                         fontSize: 14,
                       }}
                     >
-                      {tx.description || tx.merchant || 'Giao dịch'}
+                      {tx.description || tx.merchant || t('transactions.defaultDescription')}
                     </div>
                     <div
                       style={{
@@ -119,7 +122,7 @@ export const RecentTransactionsWidget: React.FC<
                         gap: 8,
                       }}
                     >
-                      <span>{tx.walletName || 'Ví'}</span>
+                      <span>{tx.walletName || t('transactions.defaultWallet')}</span>
                       {tx.categoryName && (
                         <>
                           <span>•</span>

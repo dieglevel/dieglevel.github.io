@@ -1,0 +1,17 @@
+{
+  "title": "Categories",
+  "activeArchived": "{{active}} Active · {{archived}} Archived",
+  "add": "Add Category",
+  "name": "Category Name",
+  "namePlaceholder": "Enter category name",
+  "parent": "Parent Category",
+  "root": "None (Root Category)",
+  "monthlyBudget": "Total Budget",
+  "totalSpent": "Total Spent",
+  "remaining": "Remaining",
+  "icon": "Icon",
+  "color": "Color",
+  "deleteTitle": "Delete category",
+  "deleteDescription": "Are you sure you want to delete this category?",
+  "noChildren": "No child categories"
+}
