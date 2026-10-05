@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { App, Button, Grid } from 'antd'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronRight, LogIn, UserPlus } from 'lucide-react'
@@ -11,6 +11,7 @@ import { useMutationAuth } from '@/shared/api/auth/auth.mutation'
 import { useAuthStore } from '@/shared/auth/auth.store'
 import { LogoutService } from '@/shared/auth/logout.service'
 import { getAppMenu } from '@/shared/common/menu'
+import { Route } from '@/routes'
 
 const { useBreakpoint } = Grid
 
@@ -18,8 +19,17 @@ export function MinimalGameMenu({
   onLoginSuccess,
   onRegisterSuccess,
 }: MinimalGameMenuProps) {
+  const { selectedMenu } = Route.useSearch()
+  const nagivate = useNavigate()
+
   const [openGroup, setOpenGroup] = useState<string | null>('finance')
-  const [authView, setAuthView] = useState<AuthView>('menu')
+  const [authView, setAuthView] = useState<AuthView>(
+    selectedMenu === 'login'
+      ? 'login'
+      : selectedMenu === 'register'
+        ? 'register'
+        : 'menu',
+  )
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null)
   const screens = useBreakpoint()
 
@@ -31,6 +41,18 @@ export function MinimalGameMenu({
 
   const switchView = useCallback((view: AuthView) => {
     setAuthView(view)
+    nagivate({
+      to: '/',
+      search: {
+        selectedMenu:
+          view === 'login'
+            ? 'login'
+            : view === 'register'
+              ? 'register'
+              : undefined,
+      },
+      replace: true,
+    })
   }, [])
 
   const handleLogout = useCallback(() => {

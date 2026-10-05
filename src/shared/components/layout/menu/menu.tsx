@@ -15,11 +15,12 @@ import type { AppMenuItem } from '@/shared/common/menu'
 import { getAppMenu } from '@/shared/common/menu'
 import { Brand } from '@/shared/assets/images'
 
-import { background, colors } from '@/shared/common/design-token'
+import { colors, getTokens } from '@/shared/common/design-token'
 import './menu.css'
 import { useAuthStore } from '@/shared/auth/auth.store'
 import { useMutationAuth } from '@/shared/api/auth/auth.mutation'
 import { LogoutService } from '@/shared/auth/logout.service'
+import { useThemeMode } from '@/shared/provider/antd-theme.provider'
 
 const { useBreakpoint } = Grid
 
@@ -50,6 +51,8 @@ const itemVariants = {
 }
 
 export default function Menu() {
+  const { mode } = useThemeMode()
+  const { background } = getTokens(mode)
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileExpandedId, setMobileExpandedId] = useState<string | null>(null)
@@ -268,7 +271,7 @@ export default function Menu() {
   const dropdownPanelStyle: React.CSSProperties = {
     position: 'absolute',
     top: 'calc(100% + 10px)',
-    backgroundColor: background.base,
+    backgroundColor: background.elevated,
     borderRadius: 12,
     padding: '8px',
     boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.25)',
@@ -747,12 +750,42 @@ export default function Menu() {
                     </div>
                   )
                 })}
-                <Flex gap={8} style={{ flexShrink: 0 }}>
-                  <Button variant="solid" type="primary">
-                    Login
+                {isAuthenticated ? (
+                  <Button
+                    onClick={handleLogout}
+                    style={{ marginTop: 8 }}
+                    block
+                    danger
+                  >
+                    Đăng xuất
                   </Button>
-                  <Button variant="solid">Register</Button>
-                </Flex>
+                ) : (
+                  <Flex gap={8} style={{ marginTop: 8 }}>
+                    <Button
+                      variant="solid"
+                      type="primary"
+                      onClick={() =>
+                        navigate({ to: '/', search: { selectedMenu: 'login' } })
+                      }
+                      block
+                    >
+                      Login
+                    </Button>
+                    <Button
+                      onClick={() =>
+                        navigate({
+                          to: '/',
+                          search: {
+                            selectedMenu: 'register',
+                          },
+                        })
+                      }
+                      block
+                    >
+                      Register
+                    </Button>
+                  </Flex>
+                )}
               </Flex>
             </motion.div>
           )}

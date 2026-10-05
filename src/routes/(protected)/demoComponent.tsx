@@ -1,91 +1,10 @@
-import { Button, Flex, Form } from 'antd'
 import { createFileRoute } from '@tanstack/react-router'
-import { useForm, useWatch } from 'antd/es/form/Form'
-import axios from 'axios'
-import { useEffect, useRef, useState } from 'react'
-import Pagination from '@/shared/components/pagination'
-import Select from '@/shared/components/select'
-import {
-  getValueFromEvent,
-  getValuePropsUploadFileList,
-} from '@/shared/utils/helper/other'
-import FormUpload from '@/shared/components/form/upload'
-import GuideBookModal from '@/shared/components/modal/book-modal'
-import { DEFAULT_SECTIONS } from '@/shared/components/modal/book-modal/mock'
-import SakuraBranch from '@/shared/components/sakura-branch'
-import BreathingCore from '@/shared/components/feranmut-heart'
+import AntdShowcase from '@/shared/pages/demo'
 
 export const Route = createFileRoute('/(protected)/demoComponent')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const topRef = useRef<HTMLDivElement>(null)
-  const [targetOffset, setTargetOffset] = useState<number>()
-  const [open, setOpen] = useState(false)
-
-  useEffect(() => {
-    setTargetOffset(topRef.current?.clientHeight)
-  }, [])
-
-  const [form] = useForm()
-  const watch = useWatch({ form })
-
-  const handleUpload = async () => {
-    const uploadValue = form.getFieldValue('upload')
-
-    console.log('Upload value:', watch)
-
-    const formData = new FormData()
-
-    uploadValue?.forEach((file: any) => {
-      if (file.originFileObj) {
-        formData.append('files', file.originFileObj)
-      }
-    })
-
-    const res = await axios.post('https://httpbin.org/post', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-
-    console.log(res.data)
-  }
-
-  return (
-    <Flex>
-      <Flex vertical flex={1} gap={16} ref={topRef}>
-        <Pagination total={100} />
-        <Select />
-
-        <Form form={form}>
-          <Form.Item
-            name="upload"
-            label="Upload"
-            valuePropName="fileList"
-            getValueFromEvent={getValueFromEvent}
-            getValueProps={(value) => {
-              return {
-                fileList: getValuePropsUploadFileList(value),
-              }
-            }}
-          >
-            <FormUpload multiple></FormUpload>
-          </Form.Item>
-
-          <Button onClick={handleUpload}>Upload</Button>
-        </Form>
-        <Button onClick={() => setOpen(true)}>Open Guide Book Modal</Button>
-      </Flex>
-
-      <GuideBookModal
-        open={open}
-        onClose={() => setOpen(false)}
-        sections={DEFAULT_SECTIONS}
-      />
-      <SakuraBranch size={100} />
-      <BreathingCore />
-    </Flex>
-  )
+  return <AntdShowcase />
 }
