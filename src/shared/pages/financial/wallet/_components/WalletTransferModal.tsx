@@ -1,5 +1,6 @@
 import React from 'react'
 import { Modal } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { TransferForm } from './TransferForm'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 
@@ -21,9 +22,11 @@ export const WalletTransferModal: React.FC<WalletTransferModalProps> = ({
   onClose,
   onTransfer,
 }) => {
+  const { t } = useTranslation('finance')
+
   return (
     <Modal
-      title="Transfer Between Wallets"
+      title={t('wallet.transfer')}
       open={open}
       onCancel={onClose}
       footer={null}

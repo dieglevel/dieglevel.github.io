@@ -1,3 +1,5 @@
+import i18n from '@/i18n'
+
 export abstract class BaseEnumHelper<T extends string | number> {
   protected abstract readonly DEFAULT_COLOR: string
   protected abstract readonly DEFAULT_LABEL: string
@@ -16,7 +18,10 @@ export abstract class BaseEnumHelper<T extends string | number> {
     if (!value || !this.isValid(value)) {
       return this.DEFAULT_LABEL
     }
-    return this.labelMap[value]
+    const label = this.labelMap[value]
+    return label.startsWith('enum.')
+      ? String(i18n.t(`finance:common.${label}`, { defaultValue: label }))
+      : label
   }
 
   public getOptions(): Array<{ label: string; value: T; color: string }> {

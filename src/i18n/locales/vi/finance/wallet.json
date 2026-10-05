@@ -14,4 +14,18 @@
   "from": "Ví chuyển đi",
   "to": "Ví nhận tiền",
   "fee": "Phí chuyển tiền"
+  ,"name": "Tên ví"
+  ,"typeLabel": "Loại ví"
+  ,"balance": "Số dư hiện tại"
+  ,"color": "Màu sắc ví"
+  ,"icon": "Biểu tượng"
+  ,"institution": "Tên ngân hàng / tổ chức"
+  ,"accountNumber": "Số tài khoản (ẩn)"
+  ,"creditLimit": "Hạn mức tín dụng"
+  ,"currentDebt": "Dư nợ hiện tại"
+  ,"statementDay": "Ngày chốt sao kê"
+  ,"dueDay": "Ngày đến hạn thanh toán"
+  ,"apiKey": "API Key"
+  ,"copy": "Sao chép"
+  ,"generate": "Tạo API Key"
 }

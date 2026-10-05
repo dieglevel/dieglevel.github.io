@@ -21,9 +21,9 @@ class FinancialCategoryTypeHelperImpl extends BaseEnumHelper<FINANCIAL_CATEGORY_
   }
 
   protected readonly labelMap: Record<FINANCIAL_CATEGORY_TYPE, string> = {
-    [FINANCIAL_CATEGORY_TYPE.INCOME]: 'Thu nhập',
-    [FINANCIAL_CATEGORY_TYPE.EXPENSE]: 'Chi tiêu',
-    [FINANCIAL_CATEGORY_TYPE.TRANSFER]: 'Chuyển khoản',
+    [FINANCIAL_CATEGORY_TYPE.INCOME]: 'enum.category.type.income',
+    [FINANCIAL_CATEGORY_TYPE.EXPENSE]: 'enum.category.type.expense',
+    [FINANCIAL_CATEGORY_TYPE.TRANSFER]: 'enum.category.type.transfer',
   }
 }
 
@@ -54,8 +54,10 @@ class FinancialCategorySpendingNatureHelperImpl extends BaseEnumHelper<FINANCIAL
     FINANCIAL_CATEGORY_SPENDING_NATURE,
     string
   > = {
-    [FINANCIAL_CATEGORY_SPENDING_NATURE.ESSENTIAL]: 'Tiêu dùng thiết yếu',
-    [FINANCIAL_CATEGORY_SPENDING_NATURE.FLEXIBLE]: 'Tiêu dùng tự do',
+    [FINANCIAL_CATEGORY_SPENDING_NATURE.ESSENTIAL]:
+      'enum.category.spendingNature.essential',
+    [FINANCIAL_CATEGORY_SPENDING_NATURE.FLEXIBLE]:
+      'enum.category.spendingNature.flexible',
   }
 }
 

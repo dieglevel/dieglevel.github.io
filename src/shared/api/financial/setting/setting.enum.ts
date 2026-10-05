@@ -19,8 +19,8 @@ class FinancialSettingThemeModeHelperImpl extends BaseEnumHelper<FINANCIAL_SETTI
   }
 
   protected readonly labelMap: Record<FINANCIAL_SETTING_THEME_MODE, string> = {
-    [FINANCIAL_SETTING_THEME_MODE.LIGHT]: 'Sáng',
-    [FINANCIAL_SETTING_THEME_MODE.DARK]: 'Tối',
+    [FINANCIAL_SETTING_THEME_MODE.LIGHT]: 'enum.setting.themeMode.light',
+    [FINANCIAL_SETTING_THEME_MODE.DARK]: 'enum.setting.themeMode.dark',
   }
 }
 
@@ -44,7 +44,7 @@ class FinancialSettingThemeHelperImpl extends BaseEnumHelper<FINANCIAL_SETTING_T
   }
 
   protected readonly labelMap: Record<FINANCIAL_SETTING_THEME, string> = {
-    [FINANCIAL_SETTING_THEME.HUTAO]: 'Hu Tao',
+    [FINANCIAL_SETTING_THEME.HUTAO]: 'enum.setting.theme.huTao',
   }
 }
 
@@ -71,9 +71,9 @@ class FinancialSettingLanguageHelperImpl extends BaseEnumHelper<FINANCIAL_SETTIN
   }
 
   protected readonly labelMap: Record<FINANCIAL_SETTING_LANGUAGE, string> = {
-    [FINANCIAL_SETTING_LANGUAGE.EN]: 'English',
-    [FINANCIAL_SETTING_LANGUAGE.KO]: '한국어',
-    [FINANCIAL_SETTING_LANGUAGE.VN]: 'Tiếng Việt',
+    [FINANCIAL_SETTING_LANGUAGE.EN]: 'enum.setting.language.en',
+    [FINANCIAL_SETTING_LANGUAGE.KO]: 'enum.setting.language.ko',
+    [FINANCIAL_SETTING_LANGUAGE.VN]: 'enum.setting.language.vn',
   }
 }
 
@@ -101,9 +101,9 @@ class FinancialSettingCurrencyHelperImpl extends BaseEnumHelper<FINANCIAL_SETTIN
   }
 
   protected readonly labelMap: Record<FINANCIAL_SETTING_CURRENCY, string> = {
-    [FINANCIAL_SETTING_CURRENCY.USD]: 'USD ($)',
-    [FINANCIAL_SETTING_CURRENCY.KRW]: 'KRW (₩)',
-    [FINANCIAL_SETTING_CURRENCY.VND]: 'VND (₫)',
+    [FINANCIAL_SETTING_CURRENCY.USD]: 'enum.setting.currency.usd',
+    [FINANCIAL_SETTING_CURRENCY.KRW]: 'enum.setting.currency.krw',
+    [FINANCIAL_SETTING_CURRENCY.VND]: 'enum.setting.currency.vnd',
   }
 }
 

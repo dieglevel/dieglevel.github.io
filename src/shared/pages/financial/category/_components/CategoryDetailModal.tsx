@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Button,
   Card,
@@ -56,6 +57,7 @@ export default function CategoryDetailModal({
   open,
   onCancel,
 }: CategoryDetailModalProps) {
+  const { t } = useTranslation('finance')
   const { data, isLoading } = useGetFinance_Category_Transaction({
     pathParams: {
       categoryId: categoryId || 0,
@@ -172,7 +174,7 @@ export default function CategoryDetailModal({
             <Col span={8}>
               <Card size="small">
                 <Statistic
-                  title="Tổng phát sinh"
+                  title={t('category.totalSpent')}
                   value={totalAmount}
                   precision={0}
                   suffix="₫"
@@ -183,7 +185,7 @@ export default function CategoryDetailModal({
             <Col span={8}>
               <Card size="small">
                 <Statistic
-                  title="Ngân sách tháng"
+                  title={t('category.monthlyBudget')}
                   value={parentCategory?.monthlyBudget ?? 0}
                   precision={0}
                   suffix="₫"
@@ -198,7 +200,7 @@ export default function CategoryDetailModal({
             <Col span={8}>
               <Card size="small">
                 <Statistic
-                  title="Số danh mục con"
+                  title={t('category.noChildren')}
                   value={childrenCategories.length}
                   prefix={<NodeIndexOutlined />}
                 />
@@ -258,7 +260,7 @@ export default function CategoryDetailModal({
             ) : (
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description="Không có danh mục con"
+                description={t('category.noChildren')}
               />
             )}
           </div>
@@ -306,7 +308,7 @@ export default function CategoryDetailModal({
           emptyText: (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="Không có giao dịch vượt mức"
+              description={t('common.noData')}
             />
           ),
         }}

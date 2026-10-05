@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Avatar,
   Button,
@@ -92,6 +93,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
   onDelete,
   onView,
 }) => {
+  const { t } = useTranslation('finance')
   // Calculate progress percentage
   const pct = Math.min(100, (goal.currentAmount / goal.targetAmount) * 100)
   const remaining = Math.max(0, goal.targetAmount - goal.currentAmount)
@@ -152,7 +154,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
             <Space size={6} align="center">
               <Text style={{ fontSize: 15, fontWeight: 600 }}>{goal.name}</Text>
               {goal.isLocked && (
-                <Tooltip title="Khóa rút tiền">
+                <Tooltip title={t('goal.locked', { defaultValue: 'Lock withdrawals' })}>
                   <LockOutlined style={{ color: '#ef4444', fontSize: 12 }} />
                 </Tooltip>
               )}
@@ -184,7 +186,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
         {/* Action Buttons */}
         <Space size={4}>
           {onView && (
-            <Tooltip title="Xem chi tiết">
+            <Tooltip title={t('common.detail', { defaultValue: 'View details' })}>
               <Button
                 type="text"
                 icon={<EyeOutlined style={{ color: '#1677ff' }} />}
@@ -192,7 +194,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({
               />
             </Tooltip>
           )}
-          <Tooltip title="Chỉnh sửa">
+          <Tooltip title={t('common.edit')}>
             <Button
               type="text"
               icon={<EditOutlined style={{ color: '#8c8c8c' }} />}
@@ -200,14 +202,14 @@ export const GoalCard: React.FC<GoalCardProps> = ({
             />
           </Tooltip>
           <Popconfirm
-            title="Xóa mục tiêu"
-            description="Bạn có chắc chắn muốn xóa mục tiêu này?"
+            title={t('goal.deleteTitle')}
+            description={t('goal.deleteDescription')}
             onConfirm={() => onDelete(goal.id)}
-            okText="Xóa"
+            okText={t('common.delete')}
             okButtonProps={{ danger: true }}
-            cancelText="Hủy"
+            cancelText={t('common.cancel')}
           >
-            <Tooltip title="Xóa">
+            <Tooltip title={t('common.delete')}>
               <Button type="text" danger icon={<DeleteOutlined />} />
             </Tooltip>
           </Popconfirm>
@@ -259,11 +261,11 @@ export const GoalCard: React.FC<GoalCardProps> = ({
           {/* Status Message */}
           {!done ? (
             <Text type="secondary" style={{ fontSize: 11 }}>
-              Còn {convertCurrency(remaining)}
+              {t('goal.remaining', { amount: convertCurrency(remaining) })}
             </Text>
           ) : (
             <Text type="success" style={{ fontSize: 11, fontWeight: 'bold' }}>
-              ✅ Mục tiêu đã đạt được!
+              {t('goal.achieved')}
             </Text>
           )}
         </div>

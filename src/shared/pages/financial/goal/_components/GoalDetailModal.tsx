@@ -1,5 +1,6 @@
 // @/pages/goals/_components/GoalDetailModal.tsx
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Avatar,
   Badge,
@@ -50,6 +51,7 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
   goal,
   onClose,
 }) => {
+  const { t } = useTranslation('finance')
   const [activeTab, setActiveTab] = useState('overview')
   const [showAddTransaction, setShowAddTransaction] = useState(false)
   const [form] = Form.useForm()
@@ -124,13 +126,13 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
       },
       {
         onSuccess: () => {
-          message.success('Cập nhật biến động tiền thành công!')
+          message.success(t('goal.saveSuccess'))
           form.resetFields()
           setShowAddTransaction(false)
           refreshGoalQueries()
         },
         onError: (err: any) => {
-          message.error(err?.message || 'Không thể thực hiện giao dịch!')
+          message.error(err?.message || t('goal.error'))
         },
       },
     )
@@ -140,7 +142,7 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
     const amount = Number(history.plannedAmount || history.amount || 0)
 
     if (amount <= 0) {
-      message.error('Không có số tiền hợp lệ để hoàn thành.')
+      message.error(t('goal.error'))
       return
     }
 
@@ -154,10 +156,10 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
       },
       {
         onSuccess: () => {
-          message.success('Đã hoàn thành khoản tích lũy.')
+          message.success(t('goal.completeSuccess'))
           refreshGoalQueries()
         },
-        onError: () => message.error('Không thể hoàn thành lịch sử này.'),
+        onError: () => message.error(t('goal.error')),
       },
     )
   }
@@ -169,10 +171,10 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
       },
       {
         onSuccess: () => {
-          message.success('Đã bỏ qua lịch sử chờ.')
+          message.success(t('common.save'))
           refreshGoalQueries()
         },
-        onError: () => message.error('Không thể bỏ qua lịch sử này.'),
+        onError: () => message.error(t('goal.error')),
       },
     )
   }
@@ -182,10 +184,10 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
       { pathParams: { id: goal.id } },
       {
         onSuccess: () => {
-          message.success('Đã hủy mục tiêu.')
+          message.success(t('goal.cancelSuccess'))
           refreshGoalQueries()
         },
-        onError: () => message.error('Không thể hủy mục tiêu.'),
+        onError: () => message.error(t('goal.error')),
       },
     )
   }
@@ -263,8 +265,8 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
             <Popconfirm
               title="Bỏ qua lịch sử này?"
               onConfirm={() => handleSkipHistory(record.id)}
-              okText="Bỏ qua"
-              cancelText="Hủy"
+              okText={t('common.save')}
+              cancelText={t('common.cancel')}
             >
               <Button size="small" danger loading={mGoalHistory_Skip.isPending}>
                 Bỏ qua
@@ -336,19 +338,19 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
                 </Card>
 
                 {/* Projection Statistics */}
-                <Card size="small" title="⚡ Dự phóng hoàn thành">
+                <Card size="small" title={t('goal.projection', { defaultValue: 'Completion projection' })}>
                   <Descriptions column={2} size="small" bordered>
-                    <Descriptions.Item label="Còn lại">
+                    <Descriptions.Item label={t('common.remaining', { defaultValue: 'Remaining' })}>
                       <Text type="danger" strong>
                         {convertCurrency(projectionRemaining)}
                       </Text>
                     </Descriptions.Item>
-                    <Descriptions.Item label="Trích hàng tháng">
+                    <Descriptions.Item label={t('goal.autoContribution')}>
                       {projectionMonthly > 0
                         ? convertCurrency(projectionMonthly)
                         : 'Chưa đặt'}
                     </Descriptions.Item>
-                    <Descriptions.Item label="Dự kiến hoàn thành" span={2}>
+                    <Descriptions.Item label={t('goal.completionDate', { defaultValue: 'Estimated completion' })} span={2}>
                       <Text strong style={{ color: '#1677ff' }}>
                         {projectionMonths !== null
                           ? `Còn khoảng ${projectionMonths} tháng`
@@ -359,11 +361,11 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
                 </Card>
 
                 {/* Details */}
-                <Descriptions column={2} size="small" title="Chi tiết cài đặt">
-                  <Descriptions.Item label="Phân loại">
+                <Descriptions column={2} size="small" title={t('goal.settings', { defaultValue: 'Settings details' })}>
+                  <Descriptions.Item label={t('goal.type')}>
                     <Tag color="blue">{goal.type}</Tag>
                   </Descriptions.Item>
-                  <Descriptions.Item label="Trạng thái">
+                  <Descriptions.Item label={t('goal.status')}>
                     <Badge
                       status={
                         goal.status === FINANCIAL_GOAL_STATUS.COMPLETED
@@ -373,12 +375,12 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
                       text={goal.status}
                     />
                   </Descriptions.Item>
-                  <Descriptions.Item label="Ngày trích tiền">
+                  <Descriptions.Item label={t('goal.contributionDay')}>
                     {goal.autoContributionDay
                       ? `Ngày ${goal.autoContributionDay} hàng tháng`
                       : 'Không'}
                   </Descriptions.Item>
-                  <Descriptions.Item label="Hạn chót (Deadline)">
+                  <Descriptions.Item label={t('goal.deadline')}>
                     {goal.deadline
                       ? dayjs(goal.deadline).format('DD/MM/YYYY')
                       : 'Không giới hạn'}
@@ -438,7 +440,7 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
                       <Space style={{ display: 'flex' }} align="start">
                         <Form.Item
                           name="amount"
-                          label="Số tiền góp thêm"
+                          label={t('goal.autoContribution')}
                           rules={[{ required: true, message: 'Nhập số tiền' }]}
                           style={{ flex: 1 }}
                         >
@@ -456,7 +458,7 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
                         </Form.Item>
                         <Form.Item
                           name="note"
-                          label="Ghi chú"
+                          label={t('goal.note')}
                           style={{ flex: 2 }}
                         >
                           <Input placeholder="Lý do góp thêm..." />

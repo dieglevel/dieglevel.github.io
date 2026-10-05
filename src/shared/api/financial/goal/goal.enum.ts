@@ -25,11 +25,11 @@ class FinancialGoalTypeHelperImpl extends BaseEnumHelper<FINANCIAL_GOAL_TYPE> {
   }
 
   protected readonly labelMap: Record<FINANCIAL_GOAL_TYPE, string> = {
-    [FINANCIAL_GOAL_TYPE.SAVING]: 'Tiết kiệm',
-    [FINANCIAL_GOAL_TYPE.INVESTMENT]: 'Đầu tư',
-    [FINANCIAL_GOAL_TYPE.DEBT_PAYMENT]: 'Trả nợ',
-    [FINANCIAL_GOAL_TYPE.EMERGENCY_FUND]: 'Quỹ khẩn cấp',
-    [FINANCIAL_GOAL_TYPE.OTHER]: 'Khác',
+    [FINANCIAL_GOAL_TYPE.SAVING]: 'enum.goal.type.saving',
+    [FINANCIAL_GOAL_TYPE.INVESTMENT]: 'enum.goal.type.investment',
+    [FINANCIAL_GOAL_TYPE.DEBT_PAYMENT]: 'enum.goal.type.debtPayment',
+    [FINANCIAL_GOAL_TYPE.EMERGENCY_FUND]: 'enum.goal.type.emergency',
+    [FINANCIAL_GOAL_TYPE.OTHER]: 'enum.goal.type.other',
   }
 }
 
@@ -54,8 +54,8 @@ class FinancialGoalSavingModeHelperImpl extends BaseEnumHelper<FINANCIAL_GOAL_SA
   }
 
   protected readonly labelMap: Record<FINANCIAL_GOAL_SAVING_MODE, string> = {
-    [FINANCIAL_GOAL_SAVING_MODE.MANUAL]: 'Thủ công',
-    [FINANCIAL_GOAL_SAVING_MODE.AUTO]: 'Tự động tích lũy',
+    [FINANCIAL_GOAL_SAVING_MODE.MANUAL]: 'enum.goal.savingMode.manual',
+    [FINANCIAL_GOAL_SAVING_MODE.AUTO]: 'enum.goal.savingMode.auto',
   }
 }
 
@@ -85,10 +85,10 @@ class FinancialGoalStatusHelperImpl extends BaseEnumHelper<FINANCIAL_GOAL_STATUS
   }
 
   protected readonly labelMap: Record<FINANCIAL_GOAL_STATUS, string> = {
-    [FINANCIAL_GOAL_STATUS.ACTIVE]: 'Đang thực hiện',
-    [FINANCIAL_GOAL_STATUS.COMPLETED]: 'Hoàn thành',
-    [FINANCIAL_GOAL_STATUS.CANCELLED]: 'Đã hủy',
-    [FINANCIAL_GOAL_STATUS.INACTIVE]: 'Tạm dừng',
+    [FINANCIAL_GOAL_STATUS.ACTIVE]: 'enum.goal.status.active',
+    [FINANCIAL_GOAL_STATUS.COMPLETED]: 'enum.goal.status.completed',
+    [FINANCIAL_GOAL_STATUS.CANCELLED]: 'enum.goal.status.cancelled',
+    [FINANCIAL_GOAL_STATUS.INACTIVE]: 'enum.goal.status.inactive',
   }
 }
 

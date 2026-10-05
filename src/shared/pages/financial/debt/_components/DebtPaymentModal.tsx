@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Card,
   DatePicker,
@@ -44,6 +45,7 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const { t } = useTranslation('finance')
   const { mode } = useThemeMode()
   const { colors } = getTokens(mode)
 
@@ -105,11 +107,11 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
 
   return (
     <Modal
-      title={isIncoming ? 'Thu hồi nợ (Nhận tiền)' : 'Thanh toán nợ (Trả tiền)'}
+      title={isIncoming ? t('debtForms.paymentCollect') : t('debtForms.paymentPay')}
       open={open}
       onCancel={onClose}
       onOk={() => (isPaymentTab ? form.submit() : onClose())}
-      okText={isPaymentTab ? 'Xác nhận' : 'Đóng'}
+      okText={isPaymentTab ? t('debtForms.confirm') : t('debtForms.done')}
       okButtonProps={{ disabled: isPaymentTab && insufficient }}
       destroyOnHidden
       width={720}
@@ -121,9 +123,9 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
         items={[
           {
             key: 'payment',
-            label: isIncoming ? 'Thực hiện thu nợ' : 'Thực hiện thanh toán',
+            label: isIncoming ? t('debtForms.performCollect') : t('debtForms.performPay'),
           },
-          { key: 'history', label: 'Lịch sử biến động' },
+          { key: 'history', label: t('debtForms.history') },
         ]}
       />
 
@@ -136,13 +138,13 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
         >
           <Card size="small" style={{ marginBottom: 16 }}>
             <Descriptions column={2} size="small">
-              <Descriptions.Item label="Khoản nợ" span={2}>
+              <Descriptions.Item label={t('debtForms.debt')} span={2}>
                 <Text strong>{debt.name}</Text>
               </Descriptions.Item>
-              <Descriptions.Item label="Đối tác">
+              <Descriptions.Item label={t('debtForms.partnerShort')}>
                 {debt.namePerson}
               </Descriptions.Item>
-              <Descriptions.Item label="Dư nợ hiện tại">
+              <Descriptions.Item label={t('debtForms.currentOutstanding')}>
                 <Text type="danger" strong style={{ fontFamily: 'monospace' }}>
                   {convertCurrency(debt.outstandingAmount)}
                 </Text>
@@ -153,7 +155,7 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
           <Flex gap={12} wrap>
             <Form.Item
               name="occurredAt"
-              label="Ngày giao dịch"
+              label={t('debtForms.transactionDate')}
               style={{ flex: 1, minWidth: 180 }}
               rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}
             >
@@ -167,13 +169,13 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
 
             <Form.Item
               name="walletId"
-              label="Ví (không bắt buộc)"
+              label={t('debtForms.walletOptional')}
               style={{ flex: 2, minWidth: 220 }}
               tooltip="Bỏ trống nếu không muốn thay đổi số dư ví."
             >
               <Select
                 allowClear
-                placeholder="Không dùng ví (chỉ ghi sổ)"
+                placeholder={t('debtForms.bookOnly')}
                 loading={isLoadingWallets}
                 options={walletOptions}
               />
@@ -182,7 +184,7 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
 
           <Form.Item
             name="amount"
-            label="Số tiền"
+            label={t('debtForms.amount')}
             rules={[
               { required: true, message: 'Vui lòng nhập số tiền' },
               { type: 'number', min: 0.01, message: 'Số tiền phải lớn hơn 0' },
@@ -195,7 +197,7 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
           >
             <InputNumber
               style={{ width: '100%' }}
-              placeholder="Nhập số tiền..."
+              placeholder={t('debtForms.amountPlaceholder')}
               precision={2}
               {...InputWithComma}
             />
@@ -256,7 +258,7 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
                 </Flex>
                 {insufficient && (
                   <Text type="danger" style={{ fontSize: 12 }}>
-                    Số dư ví không đủ.
+                    {t('debtForms.insufficientWallet')}
                   </Text>
                 )}
               </Flex>

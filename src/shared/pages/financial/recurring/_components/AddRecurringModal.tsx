@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Col,
   DatePicker,
@@ -28,6 +29,7 @@ export function AddRecurringModal({
   onClose,
   onSuccess,
 }: AddRecurringModalProps) {
+  const { t } = useTranslation('finance')
   const [form] = Form.useForm()
 
   // Dynamic Form Fields Watchers
@@ -79,15 +81,13 @@ export function AddRecurringModal({
   return (
     <Modal
       title={
-        initialValues
-          ? 'Chỉnh sửa Cấu hình Định kỳ'
-          : 'Thêm Cấu hình Định kỳ Mới'
+        initialValues ? t('common.edit') : t('recurring.add')
       }
       open={open}
       onCancel={onClose}
       onOk={handleSubmit}
-      okText={initialValues ? 'Lưu thay đổi' : 'Tạo thiết lập'}
-      cancelText="Hủy"
+      okText={initialValues ? t('common.save') : t('recurring.add')}
+      cancelText={t('common.cancel')}
       width={640}
       centered
       destroyOnHidden
@@ -98,7 +98,7 @@ export function AddRecurringModal({
           <Col xs={24} sm={15}>
             <Form.Item
               name="name"
-              label="Tên thiết lập"
+              label={t('recurring.name')}
               rules={[
                 { required: true, message: 'Vui lòng nhập tên thiết lập!' },
               ]}
@@ -109,7 +109,7 @@ export function AddRecurringModal({
           <Col xs={24} sm={9}>
             <Form.Item
               name="transactionType"
-              label="Loại giao dịch"
+              label={t('common.type')}
               rules={[{ required: true }]}
             >
               <Radio.Group buttonStyle="solid" style={{ width: '100%' }}>
@@ -117,13 +117,13 @@ export function AddRecurringModal({
                   value="expense"
                   style={{ width: '50%', textAlign: 'center' }}
                 >
-                  Chi
+                  {t('recurring.expense')}
                 </Radio.Button>
                 <Radio.Button
                   value="income"
                   style={{ width: '50%', textAlign: 'center' }}
                 >
-                  Thu
+                  {t('recurring.income')}
                 </Radio.Button>
               </Radio.Group>
             </Form.Item>
@@ -135,7 +135,7 @@ export function AddRecurringModal({
           <Col xs={24} sm={12}>
             <Form.Item
               name="amount"
-              label="Số tiền"
+              label={t('common.amount')}
               rules={[{ required: true, message: 'Vui lòng nhập số tiền!' }]}
             >
               <InputNumber
@@ -177,13 +177,13 @@ export function AddRecurringModal({
           <Col xs={24} sm={12}>
             <Form.Item
               name="frequency"
-              label="Chu kỳ lặp"
+              label={t('recurring.frequency')}
               rules={[{ required: true }]}
             >
               <Select
                 options={[
-                  { value: 'MONTHLY', label: 'Hàng tháng (Monthly)' },
-                  { value: 'WEEKLY', label: 'Hàng tuần (Weekly)' },
+                  { value: 'MONTHLY', label: t('recurring.monthly') },
+                  { value: 'WEEKLY', label: t('recurring.weekly') },
                   {
                     value: 'EVERY_N_DAYS',
                     label: 'Số ngày tùy chỉnh (N days)',

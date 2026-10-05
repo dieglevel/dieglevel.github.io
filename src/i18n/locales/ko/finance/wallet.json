@@ -14,4 +14,18 @@
   "from": "출금 지갑",
   "to": "입금 지갑",
   "fee": "이체 수수료"
+  ,"name": "지갑 이름"
+  ,"typeLabel": "지갑 유형"
+  ,"balance": "현재 잔액"
+  ,"color": "지갑 색상"
+  ,"icon": "아이콘"
+  ,"institution": "은행 / 기관 이름"
+  ,"accountNumber": "계좌번호 (마스킹)"
+  ,"creditLimit": "신용 한도"
+  ,"currentDebt": "현재 부채"
+  ,"statementDay": "명세서 발행일"
+  ,"dueDay": "결제일"
+  ,"apiKey": "API 키"
+  ,"copy": "복사"
+  ,"generate": "API 키 생성"
 }

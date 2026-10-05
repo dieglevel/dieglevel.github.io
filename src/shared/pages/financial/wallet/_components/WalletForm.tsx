@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Alert,
   Button,
@@ -41,6 +42,7 @@ export function WalletModal({
   onCancel,
   onSubmit,
 }: WalletModalProps) {
+  const { t } = useTranslation('finance')
   const [form] = Form.useForm()
   const watchColor = Form.useWatch('color', form)
   const watchType = Form.useWatch('type', form)
@@ -87,7 +89,7 @@ export function WalletModal({
 
   const handleGenerateApiKey = async () => {
     if (!wallet?.id) {
-      message.error('Không thể tạo API Key cho ví chưa được lưu!')
+      message.error(t('common.save'))
       return
     }
 
@@ -95,25 +97,25 @@ export function WalletModal({
       await mWallet_ApiKey.mutateAsync({
         pathParams: { id: wallet.id.toString() },
       })
-      message.success('Đã tạo mới API Key thành công!')
+      message.success(t('common.create'))
     } catch (error) {
-      message.error('Tạo API Key thất bại, vui lòng thử lại sau.')
+      message.error(t('common.noData'))
     }
   }
 
   const handleCopyApiKey = () => {
     if (wallet?.apiKey) {
       navigator.clipboard.writeText(wallet.apiKey)
-      message.success('Đã sao chép API Key!')
+      message.success(t('common.save'))
     }
   }
 
   return (
     <Modal
       open={open}
-      title={wallet ? 'Chỉnh sửa ví' : 'Thêm ví mới'}
-      okText="Lưu"
-      cancelText="Hủy"
+      title={wallet ? t('common.edit') : t('wallet.add')}
+      okText={t('common.save')}
+      cancelText={t('common.cancel')}
       onCancel={onCancel}
       onOk={handleOk}
       destroyOnHidden
@@ -132,7 +134,7 @@ export function WalletModal({
               <Row justify="space-between" align="middle">
                 <Col>
                   <Text strong style={{ fontSize: 13 }}>
-                    Record API Key (Cho App điện thoại):
+                    {t('wallet.apiKey')}
                   </Text>
                 </Col>
                 <Col>
@@ -143,7 +145,7 @@ export function WalletModal({
                     icon={<CopyOutlined />}
                     onClick={handleCopyApiKey}
                   >
-                    Sao chép
+                    {t('wallet.copy')}
                   </Button>
                 </Col>
               </Row>
@@ -160,7 +162,7 @@ export function WalletModal({
               <Row justify="space-between" align="middle">
                 <Col>
                   <Text strong style={{ fontSize: 13 }}>
-                    Ví chưa có API Key
+                    {t('wallet.apiKey')}
                   </Text>
                 </Col>
                 <Col>
@@ -171,7 +173,7 @@ export function WalletModal({
                     icon={<KeyOutlined />}
                     onClick={handleGenerateApiKey}
                   >
-                    Tạo API Key
+                    {t('wallet.generate')}
                   </Button>
                 </Col>
               </Row>
@@ -183,7 +185,7 @@ export function WalletModal({
         <Row gutter={12}>
           <Col span={14}>
             <Form.Item
-              label="Tên ví"
+              label={t('wallet.name')}
               name="name"
               rules={[{ required: true, message: 'Vui lòng nhập tên ví' }]}
             >
@@ -192,7 +194,7 @@ export function WalletModal({
           </Col>
           <Col span={10}>
             <Form.Item
-              label="Loại ví"
+              label={t('wallet.typeLabel')}
               name="type"
               rules={[{ required: true, message: 'Vui lòng chọn loại ví' }]}
             >
@@ -205,7 +207,7 @@ export function WalletModal({
         <Row gutter={12}>
           <Col span={24}>
             <Form.Item
-              label="Số dư hiện tại"
+              label={t('wallet.balance')}
               name="balance"
               rules={[{ required: true, message: 'Vui lòng nhập số dư' }]}
             >
@@ -221,12 +223,12 @@ export function WalletModal({
 
         <Row gutter={12}>
           <Col span={16}>
-            <Form.Item label="Màu sắc ví" name="color">
+            <Form.Item label={t('wallet.color')} name="color">
               <ColorPicker />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item label="Biểu tượng" name="icon">
+            <Form.Item label={t('wallet.icon')} name="icon">
               <IconPicker color={watchColor} />
             </Form.Item>
           </Col>
@@ -236,13 +238,13 @@ export function WalletModal({
         {isBankOrEwallet && (
           <Row gutter={12}>
             <Col span={12}>
-              <Form.Item label="Tên ngân hàng / Tổ chức" name="institutionName">
+              <Form.Item label={t('wallet.institution')} name="institutionName">
                 <Input placeholder="Ví dụ: MB Bank, VietinBank, Momo" />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                label="Số tài khoản (ẩn)"
+                label={t('wallet.accountNumber')}
                 name="accountNumberMasked"
                 tooltip="Chỉ hiển thị 4 số cuối để nhận biết (Ví dụ: **** 8888)"
               >
@@ -272,7 +274,7 @@ export function WalletModal({
 
             <Row gutter={12}>
               <Col span={12}>
-                <Form.Item label="Hạn mức tín dụng" name="creditLimit">
+                <Form.Item label={t('wallet.creditLimit')} name="creditLimit">
                   <InputNumber
                     style={{ width: '100%' }}
                     placeholder="0"
@@ -282,7 +284,7 @@ export function WalletModal({
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="Dư nợ hiện tại" name="currentDebt">
+                <Form.Item label={t('wallet.currentDebt')} name="currentDebt">
                   <InputNumber
                     style={{ width: '100%' }}
                     placeholder="0"
@@ -296,7 +298,7 @@ export function WalletModal({
             <Row gutter={12}>
               <Col span={12}>
                 <Form.Item
-                  label="Ngày chốt sao kê"
+                  label={t('wallet.statementDay')}
                   name="statementDay"
                   rules={[
                     {
@@ -315,7 +317,7 @@ export function WalletModal({
               </Col>
               <Col span={12}>
                 <Form.Item
-                  label="Ngày đến hạn thanh toán"
+                  label={t('wallet.dueDay')}
                   name="dueDay"
                   rules={[
                     {

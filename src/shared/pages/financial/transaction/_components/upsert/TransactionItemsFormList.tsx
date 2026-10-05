@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Button,
   Card,
@@ -26,6 +27,7 @@ interface TransactionItemsFormListProps {
 export const TransactionItemsFormList: React.FC<
   TransactionItemsFormListProps
 > = ({ fieldName = 'financialTransactionItems', categories = [] }) => {
+  const { t } = useTranslation('finance')
   return (
     <Form.Item required style={{ marginBottom: 12 }}>
       <Form.List
@@ -59,16 +61,16 @@ export const TransactionItemsFormList: React.FC<
                       rules={[
                         {
                           required: true,
-                          message: 'Nhập nội dung',
+                          message: t('common.description'),
                         },
                         {
                           whitespace: true,
-                          message: 'Không để trống',
+                          message: t('common.description'),
                         },
                       ]}
                       style={{ marginBottom: 0 }}
                     >
-                      <Input placeholder="Nội dung chi tiết" />
+                      <Input placeholder={t('common.description')} />
                     </Form.Item>
                   </Col>
 
@@ -77,18 +79,18 @@ export const TransactionItemsFormList: React.FC<
                       {...restField}
                       name={[name, 'amount']}
                       rules={[
-                        { required: true, message: 'Nhập số tiền' },
+                        { required: true, message: t('common.amount') },
                         {
                           type: 'number',
                           min: 0.01,
-                          message: 'Phải > 0',
+                          message: t('common.amount'),
                         },
                       ]}
                       style={{ marginBottom: 0 }}
                     >
                       <InputNumber
                         style={{ width: '100%' }}
-                        placeholder="Số tiền"
+                        placeholder={t('common.amount')}
                         precision={2}
                         {...InputWithComma}
                       />
@@ -117,7 +119,7 @@ export const TransactionItemsFormList: React.FC<
                             },
                           },
                         }}
-                        placeholder="Danh mục"
+                        placeholder={t('common.category')}
                         treeData={categories}
                         fieldNames={{
                           label: 'name',

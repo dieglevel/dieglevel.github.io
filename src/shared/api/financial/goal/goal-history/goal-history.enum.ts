@@ -18,8 +18,8 @@ class FinancialGoalHistorySourceHelperImpl extends BaseEnumHelper<FINANCIAL_GOAL
   }
 
   protected readonly labelMap: Record<FINANCIAL_GOAL_HISTORY_SOURCE, string> = {
-    [FINANCIAL_GOAL_HISTORY_SOURCE.USER]: 'Người dùng',
-    [FINANCIAL_GOAL_HISTORY_SOURCE.SYSTEM]: 'Hệ thống tự động',
+    [FINANCIAL_GOAL_HISTORY_SOURCE.USER]: 'enum.goal.historySource.user',
+    [FINANCIAL_GOAL_HISTORY_SOURCE.SYSTEM]: 'enum.goal.historySource.system',
   }
 }
 
@@ -47,9 +47,10 @@ class FinancialGoalHistoryStatusHelperImpl extends BaseEnumHelper<FINANCIAL_GOAL
   }
 
   protected readonly labelMap: Record<FINANCIAL_GOAL_HISTORY_STATUS, string> = {
-    [FINANCIAL_GOAL_HISTORY_STATUS.PENDING]: 'Chờ nạp',
-    [FINANCIAL_GOAL_HISTORY_STATUS.COMPLETED]: 'Đã hoàn thành',
-    [FINANCIAL_GOAL_HISTORY_STATUS.SKIPPED]: 'Đã bỏ qua',
+    [FINANCIAL_GOAL_HISTORY_STATUS.PENDING]: 'enum.goal.historyStatus.pending',
+    [FINANCIAL_GOAL_HISTORY_STATUS.COMPLETED]:
+      'enum.goal.historyStatus.completed',
+    [FINANCIAL_GOAL_HISTORY_STATUS.SKIPPED]: 'enum.goal.historyStatus.skipped',
   }
 }
 

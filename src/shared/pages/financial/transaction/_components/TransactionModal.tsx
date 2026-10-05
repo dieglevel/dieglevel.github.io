@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Button,
   Card,
@@ -40,6 +41,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   open,
   onClose,
 }) => {
+  const { t } = useTranslation('finance')
   const [form] = Form.useForm()
 
   // API Danh sách Ví & Danh mục
@@ -93,7 +95,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
     try {
       const values = await form.validateFields()
 
-      message.success('Tạo giao dịch thành công!')
+      message.success(t('common.create'))
       form.resetFields()
       onClose()
     } catch (error) {
@@ -103,12 +105,12 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 
   return (
     <BaseModal
-      title="Tạo Giao Dịch Nâng Cao"
+      title={t('transaction.advancedCreate')}
       open={open}
       onCancel={onClose}
       onOk={handleSave}
-      okText="Lưu Giao Dịch"
-      cancelText="Hủy"
+      okText={t('common.save')}
+      cancelText={t('common.cancel')}
       destroyOnHidden
       width={720}
       style={{ top: 20 }}
@@ -132,12 +134,12 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 
         {/* 2. Wallet select */}
         <Form.Item
-          label="Ví thanh toán (walletId)"
+          label={t('transaction.walletPayment')}
           name="walletId"
           rules={[{ required: true, message: 'Vui lòng chọn ví' }]}
         >
           <Select
-            placeholder="Chọn ví thanh toán"
+            placeholder={t('transaction.selectWallet')}
             loading={isLoadingWallets}
             options={wallets?.data.map((w) => ({
               value: w.id,
@@ -153,7 +155,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 
         {/* 3. Mô tả chung (description) */}
         <Form.Item
-          label="Mô tả giao dịch (description)"
+          label={t('transaction.transactionDescription')}
           name="description"
           rules={[
             { required: true, message: 'Vui lòng nhập mô tả' },
@@ -170,7 +172,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
         <Row gutter={[12, 12]}>
           <Col xs={24} sm={12}>
             <Form.Item
-              label="Đơn vị / Cửa hàng (merchant)"
+              label={t('transaction.merchant')}
               name="merchant"
               style={{ marginBottom: 0 }}
             >
@@ -179,7 +181,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
           </Col>
           <Col xs={24} sm={12}>
             <Form.Item
-              label="Địa điểm (location)"
+              label={t('transaction.location')}
               name="location"
               style={{ marginBottom: 0 }}
             >
@@ -190,12 +192,12 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 
         {/* 5. Giao dịch gốc (originalTransactionId) */}
         <Form.Item
-          label="Giao dịch gốc (Chọn nếu là giao dịch Hoàn tiền)"
+          label={t('transaction.originalRefund')}
           name="originalTransactionId"
           style={{ marginTop: 16 }}
         >
           <Select
-            placeholder="Chọn giao dịch gốc liên quan (nếu có)"
+            placeholder={t('transaction.selectOriginal')}
             allowClear
             loading={isLoadingOriginal}
             options={originalTransactions?.data.data.map((t) => ({
@@ -207,7 +209,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 
         {/* 6. Chi tiết các khoản tạm ứng (financialAdvanceTransactions) */}
         <Form.Item
-          label="Chi tiết các khoản (financialAdvanceTransactions)"
+          label={t('transaction.details')}
           required
           style={{ marginBottom: 12 }}
         >
@@ -246,7 +248,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
                           ]}
                           style={{ marginBottom: 0 }}
                         >
-                          <Input placeholder="Nội dung chi tiết" />
+                          <Input placeholder={t('transaction.itemDescription')} />
                         </Form.Item>
                       </Col>
 
@@ -353,7 +355,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
         <Row gutter={[12, 12]}>
           <Col xs={24} sm={12}>
             <Form.Item
-              label="Thẻ (tags)"
+                          label={t('transaction.tags')}
               name="tags"
               style={{ marginBottom: 0 }}
             >
@@ -366,7 +368,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
           </Col>
           <Col xs={24} sm={12}>
             <Form.Item
-              label="Link ảnh hóa đơn (receiptImageUrl)"
+              label={t('transaction.receipt')}
               name="receiptImageUrl"
               style={{ marginBottom: 0 }}
             >
@@ -379,7 +381,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
         <Row gutter={[12, 12]} style={{ marginTop: 16 }}>
           <Col xs={24} sm={12}>
             <Form.Item
-              label="Ngày thực hiện"
+              label={t('transaction.performedAt')}
               name="date"
               rules={[{ required: true }]}
               style={{ marginBottom: 0 }}

@@ -19,6 +19,7 @@ import {
   FINANCIAL_GOAL_TYPE,
 } from '@/shared/api/financial/goal/goal.enum'
 import { useMutationGoal } from '@/shared/api/financial/goal/goal.mutation'
+import { useTranslation } from 'react-i18next'
 
 const { Text } = Typography
 
@@ -43,6 +44,7 @@ export const GoalModal: React.FC<GoalModalProps> = ({
   onClose,
   onSuccess,
 }) => {
+  const { t } = useTranslation('finance')
   const [form] = Form.useForm()
   const { mGoal_Create, mGoal_Update } = useMutationGoal()
 
@@ -76,11 +78,11 @@ export const GoalModal: React.FC<GoalModalProps> = ({
         { pathParams: { id: initial.id }, body: payload },
         {
           onSuccess: () => {
-            message.success('Cập nhật mục tiêu thành công!')
+            message.success(t('goal.updateSuccess'))
             onSuccess?.()
             onClose()
           },
-          onError: () => message.error('Cập nhật thất bại!'),
+          onError: () => message.error(t('goal.error')),
         },
       )
     } else {
@@ -88,11 +90,11 @@ export const GoalModal: React.FC<GoalModalProps> = ({
         { body: payload },
         {
           onSuccess: () => {
-            message.success('Tạo mục tiêu thành công!')
+            message.success(t('goal.addSuccess'))
             onSuccess?.()
             onClose()
           },
-          onError: () => message.error('Tạo mục tiêu thất bại!'),
+          onError: () => message.error(t('goal.error')),
         },
       )
     }
@@ -102,32 +104,32 @@ export const GoalModal: React.FC<GoalModalProps> = ({
 
   return (
     <Modal
-      title={initial ? 'Chỉnh sửa mục tiêu' : 'Mục tiêu mới'}
+      title={initial ? t('common.edit') : t('goal.add')}
       open={open}
       onCancel={onClose}
       onOk={() => form.submit()}
       confirmLoading={isLoading}
-      okText={initial ? 'Lưu thay đổi' : 'Tạo mục tiêu'}
-      cancelText="Hủy"
+      okText={initial ? t('common.save') : t('goal.add')}
+      cancelText={t('common.cancel')}
       destroyOnHidden
     >
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
         <Form.Item
           name="name"
-          label="Tên mục tiêu"
+          label={t('goal.name')}
           rules={[{ required: true, message: 'Vui lòng nhập tên mục tiêu' }]}
         >
-          <Input placeholder="Tên mục tiêu" />
+          <Input placeholder={t('goal.name')} />
         </Form.Item>
 
-        <Form.Item name="type" label="Phân loại" rules={[{ required: true }]}>
+        <Form.Item name="type" label={t('goal.type')} rules={[{ required: true }]}>
           <Select options={TYPE_OPTIONS} />
         </Form.Item>
 
         <Space style={{ display: 'flex' }} align="start">
           <Form.Item
             name="targetAmount"
-            label="Mục tiêu (VND)"
+            label={t('goal.target')}
             rules={[{ required: true, message: 'Nhập số tiền mục tiêu' }]}
             style={{ flex: 1 }}
           >
@@ -140,7 +142,7 @@ export const GoalModal: React.FC<GoalModalProps> = ({
 
           <Form.Item
             name="currentAmount"
-            label="Đã có (VND)"
+            label={t('goal.current')}
             style={{ flex: 1 }}
           >
             <InputNumber style={{ width: '100%' }} placeholder="0" min={0} />
@@ -148,13 +150,13 @@ export const GoalModal: React.FC<GoalModalProps> = ({
         </Space>
 
         <Space style={{ display: 'flex' }} align="start">
-          <Form.Item name="deadline" label="Hạn chót" style={{ flex: 1 }}>
+          <Form.Item name="deadline" label={t('goal.deadline')} style={{ flex: 1 }}>
             <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />
           </Form.Item>
 
           <Form.Item
             name="autoContributionAmount"
-            label="Trích tự động/tháng"
+            label={t('goal.autoContribution')}
             style={{ flex: 1 }}
           >
             <InputNumber
@@ -165,8 +167,8 @@ export const GoalModal: React.FC<GoalModalProps> = ({
           </Form.Item>
         </Space>
 
-        <Form.Item name="description" label="Mô tả">
-          <Input.TextArea rows={2} placeholder="Ghi chú thêm..." />
+        <Form.Item name="description" label={t('goal.description')}>
+          <Input.TextArea rows={2} placeholder={t('goal.note')} />
         </Form.Item>
 
         {/* Lock Funds toggle box */}

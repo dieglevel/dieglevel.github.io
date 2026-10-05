@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Card,
   DatePicker,
@@ -31,6 +32,7 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const { t } = useTranslation('finance')
   const { mode } = useThemeMode()
   const { colors } = getTokens(mode)
 
@@ -59,7 +61,7 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
 
   return (
     <Modal
-      title={`Điều chỉnh dư nợ: ${debt.name}`}
+      title={t('debtForms.adjustTitle', { name: debt.name })}
       open={open}
       onCancel={onClose}
       onOk={() => form.submit()}
@@ -75,7 +77,7 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
       >
         <Card size="small" style={{ marginBottom: 16 }}>
           <Flex justify="space-between" align="center">
-            <Text type="secondary">Dư nợ hiện tại:</Text>
+            <Text type="secondary">{t('debt.currentBalance')}:</Text>
             <Text strong type="danger">
               {convertCurrency(debt.outstandingAmount)}
             </Text>
@@ -84,7 +86,7 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
 
         <Form.Item
           name="outstandingAmount"
-          label="Dư nợ mới"
+          label={t('debtForms.newBalance')}
           rules={[
             { required: true, message: 'Vui lòng nhập dư nợ mới' },
             {
@@ -96,7 +98,7 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
         >
           <InputNumber
             style={{ width: '100%' }}
-            placeholder="Nhập dư nợ mới..."
+            placeholder={t('debtForms.amountPlaceholder')}
             precision={2}
             {...InputWithComma}
           />
@@ -113,7 +115,7 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
             }}
           >
             <Flex justify="space-between" align="center">
-              <Text type="secondary">Chênh lệch điều chỉnh:</Text>
+              <Text type="secondary">{t('debtForms.difference')}</Text>
               <Text strong style={{ color: diff > 0 ? '#ff4d4f' : '#52c41a' }}>
                 {diff > 0 ? '+' : ''}
                 {convertCurrency(diff)}
@@ -123,7 +125,7 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
         )}
         <Form.Item
           name="occurredAt"
-          label="Ngày điều chỉnh"
+          label={t('debtForms.adjustDate')}
           rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}
         >
           <DatePicker
@@ -135,14 +137,14 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
 
         <Form.Item
           name="note"
-          label="Lý do điều chỉnh"
+          label={t('debtForms.adjustReason')}
           rules={[
             { required: true, message: 'Vui lòng nhập lý do điều chỉnh' },
           ]}
         >
           <Input.TextArea
             rows={3}
-            placeholder="Vd: Sai lệch do tính sai lãi, miễn giảm nợ..."
+            placeholder={t('debtForms.adjustReasonPlaceholder')}
           />
         </Form.Item>
       </Form>

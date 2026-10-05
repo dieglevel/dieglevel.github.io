@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Flex, Table, Tag, Typography } from 'antd'
 import { Wallet } from 'lucide-react'
 import type { ColumnsType } from 'antd/es/table'
@@ -17,13 +18,14 @@ interface Props {
 }
 
 export const DebtHistoryTable: React.FC<Props> = ({ debtId, pageSize = 5 }) => {
+  const { t } = useTranslation('finance')
   const { data: response, isLoading } = useGetFinance_Debt_Histories({
     id: debtId,
   })
 
   const columns: ColumnsType<IFinance_DebtHistory> = [
     {
-      title: 'Ngày GD',
+      title: t('debtForms.historyDate'),
       dataIndex: 'occurredAt',
       width: 110,
       render: (date: string, record) => (
@@ -32,13 +34,13 @@ export const DebtHistoryTable: React.FC<Props> = ({ debtId, pageSize = 5 }) => {
             {DayjsHelper.formatDate(date, 'DD/MM/YYYY')}
           </Text>
           <Text type="secondary" style={{ fontSize: 10 }}>
-            Nhập: {DayjsHelper.formatDate(record.createdAt, 'DD/MM HH:mm')}
+            {t('debtForms.entered')}: {DayjsHelper.formatDate(record.createdAt, 'DD/MM HH:mm')}
           </Text>
         </Flex>
       ),
     },
     {
-      title: 'Hành động',
+      title: t('debtForms.action'),
       dataIndex: 'type',
       width: 120,
       render: (type) => (
@@ -48,7 +50,7 @@ export const DebtHistoryTable: React.FC<Props> = ({ debtId, pageSize = 5 }) => {
       ),
     },
     {
-      title: 'Số tiền',
+      title: t('debtForms.amount'),
       dataIndex: 'amount',
       align: 'right',
       render: (val: number) => (
@@ -58,7 +60,7 @@ export const DebtHistoryTable: React.FC<Props> = ({ debtId, pageSize = 5 }) => {
       ),
     },
     {
-      title: 'Dư nợ còn lại',
+      title: t('debtForms.remaining'),
       align: 'right',
       render: (_, r) => (
         <Flex vertical align="end">
@@ -66,13 +68,13 @@ export const DebtHistoryTable: React.FC<Props> = ({ debtId, pageSize = 5 }) => {
             {convertCurrency(r.outstandingAmount)}
           </Text>
           <Text type="secondary" style={{ fontSize: 11 }}>
-            (Trước: {convertCurrency(r.previousOutstandingAmount)})
+            ({t('debtForms.before')}: {convertCurrency(r.previousOutstandingAmount)})
           </Text>
         </Flex>
       ),
     },
     {
-      title: 'Ví',
+      title: t('debtForms.wallet'),
       width: 130,
       render: (_, r) =>
         r.wallet ? (
@@ -81,12 +83,12 @@ export const DebtHistoryTable: React.FC<Props> = ({ debtId, pageSize = 5 }) => {
           </Tag>
         ) : (
           <Text type="secondary" style={{ fontSize: 12 }}>
-            Chỉ ghi sổ
+            {t('debtForms.bookOnly')}
           </Text>
         ),
     },
     {
-      title: 'Ghi chú',
+      title: t('debtForms.notes'),
       dataIndex: 'note',
       ellipsis: true,
       render: (note?: string) => note || <Text type="secondary">-</Text>,

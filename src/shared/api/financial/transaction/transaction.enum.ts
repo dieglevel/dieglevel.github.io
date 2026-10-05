@@ -25,11 +25,12 @@ class FinancialTransactionTypeHelperImpl extends BaseEnumHelper<FINANCIAL_TRANSA
   }
 
   protected readonly labelMap: Record<FINANCIAL_TRANSACTION_TYPE, string> = {
-    [FINANCIAL_TRANSACTION_TYPE.EXPENSE]: 'Chi tiêu',
-    [FINANCIAL_TRANSACTION_TYPE.INCOME]: 'Thu nhập',
-    [FINANCIAL_TRANSACTION_TYPE.REFUND]: 'Hoàn tiền',
-    [FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT]: 'Điều chỉnh số dư',
-    [FINANCIAL_TRANSACTION_TYPE.TRANSFER]: 'Chuyển khoản',
+    [FINANCIAL_TRANSACTION_TYPE.EXPENSE]: 'enum.transaction.type.expense',
+    [FINANCIAL_TRANSACTION_TYPE.INCOME]: 'enum.transaction.type.income',
+    [FINANCIAL_TRANSACTION_TYPE.REFUND]: 'enum.transaction.type.refund',
+    [FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT]:
+      'enum.transaction.type.adjustment',
+    [FINANCIAL_TRANSACTION_TYPE.TRANSFER]: 'enum.transaction.type.transfer',
   }
 }
 
@@ -57,9 +58,10 @@ class FinancialTransactionStatusHelperImpl extends BaseEnumHelper<FINANCIAL_TRAN
   }
 
   protected readonly labelMap: Record<FINANCIAL_TRANSACTION_STATUS, string> = {
-    [FINANCIAL_TRANSACTION_STATUS.PENDING]: 'Đang xử lý',
-    [FINANCIAL_TRANSACTION_STATUS.COMPLETED]: 'Hoàn thành',
-    [FINANCIAL_TRANSACTION_STATUS.FAILED]: 'Thất bại',
+    [FINANCIAL_TRANSACTION_STATUS.PENDING]: 'enum.transaction.status.pending',
+    [FINANCIAL_TRANSACTION_STATUS.COMPLETED]:
+      'enum.transaction.status.completed',
+    [FINANCIAL_TRANSACTION_STATUS.FAILED]: 'enum.transaction.status.failed',
   }
 }
 

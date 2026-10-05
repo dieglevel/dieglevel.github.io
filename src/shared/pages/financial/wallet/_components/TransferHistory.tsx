@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { MoveRight } from 'lucide-react'
 import { DatePicker, Typography } from 'antd'
 import dayjs from 'dayjs'
@@ -18,6 +19,7 @@ export default function TransferHistory({
   open,
   onClose,
 }: TransferHistoryProps) {
+  const { t } = useTranslation('finance')
   const [selectedMonth, setSelectedMonth] = useState<dayjs.Dayjs>(dayjs())
 
   const { data, isFetching } = useGetWallet_WalletTransfer_Date({})
@@ -35,7 +37,7 @@ export default function TransferHistory({
         },
       },
       {
-        title: 'From Wallet',
+        title: t('wallet.from'),
         dataIndex: ['fromWallet', 'name'],
         key: 'fromWallet',
         width: 140,
@@ -52,14 +54,14 @@ export default function TransferHistory({
         ),
       },
       {
-        title: 'To Wallet',
+        title: t('wallet.to'),
         dataIndex: ['toWallet', 'name'],
         key: 'toWallet',
         width: 140,
         ellipsis: true,
       },
       {
-        title: 'Amount',
+        title: t('common.amount'),
         dataIndex: 'amount',
         key: 'amount',
         width: 130,
@@ -69,7 +71,7 @@ export default function TransferHistory({
         },
       },
       {
-        title: 'Transfer Fee',
+        title: t('wallet.fee'),
         dataIndex: 'transferFee',
         key: 'transferFee',
         width: 120,
@@ -80,7 +82,7 @@ export default function TransferHistory({
       },
     ]
     return cols
-  }, [])
+  }, [t])
 
   const { totalAmount, totalFee } = useMemo(() => {
     const list = data?.data || []
@@ -97,7 +99,7 @@ export default function TransferHistory({
 
   return (
     <BaseModal
-      title="Transfer History"
+      title={t('wallet.history')}
       open={open}
       onClose={onClose}
       showButtonOk={false}

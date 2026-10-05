@@ -20,5 +20,13 @@
   "description": "Description",
   "notes": "Notes",
   "loading": "Loading...",
-  "noData": "No data"
+  "noData": "No data",
+  "enum": {
+    "category": { "type": { "income": "Income", "expense": "Expense", "transfer": "Transfer" }, "spendingNature": { "essential": "Essential spending", "flexible": "Flexible spending" } },
+    "debt": { "direction": { "incoming": "Lending (receivable)", "outgoing": "Borrowing (payable)" }, "status": { "active": "Outstanding", "paidOff": "Paid off", "settled": "Settled", "cancelled": "Cancelled" }, "history": { "created": "Debt created", "payment": "Payment", "adjustment": "Balance adjustment", "settled": "Settled", "cancelled": "Debt cancelled" }, "type": { "loan": "Loan", "creditCard": "Credit card", "mortgage": "Mortgage", "other": "Other" } },
+    "goal": { "type": { "saving": "Savings", "investment": "Investment", "debtPayment": "Debt payment", "emergency": "Emergency fund", "other": "Other" }, "savingMode": { "manual": "Manual", "auto": "Automatic savings" }, "status": { "active": "Active", "completed": "Completed", "cancelled": "Cancelled", "inactive": "Paused" }, "historySource": { "user": "User", "system": "Automatic system" }, "historyStatus": { "pending": "Pending deposit", "completed": "Completed", "skipped": "Skipped" } },
+    "transaction": { "type": { "expense": "Expense", "income": "Income", "refund": "Refund", "adjustment": "Balance adjustment", "transfer": "Transfer" }, "status": { "pending": "Processing", "completed": "Completed", "failed": "Failed" } },
+    "wallet": { "type": { "cash": "Cash", "bank": "Bank", "eWallet": "E-wallet" } },
+    "setting": { "themeMode": { "light": "Light", "dark": "Dark" }, "theme": { "huTao": "Hu Tao" }, "language": { "en": "English", "ko": "한국어", "vn": "Vietnamese" }, "currency": { "usd": "USD ($)", "krw": "KRW (₩)", "vnd": "VND (₫)" } }
+  }
 }

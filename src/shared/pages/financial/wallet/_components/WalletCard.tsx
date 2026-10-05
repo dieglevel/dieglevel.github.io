@@ -1,5 +1,6 @@
 import React from 'react'
 import { Button, Card, Popconfirm, Space, Tag, Tooltip, message } from 'antd'
+import { useTranslation } from 'react-i18next'
 import { DeleteOutlined, EditOutlined, LockOutlined } from '@ant-design/icons'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import {
@@ -20,6 +21,7 @@ export const WalletCard: React.FC<WalletCardProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { t } = useTranslation('finance')
   const isCreditCard =
     wallet.type === FINANCIAL_WALLET_TYPE.E_WALLET || wallet.creditLimit != null
 
@@ -32,11 +34,11 @@ export const WalletCard: React.FC<WalletCardProps> = ({
   const handleCopyApiKey = (e: React.MouseEvent) => {
     e.stopPropagation()
     if (!wallet.apiKey) {
-      message.warning('Ví này chưa được khởi tạo API Key!')
+      message.warning(t('common.noData'))
       return
     }
     navigator.clipboard.writeText(wallet.apiKey)
-    message.success('Đã sao chép API Key vào khay nhớ tạm!')
+    message.success(t('common.save'))
   }
 
   // Credit Utilization Percentage
@@ -154,7 +156,7 @@ export const WalletCard: React.FC<WalletCardProps> = ({
                 {wallet.name}
               </h4>
               {wallet.isLockedForDailySpending && (
-                <Tooltip title="Ví bị khóa khỏi tổng chi tiêu hàng ngày">
+                <Tooltip title={t('wallet.locked')}>
                   <Tag
                     color="warning"
                     style={{
@@ -168,7 +170,7 @@ export const WalletCard: React.FC<WalletCardProps> = ({
                       color: '#fff',
                     }}
                   >
-                    <LockOutlined style={{ marginRight: 2 }} /> Khóa
+                    <LockOutlined style={{ marginRight: 2 }} /> {t('wallet.locked')}
                   </Tag>
                 </Tooltip>
               )}
@@ -190,7 +192,7 @@ export const WalletCard: React.FC<WalletCardProps> = ({
 
         {/* Action Buttons */}
         <Space size={6} style={{ flexShrink: 0, marginLeft: 8 }}>
-          <Tooltip title="Chỉnh sửa">
+          <Tooltip title={t('common.edit')}>
             <Button
               type="text"
               size="small"
@@ -204,14 +206,14 @@ export const WalletCard: React.FC<WalletCardProps> = ({
           </Tooltip>
 
           <Popconfirm
-            title={`Xóa ví "${wallet.name}"?`}
-            description="Hành động này không thể hoàn tác."
-            okText="Xóa"
-            cancelText="Hủy"
+            title={`${t('common.delete')} "${wallet.name}"?`}
+            description={t('category.deleteDescription')}
+            okText={t('common.delete')}
+            cancelText={t('common.cancel')}
             okButtonProps={{ danger: true }}
             onConfirm={onDelete}
           >
-            <Tooltip title="Xóa ví">
+            <Tooltip title={t('common.delete')}>
               <Button
                 type="text"
                 size="small"

@@ -17,4 +17,16 @@
   "searchPlaceholder": "거래 검색...",
   "detail": "거래 상세",
   "advancedCreate": "고급 거래 생성"
+  ,"walletPayment": "결제 지갑"
+  ,"transactionDescription": "거래 설명"
+  ,"merchant": "상점 / 가맹점"
+  ,"location": "위치"
+  ,"originalRefund": "원거래 (환불 시 선택)"
+  ,"selectWallet": "결제 지갑 선택"
+  ,"selectOriginal": "관련 원거래 선택 (선택 사항)"
+  ,"details": "거래 상세 항목"
+  ,"itemDescription": "항목 설명"
+  ,"tags": "태그"
+  ,"receipt": "영수증 이미지 링크"
+  ,"performedAt": "거래일"
 }

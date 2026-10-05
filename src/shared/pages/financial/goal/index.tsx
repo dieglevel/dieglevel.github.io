@@ -86,10 +86,10 @@ export function Goals() {
       },
       {
         onSuccess: () => {
-          message.success('Xóa mục tiêu thành công!')
+          message.success(t('common.delete'))
         },
         onError: () => {
-          message.error('Có lỗi xảy ra khi xóa!')
+          message.error(t('goal.error'))
         },
       },
     )
@@ -295,12 +295,12 @@ export function Goals() {
       />
       {/* FILTER MODAL */}
       <Modal
-        title="Lọc Mục tiêu Tài chính"
+        title={t('common.search')}
         open={isFilterModalOpen}
         onCancel={() => setIsFilterModalOpen(false)}
         onOk={() => setIsFilterModalOpen(false)}
-        okText="Áp dụng"
-        cancelText="Đóng"
+        okText={t('common.save')}
+        cancelText={t('common.close')}
         width={380}
         centered
       >
@@ -371,7 +371,7 @@ export function Goals() {
 
       {/* VIEW DETAILS & PROJECTION MODAL */}
       <Modal
-        title="Chi tiết & Dự phóng Mục tiêu"
+        title={t('goal.title')}
         open={!!viewGoal}
         onCancel={() => setViewGoal(null)}
         footer={[
@@ -411,23 +411,23 @@ export function Goals() {
                 {/* Thống kê Dự phóng (Projection) */}
                 <Card
                   size="small"
-                  title="Dự phóng hoàn thành (Projection)"
+                  title={t('goal.projection', { defaultValue: 'Completion projection' })}
                   style={{ backgroundColor: '#fafafa' }}
                 >
                   <Descriptions column={1} size="small">
-                    <Descriptions.Item label="Còn phải tích lũy">
+                    <Descriptions.Item label={t('common.remaining', { defaultValue: 'Remaining' })}>
                       <Text strong style={{ color: '#cf1322' }}>
                         {convertCurrency(proj.remainingAmount)}
                       </Text>
                     </Descriptions.Item>
-                    <Descriptions.Item label="Trích tự động hàng tháng">
+                    <Descriptions.Item label={t('goal.autoContribution')}>
                       <Text strong>
                         {proj.monthlySavingRate > 0
                           ? convertCurrency(proj.monthlySavingRate)
                           : 'Không thiết lập'}
                       </Text>
                     </Descriptions.Item>
-                    <Descriptions.Item label="Thời gian dự kiến còn lại">
+                    <Descriptions.Item label={t('goal.completionDate', { defaultValue: 'Estimated completion' })}>
                       <Text strong style={{ color: '#1677ff' }}>
                         {proj.estimatedMonthsToComplete !== null
                           ? `${proj.estimatedMonthsToComplete} tháng`
@@ -439,25 +439,25 @@ export function Goals() {
 
                 {/* Thông tin chi tiết Entity */}
                 <Descriptions column={2} bordered size="small">
-                  <Descriptions.Item label="Tên mục tiêu" span={2}>
+                  <Descriptions.Item label={t('goal.name')} span={2}>
                     <Text strong>{viewGoal.name}</Text>
                   </Descriptions.Item>
-                  <Descriptions.Item label="Phân loại">
+                  <Descriptions.Item label={t('goal.type')}>
                     {renderTypeTag(viewGoal.type)}
                   </Descriptions.Item>
-                  <Descriptions.Item label="Trạng thái">
+                  <Descriptions.Item label={t('goal.status')}>
                     {renderStatusTag(viewGoal.status)}
                   </Descriptions.Item>
                   <Descriptions.Item label="Khóa chuyển tiền">
                     {viewGoal.isLocked ? 'Có' : 'Không'}
                   </Descriptions.Item>
-                  <Descriptions.Item label="Ngày trích hàng tháng">
+                  <Descriptions.Item label={t('goal.contributionDay')}>
                     {viewGoal.autoContributionDay
                       ? `Ngày ${viewGoal.autoContributionDay}`
                       : '-'}
                   </Descriptions.Item>
                   {viewGoal.description && (
-                    <Descriptions.Item label="Mô tả" span={2}>
+                    <Descriptions.Item label={t('goal.description')} span={2}>
                       {viewGoal.description}
                     </Descriptions.Item>
                   )}

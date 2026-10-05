@@ -20,5 +20,13 @@
   "description": "Mô tả",
   "notes": "Ghi chú",
   "loading": "Đang tải...",
-  "noData": "Không có dữ liệu"
+  "noData": "Không có dữ liệu",
+  "enum": {
+    "category": { "type": { "income": "Thu nhập", "expense": "Chi tiêu", "transfer": "Chuyển khoản" }, "spendingNature": { "essential": "Chi tiêu thiết yếu", "flexible": "Chi tiêu tự do" } },
+    "debt": { "direction": { "incoming": "Cho vay (nợ phải thu)", "outgoing": "Đi vay (nợ phải trả)" }, "status": { "active": "Đang nợ", "paidOff": "Đã trả xong", "settled": "Đã tất toán", "cancelled": "Đã hủy" }, "history": { "created": "Tạo khoản nợ", "payment": "Thanh toán", "adjustment": "Điều chỉnh số dư", "settled": "Tất toán", "cancelled": "Hủy khoản nợ" }, "type": { "loan": "Khoản vay", "creditCard": "Thẻ tín dụng", "mortgage": "Vay thế chấp", "other": "Khác" } },
+    "goal": { "type": { "saving": "Tiết kiệm", "investment": "Đầu tư", "debtPayment": "Trả nợ", "emergency": "Quỹ khẩn cấp", "other": "Khác" }, "savingMode": { "manual": "Thủ công", "auto": "Tự động tích lũy" }, "status": { "active": "Đang thực hiện", "completed": "Hoàn thành", "cancelled": "Đã hủy", "inactive": "Tạm dừng" }, "historySource": { "user": "Người dùng", "system": "Hệ thống tự động" }, "historyStatus": { "pending": "Chờ nạp", "completed": "Đã hoàn thành", "skipped": "Đã bỏ qua" } },
+    "transaction": { "type": { "expense": "Chi tiêu", "income": "Thu nhập", "refund": "Hoàn tiền", "adjustment": "Điều chỉnh số dư", "transfer": "Chuyển khoản" }, "status": { "pending": "Đang xử lý", "completed": "Hoàn thành", "failed": "Thất bại" } },
+    "wallet": { "type": { "cash": "Tiền mặt", "bank": "Ngân hàng", "eWallet": "Ví điện tử" } },
+    "setting": { "themeMode": { "light": "Sáng", "dark": "Tối" }, "theme": { "huTao": "Hu Tao" }, "language": { "en": "English", "ko": "한국어", "vn": "Tiếng Việt" }, "currency": { "usd": "USD ($)", "krw": "KRW (₩)", "vnd": "VND (₫)" } }
+  }
 }

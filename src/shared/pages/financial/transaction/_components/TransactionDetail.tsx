@@ -10,6 +10,7 @@ import {
   Space,
   Tag,
 } from 'antd'
+import { useTranslation } from 'react-i18next'
 import Text from 'antd/es/typography/Text'
 import Title from 'antd/es/typography/Title'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
@@ -35,6 +36,7 @@ export function TransactionDetail({
   viewTransaction,
   setViewTransaction,
 }: TransactionDetailProps) {
+  const { t } = useTranslation('finance')
   const { mode } = useThemeMode()
   const { colors } = getTokens(mode)
 
@@ -57,12 +59,12 @@ export function TransactionDetail({
 
   return (
     <Modal
-      title="Chi tiết giao dịch"
+      title={t('transaction.detail')}
       open={!!viewTransaction}
       onCancel={handleClose}
       footer={[
         <Button key="close" onClick={handleClose}>
-          Đóng
+          {t('common.close')}
         </Button>,
       ]}
       width={580}
@@ -87,7 +89,7 @@ export function TransactionDetail({
             }}
           >
             <Text style={{ fontSize: 11, letterSpacing: 0.5 }}>
-              TỔNG SỐ TIỀN
+              {t('common.amount')}
             </Text>
             <Title
               level={2}
@@ -103,17 +105,17 @@ export function TransactionDetail({
 
           {/* Thông tin chi tiết */}
           <Descriptions column={isMobile ? 1 : 2} bordered size="small">
-            <Descriptions.Item label="Ghi chú" span={2}>
+            <Descriptions.Item label={t('common.notes')} span={2}>
               <Text strong>{transaction.description || '-'}</Text>
             </Descriptions.Item>
 
-            <Descriptions.Item label="Loại giao dịch">
+            <Descriptions.Item label={t('common.type')}>
               <Tag color={isPositiveFlow ? 'green' : 'volcano'}>
                 {FinancialTransactionTypeHelper.getLabel(transaction.type)}
               </Tag>
             </Descriptions.Item>
 
-            <Descriptions.Item label="Trạng thái">
+            <Descriptions.Item label={t('common.status')}>
               <Tag
                 color={FinancialTransactionStatusHelper.getColor(
                   transaction.status,
@@ -123,7 +125,7 @@ export function TransactionDetail({
               </Tag>
             </Descriptions.Item>
 
-            <Descriptions.Item label="Ví thanh toán">
+            <Descriptions.Item label={t('common.wallet')}>
               <Flex align="center" gap={6}>
                 {transaction.wallet?.icon && (
                   <IconRenderer
@@ -136,11 +138,11 @@ export function TransactionDetail({
               </Flex>
             </Descriptions.Item>
 
-            <Descriptions.Item label="Đối tác / Merchant">
+            <Descriptions.Item label={t('common.description')}>
               <Text>{transaction.merchant || '-'}</Text>
             </Descriptions.Item>
 
-            <Descriptions.Item label="Thời gian" span={2}>
+            <Descriptions.Item label={t('common.date')} span={2}>
               {transaction.createdAt ? (
                 <Flex align="center" justify="space-between">
                   <Text style={{ fontSize: 12 }}>
@@ -161,7 +163,7 @@ export function TransactionDetail({
 
             {/* Hiển thị thông tin giao dịch gốc nếu đây là đơn Hoàn tiền (REFUND) */}
             {transaction.originalTransaction && (
-              <Descriptions.Item label="Giao dịch gốc" span={2}>
+              <Descriptions.Item label={t('transaction.detail')} span={2}>
                 <Flex align="center" justify="space-between">
                   <Text>
                     #{transaction.originalTransaction.id} -{' '}
@@ -180,7 +182,7 @@ export function TransactionDetail({
             transaction.financialTransactionItems.length > 0 && (
               <div>
                 <Divider style={{ margin: '16px 0 8px 0', fontSize: 13 }}>
-                  Danh sách hạng mục (
+                  {t('common.category')} (
                   {transaction.financialTransactionItems.length})
                 </Divider>
 
@@ -190,12 +192,12 @@ export function TransactionDetail({
                   dataSource={transaction.financialTransactionItems}
                   columns={[
                     {
-                      title: 'Mô tả',
+                      title: t('common.description'),
                       dataIndex: 'description',
                       key: 'description',
                     },
                     {
-                      title: 'Danh mục',
+                      title: t('common.category'),
                       dataIndex: 'category',
                       key: 'category',
                       render: (cat) =>
@@ -206,12 +208,12 @@ export function TransactionDetail({
                           </Flex>
                         ) : (
                           <Text type="secondary" style={{ fontSize: 12 }}>
-                            Chưa phân loại
+                            {t('common.noData')}
                           </Text>
                         ),
                     },
                     {
-                      title: 'Số tiền',
+                      title: t('common.amount'),
                       dataIndex: 'amount',
                       key: 'amount',
                       align: 'right',

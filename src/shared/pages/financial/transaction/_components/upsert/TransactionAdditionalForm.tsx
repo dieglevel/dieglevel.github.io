@@ -1,5 +1,6 @@
 import React from 'react'
 import { Card, Form, Input, Select } from 'antd'
+import { useTranslation } from 'react-i18next'
 import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
 import { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
 
@@ -12,9 +13,10 @@ interface TransactionAdditionalFormProps {
 export const TransactionAdditionalForm: React.FC<
   TransactionAdditionalFormProps
 > = ({ selectedType, originalTransactions, isLoadingOriginal }) => {
+  const { t } = useTranslation('finance')
   return (
     <Card
-      title="Thông tin bổ sung"
+      title={t('common.description')}
       style={{
         display:
           selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT
@@ -22,18 +24,18 @@ export const TransactionAdditionalForm: React.FC<
             : 'block',
       }}
     >
-      <Form.Item label="Đơn vị / Cửa hàng (merchant)" name="merchant">
+      <Form.Item label={t('common.description')} name="merchant">
         <Input placeholder="Công ty, Shopee, Starbucks..." maxLength={255} />
       </Form.Item>
 
-      <Form.Item label="Địa điểm (location)" name="location">
+      <Form.Item label={t('common.description')} name="location">
         <Input placeholder="Hà Nội, TP.HCM..." maxLength={255} />
       </Form.Item>
 
       {selectedType !== FINANCIAL_TRANSACTION_TYPE.REFUND && (
-        <Form.Item label="Giao dịch gốc (nếu có)" name="originalTransactionId">
+        <Form.Item label={t('transaction.detail')} name="originalTransactionId">
           <Select
-            placeholder="Chọn giao dịch gốc"
+            placeholder={t('transaction.detail')}
             allowClear
             loading={isLoadingOriginal}
             options={originalTransactions?.map((t) => ({
@@ -45,7 +47,7 @@ export const TransactionAdditionalForm: React.FC<
       )}
 
       <Form.Item
-        label="Link ảnh hóa đơn"
+        label={t('common.description')}
         name="receiptImageUrl"
         style={{ marginBottom: 0 }}
       >

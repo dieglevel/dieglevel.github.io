@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Alert,
   Card,
@@ -45,6 +46,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const { t } = useTranslation('finance')
   const { mode } = useThemeMode()
   const { colors } = getTokens(mode)
 
@@ -96,10 +98,10 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
   const insufficient = !!selectedWallet && projectedBalance < 0
 
   const alertMessage = !selectedWallet
-    ? 'Chỉ ghi sổ nợ, không thay đổi số dư ví nào.'
+    ? t('debtForms.alertBookOnly')
     : isBorrowing
-      ? 'Bạn đang đi vay: số tiền sẽ được cộng vào ví đã chọn.'
-      : 'Bạn cho vay: số tiền sẽ được trừ khỏi ví đã chọn.'
+      ? t('debtForms.alertBorrow')
+      : t('debtForms.alertLend')
 
   const handleFinish = async (values: any) => {
     await onSubmit({
@@ -112,7 +114,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
 
   return (
     <Modal
-      title="Tạo khoản nợ mới"
+      title={t('debtForms.createTitle')}
       open={open}
       onCancel={onClose}
       onOk={() => form.submit()}
@@ -132,7 +134,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
           showIcon
           style={{ marginBottom: 12 }}
           message={alertMessage}
-          description="Khoản nợ không tạo giao dịch nên không tính vào chi tiêu hằng tháng."
+          description={t('debtForms.description')}
         />
 
         {selectedWallet && amountNumber > 0 && (
@@ -151,7 +153,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
             <Flex vertical gap={6}>
               <Flex justify="space-between">
                 <Text type="secondary" style={{ fontSize: 13 }}>
-                  Số dư ví hiện tại ({selectedWallet.name}):
+                  {t('debtForms.currentWalletBalance', { name: selectedWallet.name })}
                 </Text>
                 <Text
                   strong
@@ -162,7 +164,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
               </Flex>
               <Flex justify="space-between">
                 <Text type="secondary" style={{ fontSize: 13 }}>
-                  Biến động ví:
+                  {t('debtForms.walletChange')}
                 </Text>
                 <Text
                   strong
@@ -180,7 +182,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
                 style={{ borderTop: '1px dashed #cbd5e1', paddingTop: 6 }}
               >
                 <Text strong style={{ fontSize: 13 }}>
-                  Số dư dự kiến:
+                  {t('debtForms.projectedBalance')}
                 </Text>
                 <Text
                   strong
@@ -195,7 +197,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
               </Flex>
               {insufficient && (
                 <Text type="danger" style={{ fontSize: 12 }}>
-                  Số dư ví không đủ để cho vay khoản này.
+                  {t('debtForms.insufficient')}
                 </Text>
               )}
             </Flex>
@@ -206,21 +208,21 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
           <Col xs={24} sm={12}>
             <Form.Item
               name="name"
-              label="Tên khoản nợ"
+              label={t('debtForms.name')}
               rules={[
                 { required: true, message: 'Vui lòng nhập tên khoản nợ' },
               ]}
             >
-              <Input placeholder="Vd: Cho Nam mượn tiền, Vay mua xe..." />
+              <Input placeholder={t('debtForms.namePlaceholder')} />
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
             <Form.Item
               name="namePerson"
-              label="Đối tác (người vay / cho vay)"
+              label={t('debtForms.partner')}
               rules={[{ required: true, message: 'Vui lòng nhập tên đối tác' }]}
             >
-              <Input placeholder="Vd: Nguyen Van A..." />
+              <Input placeholder={t('debtForms.partnerPlaceholder')} />
             </Form.Item>
           </Col>
         </Row>
@@ -229,7 +231,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
           <Col xs={24} sm={12}>
             <Form.Item
               name="direction"
-              label="Chiều nợ"
+              label={t('debtForms.direction')}
               rules={[{ required: true, message: 'Vui lòng chọn chiều nợ' }]}
             >
               <Select options={FinancialDebtDirectionHelper.getOptions()} />
@@ -238,7 +240,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
           <Col xs={24} sm={12}>
             <Form.Item
               name="type"
-              label="Loại nợ"
+              label={t('debtForms.type')}
               rules={[{ required: true, message: 'Vui lòng chọn loại nợ' }]}
             >
               <Select options={FinancialDebtTypeHelper.getOptions()} />
@@ -250,7 +252,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
           <Col xs={24} sm={12}>
             <Form.Item
               name="originalAmount"
-              label="Số tiền ban đầu"
+              label={t('debtForms.originalAmount')}
               rules={[
                 { required: true, message: 'Vui lòng nhập số tiền' },
                 {
@@ -262,7 +264,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
             >
               <InputNumber
                 style={{ width: '100%' }}
-                placeholder="Nhập số tiền..."
+                placeholder={t('debtForms.amountPlaceholder')}
                 precision={2}
                 {...InputWithComma}
               />
@@ -271,12 +273,12 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
           <Col xs={24} sm={12}>
             <Form.Item
               name="walletId"
-              label="Ví liên quan (không bắt buộc)"
+              label={t('debtForms.relatedWallet')}
               tooltip="Bỏ trống nếu chỉ muốn ghi sổ, không thay đổi số dư ví nào."
             >
               <Select
                 allowClear
-                placeholder="Không dùng ví (chỉ ghi sổ)"
+                placeholder={t('debtForms.walletBookOnly')}
                 loading={isLoadingWallets}
                 options={walletOptions}
               />
@@ -288,7 +290,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
           <Col xs={24} sm={12}>
             <Form.Item
               name="startDate"
-              label="Ngày bắt đầu"
+              label={t('debtForms.startDate')}
               rules={[
                 { required: true, message: 'Vui lòng chọn ngày bắt đầu' },
               ]}
@@ -303,7 +305,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
           <Col xs={24} sm={12}>
             <Form.Item
               name="dueDate"
-              label="Hạn trả (nếu có)"
+              label={t('debtForms.dueDate')}
               dependencies={['startDate']}
               rules={[
                 ({ getFieldValue }) => ({
@@ -323,8 +325,8 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
           </Col>
         </Row>
 
-        <Form.Item name="description" label="Ghi chú / Mô tả">
-          <Input.TextArea rows={3} placeholder="Mô tả chi tiết khoản nợ..." />
+        <Form.Item name="description" label={t('debtForms.note')}>
+          <Input.TextArea rows={3} placeholder={t('debtForms.notePlaceholder')} />
         </Form.Item>
       </Form>
     </Modal>

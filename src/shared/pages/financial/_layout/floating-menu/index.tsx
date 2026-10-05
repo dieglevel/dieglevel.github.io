@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Grid } from 'antd'
+import { useTranslation } from 'react-i18next'
 import type { Variants } from 'motion/react'
 
 import type { AppMenuItem } from '@/shared/common/menu'
@@ -40,6 +41,8 @@ const itemVariants: Variants = {
 }
 
 export default function FloatingMenu() {
+  const { t } = useTranslation()
+
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
@@ -150,7 +153,7 @@ export default function FloatingMenu() {
                         transition: 'all 0.2s ease',
                       }}
                     >
-                      {menu.label}
+                      {t(menu.label)}
                     </span>
 
                     {/* Icon Button */}

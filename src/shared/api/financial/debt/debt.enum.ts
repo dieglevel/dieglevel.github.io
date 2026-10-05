@@ -19,8 +19,8 @@ class FinancialDebtDirectionHelperImpl extends BaseEnumHelper<FINANCIAL_DEBT_DIR
   }
 
   protected readonly labelMap: Record<FINANCIAL_DEBT_DIRECTION_ENUM, string> = {
-    [FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING]: 'Cho vay (Nợ phải thu)',
-    [FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING]: 'Đi vay (Nợ phải trả)',
+    [FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING]: 'enum.debt.direction.incoming',
+    [FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING]: 'enum.debt.direction.outgoing',
   }
 }
 
@@ -50,10 +50,10 @@ class FinancialDebtStatusHelperImpl extends BaseEnumHelper<FINANCIAL_DEBT_STATUS
   }
 
   protected readonly labelMap: Record<FINANCIAL_DEBT_STATUS_ENUM, string> = {
-    [FINANCIAL_DEBT_STATUS_ENUM.ACTIVE]: 'Đang nợ',
-    [FINANCIAL_DEBT_STATUS_ENUM.PAID_OFF]: 'Đã trả xong',
-    [FINANCIAL_DEBT_STATUS_ENUM.SETTLED]: 'Đã tất toán',
-    [FINANCIAL_DEBT_STATUS_ENUM.CANCELLED]: 'Đã hủy',
+    [FINANCIAL_DEBT_STATUS_ENUM.ACTIVE]: 'enum.debt.status.active',
+    [FINANCIAL_DEBT_STATUS_ENUM.PAID_OFF]: 'enum.debt.status.paidOff',
+    [FINANCIAL_DEBT_STATUS_ENUM.SETTLED]: 'enum.debt.status.settled',
+    [FINANCIAL_DEBT_STATUS_ENUM.CANCELLED]: 'enum.debt.status.cancelled',
   }
 }
 
@@ -90,11 +90,12 @@ class FinancialDebtHistoryTypeHelperImpl extends BaseEnumHelper<FINANCIAL_DEBT_H
     FINANCIAL_DEBT_HISTORY_TYPE_ENUM,
     string
   > = {
-    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.CREATED]: 'Tạo khoản nợ',
-    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.PAYMENT]: 'Thanh toán',
-    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.ADJUSTMENT]: 'Điều chỉnh số dư',
-    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.SETTLED]: 'Tất toán',
-    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.CANCELLED]: 'Hủy khoản nợ',
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.CREATED]: 'enum.debt.history.created',
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.PAYMENT]: 'enum.debt.history.payment',
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.ADJUSTMENT]:
+      'enum.debt.history.adjustment',
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.SETTLED]: 'enum.debt.history.settled',
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.CANCELLED]: 'enum.debt.history.cancelled',
   }
 }
 
@@ -124,10 +125,10 @@ class FinancialDebtTypeHelperImpl extends BaseEnumHelper<FINANCIAL_DEBT_TYPE_ENU
   }
 
   protected readonly labelMap: Record<FINANCIAL_DEBT_TYPE_ENUM, string> = {
-    [FINANCIAL_DEBT_TYPE_ENUM.LOAN]: 'Khoản vay',
-    [FINANCIAL_DEBT_TYPE_ENUM.CREDIT_CARD]: 'Thẻ tín dụng',
-    [FINANCIAL_DEBT_TYPE_ENUM.MORTGAGE]: 'Vay thế chấp',
-    [FINANCIAL_DEBT_TYPE_ENUM.OTHER]: 'Khác',
+    [FINANCIAL_DEBT_TYPE_ENUM.LOAN]: 'enum.debt.type.loan',
+    [FINANCIAL_DEBT_TYPE_ENUM.CREDIT_CARD]: 'enum.debt.type.creditCard',
+    [FINANCIAL_DEBT_TYPE_ENUM.MORTGAGE]: 'enum.debt.type.mortgage',
+    [FINANCIAL_DEBT_TYPE_ENUM.OTHER]: 'enum.debt.type.other',
   }
 }
 

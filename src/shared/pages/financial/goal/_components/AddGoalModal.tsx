@@ -22,6 +22,7 @@ import {
   FINANCIAL_GOAL_TYPE,
 } from '@/shared/api/financial/goal/goal.enum'
 import { useMutationGoal } from '@/shared/api/financial/goal/goal.mutation'
+import { useTranslation } from 'react-i18next'
 
 const { Text } = Typography
 
@@ -62,6 +63,7 @@ export function AddGoalModal({
   initialValues,
   onClose,
 }: AddGoalModalProps) {
+  const { t } = useTranslation('finance')
   const [form] = Form.useForm()
   const { mGoal_Create, mGoal_Update } = useMutationGoal()
   const isEditing = !!initialValues?.id
@@ -123,7 +125,7 @@ export function AddGoalModal({
           },
           {
             onSuccess: () => {
-              message.success('Cập nhật mục tiêu thành công!')
+              message.success(t('goal.updateSuccess'))
               onClose()
             },
           },
@@ -133,7 +135,7 @@ export function AddGoalModal({
           { body: payload },
           {
             onSuccess: () => {
-              message.success('Tạo mục tiêu mới thành công!')
+              message.success(t('goal.addSuccess'))
               form.resetFields()
               onClose()
             },
@@ -149,15 +151,15 @@ export function AddGoalModal({
     <Modal
       title={
         <div style={{ fontSize: 16, fontWeight: 600 }}>
-          {isEditing ? '✏️ Chỉnh sửa Mục tiêu' : '🎯 Thêm Mục tiêu Mới'}
+          {isEditing ? t('common.edit') : t('goal.add')}
         </div>
       }
       open={open}
       onCancel={onClose}
       onOk={handleSubmit}
       confirmLoading={isSubmitting}
-      okText={isEditing ? 'Lưu thay đổi' : 'Tạo mục tiêu'}
-      cancelText="Hủy"
+      okText={isEditing ? t('common.save') : t('goal.add')}
+      cancelText={t('common.cancel')}
       width={650}
       centered
       destroyOnHidden
@@ -174,7 +176,7 @@ export function AddGoalModal({
           <Col xs={24} sm={14}>
             <Form.Item
               name="name"
-              label={<Text strong>Tên mục tiêu</Text>}
+              label={<Text strong>{t('goal.name')}</Text>}
               rules={[
                 { required: true, message: 'Vui lòng nhập tên mục tiêu!' },
               ]}
@@ -186,9 +188,9 @@ export function AddGoalModal({
             </Form.Item>
           </Col>
           <Col xs={24} sm={10}>
-            <Form.Item name="type" label={<Text strong>Phân loại</Text>}>
+            <Form.Item name="type" label={<Text strong>{t('goal.type')}</Text>}>
               <Select
-                placeholder="Chọn loại mục tiêu"
+                placeholder={t('goal.selectType')}
                 options={TYPE_OPTIONS}
                 allowClear
               />
@@ -201,7 +203,7 @@ export function AddGoalModal({
           <Col xs={24} sm={8}>
             <Form.Item
               name="targetAmount"
-              label={<Text strong>Mục tiêu cần đạt</Text>}
+              label={<Text strong>{t('goal.target')}</Text>}
               rules={[
                 { required: true, message: 'Nhập số tiền!' },
                 { type: 'number', min: 1, message: 'Tối thiểu 1' },
@@ -222,13 +224,13 @@ export function AddGoalModal({
           <Col xs={24} sm={8}>
             <Form.Item
               name="deadline"
-              label={<Text strong>Hạn chót (Deadline)</Text>}
+              label={<Text strong>{t('goal.deadline')}</Text>}
               rules={[{ required: true, message: 'Chọn ngày hạn chót!' }]}
             >
               <DatePicker
                 style={{ width: '100%' }}
                 format="DD/MM/YYYY"
-                placeholder="Chọn ngày"
+                placeholder={t('goal.selectDate')}
                 disabledDate={(current) => current < dayjs().startOf('day')}
               />
             </Form.Item>
@@ -236,7 +238,7 @@ export function AddGoalModal({
           <Col xs={24} sm={8}>
             <Form.Item
               name="status"
-              label={<Text strong>Trạng thái</Text>}
+              label={<Text strong>{t('goal.status')}</Text>}
               rules={[{ required: true, message: 'Chọn trạng thái!' }]}
             >
               <Select options={STATUS_OPTIONS} />
@@ -253,7 +255,7 @@ export function AddGoalModal({
 
         <Form.Item
           name="savingMode"
-          label={<Text strong>Chế độ tích lũy</Text>}
+          label={<Text strong>{t('goal.savingMode')}</Text>}
           rules={[
             { required: true, message: 'Vui lòng chọn hình thức tích lũy!' },
           ]}
@@ -267,7 +269,7 @@ export function AddGoalModal({
             <Col xs={24} sm={12}>
               <Form.Item
                 name="autoContributionAmount"
-                label="Số tiền trích tự động"
+                label={t('goal.autoContribution')}
                 rules={[
                   { required: true, message: 'Nhập số tiền trích!' },
                   { type: 'number', min: 1, message: 'Tối thiểu 1' },
@@ -288,7 +290,7 @@ export function AddGoalModal({
             <Col xs={24} sm={12}>
               <Form.Item
                 name="autoContributionDay"
-                label="Ngày trích hàng tháng (1 - 31)"
+                label={t('goal.contributionDay')}
                 rules={[
                   { required: true, message: 'Chọn ngày trích!' },
                   {
@@ -313,7 +315,7 @@ export function AddGoalModal({
         {/* Image & Lock Options */}
         <Row gutter={16}>
           <Col xs={24} sm={12}>
-            <Form.Item name="imageUrl" label="URL Ảnh minh họa">
+            <Form.Item name="imageUrl" label={t('goal.imageUrl')}>
               <Input placeholder="https://example.com/image.jpg" type="url" />
             </Form.Item>
           </Col>
@@ -339,7 +341,7 @@ export function AddGoalModal({
           <Col xs={24} sm={18}>
             <Form.Item
               name="isLocked"
-              label="Khóa rút tiền"
+              label={t('goal.locked', { defaultValue: 'Lock withdrawals' })}
               valuePropName="checked"
             >
               <Switch
@@ -354,7 +356,7 @@ export function AddGoalModal({
         {/* Description */}
         <Form.Item
           name="description"
-          label={<Text strong>Mô tả / Ghi chú</Text>}
+          label={<Text strong>{t('goal.description')} / {t('goal.note')}</Text>}
         >
           <Input.TextArea
             rows={2}

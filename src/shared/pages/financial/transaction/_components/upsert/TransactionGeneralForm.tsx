@@ -16,6 +16,7 @@ import {
   FINANCIAL_TRANSACTION_STATUS,
   FINANCIAL_TRANSACTION_TYPE,
 } from '@/shared/api/financial/transaction/transaction.enum'
+import { useTranslation } from 'react-i18next'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 
 const { Text } = Typography
@@ -39,15 +40,16 @@ export const TransactionGeneralForm: React.FC<TransactionGeneralFormProps> = ({
   isLoadingOriginal,
   onSelectOriginalTransaction,
 }) => {
+  const { t } = useTranslation('finance')
   const getWalletLabel = () => {
     switch (selectedType) {
       case FINANCIAL_TRANSACTION_TYPE.TRANSFER:
-        return 'Ví chuyển đi'
+        return t('wallet.from')
       case FINANCIAL_TRANSACTION_TYPE.REFUND:
       case FINANCIAL_TRANSACTION_TYPE.INCOME:
-        return 'Ví nhận tiền'
+        return t('wallet.to')
       default:
-        return 'Ví thanh toán'
+        return t('common.wallet')
     }
   }
 
@@ -62,11 +64,11 @@ export const TransactionGeneralForm: React.FC<TransactionGeneralFormProps> = ({
   }))
 
   return (
-    <Card title="Thông tin chung">
+    <Card title={t('common.description')}>
       {/* Chọn giao dịch gốc (bắt buộc khi REFUND) */}
       {selectedType === FINANCIAL_TRANSACTION_TYPE.REFUND && (
         <Form.Item
-          label="Giao dịch gốc cần hoàn"
+          label={t('transaction.detail')}
           name="originalTransactionId"
           rules={[
             {
@@ -76,7 +78,7 @@ export const TransactionGeneralForm: React.FC<TransactionGeneralFormProps> = ({
           ]}
         >
           <Select
-            placeholder="Chọn giao dịch gốc"
+            placeholder={t('transaction.detail')}
             allowClear
             loading={isLoadingOriginal}
             onChange={onSelectOriginalTransaction}
@@ -97,7 +99,7 @@ export const TransactionGeneralForm: React.FC<TransactionGeneralFormProps> = ({
         rules={[{ required: true, message: 'Vui lòng chọn ví' }]}
       >
         <Select
-          placeholder="Chọn ví"
+          placeholder={t('common.wallet')}
           loading={isLoadingWallets}
           options={walletOptions}
         />
@@ -106,7 +108,7 @@ export const TransactionGeneralForm: React.FC<TransactionGeneralFormProps> = ({
       {/* Ví nhận (dành riêng cho TRANSFER) */}
       {selectedType === FINANCIAL_TRANSACTION_TYPE.TRANSFER && (
         <Form.Item
-          label="Ví nhận tiền"
+          label={t('wallet.to')}
           name="toWalletId"
           rules={[
             { required: true, message: 'Vui lòng chọn ví nhận' },
@@ -122,7 +124,7 @@ export const TransactionGeneralForm: React.FC<TransactionGeneralFormProps> = ({
           ]}
         >
           <Select
-            placeholder="Chọn ví nhận tiền"
+            placeholder={t('wallet.to')}
             loading={isLoadingWallets}
             options={wallets?.map((w) => ({
               value: w.id,
@@ -140,7 +142,7 @@ export const TransactionGeneralForm: React.FC<TransactionGeneralFormProps> = ({
 
       {/* Mô tả tổng quan */}
       <Form.Item
-        label="Mô tả giao dịch"
+        label={t('common.description')}
         name="description"
         rules={[
           { required: true, message: 'Vui lòng nhập mô tả' },
@@ -152,7 +154,7 @@ export const TransactionGeneralForm: React.FC<TransactionGeneralFormProps> = ({
       >
         <Input
           disabled={selectedType === FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT}
-          placeholder="Mô tả tổng quan..."
+          placeholder={t('common.description')}
           maxLength={255}
         />
       </Form.Item>
@@ -161,7 +163,7 @@ export const TransactionGeneralForm: React.FC<TransactionGeneralFormProps> = ({
       <Row gutter={12}>
         <Col span={12}>
           <Form.Item
-            label="Ngày thực hiện"
+            label={t('common.date')}
             name="date"
             rules={[{ required: true, message: 'Chọn ngày' }]}
           >
@@ -170,7 +172,7 @@ export const TransactionGeneralForm: React.FC<TransactionGeneralFormProps> = ({
         </Col>
         <Col span={12}>
           <Form.Item
-            label="Trạng thái"
+            label={t('common.status')}
             name="status"
             rules={[{ required: true }]}
           >

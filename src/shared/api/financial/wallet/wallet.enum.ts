@@ -18,9 +18,9 @@ class FinancialWalletTypeHelperImpl extends BaseEnumHelper<FINANCIAL_WALLET_TYPE
   }
 
   protected readonly labelMap = {
-    [FINANCIAL_WALLET_TYPE.CASH]: 'Tiền mặt',
-    [FINANCIAL_WALLET_TYPE.BANK]: 'Ngân hàng',
-    [FINANCIAL_WALLET_TYPE.E_WALLET]: 'Ví điện tử',
+    [FINANCIAL_WALLET_TYPE.CASH]: 'enum.wallet.type.cash',
+    [FINANCIAL_WALLET_TYPE.BANK]: 'enum.wallet.type.bank',
+    [FINANCIAL_WALLET_TYPE.E_WALLET]: 'enum.wallet.type.eWallet',
   }
 }
 
@@ -48,9 +48,10 @@ class FinancialTransactionStatusHelperImpl extends BaseEnumHelper<FINANCIAL_TRAN
   }
 
   protected readonly labelMap = {
-    [FINANCIAL_TRANSACTION_STATUS.PENDING]: 'Đang xử lý',
-    [FINANCIAL_TRANSACTION_STATUS.COMPLETED]: 'Hoàn thành',
-    [FINANCIAL_TRANSACTION_STATUS.FAILED]: 'Thất bại',
+    [FINANCIAL_TRANSACTION_STATUS.PENDING]: 'enum.transaction.status.pending',
+    [FINANCIAL_TRANSACTION_STATUS.COMPLETED]:
+      'enum.transaction.status.completed',
+    [FINANCIAL_TRANSACTION_STATUS.FAILED]: 'enum.transaction.status.failed',
   }
 }
 
