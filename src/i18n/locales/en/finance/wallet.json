@@ -13,19 +13,19 @@
   "empty": "No wallets match the current filters",
   "from": "From Wallet",
   "to": "To Wallet",
-  "fee": "Transfer Fee"
-  ,"name": "Wallet name"
-  ,"typeLabel": "Wallet type"
-  ,"balance": "Current balance"
-  ,"color": "Wallet color"
-  ,"icon": "Icon"
-  ,"institution": "Bank / institution name"
-  ,"accountNumber": "Account number (masked)"
-  ,"creditLimit": "Credit limit"
-  ,"currentDebt": "Current debt"
-  ,"statementDay": "Statement day"
-  ,"dueDay": "Payment due day"
-  ,"apiKey": "API key"
-  ,"copy": "Copy"
-  ,"generate": "Generate API key"
+  "fee": "Transfer Fee",
+  "name": "Wallet name",
+  "typeLabel": "Wallet type",
+  "balance": "Current balance",
+  "color": "Wallet color",
+  "icon": "Icon",
+  "institution": "Bank / institution name",
+  "accountNumber": "Account number (masked)",
+  "creditLimit": "Credit limit",
+  "currentDebt": "Current debt",
+  "statementDay": "Statement day",
+  "dueDay": "Payment due day",
+  "apiKey": "API key",
+  "copy": "Copy",
+  "generate": "Generate API key"
 }

@@ -16,17 +16,17 @@
   "failed": "Thất bại",
   "searchPlaceholder": "Tìm kiếm giao dịch...",
   "detail": "Chi tiết giao dịch",
-  "advancedCreate": "Tạo giao dịch nâng cao"
-  ,"walletPayment": "Ví thanh toán"
-  ,"transactionDescription": "Mô tả giao dịch"
-  ,"merchant": "Đơn vị / cửa hàng"
-  ,"location": "Địa điểm"
-  ,"originalRefund": "Giao dịch gốc (chọn khi hoàn tiền)"
-  ,"selectWallet": "Chọn ví thanh toán"
-  ,"selectOriginal": "Chọn giao dịch gốc liên quan (nếu có)"
-  ,"details": "Chi tiết giao dịch"
-  ,"itemDescription": "Nội dung chi tiết"
-  ,"tags": "Thẻ"
-  ,"receipt": "Link ảnh hóa đơn"
-  ,"performedAt": "Ngày thực hiện"
+  "advancedCreate": "Tạo giao dịch nâng cao",
+  "walletPayment": "Ví thanh toán",
+  "transactionDescription": "Mô tả giao dịch",
+  "merchant": "Đơn vị / cửa hàng",
+  "location": "Địa điểm",
+  "originalRefund": "Giao dịch gốc (chọn khi hoàn tiền)",
+  "selectWallet": "Chọn ví thanh toán",
+  "selectOriginal": "Chọn giao dịch gốc liên quan (nếu có)",
+  "details": "Chi tiết giao dịch",
+  "itemDescription": "Nội dung chi tiết",
+  "tags": "Thẻ",
+  "receipt": "Link ảnh hóa đơn",
+  "performedAt": "Ngày thực hiện"
 }

@@ -170,7 +170,8 @@ export const WalletCard: React.FC<WalletCardProps> = ({
                       color: '#fff',
                     }}
                   >
-                    <LockOutlined style={{ marginRight: 2 }} /> {t('wallet.locked')}
+                    <LockOutlined style={{ marginRight: 2 }} />{' '}
+                    {t('wallet.locked')}
                   </Tag>
                 </Tooltip>
               )}

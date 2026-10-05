@@ -12,31 +12,31 @@
   "active": "Active",
   "completed": "Completed",
   "cancelled": "Cancelled",
-  "inactive": "Inactive"
-  ,"name": "Goal name"
-  ,"type": "Goal type"
-  ,"target": "Target amount"
-  ,"current": "Current amount"
-  ,"deadline": "Deadline"
-  ,"description": "Description"
-  ,"note": "Note"
-  ,"status": "Status"
-  ,"savingMode": "Savings mode"
-  ,"autoContribution": "Automatic contribution"
-  ,"contributionDay": "Monthly contribution day (1 - 31)"
-  ,"imageUrl": "Image URL"
-  ,"selectType": "Select goal type"
-  ,"selectDate": "Select date"
-  ,"addSuccess": "Goal created successfully!"
-  ,"updateSuccess": "Goal updated successfully!"
-  ,"saveSuccess": "Contribution recorded successfully!"
-  ,"completeSuccess": "Savings goal completed."
-  ,"cancelSuccess": "Goal cancelled."
-  ,"error": "Unable to complete the operation."
-  ,"deleteTitle": "Delete goal"
-  ,"deleteDescription": "Are you sure you want to delete this goal?"
-  ,"remaining": "Remaining {{amount}}"
-  ,"achieved": "Goal achieved!"
-  ,"daysRemaining": "{{days}} days remaining"
-  ,"overdue": "Overdue"
+  "inactive": "Inactive",
+  "name": "Goal name",
+  "type": "Goal type",
+  "target": "Target amount",
+  "current": "Current amount",
+  "deadline": "Deadline",
+  "description": "Description",
+  "note": "Note",
+  "status": "Status",
+  "savingMode": "Savings mode",
+  "autoContribution": "Automatic contribution",
+  "contributionDay": "Monthly contribution day (1 - 31)",
+  "imageUrl": "Image URL",
+  "selectType": "Select goal type",
+  "selectDate": "Select date",
+  "addSuccess": "Goal created successfully!",
+  "updateSuccess": "Goal updated successfully!",
+  "saveSuccess": "Contribution recorded successfully!",
+  "completeSuccess": "Savings goal completed.",
+  "cancelSuccess": "Goal cancelled.",
+  "error": "Unable to complete the operation.",
+  "deleteTitle": "Delete goal",
+  "deleteDescription": "Are you sure you want to delete this goal?",
+  "remaining": "Remaining {{amount}}",
+  "achieved": "Goal achieved!",
+  "daysRemaining": "{{days}} days remaining",
+  "overdue": "Overdue"
 }

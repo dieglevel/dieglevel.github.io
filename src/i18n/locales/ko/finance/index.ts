@@ -7,4 +7,13 @@ import transaction from './transaction.json'
 import wallet from './wallet.json'
 import debtForms from './debtForms.json'
 
-export default { common, category, debt, debtForms, goal, recurring, transaction, wallet }
+export default {
+  common,
+  category,
+  debt,
+  debtForms,
+  goal,
+  recurring,
+  transaction,
+  wallet,
+}

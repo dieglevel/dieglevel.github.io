@@ -12,31 +12,31 @@
   "active": "Đang thực hiện",
   "completed": "Hoàn thành",
   "cancelled": "Đã hủy",
-  "inactive": "Không hoạt động"
-  ,"name": "Tên mục tiêu"
-  ,"type": "Loại mục tiêu"
-  ,"target": "Số tiền mục tiêu"
-  ,"current": "Số tiền hiện có"
-  ,"deadline": "Hạn chót"
-  ,"description": "Mô tả"
-  ,"note": "Ghi chú"
-  ,"status": "Trạng thái"
-  ,"savingMode": "Chế độ tích lũy"
-  ,"autoContribution": "Số tiền trích tự động"
-  ,"contributionDay": "Ngày trích hàng tháng (1 - 31)"
-  ,"imageUrl": "URL ảnh"
-  ,"selectType": "Chọn loại mục tiêu"
-  ,"selectDate": "Chọn ngày"
-  ,"addSuccess": "Tạo mục tiêu thành công!"
-  ,"updateSuccess": "Cập nhật mục tiêu thành công!"
-  ,"saveSuccess": "Đã ghi nhận khoản tích lũy!"
-  ,"completeSuccess": "Đã hoàn thành mục tiêu tích lũy."
-  ,"cancelSuccess": "Đã hủy mục tiêu."
-  ,"error": "Không thể thực hiện thao tác."
-  ,"deleteTitle": "Xóa mục tiêu"
-  ,"deleteDescription": "Bạn có chắc chắn muốn xóa mục tiêu này?"
-  ,"remaining": "Còn {{amount}}"
-  ,"achieved": "Đã đạt mục tiêu!"
-  ,"daysRemaining": "Còn {{days}} ngày"
-  ,"overdue": "Quá hạn"
+  "inactive": "Không hoạt động",
+  "name": "Tên mục tiêu",
+  "type": "Loại mục tiêu",
+  "target": "Số tiền mục tiêu",
+  "current": "Số tiền hiện có",
+  "deadline": "Hạn chót",
+  "description": "Mô tả",
+  "note": "Ghi chú",
+  "status": "Trạng thái",
+  "savingMode": "Chế độ tích lũy",
+  "autoContribution": "Số tiền trích tự động",
+  "contributionDay": "Ngày trích hàng tháng (1 - 31)",
+  "imageUrl": "URL ảnh",
+  "selectType": "Chọn loại mục tiêu",
+  "selectDate": "Chọn ngày",
+  "addSuccess": "Tạo mục tiêu thành công!",
+  "updateSuccess": "Cập nhật mục tiêu thành công!",
+  "saveSuccess": "Đã ghi nhận khoản tích lũy!",
+  "completeSuccess": "Đã hoàn thành mục tiêu tích lũy.",
+  "cancelSuccess": "Đã hủy mục tiêu.",
+  "error": "Không thể thực hiện thao tác.",
+  "deleteTitle": "Xóa mục tiêu",
+  "deleteDescription": "Bạn có chắc chắn muốn xóa mục tiêu này?",
+  "remaining": "Còn {{amount}}",
+  "achieved": "Đã đạt mục tiêu!",
+  "daysRemaining": "Còn {{days}} ngày",
+  "overdue": "Quá hạn"
 }

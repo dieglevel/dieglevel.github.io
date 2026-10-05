@@ -28,8 +28,7 @@ class FinancialTransactionTypeHelperImpl extends BaseEnumHelper<FINANCIAL_TRANSA
     [FINANCIAL_TRANSACTION_TYPE.EXPENSE]: 'enum.transaction.type.expense',
     [FINANCIAL_TRANSACTION_TYPE.INCOME]: 'enum.transaction.type.income',
     [FINANCIAL_TRANSACTION_TYPE.REFUND]: 'enum.transaction.type.refund',
-    [FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT]:
-      'enum.transaction.type.adjustment',
+    [FINANCIAL_TRANSACTION_TYPE.ADJUSTMENT]: 'enum.transaction.type.adjustment',
     [FINANCIAL_TRANSACTION_TYPE.TRANSFER]: 'enum.transaction.type.transfer',
   }
 }

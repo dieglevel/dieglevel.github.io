@@ -16,17 +16,17 @@
   "failed": "Failed",
   "searchPlaceholder": "Search transactions...",
   "detail": "Transaction Details",
-  "advancedCreate": "Create Advanced Transaction"
-  ,"walletPayment": "Payment wallet"
-  ,"transactionDescription": "Transaction description"
-  ,"merchant": "Merchant / store"
-  ,"location": "Location"
-  ,"originalRefund": "Original transaction (for refunds)"
-  ,"selectWallet": "Select payment wallet"
-  ,"selectOriginal": "Select related original transaction (optional)"
-  ,"details": "Transaction details"
-  ,"itemDescription": "Item description"
-  ,"tags": "Tags"
-  ,"receipt": "Receipt image link"
-  ,"performedAt": "Transaction date"
+  "advancedCreate": "Create Advanced Transaction",
+  "walletPayment": "Payment wallet",
+  "transactionDescription": "Transaction description",
+  "merchant": "Merchant / store",
+  "location": "Location",
+  "originalRefund": "Original transaction (for refunds)",
+  "selectWallet": "Select payment wallet",
+  "selectOriginal": "Select related original transaction (optional)",
+  "details": "Transaction details",
+  "itemDescription": "Item description",
+  "tags": "Tags",
+  "receipt": "Receipt image link",
+  "performedAt": "Transaction date"
 }

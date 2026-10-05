@@ -22,11 +22,75 @@
   "loading": "불러오는 중...",
   "noData": "데이터가 없습니다",
   "enum": {
-    "category": { "type": { "income": "수입", "expense": "지출", "transfer": "이체" }, "spendingNature": { "essential": "필수 지출", "flexible": "선택 지출" } },
-    "debt": { "direction": { "incoming": "대여 (받을 돈)", "outgoing": "차입 (갚을 돈)" }, "status": { "active": "미상환", "paidOff": "상환 완료", "settled": "정산 완료", "cancelled": "취소됨" }, "history": { "created": "부채 생성", "payment": "상환", "adjustment": "잔액 조정", "settled": "정산 완료", "cancelled": "부채 취소" }, "type": { "loan": "대출", "creditCard": "신용카드", "mortgage": "담보 대출", "other": "기타" } },
-    "goal": { "type": { "saving": "저축", "investment": "투자", "debtPayment": "부채 상환", "emergency": "비상금", "other": "기타" }, "savingMode": { "manual": "수동", "auto": "자동 저축" }, "status": { "active": "진행 중", "completed": "완료", "cancelled": "취소됨", "inactive": "일시 중지" }, "historySource": { "user": "사용자", "system": "자동 시스템" }, "historyStatus": { "pending": "입금 대기", "completed": "완료", "skipped": "건너뜀" } },
-    "transaction": { "type": { "expense": "지출", "income": "수입", "refund": "환불", "adjustment": "잔액 조정", "transfer": "이체" }, "status": { "pending": "처리 중", "completed": "완료", "failed": "실패" } },
-    "wallet": { "type": { "cash": "현금", "bank": "은행", "eWallet": "전자지갑" } },
-    "setting": { "themeMode": { "light": "라이트", "dark": "다크" }, "theme": { "huTao": "호두" }, "language": { "en": "English", "ko": "한국어", "vn": "베트남어" }, "currency": { "usd": "USD ($)", "krw": "KRW (₩)", "vnd": "VND (₫)" } }
+    "category": {
+      "type": { "income": "수입", "expense": "지출", "transfer": "이체" },
+      "spendingNature": { "essential": "필수 지출", "flexible": "선택 지출" }
+    },
+    "debt": {
+      "direction": {
+        "incoming": "대여 (받을 돈)",
+        "outgoing": "차입 (갚을 돈)"
+      },
+      "status": {
+        "active": "미상환",
+        "paidOff": "상환 완료",
+        "settled": "정산 완료",
+        "cancelled": "취소됨"
+      },
+      "history": {
+        "created": "부채 생성",
+        "payment": "상환",
+        "adjustment": "잔액 조정",
+        "settled": "정산 완료",
+        "cancelled": "부채 취소"
+      },
+      "type": {
+        "loan": "대출",
+        "creditCard": "신용카드",
+        "mortgage": "담보 대출",
+        "other": "기타"
+      }
+    },
+    "goal": {
+      "type": {
+        "saving": "저축",
+        "investment": "투자",
+        "debtPayment": "부채 상환",
+        "emergency": "비상금",
+        "other": "기타"
+      },
+      "savingMode": { "manual": "수동", "auto": "자동 저축" },
+      "status": {
+        "active": "진행 중",
+        "completed": "완료",
+        "cancelled": "취소됨",
+        "inactive": "일시 중지"
+      },
+      "historySource": { "user": "사용자", "system": "자동 시스템" },
+      "historyStatus": {
+        "pending": "입금 대기",
+        "completed": "완료",
+        "skipped": "건너뜀"
+      }
+    },
+    "transaction": {
+      "type": {
+        "expense": "지출",
+        "income": "수입",
+        "refund": "환불",
+        "adjustment": "잔액 조정",
+        "transfer": "이체"
+      },
+      "status": { "pending": "처리 중", "completed": "완료", "failed": "실패" }
+    },
+    "wallet": {
+      "type": { "cash": "현금", "bank": "은행", "eWallet": "전자지갑" }
+    },
+    "setting": {
+      "themeMode": { "light": "라이트", "dark": "다크" },
+      "theme": { "huTao": "호두" },
+      "language": { "en": "English", "ko": "한국어", "vn": "베트남어" },
+      "currency": { "usd": "USD ($)", "krw": "KRW (₩)", "vnd": "VND (₫)" }
+    }
   }
 }
