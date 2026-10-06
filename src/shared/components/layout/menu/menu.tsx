@@ -10,6 +10,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
+import { ToggleThemeMode } from '../../toggle-mode'
 import type { MenuProps } from 'antd'
 
 import type { AppMenuItem } from '@/shared/common/menu'
@@ -258,7 +259,7 @@ export default function Menu() {
           backgroundColor: isChildSelected
             ? colors.primary.base
             : 'transparent',
-          color: isChildSelected ? '#ffffff' : colors.primary.soft,
+          color: isChildSelected ? '#ffffff' : colors.primary.base,
           transition: 'background-color 0.2s ease',
         }}
       >
@@ -546,6 +547,7 @@ export default function Menu() {
           {/* Right Section */}
           {screen.md ? (
             <>
+              <ToggleThemeMode />
               {isAuthenticated ? (
                 <Flex align="center" gap={12} style={{ flexShrink: 0 }}>
                   <Dropdown

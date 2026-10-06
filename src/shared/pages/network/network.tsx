@@ -15,19 +15,24 @@ import {
   WifiIcon,
   WifiOffIcon,
 } from 'lucide-react'
+import { useThemeMode } from '@/shared/provider/antd-theme.provider'
 
 const { Title, Text } = Typography
 
 // ====== PALETTE (đồng bộ theme Blossom) ======
-const C = {
-  bg: '#3D1F10',
-  accent: '#B74C36',
-  ok: '#4CAF50',
-  warn: '#E9A23B',
-  bad: '#D64545',
-  card: '#FFF8F3',
-  border: 'rgba(183, 76, 54, 0.25)',
-  textDim: 'rgba(61, 31, 16, 0.55)',
+
+const colorMode = (mode: 'light' | 'dark') => {
+  const isDark = mode === 'dark'
+  return {
+    bg: isDark ? '#fff' : '#000',
+    accent: isDark ? '#7c3aed' : '#8b5cf6',
+    card: isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)',
+    border: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)',
+    textDim: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)',
+    ok: '#22c55e',
+    warn: '#facc15',
+    bad: '#d64545',
+  }
 }
 
 // Bitrate mặc định Moonlight
@@ -102,7 +107,14 @@ const fmtTime = (t: number) =>
   new Date(t).toLocaleTimeString('vi-VN', { hour12: false })
 
 // ====== CHART SVG THUẦN: latency theo thời gian ======
-function LatencyChart({ samples }: { samples: Array<Sample> }) {
+function LatencyChart({
+  samples,
+  mode,
+}: {
+  samples: Array<Sample>
+  mode: 'light' | 'dark'
+}) {
+  const C = colorMode(mode)
   const W = 640
   const H = 180
   const PAD = { top: 12, right: 12, bottom: 24, left: 40 }
@@ -224,6 +236,9 @@ function LatencyChart({ samples }: { samples: Array<Sample> }) {
 }
 
 export default function NetworkMonitorPage() {
+  const { mode } = useThemeMode()
+  const C = colorMode(mode)
+
   const [host, setHost] = useState('')
   const [port, setPort] = useState<number>(47989)
   const [monitoring, setMonitoring] = useState(false)
@@ -622,7 +637,7 @@ export default function NetworkMonitorPage() {
             </span>
           </Flex>
         </Flex>
-        <LatencyChart samples={samples} />
+        <LatencyChart samples={samples} mode={mode} />
       </div>
 
       <Alert

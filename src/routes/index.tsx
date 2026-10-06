@@ -1,7 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { LanguageEnum } from '@/i18n/enum'
 import { StaffOfHoma } from '@/shared/components/staff-of-homa/staff-of-homa'
 import { useAuthStore } from '@/shared/auth/auth.store'
 import { AuthTokenService } from '@/shared/auth/authToken.service'
+import {
+  LOCAL_STORAGE_KEY,
+  LocalStorageService,
+} from '@/shared/lib/service/local-storage'
 
 type RouteSearch = {
   selectedMenu?: '' | 'login' | 'register'
@@ -21,7 +26,7 @@ export const Route = createFileRoute('/')({
     ) {
       return {
         ...search,
-        selectedMenu: '',
+        selectedMenu: undefined,
       }
     }
 
@@ -38,6 +43,14 @@ export const Route = createFileRoute('/')({
       user: loadToken?.user || null,
       isAuthenticated: !!loadToken,
     })
+
+    const language = LocalStorageService.get<LanguageEnum>(
+      LOCAL_STORAGE_KEY.LANGUAGE,
+    )
+
+    if (language) {
+      LocalStorageService.set(LOCAL_STORAGE_KEY.LANGUAGE, LanguageEnum.EN)
+    }
   },
 })
 
