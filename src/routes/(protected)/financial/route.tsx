@@ -2,6 +2,7 @@ import { Outlet, createFileRoute } from '@tanstack/react-router'
 
 import { Flex } from 'antd'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '@/shared/auth/auth.store'
 import { LoginComponent } from '@/routes/(public)/(empty-layout)/login'
 import WalletLayout from '@/shared/pages/financial/_layout'
@@ -23,11 +24,13 @@ export const Route = createFileRoute('/(protected)/financial')({
 export function RouteComponent() {
   const { data } = useGetFinance_Setting_Get({})
   const { setMode } = useThemeMode()
+  const { i18n } = useTranslation()
 
   useEffect(() => {
     if (data?.data) {
       useSettingStore.getState().set(data.data)
       setMode(data.data.themeMode)
+      i18n.changeLanguage(data.data.language)
     }
   }, [data])
 
