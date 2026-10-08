@@ -6,7 +6,8 @@
     "thisMonth": "Tháng này",
     "thisYear": "Năm nay",
     "allWallets": "Tất cả ví",
-    "newTransaction": "Giao dịch mới"
+    "newTransaction": "Giao dịch mới",
+    "cycleDayNotice": "Chu kỳ từ ngày {{day}}"
   },
   "summary": {
     "totalIncome": "Tổng thu nhập",
@@ -21,11 +22,19 @@
     "title": "Biểu đồ dòng tiền thu / chi",
     "empty": "Chưa có dữ liệu giao dịch",
     "income": "Thu nhập",
-    "expense": "Chi tiêu"
+    "expense": "Chi tiêu",
+    "net": "Dòng tiền ròng",
+    "viewAll": "Thu & Chi",
+    "viewNet": "Dòng ròng",
+    "totalPeriodIncome": "Tổng thu",
+    "totalPeriodExpense": "Tổng chi"
   },
   "categoryBreakdown": {
     "title": "Cơ cấu chi tiêu",
-    "empty": "Chưa có dữ liệu chi tiêu"
+    "empty": "Chưa có dữ liệu chi tiêu",
+    "totalSpent": "Tổng chi tiêu",
+    "countCategories": "danh mục",
+    "uncategorized": "Chưa phân loại"
   },
   "wallets": {
     "title": "Danh sách ví tài chính",
@@ -39,5 +48,25 @@
     "empty": "Chưa có giao dịch nào",
     "defaultDescription": "Giao dịch",
     "defaultWallet": "Ví"
+  },
+  "goals": {
+    "title": "Mục tiêu tài chính",
+    "manage": "Quản lý mục tiêu",
+    "empty": "Chưa có mục tiêu nào được tạo",
+    "createGoal": "Tạo mục tiêu",
+    "target": "Mục tiêu",
+    "saved": "Đã tích lũy",
+    "deadline": "Hạn chót"
+  },
+  "debts": {
+    "title": "Quản lý Vay & Nợ",
+    "manage": "Xem chi tiết",
+    "empty": "Không có khoản vay/nợ nào",
+    "createDebt": "Thêm khoản nợ",
+    "borrow": "Đi vay",
+    "lend": "Cho vay",
+    "paid": "Đã trả",
+    "remaining": "Còn lại",
+    "dueDate": "Hạn trả"
   }
 }

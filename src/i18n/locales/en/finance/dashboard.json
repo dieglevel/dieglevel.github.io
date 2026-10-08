@@ -6,7 +6,8 @@
     "thisMonth": "This month",
     "thisYear": "This year",
     "allWallets": "All wallets",
-    "newTransaction": "New transaction"
+    "newTransaction": "New transaction",
+    "cycleDayNotice": "Cycle starts day {{day}}"
   },
   "summary": {
     "totalIncome": "Total Income",
@@ -21,11 +22,19 @@
     "title": "Cash Flow In / Out",
     "empty": "No transaction data",
     "income": "Income",
-    "expense": "Expenses"
+    "expense": "Expenses",
+    "net": "Net Flow",
+    "viewAll": "In & Out",
+    "viewNet": "Net Only",
+    "totalPeriodIncome": "Total In",
+    "totalPeriodExpense": "Total Out"
   },
   "categoryBreakdown": {
     "title": "Spending Breakdown",
-    "empty": "No spending data"
+    "empty": "No spending data",
+    "totalSpent": "Total Spent",
+    "countCategories": "categories",
+    "uncategorized": "Uncategorized"
   },
   "wallets": {
     "title": "Financial Wallets",
@@ -39,5 +48,25 @@
     "empty": "No transactions",
     "defaultDescription": "Transaction",
     "defaultWallet": "Wallet"
+  },
+  "goals": {
+    "title": "Financial Goals",
+    "manage": "Manage goals",
+    "empty": "No financial goals created yet",
+    "createGoal": "Create Goal",
+    "target": "Target",
+    "saved": "Saved",
+    "deadline": "Deadline"
+  },
+  "debts": {
+    "title": "Loans & Debts",
+    "manage": "View details",
+    "empty": "No active loans or debts",
+    "createDebt": "Add Debt",
+    "borrow": "Borrowing",
+    "lend": "Lending",
+    "paid": "Paid",
+    "remaining": "Remaining",
+    "dueDate": "Due date"
   }
 }

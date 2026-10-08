@@ -1,12 +1,12 @@
 import React from 'react'
-import { Button, Select, Space, Typography } from 'antd'
+import { Button, Select, Space, Tag, Typography } from 'antd'
 import { useTranslation } from 'react-i18next'
-import { PlusCircle } from 'lucide-react'
+import { Calendar, PlusCircle } from 'lucide-react'
+import dayjs from 'dayjs'
 import type { WalletOverviewItem } from '@/shared/api/financial/dashboard/dashboard.type'
 import { DashboardTimeFrame } from '@/shared/api/financial/dashboard/dashboard.type'
 import { useThemeMode } from '@/shared/provider/antd-theme.provider'
 import { getTokens } from '@/shared/common/design-token'
-// Chỉnh lại đường dẫn import cho đúng với project của bạn
 
 const { Title, Text } = Typography
 
@@ -16,6 +16,11 @@ interface DashboardHeaderProps {
   selectedWalletId?: number
   setSelectedWalletId: (id?: number) => void
   wallets: Array<WalletOverviewItem>
+  period?: {
+    startDate: string
+    endDate: string
+    cycleStartDate: number
+  }
   onNavigateToCreateTransaction: () => void
 }
 
@@ -25,17 +30,23 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   selectedWalletId,
   setSelectedWalletId,
   wallets,
+  period,
   onNavigateToCreateTransaction,
 }) => {
   const { t } = useTranslation('dashboard')
   const { mode } = useThemeMode()
-  const { border, state, shadow, radius } = getTokens(mode)
+  const { border, state, shadow, radius, colors } = getTokens(mode)
 
   const timeFrames = [
     { key: DashboardTimeFrame.WEEKLY, label: t('header.thisWeek') },
     { key: DashboardTimeFrame.MONTHLY, label: t('header.thisMonth') },
     { key: DashboardTimeFrame.YEARLY, label: t('header.thisYear') },
   ]
+
+  const showCycleBadge =
+    timeFrame === DashboardTimeFrame.MONTHLY &&
+    period?.startDate &&
+    period?.endDate
 
   return (
     <div
@@ -51,9 +62,31 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       }}
     >
       <div>
-        <Title level={3} style={{ margin: 0, fontWeight: 700 }}>
-          {t('header.title')}
-        </Title>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <Title level={3} style={{ margin: 0, fontWeight: 700 }}>
+            {t('header.title')}
+          </Title>
+          {showCycleBadge && (
+            <Tag
+              color="processing"
+              style={{
+                borderRadius: radius.sm,
+                margin: 0,
+                fontSize: 12,
+                fontWeight: 600,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 5,
+                padding: '2px 8px',
+              }}
+            >
+              <Calendar size={13} />
+              {period.cycleStartDate > 1
+                ? `${t('header.cycleDayNotice', { day: period.cycleStartDate })} (${dayjs(period.startDate).format('DD/MM')} - ${dayjs(period.endDate).format('DD/MM')})`
+                : `${dayjs(period.startDate).format('DD/MM')} - ${dayjs(period.endDate).format('DD/MM')}`}
+            </Tag>
+          )}
+        </div>
         <Text type="secondary" style={{ fontSize: 13 }}>
           {t('header.subtitle')}
         </Text>

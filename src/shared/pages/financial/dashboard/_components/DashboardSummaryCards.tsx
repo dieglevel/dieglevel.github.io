@@ -10,6 +10,8 @@ import {
   Wallet,
 } from 'lucide-react'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
+import { useThemeMode } from '@/shared/provider/antd-theme.provider'
+import { getTokens } from '@/shared/common/design-token'
 
 const { Text } = Typography
 
@@ -28,6 +30,8 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
   summary,
 }) => {
   const { t } = useTranslation('dashboard')
+  const { mode } = useThemeMode()
+  const { radius } = getTokens(mode)
 
   return (
     <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
@@ -35,8 +39,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
       <Col xs={24} sm={12} lg={6}>
         <Card
           style={{
-            borderRadius: '12px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+            borderRadius: radius.lg,
           }}
           styles={{ body: { padding: '20px' } }}
         >
@@ -100,8 +103,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
       <Col xs={24} sm={12} lg={6}>
         <Card
           style={{
-            borderRadius: '12px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+            borderRadius: radius.lg,
           }}
           styles={{ body: { padding: '20px' } }}
         >
@@ -165,8 +167,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
       <Col xs={24} sm={12} lg={6}>
         <Card
           style={{
-            borderRadius: '12px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+            borderRadius: radius.lg,
           }}
           styles={{ body: { padding: '20px' } }}
         >
@@ -232,8 +233,7 @@ export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
       <Col xs={24} sm={12} lg={6}>
         <Card
           style={{
-            borderRadius: '12px',
-            boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)',
+            borderRadius: radius.lg,
           }}
           styles={{ body: { padding: '20px' } }}
         >

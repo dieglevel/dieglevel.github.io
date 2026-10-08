@@ -8,6 +8,8 @@ import { CashFlowChart } from './_components/CashFlowChart'
 import { CategoryBreakdownChart } from './_components/CategoryBreakdownChart'
 import { WalletListWidget } from './_components/WalletListWidget'
 import { RecentTransactionsWidget } from './_components/RecentTransactionsWidget'
+import { GoalsSummaryWidget } from './_components/GoalsSummaryWidget'
+import { DebtsSummaryWidget } from './_components/DebtsSummaryWidget'
 import type { GetFinancialDashboardQueryParams } from '@/shared/api/financial/dashboard/dashboard.type'
 import { DashboardTimeFrame } from '@/shared/api/financial/dashboard/dashboard.type'
 import { useGetFinancialDashboard } from '@/shared/api/financial/dashboard/useGetFinancialDashboard'
@@ -48,6 +50,8 @@ export function Dashboard() {
   const categoryBreakdown = dashboardData?.categoryBreakdown || []
   const wallets = dashboardData?.wallets || []
   const recentTransactions = dashboardData?.recentTransactions || []
+  const goalsSummary = dashboardData?.goalsSummary || []
+  const debtsSummary = dashboardData?.debtsSummary || []
 
   return (
     <div
@@ -63,14 +67,15 @@ export function Dashboard() {
         selectedWalletId={selectedWalletId}
         setSelectedWalletId={setSelectedWalletId}
         wallets={wallets}
+        period={dashboardData?.period}
         onNavigateToCreateTransaction={() =>
           router.navigate({ to: '/financial/transaction' })
         }
       />
 
       {isFetching ? (
-        <Flex align="center" justify="center" style={{ height: '100%' }}>
-          <Spin />
+        <Flex align="center" justify="center" style={{ height: '60vh' }}>
+          <Spin size="large" />
         </Flex>
       ) : (
         <>
@@ -87,8 +92,8 @@ export function Dashboard() {
             </Col>
           </Row>
 
-          {/* Third Row: Wallets & Recent Transactions */}
-          <Row gutter={[16, 16]}>
+          {/* Wallets & Recent Transactions Row */}
+          <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
             <Col xs={24} lg={9}>
               <WalletListWidget
                 wallets={wallets}
@@ -102,6 +107,26 @@ export function Dashboard() {
                 recentTransactions={recentTransactions}
                 onNavigateToTransactions={() =>
                   router.navigate({ to: '/financial/transaction' })
+                }
+              />
+            </Col>
+          </Row>
+
+          {/* Goals & Debts Summary Row */}
+          <Row gutter={[16, 16]}>
+            <Col xs={24} lg={12}>
+              <GoalsSummaryWidget
+                goalsSummary={goalsSummary}
+                onNavigateToGoals={() =>
+                  router.navigate({ to: '/financial/goal' })
+                }
+              />
+            </Col>
+            <Col xs={24} lg={12}>
+              <DebtsSummaryWidget
+                debtsSummary={debtsSummary}
+                onNavigateToDebts={() =>
+                  router.navigate({ to: '/financial/debt' })
                 }
               />
             </Col>

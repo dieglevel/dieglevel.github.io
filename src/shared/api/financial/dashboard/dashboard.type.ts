@@ -44,14 +44,21 @@ export interface GoalSummaryItem {
   targetAmount: number
   currentAmount: number
   percentage: number
+  deadline?: string | null
+  status?: string
+  type?: string
 }
 
 export interface DebtSummaryItem {
   id: number
   name: string
+  namePerson?: string
   totalAmount: number
   paidAmount: number
+  remainingAmount?: number
   type: string
+  dueDate?: string | null
+  status?: string
 }
 
 export interface DashboardRecentTransactionItem {
@@ -67,6 +74,11 @@ export interface DashboardRecentTransactionItem {
 }
 
 export interface IFinancialDashboardSummary {
+  period?: {
+    startDate: string
+    endDate: string
+    cycleStartDate: number
+  }
   summary: {
     totalIncome: number
     totalExpense: number
