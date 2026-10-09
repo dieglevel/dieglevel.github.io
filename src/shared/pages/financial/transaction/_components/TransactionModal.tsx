@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Button,
@@ -29,6 +29,8 @@ import { InputWithComma } from '@/shared/components/input/utils'
 import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
 import BaseModal from '@/shared/components/modal'
 import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
+import { useMutationTransaction } from '@/shared/api/financial/transaction/transaction.mutation'
+import { generateIdempotencyKey } from '@/shared/lib/idempotency/idempotencyKey'
 
 const { Text, Title } = Typography
 
@@ -43,6 +45,14 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 }) => {
   const { t } = useTranslation('finance')
   const [form] = Form.useForm()
+
+  const { mTransaction_Create } = useMutationTransaction()
+
+  /**
+   * Stable idempotency key per modal session.
+   * Regenerated on each successful save.
+   */
+  const idempotencyKeyRef = useRef<string>(generateIdempotencyKey())
 
   // API Danh sách Ví & Danh mục
   const { data: wallets, isLoading: isLoadingWallets } =
@@ -95,9 +105,45 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
     try {
       const values = await form.validateFields()
 
-      message.success(t('common.create'))
-      form.resetFields()
-      onClose()
+      const currentKey = idempotencyKeyRef.current
+      mTransaction_Create.mutate(
+        {
+          body: {
+            amount: calculatedTotalAmount,
+            type: values.type ?? FINANCIAL_TRANSACTION_STATUS.COMPLETED,
+            walletId: values.walletId,
+            date: values.date,
+            description: values.description,
+            merchant: values.merchant,
+            location: values.location,
+            receiptImageUrl: values.receiptImageUrl,
+            originalTransactionId: values.originalTransactionId,
+            financialTransactionItems: (values.financialAdvanceTransactions ?? []).map(
+              (item: { description?: string; amount?: number; categoryId?: number }) => ({
+                description: item.description ?? '',
+                amount: item.amount ?? 0,
+                categoryId: item.categoryId,
+              }),
+            ),
+            status: values.status ?? FINANCIAL_TRANSACTION_STATUS.COMPLETED,
+          } as any,
+          idempotencyKey: currentKey,
+        },
+        {
+          onSuccess: () => {
+            // Regenerate for next action
+            idempotencyKeyRef.current = generateIdempotencyKey()
+            message.success(t('common.create'))
+            form.resetFields()
+            onClose()
+          },
+          onError: (err) => {
+            // Keep same key so user can retry
+            console.error('Create transaction error:', err)
+            message.error('Có lỗi xảy ra khi tạo giao dịch.')
+          },
+        },
+      )
     } catch (error) {
       console.error('Validation/API error:', error)
     }

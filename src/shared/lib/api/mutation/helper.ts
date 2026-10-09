@@ -51,6 +51,12 @@ export const invalidate = (
 
 export type MutatePayload<TBody, TEndPoint extends string, TQueryParams> = {
   body?: TBody
+  /**
+   * Optional UUID v4 idempotency key.
+   * When provided, it is forwarded as the `Idempotency-Key` HTTP header.
+   * Generate with `generateIdempotencyKey()` from `@/shared/lib/idempotency/idempotencyKey`.
+   */
+  idempotencyKey?: string
 } & (HasPathParams<TEndPoint> extends true
   ? { pathParams: ExtractPathParams<TEndPoint> }
   : { pathParams?: never }) & {

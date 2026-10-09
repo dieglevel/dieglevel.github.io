@@ -8,6 +8,7 @@ import type {
   UpsertFinanceTransactionItemDto,
 } from '@/shared/api/financial/transaction/transaction.mutation'
 import { useMutationTransaction } from '@/shared/api/financial/transaction/transaction.mutation'
+import { generateIdempotencyKey } from '@/shared/lib/idempotency/idempotencyKey'
 import { useGetFinance_Category_List } from '@/shared/api/financial/category/useGetFinance_Category_List'
 import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
 import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
@@ -46,6 +47,15 @@ export function useTransactionUpsertForm({
   const router = useRouter()
 
   const { mTransaction_Create, mTransaction_Update } = useMutationTransaction()
+
+  /**
+   * Stable idempotency key for the current form session.
+   *
+   * • Generated once when the form mounts (create) or when transactionId changes (update).
+   * • Reused on network retries so the server can deduplicate safely.
+   * • Regenerated after a successful submit so the next action gets a fresh key.
+   */
+  const idempotencyKeyRef = useRef<string>(generateIdempotencyKey())
 
   const { data: transactionDetail, isLoading: isLoadingDetail } =
     useGetFinance_Transaction_View({
@@ -342,17 +352,22 @@ export function useTransactionUpsertForm({
       }
 
       if (isUpdateMode && transactionId) {
+        const currentKey = idempotencyKeyRef.current
         mTransaction_Update.mutate(
           {
             pathParams: { id: String(transactionId) },
             body: payload,
+            idempotencyKey: currentKey,
           },
           {
             onSuccess: () => {
+              // Regenerate so the next distinct action gets a fresh key
+              idempotencyKeyRef.current = generateIdempotencyKey()
               message.success('Cập nhật giao dịch thành công!')
               handleBack()
             },
             onError: (error) => {
+              // Do NOT regenerate on error — the same key should be used on retry
               console.error('API error:', error)
               message.error('Có lỗi xảy ra khi cập nhật giao dịch.')
             },
@@ -361,14 +376,18 @@ export function useTransactionUpsertForm({
         return
       }
 
+      const currentKey = idempotencyKeyRef.current
       mTransaction_Create.mutate(
-        { body: payload },
+        { body: payload, idempotencyKey: currentKey },
         {
           onSuccess: () => {
+            // Regenerate so the next distinct action gets a fresh key
+            idempotencyKeyRef.current = generateIdempotencyKey()
             message.success('Giao dịch đã được tạo thành công!')
             handleBack()
           },
           onError: (error) => {
+            // Do NOT regenerate on error — the same key should be used on retry
             console.error('API error:', error)
             message.error('Có lỗi xảy ra khi tạo giao dịch.')
           },

@@ -27,6 +27,7 @@ interface TransactionsTableProps {
   pagination?: TablePaginationConfig
   onPageChange: (newPage: number) => void
   onDelete: (transactionId: number) => void
+  onRowClick?: (record: IFinance_Transaction) => void
 }
 
 export const TransactionsTable: React.FC<TransactionsTableProps> = ({
@@ -39,6 +40,7 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
   pagination,
   onPageChange,
   onDelete,
+  onRowClick,
 }) => {
   const { t } = useTranslation('finance')
   const navigate = useNavigate()
@@ -250,8 +252,13 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
         columns={columns}
         dataSource={dataSource}
         onRow={(record) => ({
-          onClick: () =>
-            navigate({ to: `/financial/transaction/${record.id}` }),
+          onClick: () => {
+            if (onRowClick) {
+              onRowClick(record)
+            } else {
+              navigate({ to: `/financial/transaction/${record.id}` })
+            }
+          },
           style: { cursor: 'pointer' },
         })}
         rowSelection={{

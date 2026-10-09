@@ -6,6 +6,7 @@ import {
   useMutationDelete,
   useMutationPost,
 } from '@/shared/lib/api/mutation/useMutation'
+import { generateIdempotencyKey } from '@/shared/lib/idempotency/idempotencyKey'
 
 export type UpsertFinanceTransactionItemDto = Pick<
   IFinance_TransactionItem,
@@ -65,9 +66,22 @@ export const useMutationTransaction = () => {
     queryKey: transactionKeys.all,
   })
 
+  /**
+   * Helper: wrap the create mutation to always include a fresh idempotency key
+   * generated at call time. This guarantees every intentional submit has its own key.
+   *
+   * Usage:
+   *   const { createWithIdempotency } = useMutationTransaction()
+   *   createWithIdempotency({ body: dto, idempotencyKey: stableKey })
+   *
+   * For retries (e.g. network failure): reuse the SAME key.
+   * For new submissions: generate a NEW key with generateIdempotencyKey().
+   */
   return {
     mTransaction_Create,
     mTransaction_Update,
     mTransaction_Delete,
+    /** Generate a new idempotency key for use in a single transaction action */
+    generateKey: generateIdempotencyKey,
   }
 }

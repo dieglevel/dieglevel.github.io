@@ -48,6 +48,12 @@ function createMutationHook(method: 'POST' | 'PUT' | 'PATCH' | 'DELETE') {
       mutationFn: async (payload) => {
         const finalUrl = buildUrl(endPoint, payload.pathParams ?? pathParams)
 
+        // Forward idempotency key as HTTP header when provided
+        const idempotencyHeaders: Record<string, string> = {}
+        if (payload.idempotencyKey) {
+          idempotencyHeaders['Idempotency-Key'] = payload.idempotencyKey
+        }
+
         return customAxios<TResponse>({
           url: finalUrl,
           method,
@@ -55,6 +61,10 @@ function createMutationHook(method: 'POST' | 'PUT' | 'PATCH' | 'DELETE') {
           params: {
             ...queryParams,
             ...payload.queryParams,
+          },
+          headers: {
+            ...apiConfig?.headers,
+            ...idempotencyHeaders,
           },
           ...apiConfig,
         })
