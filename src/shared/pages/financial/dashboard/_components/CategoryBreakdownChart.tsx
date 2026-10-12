@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
-import { Badge, Card, Empty, Progress, Space, Tag, Typography } from 'antd'
+import { Card, Empty, Progress, Tag, Typography } from 'antd'
 import { useTranslation } from 'react-i18next'
-import { Layers, PieChart as PieChartIcon } from 'lucide-react'
+import { PieChart as PieChartIcon } from 'lucide-react'
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts'
 import type { CategoryBreakdownItem } from '@/shared/api/financial/dashboard/dashboard.type'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
@@ -25,7 +25,7 @@ const DEFAULT_CATEGORY_COLORS = [
 
 interface CustomTooltipProps {
   active?: boolean
-  payload?: any[]
+  payload?: Array<any>
   mode: 'light' | 'dark'
 }
 
@@ -86,7 +86,10 @@ export const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
   const totalExpense = useMemo(() => {
-    return categoryBreakdown.reduce((sum, item) => sum + Number(item.amount || 0), 0)
+    return categoryBreakdown.reduce(
+      (sum, item) => sum + Number(item.amount || 0),
+      0,
+    )
   }, [categoryBreakdown])
 
   const activeCategory =
@@ -193,9 +196,7 @@ export const CategoryBreakdownChart: React.FC<CategoryBreakdownChartProps> = ({
                       <Cell
                         key={`cell-${index}`}
                         fill={color}
-                        opacity={
-                          activeIndex === null || isSelected ? 1 : 0.5
-                        }
+                        opacity={activeIndex === null || isSelected ? 1 : 0.5}
                         stroke={background.base}
                         strokeWidth={isSelected ? 3 : 1}
                         style={{

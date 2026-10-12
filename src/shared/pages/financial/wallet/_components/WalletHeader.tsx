@@ -39,9 +39,7 @@ export const WalletHeader: React.FC<WalletHeaderProps> = ({
           <Title level={3} style={{ margin: 0 }}>
             {t('wallet.title')}
           </Title>
-          <Text type="secondary">
-            {t('wallet.subtitle')}
-          </Text>
+          <Text type="secondary">{t('wallet.subtitle')}</Text>
         </div>
 
         <Space size={8} wrap style={{ justifyContent: 'flex-end' }}>
@@ -65,7 +63,10 @@ export const WalletHeader: React.FC<WalletHeaderProps> = ({
           options={[
             { label: t('wallet.all'), value: 'ALL' },
             { label: t('wallet.bank'), value: FINANCIAL_WALLET_TYPE.BANK },
-            { label: t('wallet.eWallet'), value: FINANCIAL_WALLET_TYPE.E_WALLET },
+            {
+              label: t('wallet.eWallet'),
+              value: FINANCIAL_WALLET_TYPE.E_WALLET,
+            },
             { label: t('wallet.cash'), value: FINANCIAL_WALLET_TYPE.CASH },
             { label: t('wallet.locked'), value: 'LOCKED' },
           ]}

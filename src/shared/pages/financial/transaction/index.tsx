@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FloatButton, Grid, Space, Tabs } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
@@ -23,6 +23,7 @@ import {
 } from '@/shared/api/financial/wallet/wallet.enum'
 import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
 import { useMutationTransaction } from '@/shared/api/financial/transaction/transaction.mutation'
+import { generateIdempotencyKey } from '@/shared/lib/idempotency/idempotencyKey'
 
 const { useBreakpoint } = Grid
 
@@ -42,6 +43,8 @@ export function Transactions() {
     pageSize: 20,
     total: 0,
   })
+
+  const idempotencyKeyRef = useRef<string>(generateIdempotencyKey())
 
   const { mTransaction_Delete } = useMutationTransaction()
 
@@ -163,8 +166,10 @@ export function Transactions() {
   }
 
   const handleDeleteTransaction = (transactionId: number) => {
+    const idempotencyKey = idempotencyKeyRef.current
+
     mTransaction_Delete.mutate(
-      { pathParams: { id: transactionId } },
+      { pathParams: { id: transactionId }, idempotencyKey: idempotencyKey },
       {
         onSuccess: () => {
           // Refetch the transaction list after deletion

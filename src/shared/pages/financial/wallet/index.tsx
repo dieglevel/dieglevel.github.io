@@ -53,7 +53,7 @@ export function Wallets() {
       // Search Query Filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim()
-        const matchName = wallet.name?.toLowerCase().includes(q)
+        const matchName = wallet.name.toLowerCase().includes(q)
         const matchBank = wallet.institutionName?.toLowerCase().includes(q)
         const matchAccount = wallet.accountNumberMasked
           ?.toLowerCase()
@@ -99,10 +99,7 @@ export function Wallets() {
       {/* 4. Wallet Cards Grid */}
       <div style={{ width: '100%' }}>
         {filteredWallets.length === 0 && !isFetching ? (
-          <Empty
-            description={t('wallet.empty')}
-            style={{ margin: '40px 0' }}
-          />
+          <Empty description={t('wallet.empty')} style={{ margin: '40px 0' }} />
         ) : (
           <AnimatedGrid
             items={filteredWallets}

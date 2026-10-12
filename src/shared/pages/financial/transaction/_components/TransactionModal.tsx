@@ -118,15 +118,21 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
             location: values.location,
             receiptImageUrl: values.receiptImageUrl,
             originalTransactionId: values.originalTransactionId,
-            financialTransactionItems: (values.financialAdvanceTransactions ?? []).map(
-              (item: { description?: string; amount?: number; categoryId?: number }) => ({
+            financialTransactionItems: (
+              values.financialAdvanceTransactions ?? []
+            ).map(
+              (item: {
+                description?: string
+                amount?: number
+                categoryId?: number
+              }) => ({
                 description: item.description ?? '',
                 amount: item.amount ?? 0,
                 categoryId: item.categoryId,
               }),
             ),
             status: values.status ?? FINANCIAL_TRANSACTION_STATUS.COMPLETED,
-          } as any,
+          },
           idempotencyKey: currentKey,
         },
         {
@@ -294,7 +300,9 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
                           ]}
                           style={{ marginBottom: 0 }}
                         >
-                          <Input placeholder={t('transaction.itemDescription')} />
+                          <Input
+                            placeholder={t('transaction.itemDescription')}
+                          />
                         </Form.Item>
                       </Col>
 
@@ -401,7 +409,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
         <Row gutter={[12, 12]}>
           <Col xs={24} sm={12}>
             <Form.Item
-                          label={t('transaction.tags')}
+              label={t('transaction.tags')}
               name="tags"
               style={{ marginBottom: 0 }}
             >

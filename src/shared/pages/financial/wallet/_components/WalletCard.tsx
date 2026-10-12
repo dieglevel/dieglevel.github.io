@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Card, Popconfirm, Space, Tag, Tooltip, message } from 'antd'
+import { Button, Card, Popconfirm, Space, Tag, Tooltip } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { DeleteOutlined, EditOutlined, LockOutlined } from '@ant-design/icons'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
@@ -31,24 +31,9 @@ export const WalletCard: React.FC<WalletCardProps> = ({
     ? wallet.accountNumberMasked.replace(/.(?=.{4})/g, '•')
     : '•••• •••• ••••'
 
-  const handleCopyApiKey = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (!wallet.apiKey) {
-      message.warning(t('common.noData'))
-      return
-    }
-    navigator.clipboard.writeText(wallet.apiKey)
-    message.success(t('common.save'))
-  }
-
   // Credit Utilization Percentage
   const creditLimit = Number(wallet.creditLimit || 0)
   const currentDebt = Number(wallet.currentDebt || 0)
-  const creditUsagePercent =
-    creditLimit > 0
-      ? Math.min(100, Math.round((currentDebt / creditLimit) * 100))
-      : 0
-
   return (
     <Card
       variant="borderless"

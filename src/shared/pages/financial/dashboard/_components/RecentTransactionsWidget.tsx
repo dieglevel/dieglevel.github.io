@@ -194,7 +194,9 @@ export const RecentTransactionsWidget: React.FC<
                   </div>
                 </div>
 
-                <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: 12 }}>
+                <div
+                  style={{ textAlign: 'right', flexShrink: 0, marginLeft: 12 }}
+                >
                   <div
                     style={{
                       fontWeight: 700,

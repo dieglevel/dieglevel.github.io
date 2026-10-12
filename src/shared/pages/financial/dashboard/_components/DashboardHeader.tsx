@@ -46,7 +46,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   const showCycleBadge =
     timeFrame === DashboardTimeFrame.MONTHLY &&
     period?.startDate &&
-    period?.endDate
+    period.endDate
 
   return (
     <div
@@ -62,7 +62,14 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       }}
     >
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            flexWrap: 'wrap',
+          }}
+        >
           <Title level={3} style={{ margin: 0, fontWeight: 700 }}>
             {t('header.title')}
           </Title>

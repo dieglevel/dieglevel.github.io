@@ -10,13 +10,13 @@ import {
   Select,
   Typography,
 } from 'antd'
+import { useTranslation } from 'react-i18next'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
 import {
   FINANCIAL_TRANSACTION_STATUS,
   FINANCIAL_TRANSACTION_TYPE,
 } from '@/shared/api/financial/transaction/transaction.enum'
-import { useTranslation } from 'react-i18next'
 import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
 
 const { Text } = Typography
@@ -83,10 +83,13 @@ export const TransactionGeneralForm: React.FC<TransactionGeneralFormProps> = ({
             loading={isLoadingOriginal}
             onChange={onSelectOriginalTransaction}
             options={originalTransactions
-              ?.filter((t) => t.type === FINANCIAL_TRANSACTION_TYPE.EXPENSE)
-              .map((t) => ({
-                value: t.id,
-                label: `#${t.id} - ${t.description} (${t.amount.toLocaleString('vi-VN')} đ)`,
+              ?.filter(
+                (transaction) =>
+                  transaction.type === FINANCIAL_TRANSACTION_TYPE.EXPENSE,
+              )
+              .map((transaction) => ({
+                value: transaction.id,
+                label: `#${transaction.id} - ${transaction.description} (${transaction.amount.toLocaleString('vi-VN')} đ)`,
               }))}
           />
         </Form.Item>

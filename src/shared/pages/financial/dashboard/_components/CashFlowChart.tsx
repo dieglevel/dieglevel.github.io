@@ -1,20 +1,11 @@
 import React, { useMemo, useState } from 'react'
-import { Card, Empty, Flex, Segmented, Space, Tag, Typography } from 'antd'
+import { Card, Empty, Segmented, Space, Tag, Typography } from 'antd'
 import { useTranslation } from 'react-i18next'
-import {
-  ArrowDownRight,
-  ArrowUpRight,
-  Calendar,
-  TrendingDown,
-  TrendingUp,
-} from 'lucide-react'
+import { ArrowDownRight, ArrowUpRight, Calendar } from 'lucide-react'
 import {
   Area,
-  AreaChart,
-  Bar,
   CartesianGrid,
   ComposedChart,
-  Line,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -31,7 +22,7 @@ const { Text } = Typography
 
 interface CustomTooltipProps {
   active?: boolean
-  payload?: any[]
+  payload?: Array<any>
   label?: string
   mode: 'light' | 'dark'
 }
@@ -137,7 +128,7 @@ export const CashFlowChart: React.FC<CashFlowChartProps> = ({
       (acc, item) => {
         acc.totalIncome += Number(item.income || 0)
         acc.totalExpense += Number(item.expense || 0)
-        acc.totalNet += Number(item.net ?? (item.income - item.expense))
+        acc.totalNet += Number(item.net ?? item.income - item.expense)
         return acc
       },
       { totalIncome: 0, totalExpense: 0, totalNet: 0 },
@@ -200,8 +191,7 @@ export const CashFlowChart: React.FC<CashFlowChartProps> = ({
                 gap: 4,
               }}
             >
-              <ArrowUpRight size={14} />
-              +{convertCurrency(totalIncome)}
+              <ArrowUpRight size={14} />+{convertCurrency(totalIncome)}
             </Tag>
             <Tag
               color="error"
@@ -216,8 +206,7 @@ export const CashFlowChart: React.FC<CashFlowChartProps> = ({
                 gap: 4,
               }}
             >
-              <ArrowDownRight size={14} />
-              -{convertCurrency(totalExpense)}
+              <ArrowDownRight size={14} />-{convertCurrency(totalExpense)}
             </Tag>
           </Space>
 
