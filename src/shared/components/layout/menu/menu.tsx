@@ -179,18 +179,18 @@ export default function Menu() {
     setMobileExpandedId(null)
   }
 
-const isMenuSelected = (menu: AppMenuItem) => {
-  // Direct top-level link check
-  if (menu.link && location.pathname.startsWith(menu.link)) {
-    return true
+  const isMenuSelected = (menu: AppMenuItem) => {
+    // Direct top-level link check
+    if (menu.link && location.pathname.startsWith(menu.link)) {
+      return true
+    }
+    // Sub-menu child link check
+    return (
+      menu.children?.some(
+        (child) => child.link && location.pathname.startsWith(child.link),
+      ) ?? false
+    )
   }
-  // Sub-menu child link check
-  return (
-    menu.children?.some(
-      (child) => child.link && location.pathname.startsWith(child.link),
-    ) ?? false
-  )
-}
 
   // Nút "Thêm" được đánh dấu selected nếu route hiện tại thuộc menu bị ẩn
   const isMoreSelected = hiddenMenus.some((m) => isMenuSelected(m))
@@ -690,7 +690,7 @@ const isMenuSelected = (menu: AppMenuItem) => {
                 {AppMenu.map((menu) => {
                   const hasChildren = Boolean(menu.children?.length)
                   const expanded = mobileExpandedId === menu.id
-                  const selected = isParentSelected(menu)
+                  const selected = isMenuSelected(menu)
 
                   return (
                     <div key={menu.id}>
