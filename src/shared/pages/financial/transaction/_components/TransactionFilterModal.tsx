@@ -75,11 +75,7 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
       centered
       width={420}
     >
-      <Space
-        vertical
-        size="middle"
-        style={{ width: '100%', marginTop: 16 }}
-      >
+      <Space vertical size="middle" style={{ width: '100%', marginTop: 16 }}>
         <div>
           <Text
             strong
@@ -110,7 +106,10 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
             value={walletFilter}
             onChange={setWalletFilter}
             style={{ width: '100%' }}
-            options={[{ value: 'all', label: t('transaction.allWallets') }, ...walletOptions]}
+            options={[
+              { value: 'all', label: t('transaction.allWallets') },
+              ...walletOptions,
+            ]}
           />
         </div>
 

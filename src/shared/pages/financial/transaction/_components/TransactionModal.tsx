@@ -252,9 +252,9 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
             placeholder={t('transaction.selectOriginal')}
             allowClear
             loading={isLoadingOriginal}
-            options={originalTransactions?.data.data.map((t) => ({
-              value: t.id,
-              label: `#${t.id} - ${t.description} (${t.amount.toLocaleString('vi-VN')} đ)`,
+            options={originalTransactions?.data.data.map((transaction) => ({
+              value: transaction.id,
+              label: `#${transaction.id} - ${transaction.description} (${transaction.amount.toLocaleString('vi-VN')} đ)`,
             }))}
           />
         </Form.Item>

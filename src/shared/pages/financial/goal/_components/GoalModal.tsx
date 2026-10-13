@@ -13,13 +13,13 @@ import {
 } from 'antd'
 import { LockOutlined, UnlockOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
+import { useTranslation } from 'react-i18next'
 import type { IFinance_Goal } from '@/shared/api/financial/goal/goal.type'
 import {
   FINANCIAL_GOAL_STATUS,
   FINANCIAL_GOAL_TYPE,
 } from '@/shared/api/financial/goal/goal.enum'
 import { useMutationGoal } from '@/shared/api/financial/goal/goal.mutation'
-import { useTranslation } from 'react-i18next'
 
 const { Text } = Typography
 
@@ -122,7 +122,11 @@ export const GoalModal: React.FC<GoalModalProps> = ({
           <Input placeholder={t('goal.name')} />
         </Form.Item>
 
-        <Form.Item name="type" label={t('goal.type')} rules={[{ required: true }]}>
+        <Form.Item
+          name="type"
+          label={t('goal.type')}
+          rules={[{ required: true }]}
+        >
           <Select options={TYPE_OPTIONS} />
         </Form.Item>
 
@@ -150,7 +154,11 @@ export const GoalModal: React.FC<GoalModalProps> = ({
         </Space>
 
         <Space style={{ display: 'flex' }} align="start">
-          <Form.Item name="deadline" label={t('goal.deadline')} style={{ flex: 1 }}>
+          <Form.Item
+            name="deadline"
+            label={t('goal.deadline')}
+            style={{ flex: 1 }}
+          >
             <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />
           </Form.Item>
 

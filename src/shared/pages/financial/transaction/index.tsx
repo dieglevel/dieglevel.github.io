@@ -128,16 +128,17 @@ export function Transactions() {
   // Options Select
   const walletOptions = useMemo(() => {
     const map = new Map<number, IFinance_Wallet>()
-    transactions.forEach((t) => {
-      if (t.wallet?.id) map.set(t.wallet.id, t.wallet)
+    transactions.forEach((transaction) => {
+      if (transaction.wallet?.id)
+        map.set(transaction.wallet.id, transaction.wallet)
     })
     return Array.from(map.values()).map((w) => ({ value: w.id, label: w.name }))
   }, [transactions])
 
   const categoryOptions = useMemo(() => {
     const map = new Map<number, IFinance_Category>()
-    transactions.forEach((t) => {
-      t.financialTransactionItems?.forEach((item) => {
+    transactions.forEach((transaction) => {
+      transaction.financialTransactionItems?.forEach((item) => {
         if (item.category?.id) map.set(item.category.id, item.category)
       })
     })

@@ -80,9 +80,7 @@ export function AddRecurringModal({
 
   return (
     <Modal
-      title={
-        initialValues ? t('common.edit') : t('recurring.add')
-      }
+      title={initialValues ? t('common.edit') : t('recurring.add')}
       open={open}
       onCancel={onClose}
       onOk={handleSubmit}

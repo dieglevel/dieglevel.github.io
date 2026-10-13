@@ -70,6 +70,7 @@ export default function FormUpload({
   useEffect(() => {
     if (mode !== 'thumbnail') return
     const file = fileList[0]
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!file) {
       setThumbnailImage(undefined)
       return

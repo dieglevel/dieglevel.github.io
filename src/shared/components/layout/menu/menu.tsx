@@ -179,16 +179,21 @@ export default function Menu() {
     setMobileExpandedId(null)
   }
 
-  const isParentSelected = (menu: AppMenuItem) =>
+const isMenuSelected = (menu: AppMenuItem) => {
+  // Direct top-level link check
+  if (menu.link && location.pathname.startsWith(menu.link)) {
+    return true
+  }
+  // Sub-menu child link check
+  return (
     menu.children?.some(
       (child) => child.link && location.pathname.startsWith(child.link),
-    )
+    ) ?? false
+  )
+}
 
   // Nút "Thêm" được đánh dấu selected nếu route hiện tại thuộc menu bị ẩn
-  const isMoreSelected = hiddenMenus.some(
-    (m) =>
-      isParentSelected(m) || (m.link && location.pathname.startsWith(m.link)),
-  )
+  const isMoreSelected = hiddenMenus.some((m) => isMenuSelected(m))
 
   // ===== SUB-COMPONENT: nút menu cấp 1 (dùng chung cho hàng thật & hàng đo) =====
   const TopLevelButton = ({
@@ -396,7 +401,7 @@ export default function Menu() {
               {visibleMenus.map((menu) => {
                 const hasChildren = Boolean(menu.children?.length)
                 const isDropOpen = activeMenuId === menu.id
-                const selected = isParentSelected(menu)
+                const selected = isMenuSelected(menu)
 
                 return (
                   <div

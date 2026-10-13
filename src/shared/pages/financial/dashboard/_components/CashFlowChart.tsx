@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { Card, Empty, Segmented, Space, Tag, Typography } from 'antd'
+import { Card, Empty, Segmented, Space, Tag } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { ArrowDownRight, ArrowUpRight, Calendar } from 'lucide-react'
 import {
@@ -17,8 +17,6 @@ import type { CashFlowTimelinePoint } from '@/shared/api/financial/dashboard/das
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { useThemeMode } from '@/shared/provider/antd-theme.provider'
 import { getTokens } from '@/shared/common/design-token'
-
-const { Text } = Typography
 
 interface CustomTooltipProps {
   active?: boolean
@@ -128,7 +126,9 @@ export const CashFlowChart: React.FC<CashFlowChartProps> = ({
       (acc, item) => {
         acc.totalIncome += Number(item.income || 0)
         acc.totalExpense += Number(item.expense || 0)
-        acc.totalNet += Number(item.net ?? item.income - item.expense)
+        acc.totalNet += Number(
+          item.net === 0 ? item.net : item.income - item.expense,
+        )
         return acc
       },
       { totalIncome: 0, totalExpense: 0, totalNet: 0 },

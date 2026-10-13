@@ -411,11 +411,17 @@ export function Goals() {
                 {/* Thống kê Dự phóng (Projection) */}
                 <Card
                   size="small"
-                  title={t('goal.projection', { defaultValue: 'Completion projection' })}
+                  title={t('goal.projection', {
+                    defaultValue: 'Completion projection',
+                  })}
                   style={{ backgroundColor: '#fafafa' }}
                 >
                   <Descriptions column={1} size="small">
-                    <Descriptions.Item label={t('common.remaining', { defaultValue: 'Remaining' })}>
+                    <Descriptions.Item
+                      label={t('common.remaining', {
+                        defaultValue: 'Remaining',
+                      })}
+                    >
                       <Text strong style={{ color: '#cf1322' }}>
                         {convertCurrency(proj.remainingAmount)}
                       </Text>
@@ -427,7 +433,11 @@ export function Goals() {
                           : 'Không thiết lập'}
                       </Text>
                     </Descriptions.Item>
-                    <Descriptions.Item label={t('goal.completionDate', { defaultValue: 'Estimated completion' })}>
+                    <Descriptions.Item
+                      label={t('goal.completionDate', {
+                        defaultValue: 'Estimated completion',
+                      })}
+                    >
                       <Text strong style={{ color: '#1677ff' }}>
                         {proj.estimatedMonthsToComplete !== null
                           ? `${proj.estimatedMonthsToComplete} tháng`

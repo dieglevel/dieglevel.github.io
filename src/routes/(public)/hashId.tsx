@@ -3,7 +3,7 @@ import { Card, Flex, Input, Typography } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import HashIds from 'hashids'
 
-export const Route = createFileRoute('/(protected)/hashId')({
+export const Route = createFileRoute('/(public)/hashId')({
   component: RouteComponent,
 })
 

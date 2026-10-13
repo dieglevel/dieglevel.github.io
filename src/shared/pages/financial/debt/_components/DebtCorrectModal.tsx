@@ -117,7 +117,9 @@ export const DebtCorrectModal: React.FC<Props> = ({
                 </Text>
               </Flex>
               <Flex justify="space-between">
-                <Text type="secondary">{t('debtForms.walletCompensation')}</Text>
+                <Text type="secondary">
+                  {t('debtForms.walletCompensation')}
+                </Text>
                 <Text
                   strong
                   style={{ color: walletChange > 0 ? '#52c41a' : '#ff4d4f' }}

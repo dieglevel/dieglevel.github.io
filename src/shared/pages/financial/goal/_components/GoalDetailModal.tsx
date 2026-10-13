@@ -338,9 +338,18 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
                 </Card>
 
                 {/* Projection Statistics */}
-                <Card size="small" title={t('goal.projection', { defaultValue: 'Completion projection' })}>
+                <Card
+                  size="small"
+                  title={t('goal.projection', {
+                    defaultValue: 'Completion projection',
+                  })}
+                >
                   <Descriptions column={2} size="small" bordered>
-                    <Descriptions.Item label={t('common.remaining', { defaultValue: 'Remaining' })}>
+                    <Descriptions.Item
+                      label={t('common.remaining', {
+                        defaultValue: 'Remaining',
+                      })}
+                    >
                       <Text type="danger" strong>
                         {convertCurrency(projectionRemaining)}
                       </Text>
@@ -350,7 +359,12 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
                         ? convertCurrency(projectionMonthly)
                         : 'Chưa đặt'}
                     </Descriptions.Item>
-                    <Descriptions.Item label={t('goal.completionDate', { defaultValue: 'Estimated completion' })} span={2}>
+                    <Descriptions.Item
+                      label={t('goal.completionDate', {
+                        defaultValue: 'Estimated completion',
+                      })}
+                      span={2}
+                    >
                       <Text strong style={{ color: '#1677ff' }}>
                         {projectionMonths !== null
                           ? `Còn khoảng ${projectionMonths} tháng`
@@ -361,7 +375,13 @@ export const GoalDetailModal: React.FC<GoalDetailModalProps> = ({
                 </Card>
 
                 {/* Details */}
-                <Descriptions column={2} size="small" title={t('goal.settings', { defaultValue: 'Settings details' })}>
+                <Descriptions
+                  column={2}
+                  size="small"
+                  title={t('goal.settings', {
+                    defaultValue: 'Settings details',
+                  })}
+                >
                   <Descriptions.Item label={t('goal.type')}>
                     <Tag color="blue">{goal.type}</Tag>
                   </Descriptions.Item>

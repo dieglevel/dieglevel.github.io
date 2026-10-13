@@ -1,7 +1,13 @@
 import React from 'react'
 import { Button, Card, Empty, Progress, Space, Tag, Typography } from 'antd'
 import { useTranslation } from 'react-i18next'
-import { ArrowDownLeft, ArrowUpRight, Calendar, HandCoins, PlusCircle } from 'lucide-react'
+import {
+  ArrowDownLeft,
+  ArrowUpRight,
+  Calendar,
+  HandCoins,
+  PlusCircle,
+} from 'lucide-react'
 import dayjs from 'dayjs'
 import type { DebtSummaryItem } from '@/shared/api/financial/dashboard/dashboard.type'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
@@ -119,8 +125,8 @@ export const DebtsSummaryWidget: React.FC<DebtsSummaryWidgetProps> = ({
         >
           {debtsSummary.map((debt) => {
             const isLend =
-              debt.type?.toLowerCase().includes('lend') ||
-              debt.type?.toLowerCase().includes('in')
+              debt.type.toLowerCase().includes('lend') ||
+              debt.type.toLowerCase().includes('in')
             const total = Number(debt.totalAmount || 0)
             const paid = Number(debt.paidAmount || 0)
             const remaining =

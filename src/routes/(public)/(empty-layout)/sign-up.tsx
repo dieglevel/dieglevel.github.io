@@ -83,7 +83,7 @@ function RouteComponent() {
           },
         },
       )
-    } catch (error) {
+    } catch {
       message.error('Sign up failed. Please try again.')
     }
   }

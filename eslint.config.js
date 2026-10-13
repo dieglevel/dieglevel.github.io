@@ -22,7 +22,7 @@ export default [
 
       // Optional: warn unused vars
       'unused-imports/no-unused-vars': [
-        'warn',
+        'off',
         {
           vars: 'all',
           varsIgnorePattern: '^_',

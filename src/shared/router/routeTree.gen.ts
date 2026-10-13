@@ -17,13 +17,16 @@ import { Route as IndexRouteImport } from './../../routes/index'
 import { Route as publicUploadRouteImport } from './../../routes/(public)/upload'
 import { Route as publicNetworkRouteImport } from './../../routes/(public)/network'
 import { Route as publicMusicRouteImport } from './../../routes/(public)/music'
-import { Route as protectedIconRouteImport } from './../../routes/(protected)/icon'
-import { Route as protectedHashIdRouteImport } from './../../routes/(protected)/hashId'
-import { Route as protectedHanbiroTaskRouteImport } from './../../routes/(protected)/hanbiroTask'
-import { Route as protectedDemoComponentRouteImport } from './../../routes/(protected)/demoComponent'
+import { Route as publicIconRouteImport } from './../../routes/(public)/icon'
+import { Route as publicHashIdRouteImport } from './../../routes/(public)/hashId'
+import { Route as publicHanbiroTaskRouteImport } from './../../routes/(public)/hanbiroTask'
+import { Route as publicDemoComponentRouteImport } from './../../routes/(public)/demoComponent'
+import { Route as protectedSystemInformationRouteImport } from './../../routes/(protected)/system-information'
 import { Route as publicemptyLayoutRouteRouteImport } from './../../routes/(public)/(empty-layout)/route'
 import { Route as protectedFinancialRouteRouteImport } from './../../routes/(protected)/financial/route'
 import { Route as protectedFinancialIndexRouteImport } from './../../routes/(protected)/financial/index'
+import { Route as publicDemoTableRouteImport } from './../../routes/(public)/demo/table'
+import { Route as publicDemoButtonRouteImport } from './../../routes/(public)/demo/button'
 import { Route as publicemptyLayoutSignUpRouteImport } from './../../routes/(public)/(empty-layout)/sign-up'
 import { Route as publicemptyLayoutLoginRouteImport } from './../../routes/(public)/(empty-layout)/login'
 import { Route as protectedFinancialWalletRouteImport } from './../../routes/(protected)/financial/wallet'
@@ -33,8 +36,6 @@ import { Route as protectedFinancialGoalRouteImport } from './../../routes/(prot
 import { Route as protectedFinancialDebtRouteImport } from './../../routes/(protected)/financial/debt'
 import { Route as protectedFinancialDashboardRouteImport } from './../../routes/(protected)/financial/dashboard'
 import { Route as protectedFinancialCategoryRouteImport } from './../../routes/(protected)/financial/category'
-import { Route as protectedDemoTableRouteImport } from './../../routes/(protected)/demo/table'
-import { Route as protectedDemoButtonRouteImport } from './../../routes/(protected)/demo/button'
 import { Route as protectedFinancialTransactionIndexRouteImport } from './../../routes/(protected)/financial/transaction/index'
 import { Route as protectedFinancialTransactionCreateRouteImport } from './../../routes/(protected)/financial/transaction/create'
 import { Route as protectedFinancialTransactionUpdateIdRouteImport } from './../../routes/(protected)/financial/transaction/$updateId'
@@ -77,26 +78,32 @@ const publicMusicRoute = publicMusicRouteImport.update({
   path: '/music',
   getParentRoute: () => publicRouteRoute,
 } as any)
-const protectedIconRoute = protectedIconRouteImport.update({
+const publicIconRoute = publicIconRouteImport.update({
   id: '/icon',
   path: '/icon',
-  getParentRoute: () => protectedRouteRoute,
+  getParentRoute: () => publicRouteRoute,
 } as any)
-const protectedHashIdRoute = protectedHashIdRouteImport.update({
+const publicHashIdRoute = publicHashIdRouteImport.update({
   id: '/hashId',
   path: '/hashId',
-  getParentRoute: () => protectedRouteRoute,
+  getParentRoute: () => publicRouteRoute,
 } as any)
-const protectedHanbiroTaskRoute = protectedHanbiroTaskRouteImport.update({
+const publicHanbiroTaskRoute = publicHanbiroTaskRouteImport.update({
   id: '/hanbiroTask',
   path: '/hanbiroTask',
-  getParentRoute: () => protectedRouteRoute,
+  getParentRoute: () => publicRouteRoute,
 } as any)
-const protectedDemoComponentRoute = protectedDemoComponentRouteImport.update({
+const publicDemoComponentRoute = publicDemoComponentRouteImport.update({
   id: '/demoComponent',
   path: '/demoComponent',
-  getParentRoute: () => protectedRouteRoute,
+  getParentRoute: () => publicRouteRoute,
 } as any)
+const protectedSystemInformationRoute =
+  protectedSystemInformationRouteImport.update({
+    id: '/system-information',
+    path: '/system-information',
+    getParentRoute: () => protectedRouteRoute,
+  } as any)
 const publicemptyLayoutRouteRoute = publicemptyLayoutRouteRouteImport.update({
   id: '/(empty-layout)',
   getParentRoute: () => publicRouteRoute,
@@ -110,6 +117,16 @@ const protectedFinancialIndexRoute = protectedFinancialIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => protectedFinancialRouteRoute,
+} as any)
+const publicDemoTableRoute = publicDemoTableRouteImport.update({
+  id: '/demo/table',
+  path: '/demo/table',
+  getParentRoute: () => publicRouteRoute,
+} as any)
+const publicDemoButtonRoute = publicDemoButtonRouteImport.update({
+  id: '/demo/button',
+  path: '/demo/button',
+  getParentRoute: () => publicRouteRoute,
 } as any)
 const publicemptyLayoutSignUpRoute = publicemptyLayoutSignUpRouteImport.update({
   id: '/sign-up',
@@ -161,16 +178,6 @@ const protectedFinancialCategoryRoute =
     path: '/category',
     getParentRoute: () => protectedFinancialRouteRoute,
   } as any)
-const protectedDemoTableRoute = protectedDemoTableRouteImport.update({
-  id: '/demo/table',
-  path: '/demo/table',
-  getParentRoute: () => protectedRouteRoute,
-} as any)
-const protectedDemoButtonRoute = protectedDemoButtonRouteImport.update({
-  id: '/demo/button',
-  path: '/demo/button',
-  getParentRoute: () => protectedRouteRoute,
-} as any)
 const protectedFinancialTransactionIndexRoute =
   protectedFinancialTransactionIndexRouteImport.update({
     id: '/transaction/',
@@ -195,15 +202,14 @@ export interface FileRoutesByFullPath {
   '/401': typeof R401Route
   '/404': typeof R404Route
   '/financial': typeof protectedFinancialRouteRouteWithChildren
-  '/demoComponent': typeof protectedDemoComponentRoute
-  '/hanbiroTask': typeof protectedHanbiroTaskRoute
-  '/hashId': typeof protectedHashIdRoute
-  '/icon': typeof protectedIconRoute
+  '/system-information': typeof protectedSystemInformationRoute
+  '/demoComponent': typeof publicDemoComponentRoute
+  '/hanbiroTask': typeof publicHanbiroTaskRoute
+  '/hashId': typeof publicHashIdRoute
+  '/icon': typeof publicIconRoute
   '/music': typeof publicMusicRoute
   '/network': typeof publicNetworkRoute
   '/upload': typeof publicUploadRoute
-  '/demo/button': typeof protectedDemoButtonRoute
-  '/demo/table': typeof protectedDemoTableRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
   '/financial/dashboard': typeof protectedFinancialDashboardRoute
   '/financial/debt': typeof protectedFinancialDebtRoute
@@ -213,6 +219,8 @@ export interface FileRoutesByFullPath {
   '/financial/wallet': typeof protectedFinancialWalletRoute
   '/login': typeof publicemptyLayoutLoginRoute
   '/sign-up': typeof publicemptyLayoutSignUpRoute
+  '/demo/button': typeof publicDemoButtonRoute
+  '/demo/table': typeof publicDemoTableRoute
   '/financial/': typeof protectedFinancialIndexRoute
   '/financial/transaction/$updateId': typeof protectedFinancialTransactionUpdateIdRoute
   '/financial/transaction/create': typeof protectedFinancialTransactionCreateRoute
@@ -222,15 +230,14 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/401': typeof R401Route
   '/404': typeof R404Route
-  '/demoComponent': typeof protectedDemoComponentRoute
-  '/hanbiroTask': typeof protectedHanbiroTaskRoute
-  '/hashId': typeof protectedHashIdRoute
-  '/icon': typeof protectedIconRoute
+  '/system-information': typeof protectedSystemInformationRoute
+  '/demoComponent': typeof publicDemoComponentRoute
+  '/hanbiroTask': typeof publicHanbiroTaskRoute
+  '/hashId': typeof publicHashIdRoute
+  '/icon': typeof publicIconRoute
   '/music': typeof publicMusicRoute
   '/network': typeof publicNetworkRoute
   '/upload': typeof publicUploadRoute
-  '/demo/button': typeof protectedDemoButtonRoute
-  '/demo/table': typeof protectedDemoTableRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
   '/financial/dashboard': typeof protectedFinancialDashboardRoute
   '/financial/debt': typeof protectedFinancialDebtRoute
@@ -240,6 +247,8 @@ export interface FileRoutesByTo {
   '/financial/wallet': typeof protectedFinancialWalletRoute
   '/login': typeof publicemptyLayoutLoginRoute
   '/sign-up': typeof publicemptyLayoutSignUpRoute
+  '/demo/button': typeof publicDemoButtonRoute
+  '/demo/table': typeof publicDemoTableRoute
   '/financial': typeof protectedFinancialIndexRoute
   '/financial/transaction/$updateId': typeof protectedFinancialTransactionUpdateIdRoute
   '/financial/transaction/create': typeof protectedFinancialTransactionCreateRoute
@@ -254,15 +263,14 @@ export interface FileRoutesById {
   '/404': typeof R404Route
   '/(protected)/financial': typeof protectedFinancialRouteRouteWithChildren
   '/(public)/(empty-layout)': typeof publicemptyLayoutRouteRouteWithChildren
-  '/(protected)/demoComponent': typeof protectedDemoComponentRoute
-  '/(protected)/hanbiroTask': typeof protectedHanbiroTaskRoute
-  '/(protected)/hashId': typeof protectedHashIdRoute
-  '/(protected)/icon': typeof protectedIconRoute
+  '/(protected)/system-information': typeof protectedSystemInformationRoute
+  '/(public)/demoComponent': typeof publicDemoComponentRoute
+  '/(public)/hanbiroTask': typeof publicHanbiroTaskRoute
+  '/(public)/hashId': typeof publicHashIdRoute
+  '/(public)/icon': typeof publicIconRoute
   '/(public)/music': typeof publicMusicRoute
   '/(public)/network': typeof publicNetworkRoute
   '/(public)/upload': typeof publicUploadRoute
-  '/(protected)/demo/button': typeof protectedDemoButtonRoute
-  '/(protected)/demo/table': typeof protectedDemoTableRoute
   '/(protected)/financial/category': typeof protectedFinancialCategoryRoute
   '/(protected)/financial/dashboard': typeof protectedFinancialDashboardRoute
   '/(protected)/financial/debt': typeof protectedFinancialDebtRoute
@@ -272,6 +280,8 @@ export interface FileRoutesById {
   '/(protected)/financial/wallet': typeof protectedFinancialWalletRoute
   '/(public)/(empty-layout)/login': typeof publicemptyLayoutLoginRoute
   '/(public)/(empty-layout)/sign-up': typeof publicemptyLayoutSignUpRoute
+  '/(public)/demo/button': typeof publicDemoButtonRoute
+  '/(public)/demo/table': typeof publicDemoTableRoute
   '/(protected)/financial/': typeof protectedFinancialIndexRoute
   '/(protected)/financial/transaction/$updateId': typeof protectedFinancialTransactionUpdateIdRoute
   '/(protected)/financial/transaction/create': typeof protectedFinancialTransactionCreateRoute
@@ -284,6 +294,7 @@ export interface FileRouteTypes {
     | '/401'
     | '/404'
     | '/financial'
+    | '/system-information'
     | '/demoComponent'
     | '/hanbiroTask'
     | '/hashId'
@@ -291,8 +302,6 @@ export interface FileRouteTypes {
     | '/music'
     | '/network'
     | '/upload'
-    | '/demo/button'
-    | '/demo/table'
     | '/financial/category'
     | '/financial/dashboard'
     | '/financial/debt'
@@ -302,6 +311,8 @@ export interface FileRouteTypes {
     | '/financial/wallet'
     | '/login'
     | '/sign-up'
+    | '/demo/button'
+    | '/demo/table'
     | '/financial/'
     | '/financial/transaction/$updateId'
     | '/financial/transaction/create'
@@ -311,6 +322,7 @@ export interface FileRouteTypes {
     | '/'
     | '/401'
     | '/404'
+    | '/system-information'
     | '/demoComponent'
     | '/hanbiroTask'
     | '/hashId'
@@ -318,8 +330,6 @@ export interface FileRouteTypes {
     | '/music'
     | '/network'
     | '/upload'
-    | '/demo/button'
-    | '/demo/table'
     | '/financial/category'
     | '/financial/dashboard'
     | '/financial/debt'
@@ -329,6 +339,8 @@ export interface FileRouteTypes {
     | '/financial/wallet'
     | '/login'
     | '/sign-up'
+    | '/demo/button'
+    | '/demo/table'
     | '/financial'
     | '/financial/transaction/$updateId'
     | '/financial/transaction/create'
@@ -342,15 +354,14 @@ export interface FileRouteTypes {
     | '/404'
     | '/(protected)/financial'
     | '/(public)/(empty-layout)'
-    | '/(protected)/demoComponent'
-    | '/(protected)/hanbiroTask'
-    | '/(protected)/hashId'
-    | '/(protected)/icon'
+    | '/(protected)/system-information'
+    | '/(public)/demoComponent'
+    | '/(public)/hanbiroTask'
+    | '/(public)/hashId'
+    | '/(public)/icon'
     | '/(public)/music'
     | '/(public)/network'
     | '/(public)/upload'
-    | '/(protected)/demo/button'
-    | '/(protected)/demo/table'
     | '/(protected)/financial/category'
     | '/(protected)/financial/dashboard'
     | '/(protected)/financial/debt'
@@ -360,6 +371,8 @@ export interface FileRouteTypes {
     | '/(protected)/financial/wallet'
     | '/(public)/(empty-layout)/login'
     | '/(public)/(empty-layout)/sign-up'
+    | '/(public)/demo/button'
+    | '/(public)/demo/table'
     | '/(protected)/financial/'
     | '/(protected)/financial/transaction/$updateId'
     | '/(protected)/financial/transaction/create'
@@ -432,32 +445,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof publicMusicRouteImport
       parentRoute: typeof publicRouteRoute
     }
-    '/(protected)/icon': {
-      id: '/(protected)/icon'
+    '/(public)/icon': {
+      id: '/(public)/icon'
       path: '/icon'
       fullPath: '/icon'
-      preLoaderRoute: typeof protectedIconRouteImport
-      parentRoute: typeof protectedRouteRoute
+      preLoaderRoute: typeof publicIconRouteImport
+      parentRoute: typeof publicRouteRoute
     }
-    '/(protected)/hashId': {
-      id: '/(protected)/hashId'
+    '/(public)/hashId': {
+      id: '/(public)/hashId'
       path: '/hashId'
       fullPath: '/hashId'
-      preLoaderRoute: typeof protectedHashIdRouteImport
-      parentRoute: typeof protectedRouteRoute
+      preLoaderRoute: typeof publicHashIdRouteImport
+      parentRoute: typeof publicRouteRoute
     }
-    '/(protected)/hanbiroTask': {
-      id: '/(protected)/hanbiroTask'
+    '/(public)/hanbiroTask': {
+      id: '/(public)/hanbiroTask'
       path: '/hanbiroTask'
       fullPath: '/hanbiroTask'
-      preLoaderRoute: typeof protectedHanbiroTaskRouteImport
-      parentRoute: typeof protectedRouteRoute
+      preLoaderRoute: typeof publicHanbiroTaskRouteImport
+      parentRoute: typeof publicRouteRoute
     }
-    '/(protected)/demoComponent': {
-      id: '/(protected)/demoComponent'
+    '/(public)/demoComponent': {
+      id: '/(public)/demoComponent'
       path: '/demoComponent'
       fullPath: '/demoComponent'
-      preLoaderRoute: typeof protectedDemoComponentRouteImport
+      preLoaderRoute: typeof publicDemoComponentRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
+    '/(protected)/system-information': {
+      id: '/(protected)/system-information'
+      path: '/system-information'
+      fullPath: '/system-information'
+      preLoaderRoute: typeof protectedSystemInformationRouteImport
       parentRoute: typeof protectedRouteRoute
     }
     '/(public)/(empty-layout)': {
@@ -480,6 +500,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/financial/'
       preLoaderRoute: typeof protectedFinancialIndexRouteImport
       parentRoute: typeof protectedFinancialRouteRoute
+    }
+    '/(public)/demo/table': {
+      id: '/(public)/demo/table'
+      path: '/demo/table'
+      fullPath: '/demo/table'
+      preLoaderRoute: typeof publicDemoTableRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
+    '/(public)/demo/button': {
+      id: '/(public)/demo/button'
+      path: '/demo/button'
+      fullPath: '/demo/button'
+      preLoaderRoute: typeof publicDemoButtonRouteImport
+      parentRoute: typeof publicRouteRoute
     }
     '/(public)/(empty-layout)/sign-up': {
       id: '/(public)/(empty-layout)/sign-up'
@@ -544,20 +578,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedFinancialCategoryRouteImport
       parentRoute: typeof protectedFinancialRouteRoute
     }
-    '/(protected)/demo/table': {
-      id: '/(protected)/demo/table'
-      path: '/demo/table'
-      fullPath: '/demo/table'
-      preLoaderRoute: typeof protectedDemoTableRouteImport
-      parentRoute: typeof protectedRouteRoute
-    }
-    '/(protected)/demo/button': {
-      id: '/(protected)/demo/button'
-      path: '/demo/button'
-      fullPath: '/demo/button'
-      preLoaderRoute: typeof protectedDemoButtonRouteImport
-      parentRoute: typeof protectedRouteRoute
-    }
     '/(protected)/financial/transaction/': {
       id: '/(protected)/financial/transaction/'
       path: '/transaction'
@@ -621,22 +641,12 @@ const protectedFinancialRouteRouteWithChildren =
 
 interface protectedRouteRouteChildren {
   protectedFinancialRouteRoute: typeof protectedFinancialRouteRouteWithChildren
-  protectedDemoComponentRoute: typeof protectedDemoComponentRoute
-  protectedHanbiroTaskRoute: typeof protectedHanbiroTaskRoute
-  protectedHashIdRoute: typeof protectedHashIdRoute
-  protectedIconRoute: typeof protectedIconRoute
-  protectedDemoButtonRoute: typeof protectedDemoButtonRoute
-  protectedDemoTableRoute: typeof protectedDemoTableRoute
+  protectedSystemInformationRoute: typeof protectedSystemInformationRoute
 }
 
 const protectedRouteRouteChildren: protectedRouteRouteChildren = {
   protectedFinancialRouteRoute: protectedFinancialRouteRouteWithChildren,
-  protectedDemoComponentRoute: protectedDemoComponentRoute,
-  protectedHanbiroTaskRoute: protectedHanbiroTaskRoute,
-  protectedHashIdRoute: protectedHashIdRoute,
-  protectedIconRoute: protectedIconRoute,
-  protectedDemoButtonRoute: protectedDemoButtonRoute,
-  protectedDemoTableRoute: protectedDemoTableRoute,
+  protectedSystemInformationRoute: protectedSystemInformationRoute,
 }
 
 const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(
@@ -661,16 +671,28 @@ const publicemptyLayoutRouteRouteWithChildren =
 
 interface publicRouteRouteChildren {
   publicemptyLayoutRouteRoute: typeof publicemptyLayoutRouteRouteWithChildren
+  publicDemoComponentRoute: typeof publicDemoComponentRoute
+  publicHanbiroTaskRoute: typeof publicHanbiroTaskRoute
+  publicHashIdRoute: typeof publicHashIdRoute
+  publicIconRoute: typeof publicIconRoute
   publicMusicRoute: typeof publicMusicRoute
   publicNetworkRoute: typeof publicNetworkRoute
   publicUploadRoute: typeof publicUploadRoute
+  publicDemoButtonRoute: typeof publicDemoButtonRoute
+  publicDemoTableRoute: typeof publicDemoTableRoute
 }
 
 const publicRouteRouteChildren: publicRouteRouteChildren = {
   publicemptyLayoutRouteRoute: publicemptyLayoutRouteRouteWithChildren,
+  publicDemoComponentRoute: publicDemoComponentRoute,
+  publicHanbiroTaskRoute: publicHanbiroTaskRoute,
+  publicHashIdRoute: publicHashIdRoute,
+  publicIconRoute: publicIconRoute,
   publicMusicRoute: publicMusicRoute,
   publicNetworkRoute: publicNetworkRoute,
   publicUploadRoute: publicUploadRoute,
+  publicDemoButtonRoute: publicDemoButtonRoute,
+  publicDemoTableRoute: publicDemoTableRoute,
 }
 
 const publicRouteRouteWithChildren = publicRouteRoute._addFileChildren(

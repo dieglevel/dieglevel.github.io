@@ -86,7 +86,9 @@ export default function TransferHistory({
 
   const { totalAmount, totalFee } = useMemo(() => {
     const list = data?.data || []
+    // eslint-disable-next-line no-shadow
     let totalAmount = 0
+    // eslint-disable-next-line no-shadow
     let totalFee = 0
 
     list.forEach((item) => {

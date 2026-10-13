@@ -15,6 +15,7 @@ import {
   message,
 } from 'antd'
 import dayjs from 'dayjs'
+import { useTranslation } from 'react-i18next'
 import type { IFinance_Goal } from '@/shared/api/financial/goal/goal.type'
 import {
   FINANCIAL_GOAL_SAVING_MODE,
@@ -22,7 +23,6 @@ import {
   FINANCIAL_GOAL_TYPE,
 } from '@/shared/api/financial/goal/goal.enum'
 import { useMutationGoal } from '@/shared/api/financial/goal/goal.mutation'
-import { useTranslation } from 'react-i18next'
 
 const { Text } = Typography
 
@@ -356,7 +356,11 @@ export function AddGoalModal({
         {/* Description */}
         <Form.Item
           name="description"
-          label={<Text strong>{t('goal.description')} / {t('goal.note')}</Text>}
+          label={
+            <Text strong>
+              {t('goal.description')} / {t('goal.note')}
+            </Text>
+          }
         >
           <Input.TextArea
             rows={2}

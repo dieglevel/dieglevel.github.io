@@ -34,7 +34,8 @@ export const DebtHistoryTable: React.FC<Props> = ({ debtId, pageSize = 5 }) => {
             {DayjsHelper.formatDate(date, 'DD/MM/YYYY')}
           </Text>
           <Text type="secondary" style={{ fontSize: 10 }}>
-            {t('debtForms.entered')}: {DayjsHelper.formatDate(record.createdAt, 'DD/MM HH:mm')}
+            {t('debtForms.entered')}:{' '}
+            {DayjsHelper.formatDate(record.createdAt, 'DD/MM HH:mm')}
           </Text>
         </Flex>
       ),
@@ -68,7 +69,8 @@ export const DebtHistoryTable: React.FC<Props> = ({ debtId, pageSize = 5 }) => {
             {convertCurrency(r.outstandingAmount)}
           </Text>
           <Text type="secondary" style={{ fontSize: 11 }}>
-            ({t('debtForms.before')}: {convertCurrency(r.previousOutstandingAmount)})
+            ({t('debtForms.before')}:{' '}
+            {convertCurrency(r.previousOutstandingAmount)})
           </Text>
         </Flex>
       ),

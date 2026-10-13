@@ -98,7 +98,7 @@ export function WalletModal({
         pathParams: { id: wallet.id.toString() },
       })
       message.success(t('common.create'))
-    } catch (error) {
+    } catch {
       message.error(t('common.noData'))
     }
   }

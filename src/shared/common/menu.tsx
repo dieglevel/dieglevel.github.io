@@ -79,6 +79,13 @@ export const Menu: Array<AppMenuItem> = [
     ],
   },
   {
+    id: 'systemInformation',
+    label: 'menu.system-information',
+    icon: <Gauge size={18} style={{ fontSize: 18 }} />,
+    link: '/system-information',
+    isAuthRequired: true,
+  },
+  {
     id: 'finance',
     label: 'menu.finance.finnance',
     icon: <CircleDollarSign style={{ fontSize: 18 }} />,

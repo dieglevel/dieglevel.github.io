@@ -34,9 +34,7 @@ export const SettingsDataManagement: React.FC = () => {
             extra={
               <Button
                 icon={<DownloadOutlined />}
-                onClick={() =>
-                  handleAction(t('dataManagement.exportStarted'))
-                }
+                onClick={() => handleAction(t('dataManagement.exportStarted'))}
               >
                 {t('dataManagement.export')}
               </Button>
@@ -76,9 +74,7 @@ export const SettingsDataManagement: React.FC = () => {
             extra={
               <Button
                 icon={<UploadOutlined />}
-                onClick={() =>
-                  handleAction(t('dataManagement.openFilePicker'))
-                }
+                onClick={() => handleAction(t('dataManagement.openFilePicker'))}
               >
                 {t('dataManagement.import')}
               </Button>

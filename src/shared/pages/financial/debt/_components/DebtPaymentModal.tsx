@@ -107,7 +107,9 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
 
   return (
     <Modal
-      title={isIncoming ? t('debtForms.paymentCollect') : t('debtForms.paymentPay')}
+      title={
+        isIncoming ? t('debtForms.paymentCollect') : t('debtForms.paymentPay')
+      }
       open={open}
       onCancel={onClose}
       onOk={() => (isPaymentTab ? form.submit() : onClose())}
@@ -123,7 +125,9 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
         items={[
           {
             key: 'payment',
-            label: isIncoming ? t('debtForms.performCollect') : t('debtForms.performPay'),
+            label: isIncoming
+              ? t('debtForms.performCollect')
+              : t('debtForms.performPay'),
           },
           { key: 'history', label: t('debtForms.history') },
         ]}

@@ -154,7 +154,9 @@ export const GoalCard: React.FC<GoalCardProps> = ({
             <Space size={6} align="center">
               <Text style={{ fontSize: 15, fontWeight: 600 }}>{goal.name}</Text>
               {goal.isLocked && (
-                <Tooltip title={t('goal.locked', { defaultValue: 'Lock withdrawals' })}>
+                <Tooltip
+                  title={t('goal.locked', { defaultValue: 'Lock withdrawals' })}
+                >
                   <LockOutlined style={{ color: '#ef4444', fontSize: 12 }} />
                 </Tooltip>
               )}
@@ -186,7 +188,9 @@ export const GoalCard: React.FC<GoalCardProps> = ({
         {/* Action Buttons */}
         <Space size={4}>
           {onView && (
-            <Tooltip title={t('common.detail', { defaultValue: 'View details' })}>
+            <Tooltip
+              title={t('common.detail', { defaultValue: 'View details' })}
+            >
               <Button
                 type="text"
                 icon={<EyeOutlined style={{ color: '#1677ff' }} />}

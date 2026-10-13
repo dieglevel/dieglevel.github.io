@@ -25,6 +25,7 @@
     "network": "Network",
     "icon": "Icon",
     "hash-id": "Hash Id",
+    "system-information": "System Information",
     "finance": {
       "finnance": "Finance",
       "dashboard": "Dashboard",

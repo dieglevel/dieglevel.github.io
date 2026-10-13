@@ -1,13 +1,13 @@
-import React, { useState, useMemo } from 'react'
-import { Card, Form, Input, Button, Modal, Space, Grid } from 'antd'
+import React, { useMemo, useState } from 'react'
+import { Button, Card, Form, Grid, Input, Modal, Space } from 'antd'
 import { useTranslation } from 'react-i18next'
-import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
-import { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
-import { TransactionsTable } from '../TransactionsTable'
-import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
 import { CloseOutlined, SelectOutlined } from '@ant-design/icons'
+import { TransactionsTable } from '../TransactionsTable'
 import { TransactionSearch } from '../TransactionSearch'
 import { TransactionFilterModal } from '../TransactionFilterModal'
+import type { IFinance_Transaction } from '@/shared/api/financial/transaction/transaction.type'
+import { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
+import { useGetFinance_Transaction_List } from '@/shared/api/financial/transaction/useGetFinance_Transaction_List'
 
 const { useBreakpoint } = Grid
 
@@ -32,7 +32,9 @@ export const TransactionAdditionalForm: React.FC<
 
   // Search & Filter State
   const [search, setSearch] = useState('')
-  const [typeFilter, setTypeFilter] = useState<'all' | FINANCIAL_TRANSACTION_TYPE>('all')
+  const [typeFilter, setTypeFilter] = useState<
+    'all' | FINANCIAL_TRANSACTION_TYPE
+  >('all')
   const [walletFilter, setWalletFilter] = useState<number | 'all'>('all')
   const [catFilter, setCatFilter] = useState<number | 'all'>('all')
   const [statusFilter, setStatusFilter] = useState<string>('all')
@@ -68,7 +70,7 @@ export const TransactionAdditionalForm: React.FC<
     },
   })
 
-  const transactions = listData?.data?.data || []
+  const transactions = listData?.data.data || []
 
   const walletOptions = useMemo(() => {
     const map = new Map<number, any>()
@@ -95,7 +97,7 @@ export const TransactionAdditionalForm: React.FC<
 
   const selectedTx =
     (originalTransactionId &&
-      listData?.data?.data?.find((tx) => tx.id === originalTransactionId)) ||
+      listData?.data.data.find((tx) => tx.id === originalTransactionId)) ||
     originalTransactions?.find((tx) => tx.id === originalTransactionId)
 
   return (
@@ -218,7 +220,7 @@ export const TransactionAdditionalForm: React.FC<
             }
           }}
           onViewDetail={handleSelectOriginal}
-          pagination={listData?.data?.meta}
+          pagination={listData?.data.meta}
           onPageChange={setPage}
           onDelete={() => {}}
           onRowClick={handleSelectOriginal}

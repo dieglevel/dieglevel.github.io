@@ -173,7 +173,8 @@ export function MinimalGameMenu({
                         border: 'none',
                         outline: 'none',
                         padding: '6px 0',
-                        cursor: hasChildren ? 'pointer' : 'default',
+                        cursor:
+                          hasChildren || group.link ? 'pointer' : 'default',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '8px',
@@ -191,6 +192,10 @@ export function MinimalGameMenu({
                       whileHover={{ x: 6 }}
                       whileTap={hasChildren ? { scale: 0.97 } : undefined}
                       onClick={() => {
+                        if (!hasChildren && group.link) {
+                          nagivate({ to: group.link as string })
+                          return
+                        }
                         if (!hasChildren) return
                         setOpenGroup((current) =>
                           current === group.id ? null : group.id,

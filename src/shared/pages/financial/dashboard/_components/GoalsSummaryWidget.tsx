@@ -165,7 +165,13 @@ export const GoalsSummaryWidget: React.FC<GoalsSummaryWidgetProps> = ({
                     )}
                   </div>
                   <Tag
-                    color={pct >= 100 ? 'success' : pct >= 60 ? 'processing' : 'warning'}
+                    color={
+                      pct >= 100
+                        ? 'success'
+                        : pct >= 60
+                          ? 'processing'
+                          : 'warning'
+                    }
                     style={{
                       borderRadius: radius.sm,
                       margin: 0,

@@ -153,7 +153,9 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
             <Flex vertical gap={6}>
               <Flex justify="space-between">
                 <Text type="secondary" style={{ fontSize: 13 }}>
-                  {t('debtForms.currentWalletBalance', { name: selectedWallet.name })}
+                  {t('debtForms.currentWalletBalance', {
+                    name: selectedWallet.name,
+                  })}
                 </Text>
                 <Text
                   strong
@@ -326,7 +328,10 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
         </Row>
 
         <Form.Item name="description" label={t('debtForms.note')}>
-          <Input.TextArea rows={3} placeholder={t('debtForms.notePlaceholder')} />
+          <Input.TextArea
+            rows={3}
+            placeholder={t('debtForms.notePlaceholder')}
+          />
         </Form.Item>
       </Form>
     </Modal>

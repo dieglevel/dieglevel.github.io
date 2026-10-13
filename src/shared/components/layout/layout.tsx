@@ -2,7 +2,6 @@ import React from 'react'
 
 import { Flex, Layout } from 'antd'
 import Menu from './menu/menu'
-import { useThemeMode } from '@/shared/provider/antd-theme.provider'
 
 const { Content } = Layout
 
@@ -11,7 +10,6 @@ interface Props {
 }
 
 const MainLayout: React.FC<Props> = ({ children }) => {
-  const { mode } = useThemeMode()
   return (
     <Layout
       style={{

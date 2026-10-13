@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Button, Flex, Typography } from 'antd'
 import { IconChevronDownDouble } from '@/shared/assets/icons'
 
-export const Route = createFileRoute('/(protected)/demo/button')({
+export const Route = createFileRoute('/(public)/demo/button')({
   component: RouteComponent,
 })
 
