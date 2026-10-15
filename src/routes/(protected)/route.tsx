@@ -45,7 +45,12 @@ function RouteComponent() {
 
   if (!data) {
     return (
-      <Flex justify="center" align="center" style={{ height: '100%' }}>
+      <Flex
+        flex={1}
+        justify="center"
+        align="center"
+        style={{ height: '100vh' }}
+      >
         <SakuraBranch size={160} />
       </Flex>
     )

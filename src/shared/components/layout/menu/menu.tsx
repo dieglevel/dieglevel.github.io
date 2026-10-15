@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useLocation, useNavigate } from '@tanstack/react-router'
 import { Button, Dropdown, Flex, Grid, Typography } from 'antd'
@@ -23,6 +23,7 @@ import { useAuthStore } from '@/shared/auth/auth.store'
 import { useMutationAuth } from '@/shared/api/auth/auth.mutation'
 import { LogoutService } from '@/shared/auth/logout.service'
 import { useThemeMode } from '@/shared/provider/antd-theme.provider'
+import { useGetProfile } from '@/shared/api/profile/useGetProfile'
 
 const { useBreakpoint } = Grid
 
@@ -54,13 +55,19 @@ const itemVariants = {
 
 export default function Menu() {
   const { t, i18n } = useTranslation()
+  const { user, isAuthenticated, setAuth, setUser } = useAuthStore()
+  const { data: profile } = useGetProfile({
+    options: {
+      enabled: isAuthenticated && !user, // chỉ gọi API khi đã login và chưa có user trong store
+    },
+  })
+  const profileData = profile?.data
 
   const { mode } = useThemeMode()
   const { background } = getTokens(mode)
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [mobileExpandedId, setMobileExpandedId] = useState<string | null>(null)
-  const { isAuthenticated } = useAuthStore()
   const AppMenu = useMemo(
     () => getAppMenu(isAuthenticated),
     [isAuthenticated, i18n.language],
@@ -79,10 +86,15 @@ export default function Menu() {
   const location = useLocation()
 
   const { message } = useApp()
-  const { user } = useAuthStore()
   const [open, setOpen] = useState(false)
 
   const { mLogout } = useMutationAuth()
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      setUser(profileData || (null as any))
+    }
+  }, [isAuthenticated])
 
   // ===== ĐO CHIỀU RỘNG & TÍNH SỐ MỤC HIỂN THỊ =====
   useLayoutEffect(() => {
@@ -591,9 +603,14 @@ export default function Menu() {
                             ? 'linear-gradient(135deg, #B74C36, #B74C36)'
                             : 'transparent',
                         }}
+                        onClick={() => {
+                          navigate({
+                            to: '/auth/profile',
+                          })
+                        }}
                       >
                         <img
-                          src={Brand}
+                          src={profileData?.avatar?.url || Brand}
                           alt={'User Avatar'}
                           style={{
                             width: '100%',
@@ -615,7 +632,16 @@ export default function Menu() {
                             lineHeight: 1.2,
                           }}
                         >
-                          {'Tài khoản'}
+                          {(() => {
+                            let name = ''
+                            if (profileData?.firstName) {
+                              name += profileData.firstName
+                            }
+                            if (profileData?.lastName) {
+                              name += (name ? ' ' : '') + profileData.lastName
+                            }
+                            return name || '-'
+                          })()}
                         </Typography.Text>
                         <Typography.Text
                           style={{

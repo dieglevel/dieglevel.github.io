@@ -7,7 +7,6 @@ import type { Request_SignUp } from '@/shared/api/auth/auth.dto'
 import WriteItem from '@/shared/components/form/write-item'
 import { AuthTokenService } from '@/shared/auth/authToken.service'
 import { useMutationAuth } from '@/shared/api/auth/auth.mutation'
-import { UserRoleEnum } from '@/shared/auth/auth.type'
 
 export const Route = createFileRoute('/(public)/(empty-layout)/sign-up')({
   component: RouteComponent,
@@ -61,12 +60,12 @@ function RouteComponent() {
           onSuccess(data) {
             const response = data
 
-            if (response.user.role === UserRoleEnum.CUSTOMER) {
-              message.error(
-                'You do not have permission to access this application.',
-              )
-              return
-            }
+            // if (response.user.role === UserRoleEnum.CUSTOMER) {
+            //   message.error(
+            //     'You do not have permission to access this application.',
+            //   )
+            //   return
+            // }
 
             message.success('Sign up successful')
 

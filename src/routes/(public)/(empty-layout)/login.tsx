@@ -9,7 +9,6 @@ import WriteItem from '@/shared/components/form/write-item'
 import { AuthTokenService } from '@/shared/auth/authToken.service'
 import { useMutationAuth } from '@/shared/api/auth/auth.mutation'
 import { useAuthStore } from '@/shared/auth/auth.store'
-import { UserRoleEnum } from '@/shared/auth/auth.type'
 import {
   LOCAL_STORAGE_KEY,
   LocalStorageService,
@@ -87,12 +86,12 @@ export function LoginComponent() {
           onSuccess(data) {
             const response = data
 
-            if (response.data.user.role === UserRoleEnum.CUSTOMER) {
-              message.error(
-                'You do not have permission to access this application.',
-              )
-              return
-            }
+            // if (response.data.user.role === UserRoleEnum.CUSTOMER) {
+            //   message.error(
+            //     'You do not have permission to access this application.',
+            //   )
+            //   return
+            // }
 
             message.success('Login successful')
 

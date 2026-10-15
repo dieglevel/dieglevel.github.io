@@ -31,13 +31,13 @@ export function LoginForm({ onBack, onSuccess }: LoginFormProps) {
       { body: { identifier: values.identifier, password: values.password } },
       {
         onSuccess(data) {
-          if (data.data.user.role === UserRoleEnum.CUSTOMER) {
-            message.error(
-              'You do not have permission to access this application.',
-            )
-            setIsLoading(false)
-            return
-          }
+          // if (data.data.user.role === UserRoleEnum.CUSTOMER) {
+          //   message.error(
+          //     'You do not have permission to access this application.',
+          //   )
+          //   setIsLoading(false)
+          //   return
+          // }
 
           message.success('Login successful')
           AuthTokenService.setTokens(

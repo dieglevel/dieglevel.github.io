@@ -1,4 +1,4 @@
-import type { User } from '@/shared/auth/auth.type'
+import type { IProfile } from '../profile/profile.type'
 
 export interface Request_Login {
   identifier: string
@@ -8,7 +8,7 @@ export interface Request_Login {
 export interface Response_Login {
   accessToken: string
   refreshToken: string
-  user: User
+  user: IProfile
 }
 
 export interface Request_Logout {}
@@ -26,7 +26,7 @@ export interface Response_SignUp {
   expires_in: number
   expires_at: number
   refresh_token: string
-  user: User
+  user: IProfile
 }
 
 export interface Request_Register {
@@ -41,5 +41,5 @@ export interface Response_Register {
   expires_in: number
   expires_at: number
   refresh_token: string
-  user: User
+  user: IProfile
 }

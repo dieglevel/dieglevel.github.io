@@ -11,8 +11,6 @@ import type { MenuProps } from 'antd'
 import { getTokens } from '@/shared/common/design-token'
 import { LogoutService } from '@/shared/auth/logout.service'
 import { useMutationAuth } from '@/shared/api/auth/auth.mutation'
-import { UserRoleMapper } from '@/shared/auth/auth.type'
-import { renderMapperEnum } from '@/shared/utils/helper/render-mapper-enum'
 import { useAuthStore } from '@/shared/auth/auth.store'
 import { useThemeMode } from '@/shared/provider/antd-theme.provider'
 
@@ -99,7 +97,7 @@ export default function Footer() {
                     color: colors.primary.base,
                   }}
                 >
-                  {user?.email || '-'}
+                  {/* {user?.email || '-'} */}
                 </Typography.Text>
 
                 <Typography.Text
@@ -110,7 +108,7 @@ export default function Footer() {
                     opacity: 0.7,
                   }}
                 >
-                  {renderMapperEnum(user?.role, UserRoleMapper, '-')}
+                  {/* {renderMapperEnum(user?.role, UserRoleMapper, '-')} */}
                 </Typography.Text>
               </div>
             </Space>

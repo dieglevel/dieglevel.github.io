@@ -36,6 +36,7 @@ import { Route as protectedFinancialGoalRouteImport } from './../../routes/(prot
 import { Route as protectedFinancialDebtRouteImport } from './../../routes/(protected)/financial/debt'
 import { Route as protectedFinancialDashboardRouteImport } from './../../routes/(protected)/financial/dashboard'
 import { Route as protectedFinancialCategoryRouteImport } from './../../routes/(protected)/financial/category'
+import { Route as protectedAuthProfileRouteImport } from './../../routes/(protected)/auth/profile'
 import { Route as protectedFinancialTransactionIndexRouteImport } from './../../routes/(protected)/financial/transaction/index'
 import { Route as protectedFinancialTransactionCreateRouteImport } from './../../routes/(protected)/financial/transaction/create'
 import { Route as protectedFinancialTransactionUpdateIdRouteImport } from './../../routes/(protected)/financial/transaction/$updateId'
@@ -178,6 +179,11 @@ const protectedFinancialCategoryRoute =
     path: '/category',
     getParentRoute: () => protectedFinancialRouteRoute,
   } as any)
+const protectedAuthProfileRoute = protectedAuthProfileRouteImport.update({
+  id: '/auth/profile',
+  path: '/auth/profile',
+  getParentRoute: () => protectedRouteRoute,
+} as any)
 const protectedFinancialTransactionIndexRoute =
   protectedFinancialTransactionIndexRouteImport.update({
     id: '/transaction/',
@@ -210,6 +216,7 @@ export interface FileRoutesByFullPath {
   '/music': typeof publicMusicRoute
   '/network': typeof publicNetworkRoute
   '/upload': typeof publicUploadRoute
+  '/auth/profile': typeof protectedAuthProfileRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
   '/financial/dashboard': typeof protectedFinancialDashboardRoute
   '/financial/debt': typeof protectedFinancialDebtRoute
@@ -238,6 +245,7 @@ export interface FileRoutesByTo {
   '/music': typeof publicMusicRoute
   '/network': typeof publicNetworkRoute
   '/upload': typeof publicUploadRoute
+  '/auth/profile': typeof protectedAuthProfileRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
   '/financial/dashboard': typeof protectedFinancialDashboardRoute
   '/financial/debt': typeof protectedFinancialDebtRoute
@@ -271,6 +279,7 @@ export interface FileRoutesById {
   '/(public)/music': typeof publicMusicRoute
   '/(public)/network': typeof publicNetworkRoute
   '/(public)/upload': typeof publicUploadRoute
+  '/(protected)/auth/profile': typeof protectedAuthProfileRoute
   '/(protected)/financial/category': typeof protectedFinancialCategoryRoute
   '/(protected)/financial/dashboard': typeof protectedFinancialDashboardRoute
   '/(protected)/financial/debt': typeof protectedFinancialDebtRoute
@@ -302,6 +311,7 @@ export interface FileRouteTypes {
     | '/music'
     | '/network'
     | '/upload'
+    | '/auth/profile'
     | '/financial/category'
     | '/financial/dashboard'
     | '/financial/debt'
@@ -330,6 +340,7 @@ export interface FileRouteTypes {
     | '/music'
     | '/network'
     | '/upload'
+    | '/auth/profile'
     | '/financial/category'
     | '/financial/dashboard'
     | '/financial/debt'
@@ -362,6 +373,7 @@ export interface FileRouteTypes {
     | '/(public)/music'
     | '/(public)/network'
     | '/(public)/upload'
+    | '/(protected)/auth/profile'
     | '/(protected)/financial/category'
     | '/(protected)/financial/dashboard'
     | '/(protected)/financial/debt'
@@ -578,6 +590,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedFinancialCategoryRouteImport
       parentRoute: typeof protectedFinancialRouteRoute
     }
+    '/(protected)/auth/profile': {
+      id: '/(protected)/auth/profile'
+      path: '/auth/profile'
+      fullPath: '/auth/profile'
+      preLoaderRoute: typeof protectedAuthProfileRouteImport
+      parentRoute: typeof protectedRouteRoute
+    }
     '/(protected)/financial/transaction/': {
       id: '/(protected)/financial/transaction/'
       path: '/transaction'
@@ -642,11 +661,13 @@ const protectedFinancialRouteRouteWithChildren =
 interface protectedRouteRouteChildren {
   protectedFinancialRouteRoute: typeof protectedFinancialRouteRouteWithChildren
   protectedSystemInformationRoute: typeof protectedSystemInformationRoute
+  protectedAuthProfileRoute: typeof protectedAuthProfileRoute
 }
 
 const protectedRouteRouteChildren: protectedRouteRouteChildren = {
   protectedFinancialRouteRoute: protectedFinancialRouteRouteWithChildren,
   protectedSystemInformationRoute: protectedSystemInformationRoute,
+  protectedAuthProfileRoute: protectedAuthProfileRoute,
 }
 
 const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(

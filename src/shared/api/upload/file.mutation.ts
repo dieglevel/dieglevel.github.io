@@ -1,18 +1,19 @@
 import { uploadKeys } from './upload.keys'
 import type { ApiBaseResponse } from '@/shared/types/base-response'
+import type { IFile } from './file.type'
 import { useMutationPost } from '@/shared/lib/api/mutation/useMutation'
 
 export interface UploadRawResponse {}
 
 export const useMutationUpload = () => {
-  const mUploadRaw = useMutationPost<
-    ApiBaseResponse<string>,
+  const mUpload = useMutationPost<
+    ApiBaseResponse<IFile>,
     FormData,
-    '/admin/products/upload-raw'
+    '/static/upload'
   >({
-    endPoint: '/admin/products/upload-raw',
+    endPoint: '/static/upload',
     queryKey: uploadKeys.raw(),
   })
 
-  return { mUploadRaw }
+  return { mUpload }
 }

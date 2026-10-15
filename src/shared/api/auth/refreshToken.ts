@@ -1,12 +1,12 @@
 import axios from 'axios'
 import type { AxiosResponse } from 'axios'
 import type { ApiBaseResponse } from '../../types/base-response'
-import type { User } from '@/shared/auth/auth.type'
+import type { IProfile } from '../profile/profile.type'
 
 export type RefreshTokenResponse = ApiBaseResponse<{
   accessToken: string
   refreshToken: string
-  user: User
+  user: IProfile
 }>
 
 const refreshClient = axios.create({

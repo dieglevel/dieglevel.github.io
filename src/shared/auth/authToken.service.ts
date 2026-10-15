@@ -1,10 +1,10 @@
 import { AccessTokenService } from './accessToken.service'
 import { RefreshTokenService } from './refreshToken.service'
 import { UserTokenService } from './userToken.service'
-import type { User } from './auth.type'
+import type { IProfile } from '../api/profile/profile.type'
 
 export const AuthTokenService = {
-  setTokens(accessToken: string, refreshToken: string, user: User) {
+  setTokens(accessToken: string, refreshToken: string, user: IProfile) {
     AccessTokenService.set(accessToken)
     UserTokenService.set(user)
     RefreshTokenService.set(refreshToken)
@@ -26,7 +26,7 @@ export const AuthTokenService = {
   loadTokens(): {
     accessToken: string | null
     refreshToken: string | null
-    user: User | null
+    user: IProfile | null
   } | null {
     const accessToken = AccessTokenService.get()
     const refreshToken = RefreshTokenService.get()

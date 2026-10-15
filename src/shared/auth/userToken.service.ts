@@ -1,11 +1,11 @@
 import { CookieService } from '../lib/service/cookie'
 import { AUTH_TOKEN_KEY } from './auth.type'
-import type { User } from './auth.type'
+import type { IProfile } from '../api/profile/profile.type'
 
-let memoryUserToken: User | null = null
+let memoryUserToken: IProfile | null = null
 
 export const UserTokenService = {
-  set(user: User) {
+  set(user: IProfile) {
     memoryUserToken = user
 
     if (typeof window !== 'undefined') {
@@ -13,7 +13,7 @@ export const UserTokenService = {
     }
   },
 
-  get(): User | null {
+  get(): IProfile | null {
     if (memoryUserToken) return memoryUserToken
 
     if (typeof window !== 'undefined') {

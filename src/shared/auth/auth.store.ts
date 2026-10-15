@@ -1,19 +1,20 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import type { User } from '../auth/auth.type'
+import type { IProfile } from '../api/profile/profile.type'
 
 interface AuthState {
-  user: User | null
+  user: IProfile | null
   accessToken: string | null
   refreshToken: string | null
   isAuthenticated: boolean
   setAuth: (auth: {
-    user: User
+    user: IProfile | null
     accessToken: string
     refreshToken?: string
     isAuthenticated: boolean
   }) => void
   clearAuth: () => void
+  setUser: (user: IProfile | null) => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -25,6 +26,7 @@ export const useAuthStore = create<AuthState>()(
 
     setAuth: ({ user, accessToken, refreshToken, isAuthenticated }) =>
       set({ user, accessToken, refreshToken, isAuthenticated }),
+    setUser: (user) => set({ user }),
 
     clearAuth: () =>
       set({
