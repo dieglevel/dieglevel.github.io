@@ -24,28 +24,6 @@ class LanguageHelperImpl extends BaseEnumHelper<LanguageEnum> {
     [LanguageEnum.KO]: '한국어',
   }
 
-  // Dùng bản đồ riêng hỗ trợ đa ngôn ngữ
-  protected readonly i18nLabelMap: Record<
-    LanguageEnum,
-    Record<LanguageEnum, string>
-  > = {
-    [LanguageEnum.EN]: {
-      [LanguageEnum.VI]: 'Tiếng Anh',
-      [LanguageEnum.EN]: 'English',
-      [LanguageEnum.KO]: '영어',
-    },
-    [LanguageEnum.VI]: {
-      [LanguageEnum.VI]: 'Tiếng Việt',
-      [LanguageEnum.EN]: 'Vietnamese',
-      [LanguageEnum.KO]: '베트남어',
-    },
-    [LanguageEnum.KO]: {
-      [LanguageEnum.VI]: 'Tiếng Hàn',
-      [LanguageEnum.EN]: 'Korean',
-      [LanguageEnum.KO]: '한국어',
-    },
-  }
-
   public getColor(value: LanguageEnum): string {
     return this.colorMap[value]
   }
@@ -54,7 +32,7 @@ class LanguageHelperImpl extends BaseEnumHelper<LanguageEnum> {
     value: LanguageEnum,
     lang: LanguageEnum = LanguageEnum.VI,
   ): string {
-    return this.i18nLabelMap[value][lang]
+    return this.labelMap[value]
   }
 }
 

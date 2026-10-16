@@ -10,6 +10,7 @@ import { useThemeMode } from '@/shared/provider/antd-theme.provider'
 import { useGetFinance_Setting_Get } from '@/shared/api/financial/setting/useGetFinance_Setting_Get'
 import { useSettingStore } from '@/shared/pages/financial/_store/setting.store'
 import SakuraBranch from '@/shared/components/sakura-branch'
+import { i18nChangeLanguage } from '@/i18n'
 
 export const Route = createFileRoute('/(protected)')({
   component: () => {
@@ -39,7 +40,7 @@ function RouteComponent() {
     if (data?.data) {
       useSettingStore.getState().set(data.data)
       setMode(data.data.themeMode)
-      i18n.changeLanguage(data.data.language)
+      i18nChangeLanguage(data.data.language)
     }
   }, [data])
 

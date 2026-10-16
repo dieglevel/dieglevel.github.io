@@ -5,6 +5,7 @@ import { Button, Dropdown, Flex, Grid, Typography } from 'antd'
 import { ChevronDown, Ellipsis, MenuIcon, XIcon } from 'lucide-react'
 import useApp from 'antd/es/app/useApp'
 import {
+  LockFilled,
   LogoutOutlined,
   SettingOutlined,
   UserOutlined,
@@ -150,11 +151,21 @@ export default function Menu() {
       key: 'profile',
       icon: <UserOutlined />,
       label: t('auth.profile'),
+      onClick: () => {
+        navigate({
+          to: '/auth/profile',
+        })
+      },
+    },
+    {
+      key: 'change-password',
+      icon: <LockFilled />,
+      label: t('auth.change-password'),
     },
     {
       key: 'settings',
       icon: <SettingOutlined />,
-      label: t('auth.change-password'),
+      label: t('auth.settings'),
     },
     {
       type: 'divider',
@@ -602,11 +613,6 @@ export default function Menu() {
                           background: open
                             ? 'linear-gradient(135deg, #B74C36, #B74C36)'
                             : 'transparent',
-                        }}
-                        onClick={() => {
-                          navigate({
-                            to: '/auth/profile',
-                          })
                         }}
                       >
                         <img

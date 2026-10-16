@@ -14,7 +14,10 @@
     "please-enter-password": "비밀번호를 입력하세요",
     "submit-login": "로그인",
     "create-account": "계정 생성",
-    "logout": "로그아웃"
+    "logout": "로그아웃",
+    "profile": "프로필",
+    "change-password": "비밀번호 변경",
+    "settings": "설정"
   },
   "menu": {
     "tools": "도구",
@@ -24,6 +27,7 @@
     "icon": "아이콘",
     "hash-id": "해시 ID",
     "system-information": "시스템 정보",
+    "talking-driving": "토킹 드라이빙",
     "finance": {
       "finnance": "금융",
       "dashboard": "대시보드",

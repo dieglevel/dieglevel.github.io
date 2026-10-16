@@ -16,7 +16,8 @@
     "create-account": "Create an account",
     "logout": "Logout",
     "profile": "Profile",
-    "change-password": "Change Password"
+    "change-password": "Change Password",
+    "settings": "Settings"
   },
   "menu": {
     "tools": "Tools",
@@ -25,6 +26,7 @@
     "network": "Network",
     "icon": "Icon",
     "hash-id": "Hash Id",
+    "talking-driving": "Talking Driving",
     "system-information": "System Information",
     "finance": {
       "finnance": "Finance",

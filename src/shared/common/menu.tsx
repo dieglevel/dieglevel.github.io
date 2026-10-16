@@ -76,6 +76,12 @@ export const Menu: Array<AppMenuItem> = [
         icon: <Key size={16} style={{ fontSize: 16 }} />,
         link: '/hashId',
       },
+      {
+        id: 'talkingDriving',
+        label: 'menu.talking-driving',
+        icon: <Key size={16} style={{ fontSize: 16 }} />,
+        link: '/talking-driving',
+      },
     ],
   },
   {

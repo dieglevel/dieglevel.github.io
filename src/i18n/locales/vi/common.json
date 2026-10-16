@@ -14,7 +14,10 @@
     "please-enter-password": "Vui lòng nhập mật khẩu",
     "submit-login": "ĐĂNG NHẬP",
     "create-account": "Tạo tài khoản",
-    "logout": "Đăng xuất"
+    "logout": "Đăng xuất",
+    "profile": "Hồ sơ",
+    "change-password": "Đổi mật khẩu",
+    "settings": "Cài đặt"
   },
   "menu": {
     "tools": "Công cụ",
@@ -24,6 +27,7 @@
     "icon": "Biểu tượng",
     "hash-id": "Hash Id",
     "system-information": "Thông tin hệ thống",
+    "talking-driving": "Nói lái",
     "finance": {
       "finnance": "Tài chính",
       "dashboard": "Tổng quan",

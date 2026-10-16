@@ -12,6 +12,7 @@ import koDashboard from './locales/ko/finance/dashboard.json'
 import enFinance from './locales/en/finance'
 import viFinance from './locales/vi/finance'
 import koFinance from './locales/ko/finance'
+import type { LanguageEnum } from './enum'
 import {
   LOCAL_STORAGE_KEY,
   LocalStorageService,
@@ -40,7 +41,7 @@ const translations = {
 
 const resource = translations
 
-i18n.use(initReactI18next).init({
+i18n.use(initReactI18next).init<LanguageEnum>({
   resources: resource,
   lng: LocalStorageService.get<string>(LOCAL_STORAGE_KEY.LANGUAGE) || 'en',
   fallbackLng: 'en',
@@ -49,5 +50,10 @@ i18n.use(initReactI18next).init({
     escapeValue: false,
   },
 })
+
+export function i18nChangeLanguage(lng: LanguageEnum) {
+  i18n.changeLanguage(lng)
+  LocalStorageService.set(LOCAL_STORAGE_KEY.LANGUAGE, lng)
+}
 
 export default i18n

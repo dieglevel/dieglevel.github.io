@@ -2,18 +2,10 @@ import { Flex, Select } from 'antd'
 import { useTranslation } from 'react-i18next'
 import type { LanguageEnum } from '@/i18n/enum'
 import { LanguageHelper } from '@/i18n/enum'
-import {
-  LOCAL_STORAGE_KEY,
-  LocalStorageService,
-} from '@/shared/lib/service/local-storage'
+import { i18nChangeLanguage } from '@/i18n'
 
 export const LanguageSelector = () => {
   const { i18n } = useTranslation()
-
-  const changeLanguage = async (language: LanguageEnum) => {
-    await i18n.changeLanguage(language)
-    LocalStorageService.set(LOCAL_STORAGE_KEY.LANGUAGE, language)
-  }
   return (
     <Flex
       style={{
@@ -22,9 +14,9 @@ export const LanguageSelector = () => {
         right: 16,
       }}
     >
-      <Select
-        value={i18n.resolvedLanguage}
-        onChange={(e) => changeLanguage(e as any)}
+      <Select<LanguageEnum>
+        value={i18n.resolvedLanguage as LanguageEnum}
+        onChange={(e) => i18nChangeLanguage(e)}
         options={LanguageHelper.getOptions()}
       />
     </Flex>

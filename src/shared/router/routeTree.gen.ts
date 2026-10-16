@@ -15,6 +15,7 @@ import { Route as publicRouteRouteImport } from './../../routes/(public)/route'
 import { Route as protectedRouteRouteImport } from './../../routes/(protected)/route'
 import { Route as IndexRouteImport } from './../../routes/index'
 import { Route as publicUploadRouteImport } from './../../routes/(public)/upload'
+import { Route as publicTalkingDrivingRouteImport } from './../../routes/(public)/talking-driving'
 import { Route as publicNetworkRouteImport } from './../../routes/(public)/network'
 import { Route as publicMusicRouteImport } from './../../routes/(public)/music'
 import { Route as publicIconRouteImport } from './../../routes/(public)/icon'
@@ -67,6 +68,11 @@ const IndexRoute = IndexRouteImport.update({
 const publicUploadRoute = publicUploadRouteImport.update({
   id: '/upload',
   path: '/upload',
+  getParentRoute: () => publicRouteRoute,
+} as any)
+const publicTalkingDrivingRoute = publicTalkingDrivingRouteImport.update({
+  id: '/talking-driving',
+  path: '/talking-driving',
   getParentRoute: () => publicRouteRoute,
 } as any)
 const publicNetworkRoute = publicNetworkRouteImport.update({
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/icon': typeof publicIconRoute
   '/music': typeof publicMusicRoute
   '/network': typeof publicNetworkRoute
+  '/talking-driving': typeof publicTalkingDrivingRoute
   '/upload': typeof publicUploadRoute
   '/auth/profile': typeof protectedAuthProfileRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
@@ -244,6 +251,7 @@ export interface FileRoutesByTo {
   '/icon': typeof publicIconRoute
   '/music': typeof publicMusicRoute
   '/network': typeof publicNetworkRoute
+  '/talking-driving': typeof publicTalkingDrivingRoute
   '/upload': typeof publicUploadRoute
   '/auth/profile': typeof protectedAuthProfileRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
@@ -278,6 +286,7 @@ export interface FileRoutesById {
   '/(public)/icon': typeof publicIconRoute
   '/(public)/music': typeof publicMusicRoute
   '/(public)/network': typeof publicNetworkRoute
+  '/(public)/talking-driving': typeof publicTalkingDrivingRoute
   '/(public)/upload': typeof publicUploadRoute
   '/(protected)/auth/profile': typeof protectedAuthProfileRoute
   '/(protected)/financial/category': typeof protectedFinancialCategoryRoute
@@ -310,6 +319,7 @@ export interface FileRouteTypes {
     | '/icon'
     | '/music'
     | '/network'
+    | '/talking-driving'
     | '/upload'
     | '/auth/profile'
     | '/financial/category'
@@ -339,6 +349,7 @@ export interface FileRouteTypes {
     | '/icon'
     | '/music'
     | '/network'
+    | '/talking-driving'
     | '/upload'
     | '/auth/profile'
     | '/financial/category'
@@ -372,6 +383,7 @@ export interface FileRouteTypes {
     | '/(public)/icon'
     | '/(public)/music'
     | '/(public)/network'
+    | '/(public)/talking-driving'
     | '/(public)/upload'
     | '/(protected)/auth/profile'
     | '/(protected)/financial/category'
@@ -441,6 +453,13 @@ declare module '@tanstack/react-router' {
       path: '/upload'
       fullPath: '/upload'
       preLoaderRoute: typeof publicUploadRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
+    '/(public)/talking-driving': {
+      id: '/(public)/talking-driving'
+      path: '/talking-driving'
+      fullPath: '/talking-driving'
+      preLoaderRoute: typeof publicTalkingDrivingRouteImport
       parentRoute: typeof publicRouteRoute
     }
     '/(public)/network': {
@@ -698,6 +717,7 @@ interface publicRouteRouteChildren {
   publicIconRoute: typeof publicIconRoute
   publicMusicRoute: typeof publicMusicRoute
   publicNetworkRoute: typeof publicNetworkRoute
+  publicTalkingDrivingRoute: typeof publicTalkingDrivingRoute
   publicUploadRoute: typeof publicUploadRoute
   publicDemoButtonRoute: typeof publicDemoButtonRoute
   publicDemoTableRoute: typeof publicDemoTableRoute
@@ -711,6 +731,7 @@ const publicRouteRouteChildren: publicRouteRouteChildren = {
   publicIconRoute: publicIconRoute,
   publicMusicRoute: publicMusicRoute,
   publicNetworkRoute: publicNetworkRoute,
+  publicTalkingDrivingRoute: publicTalkingDrivingRoute,
   publicUploadRoute: publicUploadRoute,
   publicDemoButtonRoute: publicDemoButtonRoute,
   publicDemoTableRoute: publicDemoTableRoute,
