@@ -8,6 +8,7 @@ Searchable index of all analyzed frontend modules. Use this to locate the releva
 |---|---|---|---|---|
 | **Auth** | Sign in, sign up, token persistence, silent refresh | [auth.md](auth.md) | `src/routes/(public)/(empty-layout)/login.tsx` | `useAuthStore`, `AuthTokenService`, `useMutationAuth` |
 | **Profile** | User profile view, avatar crop and upload | [profile.md](profile.md) | `src/routes/(protected)/auth/profile.tsx` | `ProfilePage`, `useGetProfile`, `useMutationProfile` |
+| **Feedback** | User feedback, bug reporting, screenshots | [feedback.md](feedback.md) | `src/routes/(public)/feedback.tsx` | `FeedbackPage`, `useMutationFeedback`, `useGetFeedbackList` |
 | **Static File / Upload** | File upload components, previews, cropping | [static-file.md](static-file.md) | `src/routes/(public)/upload.tsx` | `useMutationUpload`, `antd-img-crop` |
 | **System Information** | Server health and hardware metrics monitoring | [system-information.md](system-information.md) | `src/routes/(protected)/system-information.tsx` | `useGetSystemInformation`, metric cards |
 

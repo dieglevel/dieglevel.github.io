@@ -39,5 +39,35 @@
       "recurring": "Recurring",
       "settings": "Settings"
     }
+  },
+  "change-password": {
+    "title": "Change Password",
+    "subtitle": "You will need to log back in on other devices.",
+    "current": "Current Password",
+    "currentRequired": "Please enter your current password",
+    "new": "New Password",
+    "newRequired": "Please enter a new password",
+    "newInvalid": "Password does not meet the requirements",
+    "confirm": "Confirm New Password",
+    "confirmRequired": "Please re-enter your new password",
+    "confirmMismatch": "Passwords do not match",
+    "submit": "Update Password",
+    "rulesTitle": "New password must contain",
+    "tip": "A long phrase easy to remember (e.g., three-random-words-2026!) is safer than a short complex string.",
+    "success": "Password changed successfully",
+    "error": "Failed to change password. Please check your current password.",
+    "rules": {
+      "length": "At least 8 characters",
+      "case": "Both uppercase and lowercase letters",
+      "number": "At least 1 number",
+      "special": "At least 1 special character (!@#$…)",
+      "different": "Different from current password"
+    },
+    "strength": {
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
+    }
   }
 }

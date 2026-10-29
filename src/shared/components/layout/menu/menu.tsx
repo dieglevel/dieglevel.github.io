@@ -153,7 +153,7 @@ export default function Menu() {
       label: t('auth.profile'),
       onClick: () => {
         navigate({
-          to: '/auth/profile',
+          to: '/profile',
         })
       },
     },
@@ -161,6 +161,11 @@ export default function Menu() {
       key: 'change-password',
       icon: <LockFilled />,
       label: t('auth.change-password'),
+      onClick: () => {
+        navigate({
+          to: '/change-password',
+        })
+      },
     },
     {
       key: 'settings',
@@ -241,10 +246,14 @@ export default function Menu() {
         userSelect: 'none',
         whiteSpace: 'nowrap',
         color: '#ffffff',
-        backgroundColor:
-          selected || opened ? 'rgba(183, 76, 54, 0.35)' : 'transparent',
+        backgroundColor: selected
+          ? 'rgba(183, 76, 54, 0.35)'
+          : opened
+            ? 'rgba(183, 76, 54, 0.19)'
+            : 'none',
         transition: 'background-color 0.2s ease',
       }}
+      className="top-level-button"
     >
       {menu.icon && (
         <span style={{ display: 'flex', alignItems: 'center', fontSize: 18 }}>
@@ -379,9 +388,6 @@ export default function Menu() {
                 cursor: 'pointer',
               }}
             />
-            {screen.md && (
-              <Typography className="sidebar-title">Blossom</Typography>
-            )}
           </Flex>
 
           {/* Middle: MENU NGANG + overflow "Thêm" (desktop) */}
@@ -593,12 +599,10 @@ export default function Menu() {
                         alignItems: 'center',
                         gap: 10,
                         cursor: 'pointer',
-                        padding: '4px 8px 4px 4px',
                         borderRadius: 20,
                         backgroundColor: open
                           ? 'rgba(255, 255, 255, 0.1)'
                           : 'transparent',
-                        border: `1px solid ${open ? '#B74C36' : 'transparent'}`,
                         transition:
                           'background-color 0.2s ease, border-color 0.2s ease',
                       }}
@@ -610,9 +614,6 @@ export default function Menu() {
                           height: 36,
                           borderRadius: '50%',
                           padding: 2,
-                          background: open
-                            ? 'linear-gradient(135deg, #B74C36, #B74C36)'
-                            : 'transparent',
                         }}
                       >
                         <img

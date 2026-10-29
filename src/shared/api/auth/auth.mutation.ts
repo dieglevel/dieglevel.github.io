@@ -49,5 +49,17 @@ export const useMutationAuth = () => {
     queryKey: authKeys.register(),
   })
 
-  return { mLogin, mLogout, mSignup, mRegister }
+  const mChangePassword = useMutationPost<
+    ApiBaseResponse<null>,
+    {
+      currentPassword: string
+      newPassword: string
+    },
+    '/account/change-password'
+  >({
+    endPoint: '/account/change-password',
+    queryKey: authKeys.changePassword(),
+  })
+
+  return { mLogin, mLogout, mSignup, mRegister, mChangePassword }
 }

@@ -21,6 +21,7 @@ import { Route as publicMusicRouteImport } from './../../routes/(public)/music'
 import { Route as publicIconRouteImport } from './../../routes/(public)/icon'
 import { Route as publicHashIdRouteImport } from './../../routes/(public)/hashId'
 import { Route as publicHanbiroTaskRouteImport } from './../../routes/(public)/hanbiroTask'
+import { Route as publicFeedbackRouteImport } from './../../routes/(public)/feedback'
 import { Route as publicDemoComponentRouteImport } from './../../routes/(public)/demoComponent'
 import { Route as protectedSystemInformationRouteImport } from './../../routes/(protected)/system-information'
 import { Route as publicemptyLayoutRouteRouteImport } from './../../routes/(public)/(empty-layout)/route'
@@ -37,7 +38,8 @@ import { Route as protectedFinancialGoalRouteImport } from './../../routes/(prot
 import { Route as protectedFinancialDebtRouteImport } from './../../routes/(protected)/financial/debt'
 import { Route as protectedFinancialDashboardRouteImport } from './../../routes/(protected)/financial/dashboard'
 import { Route as protectedFinancialCategoryRouteImport } from './../../routes/(protected)/financial/category'
-import { Route as protectedAuthProfileRouteImport } from './../../routes/(protected)/auth/profile'
+import { Route as protectedauthProfileRouteImport } from './../../routes/(protected)/(auth)/profile'
+import { Route as protectedauthChangePasswordRouteImport } from './../../routes/(protected)/(auth)/change-password'
 import { Route as protectedFinancialTransactionIndexRouteImport } from './../../routes/(protected)/financial/transaction/index'
 import { Route as protectedFinancialTransactionCreateRouteImport } from './../../routes/(protected)/financial/transaction/create'
 import { Route as protectedFinancialTransactionUpdateIdRouteImport } from './../../routes/(protected)/financial/transaction/$updateId'
@@ -98,6 +100,11 @@ const publicHashIdRoute = publicHashIdRouteImport.update({
 const publicHanbiroTaskRoute = publicHanbiroTaskRouteImport.update({
   id: '/hanbiroTask',
   path: '/hanbiroTask',
+  getParentRoute: () => publicRouteRoute,
+} as any)
+const publicFeedbackRoute = publicFeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
   getParentRoute: () => publicRouteRoute,
 } as any)
 const publicDemoComponentRoute = publicDemoComponentRouteImport.update({
@@ -185,11 +192,17 @@ const protectedFinancialCategoryRoute =
     path: '/category',
     getParentRoute: () => protectedFinancialRouteRoute,
   } as any)
-const protectedAuthProfileRoute = protectedAuthProfileRouteImport.update({
-  id: '/auth/profile',
-  path: '/auth/profile',
+const protectedauthProfileRoute = protectedauthProfileRouteImport.update({
+  id: '/(auth)/profile',
+  path: '/profile',
   getParentRoute: () => protectedRouteRoute,
 } as any)
+const protectedauthChangePasswordRoute =
+  protectedauthChangePasswordRouteImport.update({
+    id: '/(auth)/change-password',
+    path: '/change-password',
+    getParentRoute: () => protectedRouteRoute,
+  } as any)
 const protectedFinancialTransactionIndexRoute =
   protectedFinancialTransactionIndexRouteImport.update({
     id: '/transaction/',
@@ -216,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/financial': typeof protectedFinancialRouteRouteWithChildren
   '/system-information': typeof protectedSystemInformationRoute
   '/demoComponent': typeof publicDemoComponentRoute
+  '/feedback': typeof publicFeedbackRoute
   '/hanbiroTask': typeof publicHanbiroTaskRoute
   '/hashId': typeof publicHashIdRoute
   '/icon': typeof publicIconRoute
@@ -223,7 +237,8 @@ export interface FileRoutesByFullPath {
   '/network': typeof publicNetworkRoute
   '/talking-driving': typeof publicTalkingDrivingRoute
   '/upload': typeof publicUploadRoute
-  '/auth/profile': typeof protectedAuthProfileRoute
+  '/change-password': typeof protectedauthChangePasswordRoute
+  '/profile': typeof protectedauthProfileRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
   '/financial/dashboard': typeof protectedFinancialDashboardRoute
   '/financial/debt': typeof protectedFinancialDebtRoute
@@ -246,6 +261,7 @@ export interface FileRoutesByTo {
   '/404': typeof R404Route
   '/system-information': typeof protectedSystemInformationRoute
   '/demoComponent': typeof publicDemoComponentRoute
+  '/feedback': typeof publicFeedbackRoute
   '/hanbiroTask': typeof publicHanbiroTaskRoute
   '/hashId': typeof publicHashIdRoute
   '/icon': typeof publicIconRoute
@@ -253,7 +269,8 @@ export interface FileRoutesByTo {
   '/network': typeof publicNetworkRoute
   '/talking-driving': typeof publicTalkingDrivingRoute
   '/upload': typeof publicUploadRoute
-  '/auth/profile': typeof protectedAuthProfileRoute
+  '/change-password': typeof protectedauthChangePasswordRoute
+  '/profile': typeof protectedauthProfileRoute
   '/financial/category': typeof protectedFinancialCategoryRoute
   '/financial/dashboard': typeof protectedFinancialDashboardRoute
   '/financial/debt': typeof protectedFinancialDebtRoute
@@ -281,6 +298,7 @@ export interface FileRoutesById {
   '/(public)/(empty-layout)': typeof publicemptyLayoutRouteRouteWithChildren
   '/(protected)/system-information': typeof protectedSystemInformationRoute
   '/(public)/demoComponent': typeof publicDemoComponentRoute
+  '/(public)/feedback': typeof publicFeedbackRoute
   '/(public)/hanbiroTask': typeof publicHanbiroTaskRoute
   '/(public)/hashId': typeof publicHashIdRoute
   '/(public)/icon': typeof publicIconRoute
@@ -288,7 +306,8 @@ export interface FileRoutesById {
   '/(public)/network': typeof publicNetworkRoute
   '/(public)/talking-driving': typeof publicTalkingDrivingRoute
   '/(public)/upload': typeof publicUploadRoute
-  '/(protected)/auth/profile': typeof protectedAuthProfileRoute
+  '/(protected)/(auth)/change-password': typeof protectedauthChangePasswordRoute
+  '/(protected)/(auth)/profile': typeof protectedauthProfileRoute
   '/(protected)/financial/category': typeof protectedFinancialCategoryRoute
   '/(protected)/financial/dashboard': typeof protectedFinancialDashboardRoute
   '/(protected)/financial/debt': typeof protectedFinancialDebtRoute
@@ -314,6 +333,7 @@ export interface FileRouteTypes {
     | '/financial'
     | '/system-information'
     | '/demoComponent'
+    | '/feedback'
     | '/hanbiroTask'
     | '/hashId'
     | '/icon'
@@ -321,7 +341,8 @@ export interface FileRouteTypes {
     | '/network'
     | '/talking-driving'
     | '/upload'
-    | '/auth/profile'
+    | '/change-password'
+    | '/profile'
     | '/financial/category'
     | '/financial/dashboard'
     | '/financial/debt'
@@ -344,6 +365,7 @@ export interface FileRouteTypes {
     | '/404'
     | '/system-information'
     | '/demoComponent'
+    | '/feedback'
     | '/hanbiroTask'
     | '/hashId'
     | '/icon'
@@ -351,7 +373,8 @@ export interface FileRouteTypes {
     | '/network'
     | '/talking-driving'
     | '/upload'
-    | '/auth/profile'
+    | '/change-password'
+    | '/profile'
     | '/financial/category'
     | '/financial/dashboard'
     | '/financial/debt'
@@ -378,6 +401,7 @@ export interface FileRouteTypes {
     | '/(public)/(empty-layout)'
     | '/(protected)/system-information'
     | '/(public)/demoComponent'
+    | '/(public)/feedback'
     | '/(public)/hanbiroTask'
     | '/(public)/hashId'
     | '/(public)/icon'
@@ -385,7 +409,8 @@ export interface FileRouteTypes {
     | '/(public)/network'
     | '/(public)/talking-driving'
     | '/(public)/upload'
-    | '/(protected)/auth/profile'
+    | '/(protected)/(auth)/change-password'
+    | '/(protected)/(auth)/profile'
     | '/(protected)/financial/category'
     | '/(protected)/financial/dashboard'
     | '/(protected)/financial/debt'
@@ -495,6 +520,13 @@ declare module '@tanstack/react-router' {
       path: '/hanbiroTask'
       fullPath: '/hanbiroTask'
       preLoaderRoute: typeof publicHanbiroTaskRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
+    '/(public)/feedback': {
+      id: '/(public)/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof publicFeedbackRouteImport
       parentRoute: typeof publicRouteRoute
     }
     '/(public)/demoComponent': {
@@ -609,11 +641,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedFinancialCategoryRouteImport
       parentRoute: typeof protectedFinancialRouteRoute
     }
-    '/(protected)/auth/profile': {
-      id: '/(protected)/auth/profile'
-      path: '/auth/profile'
-      fullPath: '/auth/profile'
-      preLoaderRoute: typeof protectedAuthProfileRouteImport
+    '/(protected)/(auth)/profile': {
+      id: '/(protected)/(auth)/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof protectedauthProfileRouteImport
+      parentRoute: typeof protectedRouteRoute
+    }
+    '/(protected)/(auth)/change-password': {
+      id: '/(protected)/(auth)/change-password'
+      path: '/change-password'
+      fullPath: '/change-password'
+      preLoaderRoute: typeof protectedauthChangePasswordRouteImport
       parentRoute: typeof protectedRouteRoute
     }
     '/(protected)/financial/transaction/': {
@@ -680,13 +719,15 @@ const protectedFinancialRouteRouteWithChildren =
 interface protectedRouteRouteChildren {
   protectedFinancialRouteRoute: typeof protectedFinancialRouteRouteWithChildren
   protectedSystemInformationRoute: typeof protectedSystemInformationRoute
-  protectedAuthProfileRoute: typeof protectedAuthProfileRoute
+  protectedauthChangePasswordRoute: typeof protectedauthChangePasswordRoute
+  protectedauthProfileRoute: typeof protectedauthProfileRoute
 }
 
 const protectedRouteRouteChildren: protectedRouteRouteChildren = {
   protectedFinancialRouteRoute: protectedFinancialRouteRouteWithChildren,
   protectedSystemInformationRoute: protectedSystemInformationRoute,
-  protectedAuthProfileRoute: protectedAuthProfileRoute,
+  protectedauthChangePasswordRoute: protectedauthChangePasswordRoute,
+  protectedauthProfileRoute: protectedauthProfileRoute,
 }
 
 const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(
@@ -712,6 +753,7 @@ const publicemptyLayoutRouteRouteWithChildren =
 interface publicRouteRouteChildren {
   publicemptyLayoutRouteRoute: typeof publicemptyLayoutRouteRouteWithChildren
   publicDemoComponentRoute: typeof publicDemoComponentRoute
+  publicFeedbackRoute: typeof publicFeedbackRoute
   publicHanbiroTaskRoute: typeof publicHanbiroTaskRoute
   publicHashIdRoute: typeof publicHashIdRoute
   publicIconRoute: typeof publicIconRoute
@@ -726,6 +768,7 @@ interface publicRouteRouteChildren {
 const publicRouteRouteChildren: publicRouteRouteChildren = {
   publicemptyLayoutRouteRoute: publicemptyLayoutRouteRouteWithChildren,
   publicDemoComponentRoute: publicDemoComponentRoute,
+  publicFeedbackRoute: publicFeedbackRoute,
   publicHanbiroTaskRoute: publicHanbiroTaskRoute,
   publicHashIdRoute: publicHashIdRoute,
   publicIconRoute: publicIconRoute,

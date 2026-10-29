@@ -253,11 +253,12 @@ export default function Categories() {
               percent={Math.floor(
                 totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0,
               )}
-              status="active"
-              strokeColor="red"
               showInfo={false}
+              size="small"
             />
-            {Math.floor((totalSpent / totalBudget) * 100)}%
+            {isNaN(Math.floor((totalSpent / totalBudget) * 100))
+              ? '-'
+              : `${Math.floor((totalSpent / totalBudget) * 100)}%`}
           </Flex>
           <Flex gap={8} justify="center" align="center">
             <Button

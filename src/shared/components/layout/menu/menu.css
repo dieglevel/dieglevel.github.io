@@ -5,3 +5,7 @@
   font-weight: 700;
   color: white;
 }
+
+.top-level-button:hover {
+  background: rgba(183, 76, 54, 0.19);
+}

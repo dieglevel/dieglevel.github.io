@@ -8,7 +8,6 @@ import { ANTD_INPUT_STYLE } from './auth-menu-type'
 import type { Request_Login } from '@/shared/api/auth/auth.dto'
 import { useMutationAuth } from '@/shared/api/auth/auth.mutation'
 import { AuthTokenService } from '@/shared/auth/authToken.service'
-import { UserRoleEnum } from '@/shared/auth/auth.type'
 
 interface LoginFormProps {
   onBack: () => void
