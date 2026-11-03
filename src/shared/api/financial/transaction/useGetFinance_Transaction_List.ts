@@ -16,6 +16,7 @@ import { useQueryGet } from '@/shared/lib/api/mutation/useQueryGet'
 // Định nghĩa Enum Sort (Nếu chưa có ở Frontend)
 export enum FinancialTransactionSortBy {
   CREATED_AT = 'createdAt',
+  TRANSACTION_DATE = 'transactionDate',
   AMOUNT = 'amount',
   TYPE = 'type',
   STATUS = 'status',

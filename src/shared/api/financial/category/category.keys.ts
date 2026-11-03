@@ -3,4 +3,5 @@ export const categoryKeys = {
   list: () => [...categoryKeys.all, 'list'] as const,
   transaction: (categoryId?: number) =>
     [...categoryKeys.all, 'transaction', categoryId] as const,
+  summary: (month: string) => [...categoryKeys.all, 'summary', month] as const,
 }

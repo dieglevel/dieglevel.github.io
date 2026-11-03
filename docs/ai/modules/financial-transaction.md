@@ -6,6 +6,7 @@ Core personal finance ledger interface. Supports viewing, filtering, creating, u
 ## Responsibilities and Boundaries
 - Display searchable and paginated financial transactions table (`TransactionsTable`).
 - Filter by transaction type (`INCOME`, `EXPENSE`, `TRANSFER`), status (`PENDING`, `COMPLETED`, `FAILED`), wallet, category, and date ranges.
+- Display and submit the calendar `transactionDate`; `createdAt` is shown only as the creation timestamp.
 - Enforce client-side idempotency by generating a UUID v4 via `generateIdempotencyKey()` and sending it in the `Idempotency-Key` header.
 - Provide comprehensive create and update workflows (via `TransactionModal` or standalone `TransactionUpsertPage`).
 - Support transaction refunds and receipt attachments.
@@ -55,6 +56,7 @@ src/
 
 ## Existing Patterns and Conventions
 - Always generate the idempotency key once per form session, keeping it stable across network retries.
+- Send date-only values as `YYYY-MM-DD` to avoid timezone shifts between the date picker and the API.
 - Displays income with positive green indicators and expenses with primary color indicators.
 
 ## Extension Guide

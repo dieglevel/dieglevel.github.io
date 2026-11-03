@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Button,
   DatePicker,
   Flex,
+  InputNumber,
   Progress,
   Spin,
   Tree,
@@ -16,11 +17,18 @@ import { useSettingStore } from '../_store/setting.store'
 import CategoryModal from './_components/CategoryModal'
 import CategoryTreeNode from './_components/CategoryTreeNode'
 import CategoryDetailModal from './_components/CategoryDetailModal'
+import CategoryViews from './_components/CategoryViews'
+import type { CategoryView } from './_components/CategoryViews'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import { useMutationFinanceCategory } from '@/shared/api/financial/category/category.mutation'
 import { useGetFinance_Category_List } from '@/shared/api/financial/category/useGetFinance_Category_List'
 import { useThemeMode } from '@/shared/provider/antd-theme.provider'
 import { getTokens } from '@/shared/common/design-token'
+import { useGetFinance_Category_Budget_Summary } from '@/shared/api/financial/category/useGetFinance_Category_Budget_Summary'
+import {
+  useGetFinance_IncomePlan,
+  useMutationFinance_IncomePlan,
+} from '@/shared/api/financial/income-plan/income-plan.hooks'
 
 const { Title, Text } = Typography
 
@@ -60,6 +68,18 @@ export default function Categories() {
   const { data: apiResponse, isPending } = useGetFinance_Category_List({
     queryParams: params,
   })
+  const selectedMonth = dayjs(params.startDate).format('YYYY-MM')
+  const { data: budgetSummaryResponse } =
+    useGetFinance_Category_Budget_Summary(selectedMonth)
+  const budgetSummary = budgetSummaryResponse?.data
+  const { data: incomePlanResponse } = useGetFinance_IncomePlan(selectedMonth)
+  const { mutate: saveIncomePlan, isPending: isSavingIncomePlan } =
+    useMutationFinance_IncomePlan()
+  const [incomePlan, setIncomePlan] = useState<number | null>(null)
+
+  useEffect(() => {
+    setIncomePlan(incomePlanResponse?.data?.expectedAmount ?? null)
+  }, [incomePlanResponse?.data?.expectedAmount])
   const rawCategories: Array<ExtendedFinanceCategory> = apiResponse?.data || []
 
   const {
@@ -77,6 +97,7 @@ export default function Categories() {
     number | null
   >(null)
   const [detailModalOpen, setDetailModalOpen] = useState(false)
+  const [view, setView] = useState<CategoryView>('tree')
 
   // 0. Lọc bỏ các node con nằm ở Root Level (tránh trùng lặp do API trả về cả root lẫn children)
   const categories = useMemo(() => {
@@ -260,6 +281,45 @@ export default function Categories() {
               ? '-'
               : `${Math.floor((totalSpent / totalBudget) * 100)}%`}
           </Flex>
+          {budgetSummary && (
+            <Flex vertical style={{ minWidth: 220 }}>
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                Còn lại theo hạn mức:{' '}
+                {budgetSummary.remainingToSpend.toLocaleString('vi-VN')} đ
+              </Text>
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                Dư thực tế:{' '}
+                {budgetSummary.actualSurplus.toLocaleString('vi-VN')} đ
+              </Text>
+            </Flex>
+          )}
+          <Flex align="center" gap={8}>
+            <InputNumber
+              min={0}
+              value={incomePlan ?? undefined}
+              placeholder="Thu nhập dự kiến"
+              formatter={(value) =>
+                `${value ?? ''}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              }
+              parser={(value) => Number((value ?? '').replace(/,/g, ''))}
+              onChange={(value) => setIncomePlan(value ?? null)}
+              style={{ width: 170 }}
+            />
+            <Button
+              size="small"
+              loading={isSavingIncomePlan}
+              disabled={incomePlan === null}
+              onClick={() => {
+                if (incomePlan === null) return
+                saveIncomePlan({
+                  pathParams: { month: selectedMonth },
+                  body: { expectedAmount: incomePlan },
+                })
+              }}
+            >
+              Lưu thu nhập
+            </Button>
+          </Flex>
           <Flex gap={8} justify="center" align="center">
             <Button
               type="primary"
@@ -280,7 +340,7 @@ export default function Categories() {
         </Flex>
       </Flex>
 
-      {/* Tree Structure */}
+      {/* View content */}
       {isPending ? (
         <Flex
           justify="center"
@@ -295,30 +355,41 @@ export default function Categories() {
           gap={8}
           style={{
             width: '100%',
-            padding: '12px 16px',
+            padding: '12px 10%',
             borderRadius: '12px',
           }}
         >
-          <Tree
-            treeData={filteredTreeData}
-            fieldNames={{
-              title: 'name',
-              children: 'children',
-              key: 'id',
-            }}
-            blockNode
-            selectable={false}
-            defaultExpandAll
-            titleRender={(nodeData) => (
-              <CategoryTreeNode
-                node={nodeData}
-                onAddChild={openAdd}
-                onEdit={openEdit}
-                onArchive={archive}
-                onDelete={remove}
-                onDetail={openDetail}
+          <CategoryViews
+            categories={categories}
+            totalBudget={totalBudget}
+            totalSpent={totalSpent}
+            treeContent={
+              <Tree
+                treeData={filteredTreeData}
+                fieldNames={{ title: 'name', children: 'children', key: 'id' }}
+                blockNode
+                selectable={false}
+                defaultExpandAll
+                titleRender={(nodeData) => (
+                  <CategoryTreeNode
+                    node={nodeData}
+                    onAddChild={openAdd}
+                    onEdit={openEdit}
+                    onArchive={archive}
+                    onDelete={remove}
+                    onDetail={openDetail}
+                  />
+                )}
               />
-            )}
+            }
+            view={view}
+            onViewChange={setView}
+            onAddChild={openAdd}
+            onAdd={() => openAdd(null)}
+            onEdit={openEdit}
+            onArchive={archive}
+            onDelete={remove}
+            onDetail={openDetail}
           />
         </Flex>
       )}

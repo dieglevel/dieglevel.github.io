@@ -1,12 +1,28 @@
 # Current Session
 
+## 2026-11-02: Added category presentation views
+
+- Added switchable tree, card grid, remaining-budget, and split-detail views for the financial category page.
+- Reused the existing category query, budget calculations, CRUD mutations, and detail modal handlers.
+- Verification: category files pass scoped ESLint; `npm run build` passes. Full-repo lint still reports pre-existing config/demo/module issues.
+
+## 2026-11-02: Integrated budget and transaction-date APIs
+
+- Updated FE contracts and screens for `transactionDate`, monthly budget metrics, income plans, and category budget summary.
+- Category page now edits expected monthly income and displays budget remainder separately from actual surplus.
+- Transaction list/detail/forms use date-only transaction dates while preserving `createdAt` as creation time.
+- Verification: `npm run build` and scoped ESLint pass.
+
 ## Status
+
 Completed
 
 ## Objective
+
 Establish a persistent, multi-agent AI documentation and context system for the React 19 / Vite frontend repository (`/home/hanbiro/dieglevel_workspace/initial/FE`), enabling seamless context retrieval, architectural consistency, and cross-session resumption for AI coding agents (Claude Code, Codex, Cursor, etc.).
 
 ## Work Completed
+
 1. Analyzed frontend repository architecture, tech stack (React 19, TypeScript, Vite 7, TanStack Router, TanStack Query, Zustand, Ant Design 6, Three.js), and conventions.
 2. Verified all core abstractions: `customAxios` (with concurrent 401 token refresh queue), `queryClient`, `generateIdempotencyKey`, `AuthTokenService`, `useAuthStore`, `AppThemeProvider`, `design-token.ts`, `useSettingStore`, and `MainLayout`.
 3. Created AI agent instructions in `AGENTS.md` and tool-specific setup in `CLAUDE.md`.
@@ -24,6 +40,7 @@ Establish a persistent, multi-agent AI documentation and context system for the 
 7. Established session continuity protocols via `SESSION_LOG.md` and `SESSION_HISTORY.md`.
 
 ## Files Created or Updated
+
 - `AGENTS.md`
 - `CLAUDE.md`
 - `SESSION_LOG.md`
@@ -49,18 +66,22 @@ Establish a persistent, multi-agent AI documentation and context system for the 
 - `docs/ai/modules/demos-and-experiments.md`
 
 ## Verification Results
+
 - Executed `npm run build` (`tsr generate && vite build && tsc`): Clean build, exit code 0.
 - Executed `npm run test`: Noted 0 test files present (exit code 1 expected until test specs are added).
 - Executed `npm run lint`: Identified pre-existing formatting / config notices in `eslint.config.js` and demo components.
 - Ran `git status`: Confirmed zero application source files modified.
 
 ## Unresolved Issues
+
 - None. All architectural claims are grounded directly in active source code.
 
 ## Next Steps
+
 - Future AI sessions should follow the context-loading workflow in `AGENTS.md` (read `SESSION_LOG.md` -> `docs/ai/PROJECT_CONTEXT.md` -> target module doc).
 
 ## Relevant Documentation
+
 - [AGENTS.md](AGENTS.md)
 - [PROJECT_CONTEXT.md](docs/ai/PROJECT_CONTEXT.md)
 - [ARCHITECTURE.md](docs/ai/ARCHITECTURE.md)

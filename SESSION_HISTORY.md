@@ -4,6 +4,35 @@ This file tracks completed development tasks, major architectural milestones, an
 
 ---
 
+## 2026-11-02: Integrated budget and transaction-date APIs
+
+- **Task Summary**: Connected the frontend to monthly budgets, income plans, budget metrics, and date-only transaction semantics.
+- **Relevant Files**:
+  - `src/shared/api/financial/category/`
+  - `src/shared/api/financial/income-plan/`
+  - `src/shared/api/financial/transaction/`
+  - `src/shared/pages/financial/category/`
+  - `src/shared/pages/financial/transaction/`
+- **Verification Results**:
+  - `npm run build` passed.
+  - Scoped ESLint passed for all changed FE files.
+  - Existing unrelated worktree changes were preserved.
+
+---
+
+## 2026-11-02: Added category presentation views
+
+- **Task Summary**: Added a switchable tree, card grid, remaining-budget, and split-detail presentation for financial categories.
+- **Relevant Files**:
+  - `src/shared/pages/financial/category/index.tsx`
+  - `src/shared/pages/financial/category/_components/CategoryViews.tsx`
+- **Verification Results**:
+  - Scoped ESLint passes for the changed category files.
+  - `npm run build` completed successfully.
+  - Full-repo lint retains unrelated pre-existing errors.
+
+---
+
 ## 2026-10-19: Established Shared AI Context and Codebase Documentation System
 
 - **Task Summary**: Analyzed the React 19 / Vite frontend repository, documented core infrastructure, established multi-agent workflows, and generated granular module documentation for all 14 feature subsystems.

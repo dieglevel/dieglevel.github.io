@@ -49,10 +49,10 @@ export const TransactionsTable: React.FC<TransactionsTableProps> = ({
   const columns: ColumnsType<IFinance_Transaction> = [
     {
       title: t('common.date'),
-      dataIndex: 'createdAt',
-      key: 'createdAt',
+      dataIndex: 'transactionDate',
+      key: 'transactionDate',
       width: 90,
-      sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+      sorter: (a, b) => a.transactionDate.localeCompare(b.transactionDate),
       render: (date: string) => (
         <Text
           type="secondary"

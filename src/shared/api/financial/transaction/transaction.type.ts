@@ -15,6 +15,7 @@ export interface IFinance_Transaction extends IBaseEntity {
   amount: number
   type: FINANCIAL_TRANSACTION_TYPE
   status: FINANCIAL_TRANSACTION_STATUS
+  transactionDate: string
 
   wallet?: IFinance_Wallet
   walletId: number

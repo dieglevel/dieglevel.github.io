@@ -12,8 +12,9 @@
 4. Locate the relevant module via `docs/ai/modules/INDEX.md`.
 5. Read the module documentation and `docs/ai/core/CORE_OVERVIEW.md` when relevant.
 6. Inspect referenced source files and their imports.
-7. **Search the codebase before creating new abstractions.** The project has established shared components, hooks, stores, and API clients — use them.
-8. Expand investigation only when the task requires it or when docs conflict with source.
+7. **Always inspect relevant utilities before implementing.** Check existing helpers in `src/shared/utils/`, infrastructure utilities in `src/shared/lib/`, and component-local utilities such as `src/shared/components/**/utils.*` before adding formatting, validation, storage, API, idempotency, or other helper logic.
+8. **Search the codebase before creating new abstractions.** The project has established shared components, hooks, stores, API clients, and utilities — use them.
+9. Expand investigation only when the task requires it or when docs conflict with source.
 
 ### During implementation
 
@@ -42,6 +43,7 @@
 ## 3. Coding Conventions
 
 ### Technology Stack
+
 - React 19 + TypeScript (ES2022 / ESNext bundler mode)
 - Vite 7 + `@vitejs/plugin-react`
 - `@tanstack/react-router` for file-based routing and auto-code-splitting
@@ -54,6 +56,7 @@
 - Motion (`motion/react`) for fluid transitions and micro-animations
 
 ### Directory Structure & File Naming
+
 - Route definitions: `src/routes/` with TanStack Router conventions:
   - Route groups: `(public)`, `(protected)`, `(empty-layout)`
   - Index routes: `index.tsx`
@@ -65,6 +68,7 @@
 - Path alias: `@/` maps to `src/` and `@shared/` maps to `src/shared/`
 
 ### Routing & Data Fetching Patterns
+
 - Protected routes live under `src/routes/(protected)/route.tsx` which validates authentication via `AuthTokenService.loadTokens()` in `beforeLoad` and synchronizes user preferences.
 - Queries and mutations use TanStack Query hooks.
 - Mutation endpoints that impact financial records (e.g. transactions) must attach a UUID v4 generated via `generateIdempotencyKey()` (`src/shared/lib/idempotency/idempotencyKey.ts`) as the `Idempotency-Key` header.
@@ -77,6 +81,7 @@
 4. **Do not modify core infrastructure** merely for isolated feature convenience.
 
 ### Core files requiring extra caution:
+
 - `src/shared/lib/api/axios.ts` (Axios singleton, request/response interceptors, token refresh queue)
 - `src/shared/auth/` (Token persistence, auth store, logout triggers)
 - `src/shared/lib/idempotency/idempotencyKey.ts` (UUID generation and idempotency headers)
@@ -107,12 +112,12 @@
 
 ## 8. Documentation References
 
-| Document | Path | Purpose |
-|---|---|---|
-| Project Context | `docs/ai/PROJECT_CONTEXT.md` | Tech stack, entry points, commands |
-| Architecture | `docs/ai/ARCHITECTURE.md` | System design, routing, data flow |
-| Core Overview | `docs/ai/core/CORE_OVERVIEW.md` | Shared infrastructure reference |
-| Module Index | `docs/ai/modules/INDEX.md` | Find module documentation |
-| Decisions | `docs/ai/DECISIONS.md` | Architectural decisions log |
-| Session Log | `SESSION_LOG.md` | Current working state |
-| Session History | `SESSION_HISTORY.md` | Completed work log |
+| Document        | Path                            | Purpose                            |
+| --------------- | ------------------------------- | ---------------------------------- |
+| Project Context | `docs/ai/PROJECT_CONTEXT.md`    | Tech stack, entry points, commands |
+| Architecture    | `docs/ai/ARCHITECTURE.md`       | System design, routing, data flow  |
+| Core Overview   | `docs/ai/core/CORE_OVERVIEW.md` | Shared infrastructure reference    |
+| Module Index    | `docs/ai/modules/INDEX.md`      | Find module documentation          |
+| Decisions       | `docs/ai/DECISIONS.md`          | Architectural decisions log        |
+| Session Log     | `SESSION_LOG.md`                | Current working state              |
+| Session History | `SESSION_HISTORY.md`            | Completed work log                 |

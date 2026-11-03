@@ -143,14 +143,15 @@ export function TransactionDetail({
             </Descriptions.Item>
 
             <Descriptions.Item label={t('common.date')} span={2}>
-              {transaction.createdAt ? (
+              {transaction.transactionDate ? (
                 <Flex align="center" justify="space-between">
                   <Text style={{ fontSize: 12 }}>
-                    {new Date(transaction.createdAt).toLocaleDateString(
-                      'vi-VN',
-                    )}
+                    {new Date(
+                      `${transaction.transactionDate}T00:00:00`,
+                    ).toLocaleDateString('vi-VN')}
                   </Text>
                   <Text style={{ fontSize: 12 }} type="secondary">
+                    Tạo lúc{' '}
                     {new Date(transaction.createdAt).toLocaleTimeString(
                       'vi-VN',
                     )}

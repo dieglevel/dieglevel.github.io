@@ -21,7 +21,7 @@ src/
 │       ├── CategoryTreeNode.tsx                    # Individual tree row rendering
 │       └── CategoryDetailModal.tsx                 # Category transaction breakdown
 └── shared/api/financial/category/
-    ├── category.type.ts                            # Category interface & DTOs
+    ├── category.type.ts                            # Category interface, budget metrics & DTOs
     ├── category.mutation.ts                        # Mutations (create, update, delete, archive)
     └── useGetFinance_Category_List.ts              # TanStack Query hook fetching /financial-category/list
 ```
@@ -37,6 +37,7 @@ src/
 3. Fetches categories and associated spending totals for the cycle period.
 4. Renders tree with budget progress bars (`currentSpending / monthlyBudget`).
 5. On category creation or update, mutation invalidates `category.keys` and re-renders the tree.
+6. Monthly income plans and budget summaries use `/financial-income-plan/:month` and `/financial-category/budget-summary/:month`.
 
 ## Dependencies and Integrations
 - **Core**: `useThemeMode`, `getTokens`, `useSettingStore`.
@@ -45,6 +46,7 @@ src/
 ## Existing Patterns and Conventions
 - Uses `useSettingStore` to ensure budget bars calculate expenses based on billing cycle dates rather than calendar months.
 - Validates hex colors and provides preset color palettes.
+- Uses backend-calculated monthly budget metrics and keeps expected income, budget remainder, and actual surplus distinct.
 
 ## Extension Guide
 - To support auto-categorization rules (e.g. regex on transaction descriptions), add keyword tags into `CategoryModal`.

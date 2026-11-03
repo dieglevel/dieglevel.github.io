@@ -112,7 +112,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
             amount: calculatedTotalAmount,
             type: values.type ?? FINANCIAL_TRANSACTION_STATUS.COMPLETED,
             walletId: values.walletId,
-            date: values.date,
+            date: values.date.format('YYYY-MM-DD'),
             description: values.description,
             merchant: values.merchant,
             location: values.location,

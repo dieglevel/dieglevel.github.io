@@ -1,7 +1,6 @@
 import { transactionKeys } from './transaction.keys'
 import type { IFinance_Transaction } from './transaction.type'
 import type { IFinance_TransactionItem } from './transaction-item/transaction-item.type'
-import type { Dayjs } from 'dayjs'
 import {
   useMutationDelete,
   useMutationPost,
@@ -31,7 +30,7 @@ export type UpsertFinanceTransactionDto = Pick<
     >
   > & {
     financialTransactionItems?: Array<UpsertFinanceTransactionItemDto>
-    date: Dayjs
+    date: string
     toWalletId?: number | null
     transferFee?: number
   }

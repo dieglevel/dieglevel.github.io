@@ -21,4 +21,10 @@ export interface IFinance_Category extends IBaseEntity {
   account?: User
 
   totalAmount?: number
+  remaining?: number | null
+  percent?: number | null
+  status?: 'ok' | 'warn' | 'danger' | 'over' | 'free'
+  allocatedToChildren?: number
+  unallocated?: number | null
+  overAllocated?: boolean
 }

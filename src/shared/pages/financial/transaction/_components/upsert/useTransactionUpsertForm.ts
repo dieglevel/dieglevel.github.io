@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { Form, Grid, message } from 'antd'
 import dayjs from 'dayjs'
 import { useRouter } from '@tanstack/react-router'
+import type { Dayjs } from 'dayjs'
 
 import type {
   UpsertFinanceTransactionDto,
@@ -23,7 +24,11 @@ import { getTokens } from '@/shared/common/design-token'
 
 const { useBreakpoint } = Grid
 
-export interface TransactionUpsertFormValues extends UpsertFinanceTransactionDto {
+export interface TransactionUpsertFormValues extends Omit<
+  UpsertFinanceTransactionDto,
+  'date'
+> {
+  date: Dayjs
   toWalletId?: number
 }
 
@@ -216,7 +221,7 @@ export function useTransactionUpsertForm({
     form.setFieldsValue({
       type: detail.type,
       status: detail.status,
-      date: detail.createdAt ? dayjs(detail.createdAt) : dayjs(),
+      date: detail.transactionDate ? dayjs(detail.transactionDate) : dayjs(),
       walletId: detail.wallet?.id,
       amount: detail.amount,
       description: detail.description ?? '',
@@ -275,7 +280,7 @@ export function useTransactionUpsertForm({
         amount: Number(values.amount),
         status: FINANCIAL_TRANSACTION_STATUS.COMPLETED,
         walletId: values.walletId,
-        date: values.date,
+        date: values.date.format('YYYY-MM-DD'),
         receiptImageUrl: values.receiptImageUrl,
       }
 
