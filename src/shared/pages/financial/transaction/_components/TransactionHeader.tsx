@@ -1,9 +1,6 @@
 import React from 'react'
-import { Button, Flex, Space, Typography } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons'
-
-const { Title, Text } = Typography
 
 interface TransactionHeaderProps {
   isMobile: boolean
@@ -25,44 +22,32 @@ export const TransactionHeader: React.FC<TransactionHeaderProps> = ({
   const { t } = useTranslation('finance')
 
   return (
-    <Flex
-      vertical={isMobile}
-      justify="space-between"
-      align={isMobile ? 'stretch' : 'center'}
-      gap={12}
-    >
+    <header className="tx-header">
       <div>
-        <Title level={isMobile ? 4 : 3} style={{ margin: 0 }}>
-          {t('transaction.title')}
-        </Title>
-        <Text type="secondary" style={{ fontSize: 13 }}>
-          {filteredCount} / {totalCount}
-        </Text>
+        <h1>{t('transaction.title')}</h1>
+        <p>
+          {t('transaction.shownCount', {
+            shown: filteredCount,
+            total: totalCount,
+          })}
+        </p>
       </div>
-      <Space
-        style={{ width: isMobile ? '100%' : 'auto' }}
-        orientation={isMobile ? 'vertical' : 'horizontal'}
-      >
+      <div className="tx-header-actions">
         {selectedCount > 0 && (
-          <Button
-            danger
-            icon={<DeleteOutlined />}
+          <button
+            type="button"
+            className="tx-btn danger"
             onClick={onDeleteSelected}
-            style={{ flex: 1 }}
           >
-            {t('common.delete')} ({selectedCount})
-          </Button>
+            <DeleteOutlined /> {t('common.delete')} ({selectedCount})
+          </button>
         )}
         {!isMobile && (
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={onOpenAddModal}
-          >
-            {t('transaction.create')}
-          </Button>
+          <button type="button" className="tx-btn" onClick={onOpenAddModal}>
+            <PlusOutlined /> {t('transaction.create')}
+          </button>
         )}
-      </Space>
-    </Flex>
+      </div>
+    </header>
   )
 }

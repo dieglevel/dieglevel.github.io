@@ -28,5 +28,11 @@
   "itemDescription": "Nội dung chi tiết",
   "tags": "Thẻ",
   "receipt": "Link ảnh hóa đơn",
-  "performedAt": "Ngày thực hiện"
+  "performedAt": "Ngày thực hiện",
+  "today": "Hôm nay",
+  "yesterday": "Hôm qua",
+  "uncategorized": "Chưa phân loại",
+  "multiItems": "Nhiều hạng mục",
+  "shownCount": "Hiện {{shown}} / {{total}} giao dịch",
+  "txCount": "{{count}} giao dịch"
 }

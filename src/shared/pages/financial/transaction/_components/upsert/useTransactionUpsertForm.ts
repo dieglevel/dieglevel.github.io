@@ -35,11 +35,14 @@ export interface TransactionUpsertFormValues extends Omit<
 interface UseTransactionUpsertFormProps {
   mode: 'create' | 'update'
   transactionId?: number
+  /** Khi form nằm trong drawer: đóng drawer thay vì điều hướng về danh sách */
+  onClose?: () => void
 }
 
 export function useTransactionUpsertForm({
   mode,
   transactionId,
+  onClose,
 }: UseTransactionUpsertFormProps) {
   const isUpdateMode = mode === 'update' && Number.isFinite(transactionId)
 
@@ -268,6 +271,10 @@ export function useTransactionUpsertForm({
   }
 
   const handleBack = () => {
+    if (onClose) {
+      onClose()
+      return
+    }
     router.navigate({ to: '/financial/transaction' })
   }
 

@@ -27,11 +27,16 @@ import {
 interface TransactionUpsertPageProps {
   mode: 'create' | 'update'
   transactionId?: number
+  /** Hiển thị trong drawer: một cột, không chiếm toàn màn hình */
+  inDrawer?: boolean
+  onClose?: () => void
 }
 
 export const TransactionUpsertPage: React.FC<TransactionUpsertPageProps> = ({
   mode,
   transactionId,
+  inDrawer = false,
+  onClose,
 }) => {
   const {
     form,
@@ -52,11 +57,15 @@ export const TransactionUpsertPage: React.FC<TransactionUpsertPageProps> = ({
     handleSelectOriginalTransaction,
     handleBack,
     handleSave,
-  } = useTransactionUpsertForm({ mode, transactionId })
+  } = useTransactionUpsertForm({ mode, transactionId, onClose })
 
   if (isUpdateMode && isLoadingDetail) {
     return (
-      <Flex justify="center" align="center" style={{ minHeight: '100vh' }}>
+      <Flex
+        justify="center"
+        align="center"
+        style={{ minHeight: inDrawer ? 240 : '100vh' }}
+      >
         <Spin size="large" description="Đang tải thông tin giao dịch..." />
       </Flex>
     )
@@ -69,9 +78,9 @@ export const TransactionUpsertPage: React.FC<TransactionUpsertPageProps> = ({
   return (
     <div
       style={{
-        padding: '20px 24px 100px 24px',
+        padding: inDrawer ? 0 : '20px 24px 100px 24px',
         width: '100%',
-        minHeight: '100vh',
+        minHeight: inDrawer ? undefined : '100vh',
         boxSizing: 'border-box',
       }}
     >
@@ -103,7 +112,7 @@ export const TransactionUpsertPage: React.FC<TransactionUpsertPageProps> = ({
 
         <Row gutter={[20, 20]}>
           {/* CỘT TRÁI: Chi tiết khoản tiền */}
-          <Col xs={24} lg={14} xl={15}>
+          <Col xs={24} lg={inDrawer ? 24 : 14} xl={inDrawer ? 24 : 15}>
             <Card title="Chi tiết khoản tiền" style={{ height: '100%' }}>
               {/* Banner Tổng tiền */}
               <TransactionUpsertBanner
@@ -187,7 +196,7 @@ export const TransactionUpsertPage: React.FC<TransactionUpsertPageProps> = ({
           </Col>
 
           {/* CỘT PHẢI: Thông tin Ví & Mô tả */}
-          <Col xs={24} lg={10} xl={9}>
+          <Col xs={24} lg={inDrawer ? 24 : 10} xl={inDrawer ? 24 : 9}>
             <Flex vertical gap={20}>
               <TransactionGeneralForm
                 selectedType={selectedType}

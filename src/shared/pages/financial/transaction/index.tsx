@@ -1,15 +1,19 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FloatButton, Grid, Space, Tabs } from 'antd'
+import { FloatButton, Grid } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { useRouter } from '@tanstack/react-router'
 import { TransactionModal } from './_components/TransactionModal'
 import { TransactionDetail } from './_components/TransactionDetail'
-import { TransactionsTable } from './_components/TransactionsTable'
+import { TransactionList, isUncategorized } from './_components/TransactionList'
 import { TransactionHeader } from './_components/TransactionHeader'
-import { TransactionSearch } from './_components/TransactionSearch'
+import { TransactionTotals } from './_components/TransactionTotals'
+import { TransactionToolbar } from './_components/TransactionToolbar'
 import { TransactionFilterModal } from './_components/TransactionFilterModal'
+import { TransactionUpsertDrawer } from './_components/TransactionUpsertDrawer'
+import type { TransactionUpsertTarget } from './_components/TransactionUpsertDrawer'
 import type { TablePaginationConfig, TabsProps } from 'antd'
+import './transaction-page.css'
 
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
@@ -62,6 +66,8 @@ export function Transactions() {
   // State UI Controls
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
   const [showAdd, setShowAdd] = useState(false)
+  const [upsertTarget, setUpsertTarget] =
+    useState<TransactionUpsertTarget | null>(null)
   const [selectedKeys, setSelectedKeys] = useState<Array<React.Key>>([])
   const [viewTransactionId, setViewTransactionId] = useState<number | null>(
     null,
@@ -124,6 +130,7 @@ export function Transactions() {
     }
   }, [dataTransaction])
   const transactions = dataTransaction?.data.data || []
+  const uncategorizedCount = transactions.filter(isUncategorized).length
 
   // Options Select
   const walletOptions = useMemo(() => {
@@ -180,20 +187,16 @@ export function Transactions() {
     )
   }
 
-  const navigateToCreate = () => {
-    router.navigate({ to: '/financial/transaction/create' })
+  const openCreateDrawer = () => {
+    setUpsertTarget({ mode: 'create' })
+  }
+
+  const handleEditTransaction = (transaction: { id: number }) => {
+    setUpsertTarget({ mode: 'update', transactionId: transaction.id })
   }
 
   return (
-    <Space
-      vertical
-      size={isMobile ? 'small' : 'middle'}
-      style={{
-        width: '100%',
-        padding: isMobile ? 12 : 24,
-        boxSizing: 'border-box',
-      }}
-    >
+    <div className="transaction-page">
       {/* 1. Header Section */}
       <TransactionHeader
         isMobile={isMobile}
@@ -201,14 +204,24 @@ export function Transactions() {
         totalCount={dataTransaction?.data.meta.total || 0}
         selectedCount={selectedKeys.length}
         onDeleteSelected={() => setSelectedKeys([])}
-        onOpenAddModal={navigateToCreate}
+        onOpenAddModal={openCreateDrawer}
       />
 
-      {/* 2. Tabs Section */}
-      <Tabs
-        items={tabsData}
-        activeKey={activeTab}
-        onChange={(activeKey) => {
+      {/* 2. Totals */}
+      <TransactionTotals
+        totalExpense={dataTransaction?.data.totalExpense}
+        totalIncome={dataTransaction?.data.totalIncome}
+        uncategorizedCount={uncategorizedCount}
+      />
+
+      {/* 3. Tabs, Search & Active Filters */}
+      <TransactionToolbar
+        tabs={tabsData.map((tab) => ({
+          key: String(tab.key),
+          label: tab.label,
+        }))}
+        activeTab={activeTab}
+        onTabChange={(activeKey) => {
           setActiveTab(
             activeKey as
               | 'all'
@@ -216,11 +229,25 @@ export function Transactions() {
               | FINANCIAL_TRANSACTION_STATUS,
           )
         }}
-        tabBarExtraContent={{}}
+        search={search}
+        onSearchChange={setSearch}
+        activeFilterCount={activeFilterCount}
+        onOpenFilterModal={() => setIsFilterModalOpen(true)}
+        typeFilter={typeFilter}
+        walletFilter={walletFilter}
+        setWalletFilter={setWalletFilter}
+        catFilter={catFilter}
+        statusFilter={statusFilter}
+        walletOptions={walletOptions}
+        categoryOptions={categoryOptions}
+        onClearType={() => setTypeFilter('all')}
+        onClearCat={() => setCatFilter('all')}
+        onClearStatus={() => setStatusFilter('all')}
+        onResetAll={handleResetFilter}
       />
 
-      {/* 3. Transactions Table */}
-      <TransactionsTable
+      {/* 4. Transactions grouped by day */}
+      <TransactionList
         isFetching={isFetching}
         dataSource={transactions}
         isMobile={isMobile}
@@ -230,26 +257,13 @@ export function Transactions() {
         pagination={pageData}
         onPageChange={(newPage) => setPage(newPage)}
         onDelete={handleDeleteTransaction}
+        onEdit={handleEditTransaction}
       />
 
-      {/* 4. Search & Active Filters */}
-      <TransactionSearch
-        isMobile={isMobile}
-        search={search}
-        onSearchChange={setSearch}
-        activeFilterCount={activeFilterCount}
-        onOpenFilterModal={() => setIsFilterModalOpen(true)}
-        typeFilter={typeFilter}
-        walletFilter={walletFilter}
-        catFilter={catFilter}
-        statusFilter={statusFilter}
-        walletOptions={walletOptions}
-        categoryOptions={categoryOptions}
-        onClearType={() => setTypeFilter('all')}
-        onClearWallet={() => setWalletFilter('all')}
-        onClearCat={() => setCatFilter('all')}
-        onClearStatus={() => setStatusFilter('all')}
-        onResetAll={handleResetFilter}
+      {/* Create / Update Drawer */}
+      <TransactionUpsertDrawer
+        target={upsertTarget}
+        onClose={() => setUpsertTarget(null)}
       />
 
       {/* 5. Filter Modal */}
@@ -286,10 +300,10 @@ export function Transactions() {
         <FloatButton
           type="primary"
           icon={<PlusOutlined />}
-          onClick={navigateToCreate}
+          onClick={openCreateDrawer}
           style={{ right: 24, bottom: 24 }}
         />
       )}
-    </Space>
+    </div>
   )
 }

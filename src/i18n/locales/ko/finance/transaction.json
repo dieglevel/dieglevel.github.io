@@ -28,5 +28,11 @@
   "itemDescription": "항목 설명",
   "tags": "태그",
   "receipt": "영수증 이미지 링크",
-  "performedAt": "거래일"
+  "performedAt": "거래일",
+  "today": "오늘",
+  "yesterday": "어제",
+  "uncategorized": "미분류",
+  "multiItems": "여러 항목",
+  "shownCount": "{{total}}건 중 {{shown}}건 표시",
+  "txCount": "{{count}}건"
 }

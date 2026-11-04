@@ -1,0 +1,320 @@
+/* Trang danh sách giao dịch — bảng màu ấm, tự đổi theo data-theme của AppThemeProvider */
+.transaction-page {
+  --tx-bg: #fbf6f1;
+  --tx-surface: #fff;
+  --tx-surface-2: #f4ece4;
+  --tx-line: #e8dccf;
+  --tx-text: #2a1a10;
+  --tx-muted: #8a7565;
+  --tx-accent: #d9531e;
+  --tx-income: #0f8a5f;
+  --tx-danger: #d92d20;
+  --tx-warn: #b45309;
+  --tx-warn-bg: #fef3c7;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100%;
+  padding: 24px clamp(12px, 2.4vw, 28px) 80px;
+  background: var(--tx-bg);
+  color: var(--tx-text);
+  font-size: 14px;
+  line-height: 1.45;
+}
+:root[data-theme='dark'] .transaction-page {
+  --tx-bg: #1a0f0a;
+  --tx-surface: #241610;
+  --tx-surface-2: #2e1d15;
+  --tx-line: #3a261b;
+  --tx-text: #f5e9df;
+  --tx-muted: #a38b7a;
+  --tx-accent: #ff7a3d;
+  --tx-income: #3ddc97;
+  --tx-danger: #ff6b6b;
+  --tx-warn: #fbbf24;
+  --tx-warn-bg: #3a2a0c;
+}
+.transaction-page :focus-visible {
+  outline: 2px solid var(--tx-accent);
+  outline-offset: 2px;
+}
+
+/* Header */
+.tx-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.tx-header h1 {
+  margin: 0;
+  color: var(--tx-text);
+  font-size: 24px;
+  font-weight: 700;
+}
+.tx-header p {
+  margin: 2px 0 0;
+  color: var(--tx-muted);
+  font-size: 13px;
+}
+.tx-header-actions {
+  display: flex;
+  gap: 8px;
+}
+.tx-btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 14px;
+  background: var(--tx-accent);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.tx-btn.danger {
+  border: 1px solid var(--tx-line);
+  background: none;
+  color: var(--tx-danger);
+}
+
+/* Tổng hợp */
+.tx-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 20px 0 18px;
+  overflow: hidden;
+  background: var(--tx-surface);
+  border: 1px solid var(--tx-line);
+  border-radius: 12px;
+}
+.tx-summary > div {
+  min-width: 0;
+  padding: 14px 18px;
+}
+.tx-summary > div + div {
+  border-left: 1px solid var(--tx-line);
+}
+.tx-summary small {
+  display: block;
+  color: var(--tx-muted);
+  font-size: 12px;
+}
+.tx-summary b {
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+.tx-summary .income {
+  color: var(--tx-income);
+}
+
+/* Thanh công cụ */
+.tx-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.tx-tabs {
+  display: flex;
+  gap: 4px;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.tx-tabs button {
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 12px;
+  background: none;
+  color: var(--tx-muted);
+  font: inherit;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.tx-tabs button[aria-selected='true'] {
+  background: var(--tx-accent);
+  color: #fff;
+}
+.tx-tools {
+  display: flex;
+  gap: 8px;
+}
+.tx-tools .ant-input-affix-wrapper {
+  width: 220px;
+}
+.tx-tools .ant-select {
+  min-width: 150px;
+}
+.tx-chips {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.tx-chips .ant-tag {
+  margin: 0;
+}
+
+/* Danh sách theo ngày */
+.tx-day {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 16px 4px 8px;
+  background: var(--tx-bg);
+}
+.tx-day b {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.tx-day span,
+.tx-day em {
+  color: var(--tx-muted);
+  font-size: 12.5px;
+}
+.tx-day span {
+  margin-left: 8px;
+}
+.tx-day em {
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+}
+.tx-card {
+  overflow: hidden;
+  background: var(--tx-surface);
+  border: 1px solid var(--tx-line);
+  border-radius: 12px;
+}
+.tx-row {
+  display: grid;
+  grid-template-columns: auto 36px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-top: 1px solid var(--tx-line);
+  cursor: pointer;
+}
+.tx-row:first-child {
+  border-top: 0;
+}
+.tx-row:hover,
+.tx-row.selected {
+  background: var(--tx-surface-2);
+}
+.tx-av {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--c) 20%, transparent);
+}
+.tx-main {
+  min-width: 0;
+}
+.tx-title {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tx-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+  color: var(--tx-muted);
+  font-size: 12.5px;
+}
+.tx-wallet {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.tx-wallet i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.tx-chip {
+  padding: 1px 8px;
+  border: 1px solid color-mix(in srgb, var(--c) 55%, transparent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--c) 16%, transparent);
+  color: var(--tx-text);
+  font-size: 12px;
+  font-weight: 500;
+}
+.tx-chip.none {
+  border-color: transparent;
+  background: var(--tx-warn-bg);
+  color: var(--tx-warn);
+}
+.tx-amt {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+.tx-amt.income {
+  color: var(--tx-income);
+}
+.tx-amt.muted {
+  color: var(--tx-muted);
+}
+.tx-actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+}
+.tx-row:hover .tx-actions,
+.tx-row:focus-within .tx-actions {
+  opacity: 1;
+}
+.tx-empty {
+  padding: 40px;
+  color: var(--tx-muted);
+  text-align: center;
+}
+.tx-pagination {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 16px;
+}
+
+@media (hover: none) {
+  .tx-actions {
+    opacity: 1;
+  }
+}
+@media (max-width: 640px) {
+  .transaction-page {
+    padding: 16px 10px 80px;
+  }
+  .tx-summary > div {
+    padding: 12px;
+  }
+  .tx-summary b {
+    font-size: 15px;
+  }
+  .tx-tools,
+  .tx-tools .ant-input-affix-wrapper {
+    width: 100%;
+  }
+  .tx-row {
+    grid-template-columns: auto 36px minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 10px;
+  }
+  .tx-actions {
+    display: none;
+  }
+}

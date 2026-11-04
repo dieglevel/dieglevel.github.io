@@ -28,5 +28,12 @@
   "itemDescription": "Item description",
   "tags": "Tags",
   "receipt": "Receipt image link",
-  "performedAt": "Transaction date"
+  "performedAt": "Transaction date",
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "uncategorized": "Uncategorized",
+  "multiItems": "Multiple items",
+  "shownCount": "Showing {{shown}} of {{total}} transactions",
+  "txCount_one": "{{count}} transaction",
+  "txCount_other": "{{count}} transactions"
 }
