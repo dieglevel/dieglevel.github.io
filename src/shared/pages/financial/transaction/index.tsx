@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { FloatButton, Grid } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
@@ -47,8 +47,6 @@ export function Transactions() {
     pageSize: 20,
     total: 0,
   })
-
-  const idempotencyKeyRef = useRef<string>(generateIdempotencyKey())
 
   const { mTransaction_Delete } = useMutationTransaction()
 
@@ -119,16 +117,6 @@ export function Transactions() {
     },
   })
 
-  useEffect(() => {
-    if (dataTransaction?.data.meta) {
-      console.log('dataTransaction', dataTransaction)
-      setPageData({
-        current: dataTransaction.data.meta.page || 1,
-        pageSize: dataTransaction.data.meta.limit || 20,
-        total: dataTransaction.data.meta.total || 0,
-      })
-    }
-  }, [dataTransaction])
   const transactions = dataTransaction?.data.data || []
   const uncategorizedCount = transactions.filter(isUncategorized).length
 
@@ -174,7 +162,9 @@ export function Transactions() {
   }
 
   const handleDeleteTransaction = (transactionId: number) => {
-    const idempotencyKey = idempotencyKeyRef.current
+    // Each delete is a distinct action → needs its own key. Reusing one key
+    // makes the BE replay the cached response of the first delete.
+    const idempotencyKey = generateIdempotencyKey()
 
     mTransaction_Delete.mutate(
       { pathParams: { id: transactionId }, idempotencyKey: idempotencyKey },
