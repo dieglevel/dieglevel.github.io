@@ -24,14 +24,26 @@ export function Dashboard() {
   const [selectedWalletId, setSelectedWalletId] = useState<number | undefined>(
     undefined,
   )
+  // 0 = kỳ hiện tại, -1 = kỳ trước, ...
+  const [offset, setOffset] = useState(0)
+
+  const changeTimeFrame = (tf: DashboardTimeFrame) => {
+    setTimeFrame(tf)
+    setOffset(0)
+  }
 
   // Query params setup
   const queryParams: GetFinancialDashboardQueryParams = {
     timeFrame,
     walletId: selectedWalletId,
+    offset: offset || undefined,
   }
 
-  const { data: response, isFetching } = useGetFinancialDashboard({
+  const {
+    data: response,
+    isLoading,
+    isFetching,
+  } = useGetFinancialDashboard({
     queryParams,
   })
 
@@ -56,14 +68,18 @@ export function Dashboard() {
   return (
     <div
       style={{
-        padding: '24px',
+        padding: 'clamp(12px, 2.4vw, 24px)',
         minHeight: '100vh',
+        maxWidth: 1440,
+        margin: '0 auto',
       }}
     >
       {/* Header & Filter Toolbar */}
       <DashboardHeader
         timeFrame={timeFrame}
-        setTimeFrame={setTimeFrame}
+        setTimeFrame={changeTimeFrame}
+        offset={offset}
+        setOffset={setOffset}
         selectedWalletId={selectedWalletId}
         setSelectedWalletId={setSelectedWalletId}
         wallets={wallets}
@@ -73,17 +89,27 @@ export function Dashboard() {
         }
       />
 
-      {isFetching ? (
+      {isLoading ? (
         <Flex align="center" justify="center" style={{ height: '60vh' }}>
           <Spin size="large" />
         </Flex>
       ) : (
-        <>
+        // Đổi bộ lọc: giữ dữ liệu cũ, làm mờ nhẹ thay vì nháy spinner/nhảy layout
+        <div
+          aria-busy={isFetching}
+          style={{
+            opacity: isFetching ? 0.55 : 1,
+            transition: 'opacity 0.2s ease',
+          }}
+        >
           {/* Top 4 KPI Metrics Cards */}
-          <DashboardSummaryCards summary={summary} />
+          <DashboardSummaryCards
+            summary={summary}
+            cashFlowTimeline={cashFlowTimeline}
+          />
 
           {/* Charts Row */}
-          <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+          <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
             <Col xs={24} lg={15}>
               <CashFlowChart cashFlowTimeline={cashFlowTimeline} />
             </Col>
@@ -93,7 +119,7 @@ export function Dashboard() {
           </Row>
 
           {/* Wallets & Recent Transactions Row */}
-          <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+          <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
             <Col xs={24} lg={9}>
               <WalletListWidget
                 wallets={wallets}
@@ -131,7 +157,7 @@ export function Dashboard() {
               />
             </Col>
           </Row>
-        </>
+        </div>
       )}
     </div>
   )

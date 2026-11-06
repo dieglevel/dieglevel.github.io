@@ -48,6 +48,7 @@
         "created": "Debt created",
         "payment": "Payment",
         "adjustment": "Balance adjustment",
+        "corrected": "Original amount corrected",
         "settled": "Settled",
         "cancelled": "Debt cancelled"
       },
@@ -74,6 +75,7 @@
         "inactive": "Paused"
       },
       "historySource": { "user": "User", "system": "Automatic system" },
+      "historyType": { "contribution": "Contribution", "withdrawal": "Withdrawal" },
       "historyStatus": {
         "pending": "Pending deposit",
         "completed": "Completed",
@@ -103,5 +105,14 @@
       "language": { "en": "English", "ko": "한국어", "vn": "Vietnamese" },
       "currency": { "usd": "USD ($)", "krw": "KRW (₩)", "vnd": "VND (₫)" }
     }
+  },
+  "walletSwitch": {
+    "wallet": "Wallet",
+    "selectWallet": "Select a wallet...",
+    "walletRequired": "Please select a wallet",
+    "insufficient": "The wallet doesn't have enough money for this.",
+    "currentBalance": "Current balance ({{name}})",
+    "change": "Change",
+    "projected": "Balance after"
   }
 }

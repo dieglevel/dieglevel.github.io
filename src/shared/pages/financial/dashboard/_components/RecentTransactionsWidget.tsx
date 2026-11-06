@@ -1,8 +1,15 @@
 import React from 'react'
-import { Button, Card, Empty, Typography } from 'antd'
+import { Empty, Typography } from 'antd'
 import { useTranslation } from 'react-i18next'
-import { ArrowDownRight, ArrowUpRight, Clock, Wallet } from 'lucide-react'
+import {
+  ArrowDownRight,
+  ArrowLeftRight,
+  ArrowUpRight,
+  Clock,
+} from 'lucide-react'
 import dayjs from 'dayjs'
+import { WidgetCard } from './WidgetCard'
+import { getVizColors } from './viz'
 import type { DashboardRecentTransactionItem } from '@/shared/api/financial/dashboard/dashboard.type'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { useThemeMode } from '@/shared/provider/antd-theme.provider'
@@ -20,203 +27,99 @@ export const RecentTransactionsWidget: React.FC<
 > = ({ recentTransactions, onNavigateToTransactions }) => {
   const { t } = useTranslation('dashboard')
   const { mode } = useThemeMode()
-  const { border, state, radius, text } = getTokens(mode)
+  const { border, radius, colors } = getTokens(mode)
+  const viz = getVizColors(mode)
 
   return (
-    <Card
-      title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: radius.md,
-              background: '#16a34a18',
-              color: '#16a34a',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Clock size={18} />
-          </div>
-          <span style={{ fontSize: 16, fontWeight: 600 }}>
-            {t('transactions.title')}
-          </span>
-        </div>
-      }
-      extra={
-        <Button
-          type="link"
-          size="small"
-          onClick={onNavigateToTransactions}
-          style={{
-            color: '#16a34a',
-            fontSize: 13,
-            fontWeight: 500,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 4,
-          }}
-        >
-          {t('transactions.viewAll')}
-          <ArrowUpRight size={14} />
-        </Button>
-      }
-      style={{
-        borderRadius: radius.lg,
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-      styles={{
-        body: {
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '16px 20px',
-        },
+    <WidgetCard
+      icon={<Clock size={18} />}
+      title={t('transactions.title')}
+      action={{
+        label: t('transactions.viewAll'),
+        onClick: onNavigateToTransactions,
       }}
     >
       {recentTransactions.length === 0 ? (
         <div
           style={{
             flex: 1,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: 'grid',
+            placeItems: 'center',
             padding: '40px 0',
           }}
         >
           <Empty description={t('transactions.empty')} />
         </div>
       ) : (
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 10,
-          }}
-        >
-          {recentTransactions.map((tx) => {
+        <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+          {recentTransactions.map((tx, i) => {
             const isIncome = tx.type === 'INCOME'
             const isExpense = tx.type === 'EXPENSE'
+            // Icon mang màu thu/chi (cùng màu biểu đồ); số tiền dùng màu chữ + dấu
+            const tone = isIncome
+              ? viz.income
+              : isExpense
+                ? viz.expense
+                : colors.neutral.base
+            const Icon = isIncome
+              ? ArrowUpRight
+              : isExpense
+                ? ArrowDownRight
+                : ArrowLeftRight
+
             return (
-              <div
+              <li
                 key={tx.id}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '12px 14px',
-                  borderRadius: radius.md,
-                  border: `1px solid ${border.base}`,
-                  background: state.hover,
-                  transition: 'transform 0.2s ease',
+                  gap: 12,
+                  padding: '10px 0',
+                  borderTop: i === 0 ? 'none' : `1px solid ${border.light}`,
                 }}
               >
-                <div
+                <span
+                  aria-hidden
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12,
-                    overflow: 'hidden',
+                    width: 36,
+                    height: 36,
+                    flexShrink: 0,
+                    borderRadius: radius.md,
+                    display: 'grid',
+                    placeItems: 'center',
+                    background: `color-mix(in srgb, ${tone} 16%, transparent)`,
+                    color: tone,
                   }}
                 >
-                  <div
-                    style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: radius.sm,
-                      background: isIncome
-                        ? '#dcfce7'
-                        : isExpense
-                          ? '#fee2e2'
-                          : '#e0f2fe',
-                      color: isIncome
-                        ? '#16a34a'
-                        : isExpense
-                          ? '#dc2626'
-                          : '#0284c7',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {isIncome ? (
-                      <ArrowUpRight size={18} />
-                    ) : isExpense ? (
-                      <ArrowDownRight size={18} />
-                    ) : (
-                      <Wallet size={18} />
-                    )}
-                  </div>
-                  <div style={{ overflow: 'hidden' }}>
-                    <div
-                      style={{
-                        fontWeight: 600,
-                        fontSize: 14,
-                        color: text.primary,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                      }}
-                    >
-                      {tx.description ||
-                        tx.merchant ||
-                        t('transactions.defaultDescription')}
-                    </div>
-                    <div
-                      style={{
-                        color: '#64748b',
-                        fontSize: 12,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 6,
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
-                      <span>
-                        {tx.walletName || t('transactions.defaultWallet')}
-                      </span>
-                      {tx.categoryName && (
-                        <>
-                          <span>•</span>
-                          <span>{tx.categoryName}</span>
-                        </>
-                      )}
-                      <span>•</span>
-                      <span>
-                        {dayjs(tx.createdAt).format('DD/MM/YYYY HH:mm')}
-                      </span>
-                    </div>
-                  </div>
+                  <Icon size={18} />
+                </span>
+
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <Text strong ellipsis style={{ display: 'block' }}>
+                    {tx.description ||
+                      tx.merchant ||
+                      t('transactions.defaultDescription')}
+                  </Text>
+                  <Text type="secondary" ellipsis style={{ display: 'block' }}>
+                    {[
+                      tx.walletName || t('transactions.defaultWallet'),
+                      tx.categoryName,
+                      dayjs(tx.createdAt).format('DD/MM HH:mm'),
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </Text>
                 </div>
 
-                <div
-                  style={{ textAlign: 'right', flexShrink: 0, marginLeft: 12 }}
-                >
-                  <div
-                    style={{
-                      fontWeight: 700,
-                      fontSize: 15,
-                      color: isIncome
-                        ? '#16a34a'
-                        : isExpense
-                          ? '#dc2626'
-                          : text.primary,
-                    }}
-                  >
-                    {isIncome ? '+' : isExpense ? '-' : ''}
-                    {convertCurrency(tx.amount)}
-                  </div>
-                </div>
-              </div>
+                <Text strong style={{ flexShrink: 0, whiteSpace: 'nowrap' }}>
+                  {isIncome ? '+' : isExpense ? '−' : ''}
+                  {convertCurrency(Math.abs(tx.amount))}
+                </Text>
+              </li>
             )
           })}
-        </div>
+        </ul>
       )}
-    </Card>
+    </WidgetCard>
   )
 }

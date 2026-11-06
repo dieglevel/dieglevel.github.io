@@ -16,13 +16,19 @@ import {
 } from 'antd'
 import dayjs from 'dayjs'
 import { useTranslation } from 'react-i18next'
-import type { IFinance_Goal } from '@/shared/api/financial/goal/goal.type'
+import type {
+  IFinance_Goal,
+  UpsertFinanceGoalDto,
+} from '@/shared/api/financial/goal/goal.type'
 import {
   FINANCIAL_GOAL_SAVING_MODE,
-  FINANCIAL_GOAL_STATUS,
   FINANCIAL_GOAL_TYPE,
+  FinancialGoalSavingModeHelper,
+  FinancialGoalTypeHelper,
 } from '@/shared/api/financial/goal/goal.enum'
 import { useMutationGoal } from '@/shared/api/financial/goal/goal.mutation'
+import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
+import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const { Text } = Typography
 
@@ -32,31 +38,7 @@ interface AddGoalModalProps {
   onClose: () => void
 }
 
-const TYPE_OPTIONS = [
-  { value: FINANCIAL_GOAL_TYPE.EMERGENCY_FUND, label: '🚨 Quỹ khẩn cấp' },
-  { value: FINANCIAL_GOAL_TYPE.DEBT_PAYMENT, label: '� Trả nợ' },
-  { value: FINANCIAL_GOAL_TYPE.INVESTMENT, label: '✈️ Đầu tư' },
-  { value: FINANCIAL_GOAL_TYPE.SAVING, label: '💰 Tiết kiệm' },
-  { value: FINANCIAL_GOAL_TYPE.OTHER, label: '📌 Khác' },
-]
-
-const STATUS_OPTIONS = [
-  { value: FINANCIAL_GOAL_STATUS.ACTIVE, label: 'Đang thực hiện' },
-  { value: FINANCIAL_GOAL_STATUS.COMPLETED, label: 'Hoàn thành' },
-  { value: FINANCIAL_GOAL_STATUS.CANCELLED, label: 'Đã hủy' },
-  { value: FINANCIAL_GOAL_STATUS.INACTIVE, label: 'Không hoạt động' },
-]
-
-const SAVING_MODE_OPTIONS = [
-  {
-    value: FINANCIAL_GOAL_SAVING_MODE.MANUAL,
-    label: '🖐️ Tự tích lũy thủ công',
-  },
-  {
-    value: FINANCIAL_GOAL_SAVING_MODE.AUTO,
-    label: '⚡ Trích tiền tự động hàng tháng',
-  },
-]
+// Trạng thái không sửa ở form — đổi qua Tạm dừng / Tiếp tục / Hủy trong chi tiết mục tiêu
 
 export function AddGoalModal({
   open,
@@ -68,6 +50,12 @@ export function AddGoalModal({
   const { mGoal_Create, mGoal_Update } = useMutationGoal()
   const isEditing = !!initialValues?.id
   const isSubmitting = mGoal_Create.isPending || mGoal_Update.isPending
+  const { data: walletRes, isLoading: isLoadingWallets } =
+    useGetFinance_Wallet_List({})
+  const walletOptions = (walletRes?.data ?? []).map((w) => ({
+    value: w.id,
+    label: `${w.name} · ${convertCurrency(w.balance)}`,
+  }))
 
   // Watch savingMode to toggle auto contribution inputs
   const savingMode = Form.useWatch('savingMode', form)
@@ -87,7 +75,6 @@ export function AddGoalModal({
       } else {
         form.resetFields()
         form.setFieldsValue({
-          status: FINANCIAL_GOAL_STATUS.ACTIVE,
           savingMode: FINANCIAL_GOAL_SAVING_MODE.MANUAL,
           type: FINANCIAL_GOAL_TYPE.EMERGENCY_FUND,
           isLocked: false,
@@ -101,20 +88,20 @@ export function AddGoalModal({
     try {
       const values = await form.validateFields()
 
-      const payload: any = {
+      const isAuto = values.savingMode === FINANCIAL_GOAL_SAVING_MODE.AUTO
+      const payload: UpsertFinanceGoalDto = {
         name: values.name,
         description: values.description || undefined,
-        status: values.status,
         type: values.type || undefined,
         targetAmount: values.targetAmount,
-        deadline: values.deadline ? values.deadline.toDate() : null,
+        deadline: values.deadline ? values.deadline.toISOString() : null,
         savingMode: values.savingMode,
         isLocked: !!values.isLocked,
         imageUrl: values.imageUrl || undefined,
-        ...(values.savingMode === FINANCIAL_GOAL_SAVING_MODE.AUTO && {
-          autoContributionAmount: values.autoContributionAmount,
-          autoContributionDay: values.autoContributionDay,
-        }),
+        // MANUAL: BE tự xóa cấu hình tự động; gửi null để sửa từ AUTO → MANUAL
+        autoContributionAmount: isAuto ? values.autoContributionAmount : null,
+        autoContributionDay: isAuto ? values.autoContributionDay : null,
+        walletId: isAuto ? (values.walletId ?? null) : null,
       }
 
       if (isEditing) {
@@ -149,11 +136,7 @@ export function AddGoalModal({
 
   return (
     <Modal
-      title={
-        <div style={{ fontSize: 16, fontWeight: 600 }}>
-          {isEditing ? t('common.edit') : t('goal.add')}
-        </div>
-      }
+      title={isEditing ? t('common.edit') : t('goal.add')}
       open={open}
       onCancel={onClose}
       onOk={handleSubmit}
@@ -191,7 +174,7 @@ export function AddGoalModal({
             <Form.Item name="type" label={<Text strong>{t('goal.type')}</Text>}>
               <Select
                 placeholder={t('goal.selectType')}
-                options={TYPE_OPTIONS}
+                options={FinancialGoalTypeHelper.getOptions()}
                 allowClear
               />
             </Form.Item>
@@ -200,7 +183,7 @@ export function AddGoalModal({
 
         {/* Amount, Deadline & Status */}
         <Row gutter={16}>
-          <Col xs={24} sm={8}>
+          <Col xs={24} sm={12}>
             <Form.Item
               name="targetAmount"
               label={<Text strong>{t('goal.target')}</Text>}
@@ -221,11 +204,10 @@ export function AddGoalModal({
               />
             </Form.Item>
           </Col>
-          <Col xs={24} sm={8}>
+          <Col xs={24} sm={12}>
             <Form.Item
               name="deadline"
               label={<Text strong>{t('goal.deadline')}</Text>}
-              rules={[{ required: true, message: 'Chọn ngày hạn chót!' }]}
             >
               <DatePicker
                 style={{ width: '100%' }}
@@ -235,22 +217,11 @@ export function AddGoalModal({
               />
             </Form.Item>
           </Col>
-          <Col xs={24} sm={8}>
-            <Form.Item
-              name="status"
-              label={<Text strong>{t('goal.status')}</Text>}
-              rules={[{ required: true, message: 'Chọn trạng thái!' }]}
-            >
-              <Select options={STATUS_OPTIONS} />
-            </Form.Item>
-          </Col>
         </Row>
 
         {/* Saving Mode Section */}
         <Divider style={{ margin: '16px 0' }}>
-          <Text type="secondary" style={{ fontSize: 12 }}>
-            ⚙️ HÌNH THỨC TÍCH LŨY
-          </Text>
+          <Text type="secondary">{t('goal.savingMode')}</Text>
         </Divider>
 
         <Form.Item
@@ -260,7 +231,7 @@ export function AddGoalModal({
             { required: true, message: 'Vui lòng chọn hình thức tích lũy!' },
           ]}
         >
-          <Select options={SAVING_MODE_OPTIONS} />
+          <Select options={FinancialGoalSavingModeHelper.getOptions()} />
         </Form.Item>
 
         {/* Auto Contribution Fields */}
@@ -309,6 +280,20 @@ export function AddGoalModal({
                 />
               </Form.Item>
             </Col>
+            <Col xs={24}>
+              <Form.Item
+                name="walletId"
+                label={t('goal.defaultWallet')}
+                extra={t('goal.defaultWalletHelp')}
+              >
+                <Select
+                  allowClear
+                  loading={isLoadingWallets}
+                  placeholder={t('goal.noWallet')}
+                  options={walletOptions}
+                />
+              </Form.Item>
+            </Col>
           </Row>
         )}
 
@@ -341,7 +326,8 @@ export function AddGoalModal({
           <Col xs={24} sm={18}>
             <Form.Item
               name="isLocked"
-              label={t('goal.locked', { defaultValue: 'Lock withdrawals' })}
+              label={t('goal.locked')}
+              extra={t('goal.lockedHelp')}
               valuePropName="checked"
             >
               <Switch

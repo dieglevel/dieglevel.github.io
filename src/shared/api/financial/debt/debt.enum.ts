@@ -66,6 +66,7 @@ export enum FINANCIAL_DEBT_HISTORY_TYPE_ENUM {
   CREATED = 'CREATED',
   PAYMENT = 'PAYMENT',
   ADJUSTMENT = 'ADJUSTMENT',
+  CORRECTED = 'CORRECTED',
   SETTLED = 'SETTLED',
   CANCELLED = 'CANCELLED',
 }
@@ -82,6 +83,7 @@ class FinancialDebtHistoryTypeHelperImpl extends BaseEnumHelper<FINANCIAL_DEBT_H
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.CREATED]: '#3b82f6', // Xanh dương (Tạo khoản nợ)
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.PAYMENT]: '#10b981', // Xanh lá (Thanh toán)
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.ADJUSTMENT]: '#8b5cf6', // Tím (Điều chỉnh)
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.CORRECTED]: '#0ea5e9', // Xanh ngọc (Sửa số tiền gốc)
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.SETTLED]: '#6b7280', // Xám (Tất toán)
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.CANCELLED]: '#ef4444', // Đỏ (Đã hủy)
   }
@@ -94,6 +96,7 @@ class FinancialDebtHistoryTypeHelperImpl extends BaseEnumHelper<FINANCIAL_DEBT_H
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.PAYMENT]: 'enum.debt.history.payment',
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.ADJUSTMENT]:
       'enum.debt.history.adjustment',
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.CORRECTED]: 'enum.debt.history.corrected',
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.SETTLED]: 'enum.debt.history.settled',
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.CANCELLED]: 'enum.debt.history.cancelled',
   }

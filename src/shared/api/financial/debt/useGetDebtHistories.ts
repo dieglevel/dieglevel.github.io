@@ -21,7 +21,7 @@ export const useGetFinance_Debt_Histories = ({
     '/financial-debt/:id/histories'
   >({
     endPoint: `/financial-debt/:id/histories`,
-    queryKey: debtKeys.histories(),
+    queryKey: debtKeys.histories(id),
     pathParams: { id },
     options: {
       ...options,

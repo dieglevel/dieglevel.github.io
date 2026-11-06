@@ -11,6 +11,7 @@ import {
   Typography /* thêm */,
 } from 'antd'
 import dayjs from 'dayjs'
+import { DEBT_UI_CLASS } from './DebtThemeProvider'
 import type { IFinance_Debt } from '@/shared/api/financial/debt/debt.type'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { InputWithComma } from '@/shared/components/input/utils'
@@ -61,6 +62,7 @@ export const DebtAdjustModal: React.FC<DebtAdjustModalProps> = ({
 
   return (
     <Modal
+      rootClassName={DEBT_UI_CLASS}
       title={t('debtForms.adjustTitle', { name: debt.name })}
       open={open}
       onCancel={onClose}

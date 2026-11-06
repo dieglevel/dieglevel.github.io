@@ -1,4 +1,5 @@
 import { walletKeys } from '../wallet/wallet.keys'
+import { dashboardKeys } from '../dashboard/dashboard.keys'
 import { debtKeys } from './debt.keys'
 import type {
   IFinance_Debt,
@@ -11,6 +12,13 @@ import {
   useMutationPost,
 } from '@/shared/lib/api/mutation/useMutation'
 
+/** Làm mới danh sách + lịch sử nợ, số dư ví và widget dashboard */
+const DEBT_INVALIDATE_KEYS = [
+  debtKeys.all,
+  walletKeys.list(),
+  dashboardKeys.all,
+]
+
 export const useMutationFinanceDebt = () => {
   const mDebt_Create = useMutationPost<
     void,
@@ -18,7 +26,7 @@ export const useMutationFinanceDebt = () => {
     'financial-debt/create'
   >({
     endPoint: 'financial-debt/create',
-    queryKey: [debtKeys.list(), walletKeys.list()],
+    queryKey: DEBT_INVALIDATE_KEYS,
   })
 
   const mDebt_Update = useMutationPost<
@@ -28,7 +36,7 @@ export const useMutationFinanceDebt = () => {
     { id: string }
   >({
     endPoint: 'financial-debt/update/:id',
-    queryKey: [debtKeys.list(), walletKeys.list()],
+    queryKey: DEBT_INVALIDATE_KEYS,
   })
 
   const mDebt_Delete = useMutationDelete<
@@ -38,7 +46,7 @@ export const useMutationFinanceDebt = () => {
     { id: string }
   >({
     endPoint: 'financial-debt/delete/:id',
-    queryKey: [debtKeys.list(), walletKeys.list()],
+    queryKey: DEBT_INVALIDATE_KEYS,
   })
 
   const mDebt_Payment = useMutationPost<
@@ -48,7 +56,7 @@ export const useMutationFinanceDebt = () => {
     { id: string }
   >({
     endPoint: 'financial-debt/:id/payment',
-    queryKey: [debtKeys.list(), walletKeys.list()],
+    queryKey: DEBT_INVALIDATE_KEYS,
   })
 
   const mDebt_Adjust = useMutationPost<
@@ -58,7 +66,7 @@ export const useMutationFinanceDebt = () => {
     { id: string }
   >({
     endPoint: 'financial-debt/:id/adjust',
-    queryKey: [debtKeys.list(), walletKeys.list()],
+    queryKey: DEBT_INVALIDATE_KEYS,
   })
 
   const mDebt_Settle = useMutationPost<
@@ -68,7 +76,7 @@ export const useMutationFinanceDebt = () => {
     { id: string }
   >({
     endPoint: 'financial-debt/:id/settle',
-    queryKey: [debtKeys.list()],
+    queryKey: DEBT_INVALIDATE_KEYS,
   })
 
   const mDebt_Cancel = useMutationPost<
@@ -78,7 +86,7 @@ export const useMutationFinanceDebt = () => {
     { id: string }
   >({
     endPoint: 'financial-debt/:id/cancel',
-    queryKey: [debtKeys.list()],
+    queryKey: DEBT_INVALIDATE_KEYS,
   })
   const mDebt_Correct = useMutationPost<
     void,
@@ -87,7 +95,7 @@ export const useMutationFinanceDebt = () => {
     { id: string }
   >({
     endPoint: 'financial-debt/:id/correct',
-    queryKey: [debtKeys.list()],
+    queryKey: DEBT_INVALIDATE_KEYS,
   })
 
   return {

@@ -1,28 +1,31 @@
 import React, { useMemo, useState } from 'react'
-import { Grid, Space } from 'antd'
+import { useTranslation } from 'react-i18next'
+import { App } from 'antd'
 
+import {
+  DEBT_UI_CLASS,
+  DebtThemeProvider,
+} from './_components/DebtThemeProvider'
 import { DebtHeader } from './_components/DebtHeader'
 import { DebtSummaryCards } from './_components/DebtSummaryCards'
-import { DebtTable } from './_components/DebtTable'
+import { DebtList } from './_components/DebtList'
 import { DebtCreateModal } from './_components/DebtCreateModal'
 import { DebtPaymentModal } from './_components/DebtPaymentModal'
 import { DebtAdjustModal } from './_components/DebtAdjustModal'
 import { DebtHistoryModal } from './_components/DebtHistoryModal'
 import { DebtCorrectModal } from './_components/DebtCorrectModal'
+import { summarizeDebts } from './debt.utils'
+import type { DebtPaymentSubmit } from './_components/DebtPaymentModal'
 import type { IFinance_Debt } from '@/shared/api/financial/debt/debt.type'
-import {
-  FINANCIAL_DEBT_DIRECTION_ENUM,
-  FINANCIAL_DEBT_STATUS_ENUM,
-} from '@/shared/api/financial/debt/debt.enum'
 import { useMutationFinanceDebt } from '@/shared/api/financial/debt/debt.mutation'
 import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 import { useGetFinance_Debt_List } from '@/shared/api/financial/debt/useGetFinance_Debt_List'
 
-const { useBreakpoint } = Grid
+type ModalKind = 'payment' | 'adjust' | 'correct' | 'history'
 
 export const DebtManagementPage: React.FC = () => {
-  const screens = useBreakpoint()
-  const isMobile = !screens.md
+  const { t } = useTranslation('finance')
+  const { message } = App.useApp()
 
   // Queries & Mutations
   const { data: debtListResponse, isLoading } = useGetFinance_Debt_List()
@@ -30,7 +33,8 @@ export const DebtManagementPage: React.FC = () => {
     useGetFinance_Wallet_List({})
 
   const wallets = walletListResponse?.data || []
-  const debts = debtListResponse?.data || []
+  const debts = useMemo(() => debtListResponse?.data || [], [debtListResponse])
+  const summary = useMemo(() => summarizeDebts(debts), [debts])
 
   const {
     mDebt_Create,
@@ -42,16 +46,16 @@ export const DebtManagementPage: React.FC = () => {
     mDebt_Correct,
   } = useMutationFinanceDebt()
 
-  // Local States
-  const [activeTab, setActiveTab] = useState<string>('ALL')
-  const [selectedDebt, setSelectedDebt] = useState<IFinance_Debt | null>(null)
-
-  // Modals visibility
   const [isCreateOpen, setIsCreateOpen] = useState(false)
-  const [isPaymentOpen, setIsPaymentOpen] = useState(false)
-  const [isAdjustOpen, setIsAdjustOpen] = useState(false)
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false)
-  const [isCorrectOpen, setIsCorrectOpen] = useState(false)
+  const [selectedDebt, setSelectedDebt] = useState<IFinance_Debt | null>(null)
+  const [openModal, setOpenModal] = useState<ModalKind | null>(null)
+
+  const open = (kind: ModalKind) => (debt: IFinance_Debt) => {
+    setSelectedDebt(debt)
+    setOpenModal(kind)
+  }
+  const close = () => setOpenModal(null)
+  const selectedId = () => ({ id: String(selectedDebt?.id) })
 
   // Handlers
   const handleCreate = async (values: any) => {
@@ -59,166 +63,118 @@ export const DebtManagementPage: React.FC = () => {
     setIsCreateOpen(false)
   }
 
-  const handlePayment = async (values: any) => {
+  const handlePayment = async (values: DebtPaymentSubmit) => {
     if (!selectedDebt) return
     await mDebt_Payment.mutateAsync({
-      pathParams: { id: String(selectedDebt.id) },
+      pathParams: selectedId(),
       body: values,
     })
-    setIsPaymentOpen(false)
+    close()
+    // Về 0 → BE tự chuyển sang PAID_OFF
+    if (values.amount >= Number(selectedDebt.outstandingAmount)) {
+      message.success(t('debt.paidOffToast', { name: selectedDebt.name }))
+    }
   }
 
   const handleAdjust = async (values: any) => {
     if (!selectedDebt) return
-    await mDebt_Adjust.mutateAsync({
-      pathParams: { id: String(selectedDebt.id) },
-      body: values,
-    })
-    setIsAdjustOpen(false)
+    await mDebt_Adjust.mutateAsync({ pathParams: selectedId(), body: values })
+    close()
+  }
+
+  const handleCorrect = async (values: any) => {
+    if (!selectedDebt) return
+    await mDebt_Correct.mutateAsync({ pathParams: selectedId(), body: values })
+    close()
   }
 
   const handleSettle = async (id: number) => {
     await mDebt_Settle.mutateAsync({
       pathParams: { id: String(id) },
-      body: { note: 'Tất toán khoản nợ' },
+      body: { note: t('debt.settleNote') },
     })
   }
 
   const handleCancel = async (id: number) => {
     await mDebt_Cancel.mutateAsync({
       pathParams: { id: String(id) },
-      body: { note: 'Hủy khoản nợ' },
+      body: { note: t('debt.cancelNote') },
     })
   }
 
   const handleDelete = async (id: number) => {
-    await mDebt_Delete.mutateAsync({
-      pathParams: { id: String(id) },
-    })
+    await mDebt_Delete.mutateAsync({ pathParams: { id: String(id) } })
   }
-
-  const handleCorrect = async (values: any) => {
-    if (!selectedDebt) return
-    await mDebt_Correct.mutateAsync({
-      pathParams: { id: String(selectedDebt.id) },
-      body: values,
-    })
-    setIsCorrectOpen(false)
-  }
-
-  // Filtered debts by active tab
-  const filteredDebts = useMemo(() => {
-    return debts.filter((item) => {
-      if (activeTab === 'ALL') return true
-      if (
-        activeTab === FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING ||
-        activeTab === FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING
-      ) {
-        return item.direction === activeTab
-      }
-      return item.status === activeTab
-    })
-  }, [debts, activeTab])
-
-  const activeCount = debts.filter(
-    (d) => d.status === FINANCIAL_DEBT_STATUS_ENUM.ACTIVE,
-  ).length
 
   return (
-    <Space
-      vertical
-      size="middle"
-      style={{
-        width: '100%',
-        padding: isMobile ? 12 : 24,
-        boxSizing: 'border-box',
-        minHeight: '100vh',
-      }}
-    >
-      {/* 1. Header Component */}
-      <DebtHeader
-        isMobile={isMobile}
-        totalCount={debts.length}
-        activeCount={activeCount}
-        onOpenCreate={() => setIsCreateOpen(true)}
-      />
+    <DebtThemeProvider>
+      <div className={`${DEBT_UI_CLASS} debt-page`}>
+        <div className="dp-wrap">
+          {/* 1. Header */}
+          <DebtHeader
+            totalCount={summary.total}
+            activeCount={summary.activeCount}
+            overdueCount={summary.overdueCount}
+            onOpenCreate={() => setIsCreateOpen(true)}
+          />
 
-      {/* 2. Summary Statistics Cards */}
-      <DebtSummaryCards debts={debts} />
+          {/* 2. Tổng quan */}
+          <DebtSummaryCards summary={summary} />
 
-      {/* 3. Main Debt Table with Filtering Tabs */}
-      <DebtTable
-        debts={filteredDebts}
-        isLoading={isLoading}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        onOpenPayment={(debt) => {
-          setSelectedDebt(debt)
-          setIsPaymentOpen(true)
-        }}
-        onOpenAdjust={(debt) => {
-          setSelectedDebt(debt)
-          setIsAdjustOpen(true)
-        }}
-        onOpenHistory={(debt) => {
-          setSelectedDebt(debt)
-          setIsHistoryOpen(true)
-        }}
-        onSettle={handleSettle}
-        onCancel={handleCancel}
-        onDelete={handleDelete}
-        onOpenCorrect={(debt) => {
-          setSelectedDebt(debt)
-          setIsCorrectOpen(true)
-        }}
-      />
+          {/* 3–5. Tab trạng thái, tìm kiếm, danh sách */}
+          <DebtList
+            debts={debts}
+            isLoading={isLoading}
+            onOpenHistory={open('history')}
+            onOpenPayment={open('payment')}
+            onOpenAdjust={open('adjust')}
+            onOpenCorrect={open('correct')}
+            onSettle={handleSettle}
+            onCancel={handleCancel}
+            onDelete={handleDelete}
+          />
+        </div>
 
-      {/* 4. Modal: Tạo mới khoản nợ */}
-      <DebtCreateModal
-        open={isCreateOpen}
-        isLoadingWallets={isLoadingWallets}
-        wallets={wallets}
-        onClose={() => setIsCreateOpen(false)}
-        onSubmit={handleCreate}
-      />
+        <DebtCreateModal
+          open={isCreateOpen}
+          isLoadingWallets={isLoadingWallets}
+          wallets={wallets}
+          onClose={() => setIsCreateOpen(false)}
+          onSubmit={handleCreate}
+        />
 
-      {/* 5. Modal: Thanh toán / Thu hồi nợ */}
-      {selectedDebt && (
         <DebtPaymentModal
-          open={isPaymentOpen}
+          open={openModal === 'payment'}
           debt={selectedDebt}
           wallets={wallets}
           isLoadingWallets={isLoadingWallets}
-          onClose={() => setIsPaymentOpen(false)}
+          onClose={close}
           onSubmit={handlePayment}
         />
-      )}
 
-      {/* 6. Modal: Điều chỉnh dư nợ */}
-      <DebtAdjustModal
-        open={isAdjustOpen}
-        debt={selectedDebt}
-        onClose={() => setIsAdjustOpen(false)}
-        onSubmit={handleAdjust}
-      />
-
-      {/* 7. Modal: Lịch sử biến động nợ */}
-      {selectedDebt && (
-        <DebtHistoryModal
-          debtId={selectedDebt.id}
-          debtName={selectedDebt.name}
-          open={isHistoryOpen}
-          onClose={() => setIsHistoryOpen(false)}
+        <DebtAdjustModal
+          open={openModal === 'adjust'}
+          debt={selectedDebt}
+          onClose={close}
+          onSubmit={handleAdjust}
         />
-      )}
 
-      {/* 8. Modal: Chỉnh sửa số tiền gốc */}
-      <DebtCorrectModal
-        open={isCorrectOpen}
-        debt={selectedDebt}
-        onClose={() => setIsCorrectOpen(false)}
-        onSubmit={handleCorrect}
-      />
-    </Space>
+        <DebtCorrectModal
+          open={openModal === 'correct'}
+          debt={selectedDebt}
+          onClose={close}
+          onSubmit={handleCorrect}
+        />
+
+        {selectedDebt && (
+          <DebtHistoryModal
+            debtId={selectedDebt.id}
+            debtName={selectedDebt.name}
+            open={openModal === 'history'}
+            onClose={close}
+          />
+        )}
+      </div>
+    </DebtThemeProvider>
   )
 }

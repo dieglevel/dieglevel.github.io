@@ -41,6 +41,7 @@
         "created": "부채 생성",
         "payment": "상환",
         "adjustment": "잔액 조정",
+        "corrected": "원금 수정",
         "settled": "정산 완료",
         "cancelled": "부채 취소"
       },
@@ -67,6 +68,7 @@
         "inactive": "일시 중지"
       },
       "historySource": { "user": "사용자", "system": "자동 시스템" },
+      "historyType": { "contribution": "적립", "withdrawal": "인출" },
       "historyStatus": {
         "pending": "입금 대기",
         "completed": "완료",
@@ -92,5 +94,14 @@
       "language": { "en": "English", "ko": "한국어", "vn": "베트남어" },
       "currency": { "usd": "USD ($)", "krw": "KRW (₩)", "vnd": "VND (₫)" }
     }
+  },
+  "walletSwitch": {
+    "wallet": "지갑",
+    "selectWallet": "지갑 선택...",
+    "walletRequired": "지갑을 선택해 주세요",
+    "insufficient": "지갑 잔액이 부족합니다.",
+    "currentBalance": "현재 잔액 ({{name}})",
+    "change": "변동",
+    "projected": "거래 후 잔액"
   }
 }

@@ -1,32 +1,37 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  Card,
+  Alert,
+  Button,
   DatePicker,
-  Descriptions,
-  Divider,
-  Flex,
   Form,
   Input,
   InputNumber,
   Modal,
-  Select,
-  Tabs,
   Typography,
 } from 'antd'
 import dayjs from 'dayjs'
-import { DebtHistoryTable } from './DebtHistoryTable'
+import { isReceivable } from '../debt.utils'
+import { DEBT_UI_CLASS } from './DebtThemeProvider'
 import type { IFinance_Debt } from '@/shared/api/financial/debt/debt.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
-import { FINANCIAL_DEBT_DIRECTION_ENUM } from '@/shared/api/financial/debt/debt.enum'
+import {
+  WalletBalanceSwitch,
+  getWalletImpact,
+} from '@/shared/components/wallet-balance-switch/WalletBalanceSwitch'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { InputWithComma } from '@/shared/components/input/utils'
-import { IconRenderer } from '@/shared/components/icon-picker/icon-re-render'
-import { useThemeMode } from '@/shared/provider/antd-theme.provider'
-import { getTokens } from '@/shared/common/design-token'
 
-const { Text } = Typography
-const mono = "'JetBrains Mono', monospace"
+const { Title, Text } = Typography
+
+const round2 = (n: number) => Math.round(n * 100) / 100
+
+export interface DebtPaymentSubmit {
+  amount: number
+  occurredAt: string
+  walletId?: number
+  note?: string
+}
 
 interface DebtPaymentModalProps {
   open: boolean
@@ -34,9 +39,13 @@ interface DebtPaymentModalProps {
   wallets: Array<IFinance_Wallet>
   isLoadingWallets: boolean
   onClose: () => void
-  onSubmit: (values: any) => Promise<void>
+  onSubmit: (values: DebtPaymentSubmit) => Promise<void>
 }
 
+/**
+ * Thu nợ (khoản cho vay) / Trả nợ (khoản đi vay) — POST /:id/payment.
+ * Về 0 thì BE tự chuyển khoản nợ sang PAID_OFF.
+ */
 export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
   open,
   debt,
@@ -46,14 +55,12 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
   onSubmit,
 }) => {
   const { t } = useTranslation('finance')
-  const { mode } = useThemeMode()
-  const { colors } = getTokens(mode)
-
   const [form] = Form.useForm()
-  const [activeTabKey, setActiveTabKey] = useState<string>('payment')
+  const [submitting, setSubmitting] = useState(false)
 
-  const paymentAmount = Number(Form.useWatch('amount', form) || 0)
-  const selectedWalletId = Form.useWatch('walletId', form)
+  const amount = Number(Form.useWatch('amount', form) || 0)
+  const updateWallet: boolean | undefined = Form.useWatch('updateWallet', form)
+  const walletId: number | undefined = Form.useWatch('walletId', form)
 
   useEffect(() => {
     if (open && debt) {
@@ -61,251 +68,198 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
       form.setFieldsValue({
         amount: Number(debt.outstandingAmount),
         occurredAt: dayjs(),
+        updateWallet: true,
       })
-      setActiveTabKey('payment')
     }
   }, [open, debt, form])
 
   if (!debt) return null
 
-  const isIncoming = debt.direction === FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING
-  const selectedWallet = wallets.find((w) => w.id === selectedWalletId)
-
-  const remainingDebt = Math.max(0, debt.outstandingAmount - paymentAmount)
-  const currentBalance = Number(selectedWallet?.balance || 0)
-  const projectedBalance =
-    currentBalance + (isIncoming ? paymentAmount : -paymentAmount)
-  const insufficient = !!selectedWallet && !isIncoming && projectedBalance < 0
-
-  const walletOptions = wallets.map((w) => ({
-    value: w.id,
-    label: (
-      <Flex justify="space-between" align="center" style={{ width: '100%' }}>
-        <Flex align="center" gap={8}>
-          <IconRenderer iconName={w.icon} />
-          <Text style={{ fontSize: 13 }}>{w.name}</Text>
-        </Flex>
-        <Text
-          type="secondary"
-          style={{ fontSize: 12, fontFamily: 'monospace' }}
-        >
-          {convertCurrency(w.balance)}
-        </Text>
-      </Flex>
-    ),
-  }))
+  const collecting = isReceivable(debt)
+  const outstanding = Number(debt.outstandingAmount || 0)
+  const remaining = Math.max(0, round2(outstanding - amount))
+  const validAmount = amount > 0 && amount <= outstanding
+  const { insufficient } = getWalletImpact({
+    wallets,
+    updateWallet,
+    walletId,
+    amount,
+    isInflow: collecting,
+  })
 
   const handleFinish = async (values: any) => {
-    await onSubmit({
-      ...values,
-      occurredAt: values.occurredAt.format('YYYY-MM-DD'),
-      walletId: values.walletId ?? undefined,
-    })
+    setSubmitting(true)
+    try {
+      await onSubmit({
+        amount: values.amount,
+        occurredAt: values.occurredAt.format('YYYY-MM-DD'),
+        // Tắt công tắc = chỉ ghi sổ → không gửi walletId
+        walletId: values.updateWallet ? values.walletId : undefined,
+        note: values.note?.trim() || undefined,
+      })
+    } finally {
+      setSubmitting(false)
+    }
   }
-
-  const isPaymentTab = activeTabKey === 'payment'
 
   return (
     <Modal
-      title={
-        isIncoming ? t('debtForms.paymentCollect') : t('debtForms.paymentPay')
-      }
+      rootClassName={DEBT_UI_CLASS}
       open={open}
       onCancel={onClose}
-      onOk={() => (isPaymentTab ? form.submit() : onClose())}
-      okText={isPaymentTab ? t('debtForms.confirm') : t('debtForms.done')}
-      okButtonProps={{ disabled: isPaymentTab && insufficient }}
       destroyOnHidden
-      width={720}
+      width={520}
       centered
-    >
-      <Tabs
-        activeKey={activeTabKey}
-        onChange={setActiveTabKey}
-        items={[
-          {
-            key: 'payment',
-            label: isIncoming
-              ? t('debtForms.performCollect')
-              : t('debtForms.performPay'),
-          },
-          { key: 'history', label: t('debtForms.history') },
-        ]}
-      />
-
-      {isPaymentTab ? (
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleFinish}
-          style={{ marginTop: 8 }}
+      title={
+        <div>
+          {collecting
+            ? t('debtForms.paymentCollect')
+            : t('debtForms.paymentPay')}
+          <span className="pm-sub">
+            {debt.name} · {debt.namePerson}
+          </span>
+        </div>
+      }
+      footer={[
+        <Button key="cancel" onClick={onClose}>
+          {t('debtForms.cancel')}
+        </Button>,
+        <Button
+          key="ok"
+          type="primary"
+          loading={submitting}
+          disabled={insufficient}
+          onClick={() => form.submit()}
         >
-          <Card size="small" style={{ marginBottom: 16 }}>
-            <Descriptions column={2} size="small">
-              <Descriptions.Item label={t('debtForms.debt')} span={2}>
-                <Text strong>{debt.name}</Text>
-              </Descriptions.Item>
-              <Descriptions.Item label={t('debtForms.partnerShort')}>
-                {debt.namePerson}
-              </Descriptions.Item>
-              <Descriptions.Item label={t('debtForms.currentOutstanding')}>
-                <Text type="danger" strong style={{ fontFamily: 'monospace' }}>
-                  {convertCurrency(debt.outstandingAmount)}
-                </Text>
-              </Descriptions.Item>
-            </Descriptions>
-          </Card>
+          {collecting
+            ? t('debtForms.confirmCollect')
+            : t('debtForms.confirmPay')}
+        </Button>,
+      ]}
+    >
+      <div className="pm-highlight">
+        <Text type="secondary">
+          {collecting ? t('debt.receivable') : t('debt.payable')}
+        </Text>
+        <Title
+          level={3}
+          className="dp-num"
+          style={{
+            margin: 0,
+            color: collecting ? 'var(--d-income)' : 'var(--d-danger)',
+          }}
+        >
+          {convertCurrency(outstanding)}
+        </Title>
+      </div>
 
-          <Flex gap={12} wrap>
+      <Form
+        form={form}
+        layout="vertical"
+        requiredMark={false}
+        onFinish={handleFinish}
+      >
+        <Form.Item
+          label={t('debtForms.amount')}
+          required
+          style={{ marginBottom: 16 }}
+        >
+          <div className="pm-amount-row">
             <Form.Item
-              name="occurredAt"
-              label={t('debtForms.transactionDate')}
-              style={{ flex: 1, minWidth: 180 }}
-              rules={[{ required: true, message: 'Vui lòng chọn ngày' }]}
+              name="amount"
+              noStyle
+              rules={[
+                { required: true, message: t('debtForms.amountRequired') },
+                {
+                  type: 'number',
+                  min: 0.01,
+                  message: t('debtForms.amountPositive'),
+                },
+                {
+                  type: 'number',
+                  max: outstanding,
+                  message: t('debtForms.amountMax', {
+                    max: convertCurrency(outstanding),
+                  }),
+                },
+              ]}
             >
-              <DatePicker
-                style={{ width: '100%' }}
-                format="DD/MM/YYYY"
-                allowClear={false}
-                disabledDate={(d) => d.isBefore(dayjs(debt.startDate), 'day')}
+              <InputNumber
+                aria-label={t('debtForms.amount')}
+                placeholder={t('debtForms.amountPlaceholder')}
+                precision={2}
+                {...InputWithComma}
               />
             </Form.Item>
-
-            <Form.Item
-              name="walletId"
-              label={t('debtForms.walletOptional')}
-              style={{ flex: 2, minWidth: 220 }}
-              tooltip="Bỏ trống nếu không muốn thay đổi số dư ví."
-            >
-              <Select
-                allowClear
-                placeholder={t('debtForms.bookOnly')}
-                loading={isLoadingWallets}
-                options={walletOptions}
-              />
-            </Form.Item>
-          </Flex>
-
-          <Form.Item
-            name="amount"
-            label={t('debtForms.amount')}
-            rules={[
-              { required: true, message: 'Vui lòng nhập số tiền' },
-              { type: 'number', min: 0.01, message: 'Số tiền phải lớn hơn 0' },
-              {
-                type: 'number',
-                max: debt.outstandingAmount,
-                message: 'Không được vượt quá dư nợ còn lại',
-              },
-            ]}
-          >
-            <InputNumber
-              style={{ width: '100%' }}
-              placeholder={t('debtForms.amountPlaceholder')}
-              precision={2}
-              {...InputWithComma}
-            />
-          </Form.Item>
-
-          {selectedWallet && paymentAmount > 0 && (
-            <Card
-              size="small"
-              style={{
-                marginBottom: 16,
-                backgroundColor: isIncoming
-                  ? colors.success.soft
-                  : colors.error.soft,
-                borderColor: isIncoming
-                  ? colors.success.base
-                  : colors.error.base,
+            <Button
+              onClick={() => {
+                form.setFieldsValue({ amount: outstanding })
+                form.validateFields(['amount', 'walletId']).catch(() => {})
               }}
             >
-              <Flex vertical gap={6}>
-                <Flex justify="space-between">
-                  <Text type="secondary" style={{ fontSize: 13 }}>
-                    Số dư ví ({selectedWallet.name}):
-                  </Text>
-                  <Text strong style={{ fontFamily: mono }}>
-                    {convertCurrency(currentBalance)}
-                  </Text>
-                </Flex>
-                <Flex justify="space-between">
-                  <Text type="secondary" style={{ fontSize: 13 }}>
-                    Biến động ví ({isIncoming ? 'nhận tiền' : 'trả tiền'}):
-                  </Text>
-                  <Text
-                    strong
-                    style={{
-                      color: isIncoming ? '#52c41a' : '#ff4d4f',
-                      fontFamily: mono,
-                    }}
-                  >
-                    {isIncoming ? '+' : '-'}
-                    {convertCurrency(paymentAmount)}
-                  </Text>
-                </Flex>
-                <Divider style={{ margin: '4px 0' }} dashed />
-                <Flex justify="space-between">
-                  <Text strong style={{ fontSize: 13 }}>
-                    Số dư ví dự kiến:
-                  </Text>
-                  <Text
-                    strong
-                    style={{
-                      fontSize: 15,
-                      color: insufficient ? '#dc2626' : '#1677ff',
-                      fontFamily: mono,
-                    }}
-                  >
-                    {convertCurrency(projectedBalance)}
-                  </Text>
-                </Flex>
-                {insufficient && (
-                  <Text type="danger" style={{ fontSize: 12 }}>
-                    {t('debtForms.insufficientWallet')}
-                  </Text>
-                )}
-              </Flex>
-            </Card>
-          )}
+              {collecting ? t('debtForms.collectAll') : t('debtForms.payAll')}
+            </Button>
+          </div>
+        </Form.Item>
 
-          <Card
-            size="small"
-            style={{
-              backgroundColor:
-                remainingDebt === 0 ? colors.success.soft : colors.error.soft,
-              borderColor:
-                remainingDebt === 0 ? colors.success.base : colors.error.base,
-              marginBottom: 16,
-            }}
-          >
-            <Flex justify="space-between" align="center">
-              <Text type="secondary">Dư nợ còn lại sau giao dịch:</Text>
-              <Text
-                strong
-                style={{
-                  color: remainingDebt === 0 ? '#52c41a' : '#1677ff',
-                  fontSize: 15,
-                  fontFamily: mono,
-                }}
-              >
-                {convertCurrency(remainingDebt)}{' '}
-                {remainingDebt === 0 && '(Hoàn tất nợ)'}
-              </Text>
-            </Flex>
-          </Card>
+        <Form.Item
+          name="occurredAt"
+          label={t('debtForms.date')}
+          rules={[{ required: true, message: t('debtForms.dateRequired') }]}
+        >
+          <DatePicker
+            style={{ width: '100%' }}
+            format="DD/MM/YYYY"
+            allowClear={false}
+            // BE từ chối ngày tương lai; không cho chọn trước ngày bắt đầu nợ
+            disabledDate={(d) =>
+              d.isAfter(dayjs(), 'day') ||
+              d.isBefore(dayjs(debt.startDate), 'day')
+            }
+          />
+        </Form.Item>
 
-          <Form.Item name="note" label="Ghi chú">
-            <Input.TextArea
-              rows={2}
-              maxLength={500}
-              placeholder="Nội dung/ghi chú..."
-            />
-          </Form.Item>
-        </Form>
-      ) : (
-        <DebtHistoryTable debtId={debt.id} />
-      )}
+        <WalletBalanceSwitch
+          title={t('debtForms.updateWallet')}
+          hintOff={t('debtForms.alertBookOnly')}
+          hintOn={
+            collecting ? t('debtForms.hintAdd') : t('debtForms.hintDeduct')
+          }
+          wallets={wallets}
+          isLoadingWallets={isLoadingWallets}
+          amount={amount}
+          amountField="amount"
+          isInflow={collecting}
+        />
+
+        <Form.Item name="note" label={t('debtForms.noteOptional')}>
+          <Input.TextArea
+            rows={2}
+            maxLength={500}
+            placeholder={t('debtForms.paymentNotePlaceholder')}
+          />
+        </Form.Item>
+
+        <div className="pm-preview" aria-live="polite">
+          <span>
+            {collecting
+              ? t('debtForms.remainingAfterCollect')
+              : t('debtForms.remainingAfterPay')}
+          </span>
+          <Text strong className="dp-num">
+            {convertCurrency(remaining)}
+          </Text>
+        </div>
+
+        {validAmount && remaining === 0 && (
+          <Alert
+            type="success"
+            showIcon
+            style={{ marginTop: 12 }}
+            message={t('debtForms.willPayOff')}
+          />
+        )}
+      </Form>
     </Modal>
   )
 }

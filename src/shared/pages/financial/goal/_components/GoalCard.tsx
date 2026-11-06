@@ -1,329 +1,264 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  Avatar,
-  Button,
-  Card,
-  Popconfirm,
-  Progress,
-  Space,
-  Tag,
-  Tooltip,
-  Typography,
-} from 'antd'
+import { Avatar, Button, Card, Dropdown, Tag, Tooltip, Typography } from 'antd'
 import {
   CalendarOutlined,
   DeleteOutlined,
   EditOutlined,
   EyeOutlined,
   LockOutlined,
-  RiseOutlined,
+  MoreOutlined,
   SyncOutlined,
-  ThunderboltOutlined,
   TrophyOutlined,
 } from '@ant-design/icons'
+import {
+  canContribute,
+  daysToDeadline,
+  estimateMonths,
+  goalAmounts,
+} from '../goal.utils'
+import type { MenuProps } from 'antd'
 import type { IFinance_Goal } from '@/shared/api/financial/goal/goal.type'
 import {
+  FINANCIAL_GOAL_SAVING_MODE,
   FINANCIAL_GOAL_STATUS,
-  FINANCIAL_GOAL_TYPE,
+  FinancialGoalStatusHelper,
+  FinancialGoalTypeHelper,
 } from '@/shared/api/financial/goal/goal.enum'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
+import { useThemeMode } from '@/shared/provider/antd-theme.provider'
+import { getTokens } from '@/shared/common/design-token'
 
 const { Text, Title } = Typography
 
-// Dynamic labels for goal types
-const TYPE_LABELS: Record<FINANCIAL_GOAL_TYPE, string> = {
-  [FINANCIAL_GOAL_TYPE.EMERGENCY_FUND]: 'Quỹ khẩn cấp',
-  [FINANCIAL_GOAL_TYPE.SAVING]: 'Tiết kiệm',
-  [FINANCIAL_GOAL_TYPE.INVESTMENT]: 'Đầu tư',
-  [FINANCIAL_GOAL_TYPE.DEBT_PAYMENT]: 'Trả nợ',
-  [FINANCIAL_GOAL_TYPE.OTHER]: 'Khác',
-}
-
-// Color mapping for goal types
-const TYPE_COLORS: Record<FINANCIAL_GOAL_TYPE, string> = {
-  [FINANCIAL_GOAL_TYPE.EMERGENCY_FUND]: '#ef4444',
-  [FINANCIAL_GOAL_TYPE.SAVING]: '#0ea5e9',
-  [FINANCIAL_GOAL_TYPE.INVESTMENT]: '#22c55e',
-  [FINANCIAL_GOAL_TYPE.DEBT_PAYMENT]: '#f59e0b',
-  [FINANCIAL_GOAL_TYPE.OTHER]: '#8b5cf6',
-}
-
-// Status tag colors
-const STATUS_COLORS: Record<FINANCIAL_GOAL_STATUS, string> = {
-  [FINANCIAL_GOAL_STATUS.ACTIVE]: 'processing',
-  [FINANCIAL_GOAL_STATUS.COMPLETED]: 'success',
-  [FINANCIAL_GOAL_STATUS.CANCELLED]: 'error',
-  [FINANCIAL_GOAL_STATUS.INACTIVE]: 'default',
-}
-
-/**
- * Calculate days remaining until deadline
- */
-function daysLeft(deadline?: Date | string | null): number | null {
-  if (!deadline) return null
-  const diff = new Date(deadline).getTime() - Date.now()
-  return Math.ceil(diff / 86400000)
-}
-
-/**
- * Calculate months to complete based on current progress and monthly savings
- */
-function monthsToComplete(
-  current: number,
-  target: number,
-  autoSave?: number | null,
-): number | null {
-  if (!autoSave || autoSave <= 0) return null
-  const remaining = target - current
-  if (remaining <= 0) return 0
-  return Math.ceil(remaining / autoSave)
-}
+/** Số ngày còn lại được coi là "sắp đến hạn" */
+const DUE_SOON_DAYS = 30
 
 interface GoalCardProps {
   goal: IFinance_Goal
+  onView: (g: IFinance_Goal) => void
   onEdit: (g: IFinance_Goal) => void
-  onDelete: (id: number) => void
-  onView?: (g: IFinance_Goal) => void
+  onDelete: (g: IFinance_Goal) => void
+  onContribute: (g: IFinance_Goal) => void
 }
 
 export const GoalCard: React.FC<GoalCardProps> = ({
   goal,
+  onView,
   onEdit,
   onDelete,
-  onView,
+  onContribute,
 }) => {
   const { t } = useTranslation('finance')
-  // Calculate progress percentage
-  const pct = Math.min(100, (goal.currentAmount / goal.targetAmount) * 100)
-  const remaining = Math.max(0, goal.targetAmount - goal.currentAmount)
+  const { mode } = useThemeMode()
+  const { colors, radius } = getTokens(mode)
 
-  // Calculate time & progress metrics
-  const days = daysLeft(goal.deadline)
-  const months = monthsToComplete(
-    goal.currentAmount,
-    goal.targetAmount,
-    goal.autoContributionAmount,
-  )
+  const { current, target, remaining, percent } = goalAmounts(goal)
+  const days = daysToDeadline(goal)
+  const months = estimateMonths(goal)
+  const isAuto = goal.savingMode === FINANCIAL_GOAL_SAVING_MODE.AUTO
+  const done = goal.status === FINANCIAL_GOAL_STATUS.COMPLETED
+  const closed =
+    goal.status === FINANCIAL_GOAL_STATUS.CANCELLED ||
+    goal.status === FINANCIAL_GOAL_STATUS.INACTIVE
+  const accent = done ? colors.success : colors.primary
 
-  // Check if goal is completed
-  const done =
-    goal.currentAmount >= goal.targetAmount ||
-    goal.status === FINANCIAL_GOAL_STATUS.COMPLETED
+  const menu: MenuProps['items'] = [
+    {
+      key: 'view',
+      icon: <EyeOutlined />,
+      label: t('goal.viewDetail'),
+      onClick: () => onView(goal),
+    },
+    {
+      key: 'edit',
+      icon: <EditOutlined />,
+      label: t('common.edit'),
+      onClick: () => onEdit(goal),
+    },
+    { type: 'divider' },
+    {
+      key: 'delete',
+      icon: <DeleteOutlined />,
+      label: t('common.delete'),
+      danger: true,
+      onClick: () => onDelete(goal),
+    },
+  ]
 
-  // Dynamic color based on type and completion status
-  const goalColor = TYPE_COLORS[goal.type] || '#6366f1'
-  const activeColor = done ? '#10b981' : goalColor
+  const deadlineTag = () => {
+    if (
+      days === null ||
+      done ||
+      goal.status === FINANCIAL_GOAL_STATUS.CANCELLED
+    )
+      return null
+    const color =
+      days < 0 ? 'error' : days <= DUE_SOON_DAYS ? 'warning' : undefined
+    return (
+      <Tag icon={<CalendarOutlined />} color={color} style={{ margin: 0 }}>
+        {days < 0 ? t('goal.overdue') : t('goal.daysRemaining', { days })}
+      </Tag>
+    )
+  }
 
   return (
     <Card
       hoverable
-      style={{ borderRadius: 16, height: '100%' }}
+      role="button"
+      tabIndex={0}
+      aria-label={goal.name}
+      onClick={() => onView(goal)}
+      onKeyDown={(e) => {
+        if (e.target === e.currentTarget && e.key === 'Enter') onView(goal)
+      }}
+      style={{
+        borderRadius: radius.lg,
+        height: '100%',
+        opacity: closed ? 0.72 : 1,
+      }}
       styles={{
         body: {
           padding: 20,
+          height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          gap: 16,
+          gap: 14,
         },
       }}
     >
-      {/* Header Row */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-        }}
-      >
-        <Space size="middle">
-          <Avatar
-            src={goal.imageUrl || undefined}
-            icon={!goal.imageUrl && <TrophyOutlined />}
-            shape="square"
-            size={60}
-            style={{
-              borderRadius: 12,
-              backgroundColor: `${goalColor}20`,
-              color: goalColor,
-              fontSize: 20,
-              flexShrink: 0,
-            }}
-          />
-          <div>
-            <Space size={6} align="center">
-              <Text style={{ fontSize: 15, fontWeight: 600 }}>{goal.name}</Text>
-              {goal.isLocked && (
-                <Tooltip
-                  title={t('goal.locked', { defaultValue: 'Lock withdrawals' })}
-                >
-                  <LockOutlined style={{ color: '#ef4444', fontSize: 12 }} />
-                </Tooltip>
-              )}
-            </Space>
-            <div style={{ marginTop: 2 }}>
-              <Space size={4}>
-                <Tag
-                  color={goalColor}
-                  style={{ borderRadius: 10, margin: 0, fontSize: 10 }}
-                >
-                  {TYPE_LABELS[goal.type] || goal.type}
-                </Tag>
-                <Tag
-                  color={STATUS_COLORS[goal.status] || 'default'}
-                  style={{
-                    borderRadius: 10,
-                    margin: 0,
-                    fontSize: 10,
-                    textTransform: 'capitalize',
-                  }}
-                >
-                  {goal.status}
-                </Tag>
-              </Space>
-            </div>
+      {/* Đầu thẻ: ảnh/biểu tượng, tên, loại, trạng thái, menu */}
+      <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+        <Avatar
+          shape="square"
+          size={44}
+          src={goal.imageUrl || undefined}
+          icon={!goal.imageUrl && <TrophyOutlined />}
+          style={{
+            flexShrink: 0,
+            borderRadius: radius.md,
+            background: accent.soft,
+            color: accent.text,
+          }}
+        />
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Text strong ellipsis={{ tooltip: goal.name }}>
+              {goal.name}
+            </Text>
+            {goal.isLocked && (
+              <Tooltip title={t('goal.locked')}>
+                <LockOutlined aria-label={t('goal.locked')} />
+              </Tooltip>
+            )}
           </div>
-        </Space>
-
-        {/* Action Buttons */}
-        <Space size={4}>
-          {onView && (
-            <Tooltip
-              title={t('common.detail', { defaultValue: 'View details' })}
-            >
-              <Button
-                type="text"
-                icon={<EyeOutlined style={{ color: '#1677ff' }} />}
-                onClick={() => onView(goal)}
-              />
-            </Tooltip>
-          )}
-          <Tooltip title={t('common.edit')}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Text type="secondary">
+              {FinancialGoalTypeHelper.getLabel(goal.type)}
+            </Text>
+            {goal.status !== FINANCIAL_GOAL_STATUS.ACTIVE && (
+              <Tag
+                color={FinancialGoalStatusHelper.getColor(goal.status)}
+                style={{ margin: 0 }}
+              >
+                {FinancialGoalStatusHelper.getLabel(goal.status)}
+              </Tag>
+            )}
+          </div>
+        </div>
+        <div onClick={(e) => e.stopPropagation()}>
+          <Dropdown trigger={['click']} menu={{ items: menu }}>
             <Button
               type="text"
-              icon={<EditOutlined style={{ color: '#8c8c8c' }} />}
-              onClick={() => onEdit(goal)}
+              aria-label={t('goal.moreActions', { name: goal.name })}
+              icon={<MoreOutlined />}
             />
-          </Tooltip>
-          <Popconfirm
-            title={t('goal.deleteTitle')}
-            description={t('goal.deleteDescription')}
-            onConfirm={() => onDelete(goal.id)}
-            okText={t('common.delete')}
-            okButtonProps={{ danger: true }}
-            cancelText={t('common.cancel')}
-          >
-            <Tooltip title={t('common.delete')}>
-              <Button type="text" danger icon={<DeleteOutlined />} />
-            </Tooltip>
-          </Popconfirm>
-        </Space>
-      </div>
-
-      {/* Progress Circle & Amount Details */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-        <Progress
-          type="circle"
-          percent={Math.round(pct)}
-          size={72}
-          strokeColor={activeColor}
-          format={(p) => (
-            <span
-              style={{ fontSize: 12, fontWeight: 'bold', color: activeColor }}
-            >
-              {p}%
-            </span>
-          )}
-        />
-        <div style={{ flex: 1 }}>
-          {/* Amount Progress */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'baseline',
-              marginBottom: 4,
-            }}
-          >
-            <Title level={4} style={{ margin: 0, fontFamily: 'monospace' }}>
-              {convertCurrency(goal.currentAmount)}
-            </Title>
-            <Text type="secondary" style={{ fontSize: 11 }}>
-              / {convertCurrency(goal.targetAmount)}
-            </Text>
-          </div>
-
-          {/* Progress Bar */}
-          <Progress
-            percent={pct}
-            showInfo={false}
-            strokeColor={activeColor}
-            size="small"
-            style={{ marginBottom: 4 }}
-          />
-
-          {/* Status Message */}
-          {!done ? (
-            <Text type="secondary" style={{ fontSize: 11 }}>
-              {t('goal.remaining', { amount: convertCurrency(remaining) })}
-            </Text>
-          ) : (
-            <Text type="success" style={{ fontSize: 11, fontWeight: 'bold' }}>
-              {t('goal.achieved')}
-            </Text>
-          )}
+          </Dropdown>
         </div>
       </div>
 
-      {/* Meta Tags & Badges */}
-      <Space wrap style={{ width: '100%' }} size={[4, 8]}>
-        {/* Deadline */}
-        {days !== null && (
-          <Tag
-            icon={<CalendarOutlined />}
-            color={
-              days < 30 && days > 0
-                ? 'warning'
-                : days <= 0
-                  ? 'error'
-                  : 'default'
-            }
-            style={{ borderRadius: 8, padding: '2px 8px', margin: 0 }}
-          >
-            {days > 0 ? `Còn ${days} ngày` : 'Quá hạn'}
-          </Tag>
-        )}
+      {/* Số tiền + thanh tiến độ */}
+      <div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'baseline',
+            gap: 8,
+          }}
+        >
+          <Title level={4} style={{ margin: 0 }}>
+            {convertCurrency(current)}
+          </Title>
+          <Text strong>{Math.round(percent)}%</Text>
+        </div>
+        <Text type="secondary">
+          {t('goal.ofTarget', { target: convertCurrency(target) })}
+        </Text>
+        <div
+          role="meter"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(percent)}
+          aria-label={goal.name}
+          style={{
+            height: 8,
+            marginTop: 8,
+            borderRadius: 4,
+            background: accent.soft,
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              width: `${percent}%`,
+              height: '100%',
+              borderRadius: 4,
+              background: accent.base,
+            }}
+          />
+        </div>
+        <Text
+          type={done ? 'success' : 'secondary'}
+          style={{ display: 'block', marginTop: 6 }}
+        >
+          {done || remaining === 0
+            ? t('goal.achieved')
+            : t('goal.remaining', { amount: convertCurrency(remaining) })}
+        </Text>
+      </div>
 
-        {/* Monthly Contribution */}
-        {Boolean(goal.autoContributionAmount) && (
-          <Tag
-            icon={<ThunderboltOutlined style={{ color: '#f59e0b' }} />}
-            style={{ borderRadius: 8, padding: '2px 8px', margin: 0 }}
-          >
-            {convertCurrency(goal.autoContributionAmount)}/tháng
+      {/* Thông tin phụ */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+        {deadlineTag()}
+        {isAuto && goal.autoContributionAmount ? (
+          <Tag icon={<SyncOutlined />} style={{ margin: 0 }}>
+            {t('goal.perMonth', {
+              amount: convertCurrency(goal.autoContributionAmount),
+            })}
+            {goal.autoContributionDay
+              ? ` · ${t('goal.dayShort', { day: goal.autoContributionDay })}`
+              : ''}
           </Tag>
+        ) : null}
+        {months !== null && months > 0 && !closed && (
+          <Tag style={{ margin: 0 }}>{t('goal.monthsShort', { months })}</Tag>
         )}
+      </div>
 
-        {/* Contribution Day */}
-        {Boolean(goal.autoContributionDay) && (
-          <Tag
-            icon={<SyncOutlined style={{ color: '#3b82f6' }} />}
-            style={{ borderRadius: 8, padding: '2px 8px', margin: 0 }}
-          >
-            Ngày {goal.autoContributionDay}
-          </Tag>
-        )}
-
-        {/* Months to Complete */}
-        {months !== null && months > 0 && (
-          <Tag
-            icon={<RiseOutlined style={{ color: '#10b981' }} />}
-            style={{ borderRadius: 8, padding: '2px 8px', margin: 0 }}
-          >
-            ~{months} tháng
-          </Tag>
-        )}
-      </Space>
+      {/* Góp nhanh */}
+      {canContribute(goal) && (
+        <Button
+          block
+          style={{ marginTop: 'auto' }}
+          onClick={(e) => {
+            e.stopPropagation()
+            onContribute(goal)
+          }}
+        >
+          {t('goal.contribute')}
+        </Button>
+      )}
     </Card>
   )
 }

@@ -36,7 +36,8 @@ export interface IFinance_DebtHistory extends IBaseEntity {
 }
 
 export interface IFinance_DebtPayment_Request {
-  walletId: number
+  /** Bỏ trống = chỉ ghi sổ, không thay đổi số dư ví */
+  walletId?: number
   amount: number
   note?: string
 }

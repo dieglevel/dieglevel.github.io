@@ -7,40 +7,62 @@
     "thisYear": "올해",
     "allWallets": "모든 지갑",
     "newTransaction": "새 거래",
-    "cycleDayNotice": "매월 {{day}}일 시작"
+    "cycleDayNotice": "매월 {{day}}일 시작",
+    "week": "주",
+    "month": "월",
+    "year": "년",
+    "prevPeriod": "이전 기간",
+    "nextPeriod": "다음 기간",
+    "pickPeriod": "기간 선택",
+    "backToCurrent": {
+      "week": "이번 주로",
+      "month": "이번 달로",
+      "year": "올해로"
+    }
   },
   "summary": {
     "totalIncome": "총수입",
     "incomeDescription": "기간 내 들어온 금액",
     "totalExpense": "총지출",
     "expenseDescription": "기간 내 사용한 금액",
-    "netBalance": "순잔액",
+    "netBalance": "잔여 (수입 − 지출)",
     "totalWalletBalance": "전체 지갑 잔액:",
-    "savingsRate": "저축률"
+    "savingsRate": "저축률",
+    "walletBalance": "지갑 총 잔액",
+    "walletBalanceHint": "대기 중인 거래 없음",
+    "pending": "대기 중인 거래 {{count}}건",
+    "incomeTrend": "기간 내 수입 추이",
+    "expenseTrend": "기간 내 지출 추이"
   },
   "cashFlow": {
-    "title": "현금 흐름 수입 / 지출",
+    "title": "현금 흐름",
     "empty": "거래 데이터가 없습니다",
     "income": "수입",
     "expense": "지출",
-    "net": "순 현금 흐름",
-    "viewAll": "수입 및 지출",
-    "viewNet": "순 현금만",
+    "net": "차액",
+    "viewAll": "수입 & 지출",
+    "viewNet": "차액",
     "totalPeriodIncome": "총 수입",
-    "totalPeriodExpense": "총 지출"
+    "totalPeriodExpense": "총 지출",
+    "viewTable": "표",
+    "netPositive": "수입 > 지출",
+    "netNegative": "지출 > 수입",
+    "date": "기간"
   },
   "categoryBreakdown": {
     "title": "지출 구성",
     "empty": "지출 데이터가 없습니다",
     "totalSpent": "총 지출액",
-    "countCategories": "개 카테고리",
-    "uncategorized": "미분류"
+    "countCategories": "{{count}}개 카테고리",
+    "uncategorized": "미분류",
+    "other": "기타 ({{count}}개 카테고리)"
   },
   "wallets": {
-    "title": "금융 지갑 목록",
+    "title": "내 지갑",
     "manage": "지갑 관리",
     "empty": "생성된 금융 지갑이 없습니다",
-    "defaultType": "지갑"
+    "defaultType": "지갑",
+    "allocation": "잔액 분배"
   },
   "transactions": {
     "title": "최근 거래",
@@ -56,17 +78,24 @@
     "createGoal": "목표 생성",
     "target": "목표액",
     "saved": "모은 금액",
-    "deadline": "마감일"
+    "deadline": "마감일",
+    "completed": "달성",
+    "progressLine": "적립 {{saved}} / {{target}}"
   },
   "debts": {
-    "title": "대출 및 채무 관리",
-    "manage": "상세 보기",
-    "empty": "활성 대출 또는 채무가 없습니다",
+    "title": "진행 중인 부채",
+    "manage": "전체 보기",
+    "empty": "진행 중인 부채가 없습니다",
     "createDebt": "채무 추가",
     "borrow": "빌린 돈",
     "lend": "빌려준 돈",
     "paid": "상환 완료",
     "remaining": "남은 금액",
-    "dueDate": "상환 기한"
+    "dueDate": "상환 기한",
+    "overdue": "{{days}}일 연체",
+    "dueToday": "오늘 기한",
+    "dueSoon": "{{days}}일 남음",
+    "receivable": "남은 받을 금액",
+    "payable": "남은 갚을 금액"
   }
 }

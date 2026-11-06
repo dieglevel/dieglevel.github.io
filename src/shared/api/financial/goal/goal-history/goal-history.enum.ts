@@ -56,3 +56,32 @@ class FinancialGoalHistoryStatusHelperImpl extends BaseEnumHelper<FINANCIAL_GOAL
 
 export const FinancialGoalHistoryStatusHelper =
   new FinancialGoalHistoryStatusHelperImpl()
+
+// ===========================================================================================
+// FINANCIAL_GOAL_HISTORY_TYPE — góp vào hay rút ra (amount luôn dương)
+// ===========================================================================================
+export enum FINANCIAL_GOAL_HISTORY_TYPE {
+  CONTRIBUTION = 'CONTRIBUTION',
+  WITHDRAWAL = 'WITHDRAWAL',
+}
+
+class FinancialGoalHistoryTypeHelperImpl extends BaseEnumHelper<FINANCIAL_GOAL_HISTORY_TYPE> {
+  protected readonly DEFAULT_COLOR = '#808080'
+  protected readonly DEFAULT_LABEL = '-'
+  protected readonly enumObject = FINANCIAL_GOAL_HISTORY_TYPE
+
+  protected readonly colorMap: Record<FINANCIAL_GOAL_HISTORY_TYPE, string> = {
+    [FINANCIAL_GOAL_HISTORY_TYPE.CONTRIBUTION]: '#10b981',
+    [FINANCIAL_GOAL_HISTORY_TYPE.WITHDRAWAL]: '#f59e0b',
+  }
+
+  protected readonly labelMap: Record<FINANCIAL_GOAL_HISTORY_TYPE, string> = {
+    [FINANCIAL_GOAL_HISTORY_TYPE.CONTRIBUTION]:
+      'enum.goal.historyType.contribution',
+    [FINANCIAL_GOAL_HISTORY_TYPE.WITHDRAWAL]:
+      'enum.goal.historyType.withdrawal',
+  }
+}
+
+export const FinancialGoalHistoryTypeHelper =
+  new FinancialGoalHistoryTypeHelperImpl()

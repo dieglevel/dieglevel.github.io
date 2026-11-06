@@ -1,11 +1,14 @@
 import React, { useMemo, useState } from 'react'
-import { Card, Empty, Segmented, Space, Tag } from 'antd'
+import { Empty, Segmented, Table, Typography } from 'antd'
 import { useTranslation } from 'react-i18next'
-import { ArrowDownRight, ArrowUpRight, Calendar } from 'lucide-react'
+import { Activity } from 'lucide-react'
 import {
-  Area,
+  Bar,
+  BarChart,
   CartesianGrid,
-  ComposedChart,
+  Cell,
+  Line,
+  LineChart,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -13,97 +16,104 @@ import {
   YAxis,
 } from 'recharts'
 import dayjs from 'dayjs'
+import { WidgetCard } from './WidgetCard'
+import { formatCompact, getVizColors } from './viz'
 import type { CashFlowTimelinePoint } from '@/shared/api/financial/dashboard/dashboard.type'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { useThemeMode } from '@/shared/provider/antd-theme.provider'
 import { getTokens } from '@/shared/common/design-token'
 
-interface CustomTooltipProps {
-  active?: boolean
-  payload?: Array<any>
-  label?: string
-  mode: 'light' | 'dark'
+const { Text } = Typography
+
+type ViewMode = 'flow' | 'net' | 'table'
+
+/** "2026-11-05" → 05/11 · "2026-11" → 11/26 */
+const formatTick = (date: string) =>
+  date.length === 10
+    ? dayjs(date).format('DD/MM')
+    : date.length === 7
+      ? dayjs(date).format('MM/YY')
+      : date
+
+const formatFull = (date: string) =>
+  date.length === 10
+    ? dayjs(date).format('DD/MM/YYYY')
+    : date.length === 7
+      ? dayjs(date).format('MM/YYYY')
+      : date
+
+const Swatch: React.FC<{ color: string; line?: boolean }> = ({
+  color,
+  line,
+}) => (
+  <span
+    aria-hidden
+    style={{
+      display: 'inline-block',
+      width: line ? 14 : 10,
+      height: line ? 3 : 10,
+      borderRadius: line ? 2 : 3,
+      background: color,
+      flexShrink: 0,
+    }}
+  />
+)
+
+interface TooltipRow {
+  label: string
+  value: number
+  color: string
+  signed?: boolean
 }
 
-const CustomTooltip: React.FC<CustomTooltipProps> = ({
-  active,
-  payload,
-  label,
-  mode,
-}) => {
-  const { border, background, shadow } = getTokens(mode)
+const ChartTooltip: React.FC<{
+  active?: boolean
+  label?: string
+  rows: (point: CashFlowTimelinePoint) => Array<TooltipRow>
+  payload?: Array<{ payload: CashFlowTimelinePoint }>
+}> = ({ active, label, payload, rows }) => {
+  const { mode } = useThemeMode()
+  const { background, border, shadow } = getTokens(mode)
+  if (!active || !payload?.length) return null
 
-  if (active && payload && payload.length) {
-    const formattedLabel =
-      label && label.length === 10
-        ? dayjs(label).format('DD/MM/YYYY')
-        : label && label.length === 7
-          ? dayjs(label).format('MM/YYYY')
-          : label
-
-    return (
-      <div
-        style={{
-          background: background.elevated,
-          border: `1px solid ${border.base}`,
-          padding: '12px 16px',
-          borderRadius: 10,
-          boxShadow: shadow.elevated,
-          minWidth: 180,
-        }}
-      >
+  return (
+    <div
+      style={{
+        background: background.elevated,
+        border: `1px solid ${border.base}`,
+        borderRadius: 8,
+        boxShadow: shadow.elevated,
+        padding: '10px 12px',
+        minWidth: 180,
+      }}
+    >
+      <Text type="secondary" style={{ display: 'block', marginBottom: 6 }}>
+        {formatFull(label || '')}
+      </Text>
+      {rows(payload[0].payload).map((r) => (
         <div
+          key={r.label}
           style={{
-            fontWeight: 600,
-            fontSize: 12,
-            marginBottom: 8,
-            color: '#64748b',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            justifyContent: 'space-between',
           }}
         >
-          {formattedLabel}
+          <span
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+          >
+            <Swatch color={r.color} line />
+            <Text>{r.label}</Text>
+          </span>
+          <Text strong>
+            {r.signed && r.value > 0 ? '+' : r.value < 0 ? '−' : ''}
+            {convertCurrency(Math.abs(r.value))}
+          </Text>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {payload.map((entry: any, index: number) => (
-            <div
-              key={`item-${index}`}
-              style={{
-                fontSize: 13,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 16,
-              }}
-            >
-              <span
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  color: entry.color,
-                  fontWeight: 500,
-                }}
-              >
-                <span
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    background: entry.color,
-                    display: 'inline-block',
-                  }}
-                />
-                {entry.name}:
-              </span>
-              <span style={{ fontWeight: 600 }}>
-                {convertCurrency(entry.value)}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-  return null
+      ))}
+    </div>
+  )
 }
 
 interface CashFlowChartProps {
@@ -115,210 +125,261 @@ export const CashFlowChart: React.FC<CashFlowChartProps> = ({
 }) => {
   const { t } = useTranslation('dashboard')
   const { mode } = useThemeMode()
-  const { border, radius } = getTokens(mode)
-  const isDark = mode === 'dark'
+  const { background } = getTokens(mode)
+  const viz = getVizColors(mode)
 
-  const [viewMode, setViewMode] = useState<'both' | 'net'>('both')
+  const [view, setView] = useState<ViewMode>('flow')
 
-  // Calculate period sums
-  const { totalIncome, totalExpense, totalNet } = useMemo(() => {
-    return cashFlowTimeline.reduce(
-      (acc, item) => {
-        acc.totalIncome += Number(item.income || 0)
-        acc.totalExpense += Number(item.expense || 0)
-        acc.totalNet += Number(
-          item.net === 0 ? item.net : item.income - item.expense,
-        )
-        return acc
-      },
-      { totalIncome: 0, totalExpense: 0, totalNet: 0 },
+  const data = useMemo(
+    () =>
+      cashFlowTimeline.map((p) => {
+        const income = Number(p.income || 0)
+        const expense = Number(p.expense || 0)
+        return { ...p, income, expense, net: income - expense }
+      }),
+    [cashFlowTimeline],
+  )
+
+  const totals = useMemo(
+    () =>
+      data.reduce(
+        (acc, p) => ({
+          income: acc.income + p.income,
+          expense: acc.expense + p.expense,
+        }),
+        { income: 0, expense: 0 },
+      ),
+    [data],
+  )
+  const net = totals.income - totals.expense
+
+  const flowRows = (p: CashFlowTimelinePoint): Array<TooltipRow> => [
+    { label: t('cashFlow.income'), value: p.income, color: viz.income },
+    { label: t('cashFlow.expense'), value: p.expense, color: viz.expense },
+    {
+      label: t('cashFlow.net'),
+      value: p.income - p.expense,
+      color: 'transparent',
+      signed: true,
+    },
+  ]
+  const netRows = (p: CashFlowTimelinePoint): Array<TooltipRow> => [
+    {
+      label: t('cashFlow.net'),
+      value: p.income - p.expense,
+      color: p.income - p.expense >= 0 ? viz.income : viz.expense,
+      signed: true,
+    },
+  ]
+
+  // Lưới & trục: hairline liền, chữ trục màu chữ phụ
+  const axisProps = {
+    stroke: viz.grid,
+    tick: { fill: viz.axis, fontSize: 12 },
+    tickLine: false,
+    axisLine: false,
+  }
+
+  const legend =
+    view === 'net' ? (
+      <>
+        <LegendItem color={viz.income} label={t('cashFlow.netPositive')} />
+        <LegendItem color={viz.expense} label={t('cashFlow.netNegative')} />
+        <LegendItem
+          label={t('cashFlow.net')}
+          value={`${net > 0 ? '+' : net < 0 ? '−' : ''}${convertCurrency(Math.abs(net))}`}
+        />
+      </>
+    ) : (
+      <>
+        <LegendItem
+          color={viz.income}
+          line
+          label={t('cashFlow.income')}
+          value={convertCurrency(totals.income)}
+        />
+        <LegendItem
+          color={viz.expense}
+          line
+          label={t('cashFlow.expense')}
+          value={convertCurrency(totals.expense)}
+        />
+        <LegendItem
+          label={t('cashFlow.net')}
+          value={`${net > 0 ? '+' : net < 0 ? '−' : ''}${convertCurrency(Math.abs(net))}`}
+        />
+      </>
     )
-  }, [cashFlowTimeline])
-
-  const formatXAxis = (dateStr: string) => {
-    if (!dateStr) return ''
-    if (dateStr.length === 10) return dayjs(dateStr).format('DD/MM')
-    if (dateStr.length === 7) return dayjs(dateStr).format('MM/YY')
-    return dateStr
-  }
-
-  const formatYAxis = (val: number) => {
-    const absVal = Math.abs(val)
-    if (absVal >= 1000000) return `${(val / 1000000).toFixed(1)}M`
-    if (absVal >= 1000) return `${(val / 1000).toFixed(0)}k`
-    return `${val}`
-  }
 
   return (
-    <Card
-      title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: radius.md,
-              background: '#0284c718',
-              color: '#0284c7',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Calendar size={18} />
-          </div>
-          <div>
-            <div style={{ fontSize: 16, fontWeight: 600, lineHeight: 1.2 }}>
-              {t('cashFlow.title')}
-            </div>
-          </div>
-        </div>
-      }
+    <WidgetCard
+      icon={<Activity size={18} />}
+      title={t('cashFlow.title')}
       extra={
-        <Space wrap size="middle">
-          {/* Quick period summary badges */}
-          <Space size={8}>
-            <Tag
-              color="success"
-              style={{
-                borderRadius: radius.sm,
-                margin: 0,
-                padding: '2px 8px',
-                fontSize: 12,
-                fontWeight: 600,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 4,
-              }}
-            >
-              <ArrowUpRight size={14} />+{convertCurrency(totalIncome)}
-            </Tag>
-            <Tag
-              color="error"
-              style={{
-                borderRadius: radius.sm,
-                margin: 0,
-                padding: '2px 8px',
-                fontSize: 12,
-                fontWeight: 600,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 4,
-              }}
-            >
-              <ArrowDownRight size={14} />-{convertCurrency(totalExpense)}
-            </Tag>
-          </Space>
-
-          {/* Toggle View Mode */}
-          <Segmented
-            size="small"
-            value={viewMode}
-            onChange={(val) => setViewMode(val as 'both' | 'net')}
-            options={[
-              { label: t('cashFlow.viewAll'), value: 'both' },
-              { label: t('cashFlow.viewNet'), value: 'net' },
-            ]}
-          />
-        </Space>
+        <Segmented<ViewMode>
+          value={view}
+          onChange={setView}
+          options={[
+            { label: t('cashFlow.viewAll'), value: 'flow' },
+            { label: t('cashFlow.viewNet'), value: 'net' },
+            { label: t('cashFlow.viewTable'), value: 'table' },
+          ]}
+        />
       }
-      style={{
-        borderRadius: radius.lg,
-      }}
-      styles={{ body: { padding: '20px 20px 14px 10px' } }}
     >
-      {cashFlowTimeline.length === 0 ? (
+      {data.length === 0 ? (
         <div style={{ padding: '60px 0' }}>
           <Empty description={t('cashFlow.empty')} />
         </div>
       ) : (
-        <div style={{ width: '100%', height: 330 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <ComposedChart
-              data={cashFlowTimeline}
-              margin={{ top: 12, right: 16, left: 4, bottom: 4 }}
-            >
-              <defs>
-                <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#16a34a" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#16a34a" stopOpacity={0.01} />
-                </linearGradient>
-                <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#dc2626" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#dc2626" stopOpacity={0.01} />
-                </linearGradient>
-                <linearGradient id="colorNet" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#4f46e5" stopOpacity={0.02} />
-                </linearGradient>
-              </defs>
+        <>
+          {/* Chú giải + tổng kỳ (luôn hiện, không phụ thuộc tooltip) */}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '8px 24px',
+              marginBottom: 12,
+            }}
+          >
+            {legend}
+          </div>
 
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke={isDark ? '#334155' : border.base}
-                vertical={false}
-              />
-
-              <XAxis
-                dataKey="date"
-                stroke="#64748b"
-                fontSize={11}
-                tickLine={false}
-                tickFormatter={formatXAxis}
-              />
-
-              <YAxis
-                stroke="#64748b"
-                fontSize={11}
-                tickLine={false}
-                tickFormatter={formatYAxis}
-              />
-
-              <Tooltip content={<CustomTooltip mode={mode} />} />
-
-              {viewMode === 'both' ? (
-                <>
-                  <Area
-                    type="monotone"
-                    dataKey="income"
-                    name={t('cashFlow.income')}
-                    stroke="#16a34a"
-                    strokeWidth={2.5}
-                    fillOpacity={1}
-                    fill="url(#colorIncome)"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="expense"
-                    name={t('cashFlow.expense')}
-                    stroke="#dc2626"
-                    strokeWidth={2.5}
-                    fillOpacity={1}
-                    fill="url(#colorExpense)"
-                  />
-                </>
-              ) : (
-                <>
-                  <ReferenceLine
-                    y={0}
-                    stroke={isDark ? '#64748b' : '#94a3b8'}
-                    strokeDasharray="3 3"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="net"
-                    name={t('cashFlow.net')}
-                    stroke="#4f46e5"
-                    strokeWidth={2.5}
-                    fillOpacity={1}
-                    fill="url(#colorNet)"
-                  />
-                </>
-              )}
-            </ComposedChart>
-          </ResponsiveContainer>
-        </div>
+          {view === 'table' ? (
+            <Table
+              size="small"
+              rowKey="date"
+              dataSource={data}
+              pagination={{ pageSize: 8, showSizeChanger: false }}
+              columns={[
+                {
+                  title: t('cashFlow.date'),
+                  dataIndex: 'date',
+                  render: formatFull,
+                },
+                {
+                  title: t('cashFlow.income'),
+                  dataIndex: 'income',
+                  align: 'right',
+                  render: (v: number) => convertCurrency(v),
+                },
+                {
+                  title: t('cashFlow.expense'),
+                  dataIndex: 'expense',
+                  align: 'right',
+                  render: (v: number) => convertCurrency(v),
+                },
+                {
+                  title: t('cashFlow.net'),
+                  dataIndex: 'net',
+                  align: 'right',
+                  render: (v: number) => (
+                    <Text type={v < 0 ? 'danger' : undefined}>
+                      {v > 0 ? '+' : v < 0 ? '−' : ''}
+                      {convertCurrency(Math.abs(v))}
+                    </Text>
+                  ),
+                },
+              ]}
+            />
+          ) : (
+            // Chiều cao gồm cả dải nhãn trục X — không bị cắt/cuộn lồng
+            <div style={{ width: '100%', height: 300 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                {view === 'flow' ? (
+                  <LineChart
+                    data={data}
+                    margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+                  >
+                    <CartesianGrid stroke={viz.grid} vertical={false} />
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={formatTick}
+                      minTickGap={16}
+                      {...axisProps}
+                    />
+                    <YAxis
+                      tickFormatter={formatCompact}
+                      width={48}
+                      {...axisProps}
+                    />
+                    <Tooltip
+                      cursor={{ stroke: viz.axis, strokeWidth: 1 }}
+                      content={<ChartTooltip rows={flowRows} />}
+                    />
+                    {(['income', 'expense'] as const).map((key) => (
+                      <Line
+                        key={key}
+                        type="monotone"
+                        dataKey={key}
+                        name={t(`cashFlow.${key}`)}
+                        stroke={viz[key]}
+                        strokeWidth={2}
+                        dot={false}
+                        activeDot={{
+                          r: 4,
+                          fill: viz[key],
+                          stroke: background.base,
+                          strokeWidth: 2,
+                        }}
+                      />
+                    ))}
+                  </LineChart>
+                ) : (
+                  <BarChart
+                    data={data}
+                    margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+                    barCategoryGap={2}
+                  >
+                    <CartesianGrid stroke={viz.grid} vertical={false} />
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={formatTick}
+                      minTickGap={16}
+                      {...axisProps}
+                    />
+                    <YAxis
+                      tickFormatter={formatCompact}
+                      width={48}
+                      {...axisProps}
+                    />
+                    <ReferenceLine y={0} stroke={viz.axis} />
+                    <Tooltip
+                      cursor={{ fill: viz.grid, opacity: 0.6 }}
+                      content={<ChartTooltip rows={netRows} />}
+                    />
+                    <Bar dataKey="net" maxBarSize={24}>
+                      {data.map((p) => (
+                        <Cell
+                          key={p.date}
+                          fill={p.net >= 0 ? viz.income : viz.expense}
+                          // Bo 4px ở đầu xa đường 0
+                          radius={
+                            (p.net >= 0 ? [4, 4, 0, 0] : [0, 0, 4, 4]) as any
+                          }
+                        />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                )}
+              </ResponsiveContainer>
+            </div>
+          )}
+        </>
       )}
-    </Card>
+    </WidgetCard>
   )
 }
+
+const LegendItem: React.FC<{
+  color?: string
+  line?: boolean
+  label: string
+  value?: string
+}> = ({ color, line, label, value }) => (
+  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+    {color && <Swatch color={color} line={line} />}
+    <Text type="secondary">{label}</Text>
+    {value && <Text strong>{value}</Text>}
+  </span>
+)

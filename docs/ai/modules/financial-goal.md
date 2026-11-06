@@ -1,68 +1,69 @@
 # Module: Financial Goal
 
 ## Purpose
-Manages user savings and financial targets. Tracks accumulated progress against deadlines, supports manual/automatic contributions, calculates completion projections, and displays progress timelines.
+UI for savings goals: list/filter goal cards, create/edit, and a detail modal to contribute, withdraw, confirm or skip pending auto contributions, pause/resume and cancel (with optional refund). Money can optionally move in/out of a wallet via the shared `WalletBalanceSwitch`.
 
-## Responsibilities and Boundaries
-- Display savings goals with progress rings/bars (`GoalCard`) and summary metrics (`GoalSummary`).
-- Filter goals by type (`EMERGENCY_FUND`, `VACATION`, `VEHICLE`, `REAL_ESTATE`, `EDUCATION`, `OTHER`) and status (`ACTIVE`, `COMPLETED`, `CANCELLED`).
-- Create and edit goals via `AddGoalModal`.
-- View detailed goal progress, contribution histories, and future projections via `GoalDetailModal`.
-- Support manual contribution entries linked to user wallets.
+End-user guide (Vietnamese): [`docs/guides/muc-tieu-tai-chinh.md`](../../guides/muc-tieu-tai-chinh.md). Backend rules: BE `docs/ai/modules/financial-goal.md`.
 
 ## Source Map
 ```
-src/
-├── routes/(protected)/financial/goal.tsx           # Route definition
-├── shared/pages/financial/goal/
-│   ├── index.tsx                                   # Goals view coordinator
-│   └── _components/
-│       ├── GoalSummary.tsx                         # Savings rate & total target KPI cards
-│       ├── GoalCard.tsx                            # Individual goal card with progress indicator
-│       ├── AddGoalModal.tsx                        # Create goal modal
-│       └── GoalDetailModal.tsx                     # Contribution histories and projection views
-└── shared/api/financial/goal/
-    ├── goal.type.ts                                # Goal & history interfaces
-    ├── goal.enum.ts                                # SAVING_MODE, STATUS, TYPE enums
-    ├── goal.mutation.ts                            # Create, update, delete, contribute mutations
-    └── useGetFinance_Category_List.ts              # TanStack Query hook fetching /financial-goal
+src/routes/(protected)/financial/goal.tsx
+src/shared/pages/financial/goal/
+├── index.tsx                         # Page: header, GoalSummary, inline filters (status Segmented with counts, search, type), sorted card grid, quick contribute, delete confirm
+├── goal.utils.ts                     # goalAmounts, estimateMonths (AUTO only, = BE), daysToDeadline, canContribute/canWithdraw/canCancel
+└── _components/
+    ├── GoalSummary.tsx               # 4 tiles: saved (+meter vs total target, excl. cancelled), in progress (+paused), completed, auto contribution per month
+    ├── GoalCard.tsx                  # Clickable card (opens detail): meter, % / target, deadline tag (≤30 days warning), auto amount + day, ~months, quick "Góp tiền", ⋯ menu (view / edit / delete); paused & cancelled dimmed
+    ├── AddGoalModal.tsx              # Create/edit form (no status field; AUTO → amount, day, default wallet)
+    ├── GoalDetailModal.tsx           # Overview (progress block, actions incl. Edit, 4 stat tiles, settings) + History list (pending pinned on top, "show more")
+    ├── GoalMoneyModal.tsx            # mode: contribute | withdraw | confirm (pending)
+    └── GoalCancelModal.tsx           # Cancel + optional refund wallet (hidden when locked)
+src/shared/components/wallet-balance-switch/WalletBalanceSwitch.tsx   # Shared with debt modals
+src/shared/api/financial/goal/
+├── goal.type.ts                      # IFinance_Goal (savingMode, walletId, wallet), IFinance_Goal_Projection, UpsertFinanceGoalDto
+├── goal.enum.ts                      # TYPE / SAVING_MODE / STATUS + helpers (i18n labels)
+├── goal.mutation.ts                  # create / update / delete / cancel / pause / resume, GOAL_INVALIDATE_KEYS
+├── goal.keys.ts, goalHistory.keys.ts
+├── useGetFinance_Category_List.ts    # (misnamed) exports useGetFinance_Goal_List → GET /financial-goal/all
+├── useGetFinance_Goal_Projection.ts
+└── goal-history/
+    ├── goal-history.type.ts          # IFinance_GoalHistory (type, walletId, wallet)
+    ├── goal-history.enum.ts          # SOURCE / STATUS / TYPE (CONTRIBUTION | WITHDRAWAL) + helpers
+    ├── goal.mutation.ts              # manual-contribution / withdraw / complete / skip
+    └── useGetFinance_Goal_Detail.ts  # GET /:id/detail
 ```
 
 ## Main Components
-- **`Goals`** (`src/shared/pages/financial/goal/index.tsx`): Main view managing filter state and goal card grids.
-- **`GoalCard`**: Displays target vs. current amount, remaining days to deadline, and progress percentage.
-- **`GoalDetailModal`**: Displays contribution timeline, projection estimates based on monthly saving speed, and buttons to log contributions.
+- **`GoalDetailModal`**: takes the selected list item only for its id; everything displayed comes from `useGetFinance_Goal_Detail` so values refresh after each mutation. Shows a warning alert + badge when `PENDING` histories exist. Withdraw is disabled (with tooltip) when `isLocked`.
+- **`GoalMoneyModal`**: amount capped at remaining (contribute/confirm) or saved amount (withdraw), quick-fill button, `WalletBalanceSwitch` (debit for contribute/confirm, credit for withdraw). Default wallet: pending's `walletId` → goal's `walletId`. Sends `walletId` only when the switch is on.
+- **`GoalCancelModal`**: refund via `WalletBalanceSwitch` (`isInflow`), or an alert when the goal is locked.
+- **`WalletBalanceSwitch`** (shared): renders `updateWallet` + `walletId` Form.Items inside the parent form, validates insufficient balance against the current amount field, previews balance before/after. Texts are passed by the caller (`title`, `hintOn`, `hintOff`); fixed labels come from `finance:common.walletSwitch.*`.
 
 ## Business and Data Flows
-1. User loads `/financial/goal`.
-2. Fetches goals via `useGetFinance_Goal_List`.
-3. To log a contribution:
-   - User opens `GoalDetailModal`, enters contribution amount and source wallet.
-   - Mutation posts manual contribution.
-   - On success, updates `currentAmount` and recalculates remaining progress.
-4. When `currentAmount >= targetAmount`, status transitions to `COMPLETED`.
-
-## Dependencies and Integrations
-- **Core**: `useThemeMode`, `convertCurrency`.
-- **Domain**: Linked to `FinancialWalletModule` for contribution fund sourcing.
+1. List: `GET /financial-goal/all` → cards (filtering client-side by search/type/status).
+2. Detail: `GET /:id/detail` + `GET /:id/projection` (no `monthlySavingRate` → uses the goal's AUTO amount) + wallet list.
+3. Mutations use `GOAL_INVALIDATE_KEYS` = goal keys, goal-history keys, wallet list, dashboard — wallet balances and the dashboard widget refresh automatically.
+4. Mutation responses are `ApiBaseResponse<T>` (`customAxios` returns the body wrapped by the BE `ResponseInterceptor`); read `res.data`.
 
 ## Existing Patterns and Conventions
-- Uses `convertCurrency` helper to format numbers according to active user preferences.
-- Visual status badges: Green for completed goals, Blue for active goals.
-
-## Extension Guide
-- To display monthly contribution targets, add an amortization schedule calculation into `GoalDetailModal`.
+- Card order: ACTIVE (nearest deadline first, no deadline last) → INACTIVE → COMPLETED → CANCELLED, then newest.
+- Text uses default Typography sizes; colours come from `getTokens` (primary = in progress, success = completed). No emoji in labels.
+- Status / type / history labels come from enum helpers (`FinancialGoalStatusHelper.getLabel` …) backed by `finance:common.enum.goal.*`; page strings live in `finance:goal.*` (vi/en/ko).
+- Status is never edited in the form — use pause / resume / cancel.
+- Card estimates use `goal.utils.estimateMonths`, which mirrors the BE projection (AUTO only).
 
 ## Constraints and Common Pitfalls
-- Goals with status `COMPLETED` or `CANCELLED` should disable additional contributions.
+- Delete does not refund wallets; the confirmation text tells users to cancel with refund first.
+- `IFinance_Goal.deadline` may arrive as an ISO string; always wrap with `dayjs`.
+- The goal list endpoint does not include histories, so cards cannot show pending counts.
 
 ## Tests and Verification
-- Run `npm run build` to verify goal components and types.
+- `npm run build` (route generation + Vite + tsc) and `npm run lint`.
 
 ## Documentation Status
 - Status: Verified
-- Last Verified: 2026-10-19
-- Source Paths:
-  - `src/shared/pages/financial/goal/index.tsx`
-  - `src/shared/api/financial/goal/goal.mutation.ts`
-- Known Gaps: None.
+- Last Verified: 2026-11-07
+- Source Paths: files listed in Source Map.
+- Known Gaps:
+  - Not yet exercised in a browser against the new backend.
+  - `useGetFinance_Category_List.ts` file name does not match its export.

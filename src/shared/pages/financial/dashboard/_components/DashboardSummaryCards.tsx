@@ -1,19 +1,15 @@
 import React from 'react'
-import { Card, Col, Progress, Row, Typography } from 'antd'
+import { Card, Col, Row, Tag, Typography } from 'antd'
 import { useTranslation } from 'react-i18next'
-import {
-  ArrowDownRight,
-  ArrowUpRight,
-  Target,
-  TrendingDown,
-  TrendingUp,
-  Wallet,
-} from 'lucide-react'
+import { Clock } from 'lucide-react'
+import { Sparkline } from './Sparkline'
+import { getVizColors } from './viz'
+import type { CashFlowTimelinePoint } from '@/shared/api/financial/dashboard/dashboard.type'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
 import { useThemeMode } from '@/shared/provider/antd-theme.provider'
 import { getTokens } from '@/shared/common/design-token'
 
-const { Text } = Typography
+const { Title, Text } = Typography
 
 interface DashboardSummaryCardsProps {
   summary: {
@@ -24,267 +20,176 @@ interface DashboardSummaryCardsProps {
     totalWalletBalance: number
     pendingCount: number
   }
+  cashFlowTimeline: Array<CashFlowTimelinePoint>
+}
+
+/** Ô màu nhỏ đánh dấu series — màu nằm ở dấu, chữ vẫn dùng màu chữ */
+const Swatch: React.FC<{ color: string }> = ({ color }) => (
+  <span
+    aria-hidden
+    style={{
+      display: 'inline-block',
+      width: 10,
+      height: 10,
+      borderRadius: 3,
+      background: color,
+      marginRight: 6,
+    }}
+  />
+)
+
+const Tile: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { mode } = useThemeMode()
+  const { radius } = getTokens(mode)
+  return (
+    <Card
+      style={{ borderRadius: radius.lg, height: '100%' }}
+      styles={{
+        body: {
+          padding: 20,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 4,
+        },
+      }}
+    >
+      {children}
+    </Card>
+  )
 }
 
 export const DashboardSummaryCards: React.FC<DashboardSummaryCardsProps> = ({
   summary,
+  cashFlowTimeline,
 }) => {
   const { t } = useTranslation('dashboard')
   const { mode } = useThemeMode()
-  const { radius } = getTokens(mode)
+  const viz = getVizColors(mode)
+
+  const incomeSeries = cashFlowTimeline.map((p) => Number(p.income || 0))
+  const expenseSeries = cashFlowTimeline.map((p) => Number(p.expense || 0))
+  const net = Number(summary.netBalance || 0)
+  const rate = Math.round(Number(summary.savingsRate || 0))
+  const meterPct = Math.min(100, Math.max(0, rate))
 
   return (
-    <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-      {/* Total Income Card */}
-      <Col xs={24} sm={12} lg={6}>
-        <Card
-          style={{
-            borderRadius: radius.lg,
-          }}
-          styles={{ body: { padding: '20px' } }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-            }}
-          >
-            <div>
-              <Text
-                type="secondary"
-                style={{ fontSize: '13px', fontWeight: 500 }}
-              >
-                {t('summary.totalIncome')}
-              </Text>
-              <h2
+    <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+      {/* 1. Tổng số dư ví — con số dẫn đầu */}
+      <Col xs={24} sm={12} xl={6}>
+        <Tile>
+          <Text type="secondary">{t('summary.walletBalance')}</Text>
+          <Title level={3} style={{ margin: 0 }}>
+            {convertCurrency(summary.totalWalletBalance)}
+          </Title>
+          <div style={{ marginTop: 'auto', paddingTop: 8 }}>
+            {summary.pendingCount > 0 ? (
+              <Tag
+                color="warning"
+                icon={<Clock size={12} aria-hidden />}
                 style={{
-                  margin: '6px 0 0',
-                  fontSize: '22px',
-                  fontWeight: 700,
-                  color: '#16a34a',
+                  margin: 0,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
                 }}
               >
-                {convertCurrency(summary.totalIncome)}
-              </h2>
-            </div>
-            <div
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: '10px',
-                background: '#dcfce7',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#16a34a',
-              }}
-            >
-              <ArrowUpRight size={22} />
-            </div>
+                {t('summary.pending', { count: summary.pendingCount })}
+              </Tag>
+            ) : (
+              <Text type="secondary">{t('summary.walletBalanceHint')}</Text>
+            )}
           </div>
-          <div
-            style={{
-              marginTop: 14,
-              fontSize: 12,
-              color: '#16a34a',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4,
-            }}
-          >
-            <TrendingUp size={14} />
-            <span>{t('summary.incomeDescription')}</span>
-          </div>
-        </Card>
+        </Tile>
       </Col>
 
-      {/* Total Expense Card */}
-      <Col xs={24} sm={12} lg={6}>
-        <Card
-          style={{
-            borderRadius: radius.lg,
-          }}
-          styles={{ body: { padding: '20px' } }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-            }}
-          >
-            <div>
-              <Text
-                type="secondary"
-                style={{ fontSize: '13px', fontWeight: 500 }}
-              >
-                {t('summary.totalExpense')}
-              </Text>
-              <h2
-                style={{
-                  margin: '6px 0 0',
-                  fontSize: '22px',
-                  fontWeight: 700,
-                  color: '#dc2626',
-                }}
-              >
-                {convertCurrency(summary.totalExpense)}
-              </h2>
-            </div>
-            <div
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: '10px',
-                background: '#fee2e2',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#dc2626',
-              }}
-            >
-              <ArrowDownRight size={22} />
-            </div>
-          </div>
-          <div
-            style={{
-              marginTop: 14,
-              fontSize: 12,
-              color: '#dc2626',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 4,
-            }}
-          >
-            <TrendingDown size={14} />
-            <span>{t('summary.expenseDescription')}</span>
-          </div>
-        </Card>
-      </Col>
-
-      {/* Net Savings Card */}
-      <Col xs={24} sm={12} lg={6}>
-        <Card
-          style={{
-            borderRadius: radius.lg,
-          }}
-          styles={{ body: { padding: '20px' } }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-            }}
-          >
-            <div>
-              <Text
-                type="secondary"
-                style={{ fontSize: '13px', fontWeight: 500 }}
-              >
-                {t('summary.netBalance')}
-              </Text>
-              <h2
-                style={{
-                  margin: '6px 0 0',
-                  fontSize: '22px',
-                  fontWeight: 700,
-                  color: summary.netBalance >= 0 ? '#0284c7' : '#dc2626',
-                }}
-              >
-                {convertCurrency(summary.netBalance)}
-              </h2>
-            </div>
-            <div
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: '10px',
-                background: '#e0f2fe',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#0284c7',
-              }}
-            >
-              <Wallet size={22} />
-            </div>
-          </div>
-          <div
-            style={{
-              marginTop: 14,
-              fontSize: 12,
-              color: '#64748b',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <span>{t('summary.totalWalletBalance')}</span>
-            <span style={{ fontWeight: 600 }}>
-              {convertCurrency(summary.totalWalletBalance)}
-            </span>
-          </div>
-        </Card>
-      </Col>
-
-      {/* Savings Rate Card */}
-      <Col xs={24} sm={12} lg={6}>
-        <Card
-          style={{
-            borderRadius: radius.lg,
-          }}
-          styles={{ body: { padding: '20px' } }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-            }}
-          >
-            <div>
-              <Text
-                type="secondary"
-                style={{ fontSize: '13px', fontWeight: 500 }}
-              >
-                {t('summary.savingsRate')}
-              </Text>
-              <h2
-                style={{
-                  margin: '6px 0 0',
-                  fontSize: '22px',
-                  fontWeight: 700,
-                  color: '#4f46e5',
-                }}
-              >
-                {summary.savingsRate}%
-              </h2>
-            </div>
-            <div
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: '10px',
-                background: '#e0e7ff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#4f46e5',
-              }}
-            >
-              <Target size={22} />
-            </div>
-          </div>
-          <div style={{ marginTop: 12 }}>
-            <Progress
-              percent={summary.savingsRate}
-              showInfo={false}
-              strokeColor="#4f46e5"
+      {/* 2. Thu nhập + xu hướng */}
+      <Col xs={24} sm={12} xl={6}>
+        <Tile>
+          <Text type="secondary">
+            <Swatch color={viz.income} />
+            {t('summary.totalIncome')}
+          </Text>
+          <Title level={4} style={{ margin: 0 }}>
+            {convertCurrency(summary.totalIncome)}
+          </Title>
+          <div style={{ marginTop: 'auto', paddingTop: 8 }}>
+            <Sparkline
+              values={incomeSeries}
+              color={viz.income}
+              ariaLabel={t('summary.incomeTrend')}
             />
           </div>
-        </Card>
+        </Tile>
+      </Col>
+
+      {/* 3. Chi tiêu + xu hướng */}
+      <Col xs={24} sm={12} xl={6}>
+        <Tile>
+          <Text type="secondary">
+            <Swatch color={viz.expense} />
+            {t('summary.totalExpense')}
+          </Text>
+          <Title level={4} style={{ margin: 0 }}>
+            {convertCurrency(summary.totalExpense)}
+          </Title>
+          <div style={{ marginTop: 'auto', paddingTop: 8 }}>
+            <Sparkline
+              values={expenseSeries}
+              color={viz.expense}
+              ariaLabel={t('summary.expenseTrend')}
+            />
+          </div>
+        </Tile>
+      </Col>
+
+      {/* 4. Còn lại (thu − chi) + meter tỷ lệ tích lũy */}
+      <Col xs={24} sm={12} xl={6}>
+        <Tile>
+          <Text type="secondary">{t('summary.netBalance')}</Text>
+          <Title
+            level={4}
+            type={net < 0 ? 'danger' : undefined}
+            style={{ margin: 0 }}
+          >
+            {net > 0 ? '+' : net < 0 ? '−' : ''}
+            {convertCurrency(Math.abs(net))}
+          </Title>
+          <div style={{ marginTop: 'auto', paddingTop: 8 }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                marginBottom: 6,
+              }}
+            >
+              <Text type="secondary">{t('summary.savingsRate')}</Text>
+              <Text strong>{rate}%</Text>
+            </div>
+            <div
+              role="meter"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={meterPct}
+              aria-label={t('summary.savingsRate')}
+              style={{
+                height: 8,
+                borderRadius: 4,
+                background: viz.meter.track,
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  width: `${meterPct}%`,
+                  height: '100%',
+                  borderRadius: 4,
+                  background: viz.meter.fill,
+                }}
+              />
+            </div>
+          </div>
+        </Tile>
       </Col>
     </Row>
   )

@@ -10,6 +10,7 @@ import {
   Modal,
   Typography,
 } from 'antd'
+import { DEBT_UI_CLASS } from './DebtThemeProvider'
 import type { IFinance_Debt } from '@/shared/api/financial/debt/debt.type'
 import { FINANCIAL_DEBT_DIRECTION_ENUM } from '@/shared/api/financial/debt/debt.enum'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
@@ -52,6 +53,7 @@ export const DebtCorrectModal: React.FC<Props> = ({
 
   return (
     <Modal
+      rootClassName={DEBT_UI_CLASS}
       title={t('debtForms.correctTitle', { name: debt.name })}
       open={open}
       onCancel={onClose}

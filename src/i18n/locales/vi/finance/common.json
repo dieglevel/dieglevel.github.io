@@ -48,6 +48,7 @@
         "created": "Tạo khoản nợ",
         "payment": "Thanh toán",
         "adjustment": "Điều chỉnh số dư",
+        "corrected": "Sửa số tiền gốc",
         "settled": "Tất toán",
         "cancelled": "Hủy khoản nợ"
       },
@@ -74,8 +75,9 @@
         "inactive": "Tạm dừng"
       },
       "historySource": { "user": "Người dùng", "system": "Hệ thống tự động" },
+      "historyType": { "contribution": "Góp vào", "withdrawal": "Rút ra" },
       "historyStatus": {
-        "pending": "Chờ nạp",
+        "pending": "Chờ xác nhận",
         "completed": "Đã hoàn thành",
         "skipped": "Đã bỏ qua"
       }
@@ -107,5 +109,14 @@
       "language": { "en": "English", "ko": "한국어", "vn": "Tiếng Việt" },
       "currency": { "usd": "USD ($)", "krw": "KRW (₩)", "vnd": "VND (₫)" }
     }
+  },
+  "walletSwitch": {
+    "wallet": "Ví",
+    "selectWallet": "Chọn ví...",
+    "walletRequired": "Vui lòng chọn ví",
+    "insufficient": "Ví không đủ tiền cho giao dịch này.",
+    "currentBalance": "Số dư hiện tại ({{name}})",
+    "change": "Biến động",
+    "projected": "Số dư sau giao dịch"
   }
 }

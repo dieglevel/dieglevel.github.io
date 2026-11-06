@@ -1,3 +1,5 @@
+import type { FINANCIAL_DEBT_DIRECTION_ENUM } from '../debt/debt.enum'
+
 export enum DashboardTimeFrame {
   WEEKLY = 'weekly',
   MONTHLY = 'monthly',
@@ -10,6 +12,8 @@ export interface GetFinancialDashboardQueryParams {
   toDate?: string
   walletId?: number
   timeFrame?: DashboardTimeFrame
+  /** 0 = kỳ hiện tại, -1 = kỳ trước (theo timeFrame), ... */
+  offset?: number
 }
 
 export interface CashFlowTimelinePoint {
@@ -56,6 +60,8 @@ export interface DebtSummaryItem {
   totalAmount: number
   paidAmount: number
   remainingAmount?: number
+  /** INCOMING = cho vay (phải thu), OUTGOING = đi vay (phải trả) */
+  direction: FINANCIAL_DEBT_DIRECTION_ENUM
   type: string
   dueDate?: string | null
   status?: string

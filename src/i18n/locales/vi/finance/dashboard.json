@@ -7,40 +7,62 @@
     "thisYear": "Năm nay",
     "allWallets": "Tất cả ví",
     "newTransaction": "Giao dịch mới",
-    "cycleDayNotice": "Chu kỳ từ ngày {{day}}"
+    "cycleDayNotice": "Chu kỳ từ ngày {{day}}",
+    "week": "Tuần",
+    "month": "Tháng",
+    "year": "Năm",
+    "prevPeriod": "Kỳ trước",
+    "nextPeriod": "Kỳ sau",
+    "pickPeriod": "Chọn kỳ",
+    "backToCurrent": {
+      "week": "Về tuần này",
+      "month": "Về tháng này",
+      "year": "Về năm nay"
+    }
   },
   "summary": {
     "totalIncome": "Tổng thu nhập",
     "incomeDescription": "Tiền thu vào trong kỳ",
     "totalExpense": "Tổng chi tiêu",
     "expenseDescription": "Tiền chi ra trong kỳ",
-    "netBalance": "Số dư ròng",
+    "netBalance": "Còn lại (thu − chi)",
     "totalWalletBalance": "Tổng số dư các ví:",
-    "savingsRate": "Tỷ lệ tích lũy"
+    "savingsRate": "Tỷ lệ tích lũy",
+    "walletBalance": "Tổng số dư các ví",
+    "walletBalanceHint": "Không có giao dịch đang chờ",
+    "pending": "{{count}} giao dịch đang chờ",
+    "incomeTrend": "Xu hướng thu nhập trong kỳ",
+    "expenseTrend": "Xu hướng chi tiêu trong kỳ"
   },
   "cashFlow": {
-    "title": "Biểu đồ dòng tiền thu / chi",
+    "title": "Dòng tiền",
     "empty": "Chưa có dữ liệu giao dịch",
     "income": "Thu nhập",
     "expense": "Chi tiêu",
-    "net": "Dòng tiền ròng",
-    "viewAll": "Thu & Chi",
-    "viewNet": "Dòng ròng",
+    "net": "Chênh lệch",
+    "viewAll": "Thu & chi",
+    "viewNet": "Chênh lệch",
     "totalPeriodIncome": "Tổng thu",
-    "totalPeriodExpense": "Tổng chi"
+    "totalPeriodExpense": "Tổng chi",
+    "viewTable": "Bảng",
+    "netPositive": "Thu > chi",
+    "netNegative": "Chi > thu",
+    "date": "Thời gian"
   },
   "categoryBreakdown": {
     "title": "Cơ cấu chi tiêu",
     "empty": "Chưa có dữ liệu chi tiêu",
     "totalSpent": "Tổng chi tiêu",
-    "countCategories": "danh mục",
-    "uncategorized": "Chưa phân loại"
+    "countCategories": "{{count}} danh mục",
+    "uncategorized": "Chưa phân loại",
+    "other": "Khác ({{count}} danh mục)"
   },
   "wallets": {
-    "title": "Danh sách ví tài chính",
+    "title": "Ví của bạn",
     "manage": "Quản lý ví",
     "empty": "Chưa tạo ví tài chính nào",
-    "defaultType": "Ví"
+    "defaultType": "Ví",
+    "allocation": "Phân bổ số dư"
   },
   "transactions": {
     "title": "Giao dịch gần đây",
@@ -56,17 +78,24 @@
     "createGoal": "Tạo mục tiêu",
     "target": "Mục tiêu",
     "saved": "Đã tích lũy",
-    "deadline": "Hạn chót"
+    "deadline": "Hạn chót",
+    "completed": "Hoàn thành",
+    "progressLine": "Đã tích lũy {{saved}} / {{target}}"
   },
   "debts": {
-    "title": "Quản lý Vay & Nợ",
-    "manage": "Xem chi tiết",
-    "empty": "Không có khoản vay/nợ nào",
+    "title": "Sổ nợ đang mở",
+    "manage": "Xem tất cả",
+    "empty": "Không có khoản nợ đang mở",
     "createDebt": "Thêm khoản nợ",
     "borrow": "Đi vay",
     "lend": "Cho vay",
     "paid": "Đã trả",
     "remaining": "Còn lại",
-    "dueDate": "Hạn trả"
+    "dueDate": "Hạn trả",
+    "overdue": "Quá hạn {{days}} ngày",
+    "dueToday": "Đến hạn hôm nay",
+    "dueSoon": "Còn {{days}} ngày",
+    "receivable": "Còn phải thu",
+    "payable": "Còn phải trả"
   }
 }

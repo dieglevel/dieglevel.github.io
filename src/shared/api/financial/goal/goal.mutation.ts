@@ -1,5 +1,8 @@
+import { walletKeys } from '../wallet/wallet.keys'
+import { dashboardKeys } from '../dashboard/dashboard.keys'
 import { goalKeys } from './goal.keys'
-import type { IFinance_Goal } from './goal.type'
+import { goalHistoryKeys } from './goalHistory.keys'
+import type { IFinance_Goal, UpsertFinanceGoalDto } from './goal.type'
 import {
   useMutationDelete,
   useMutationPatch,
@@ -7,54 +10,85 @@ import {
 } from '@/shared/lib/api/mutation/useMutation'
 
 /**
- * Hook chứa tất cả mutations liên quan đến Financial Goal
- * - Create: Tạo mục tiêu mới
- * - Update: Cập nhật mục tiêu
- * - Delete: Xóa mục tiêu
+ * Mọi thao tác mục tiêu: làm mới danh sách/chi tiết/dự phóng, lịch sử,
+ * số dư ví (góp/rút có thể đụng ví) và widget dashboard.
+ */
+export const GOAL_INVALIDATE_KEYS = [
+  goalKeys.all,
+  goalHistoryKeys.all,
+  walletKeys.list(),
+  dashboardKeys.all,
+]
+
+export interface CancelGoalDto {
+  /** Hoàn toàn bộ số đã tích lũy vào ví này (bị chặn khi mục tiêu đang khóa) */
+  refundWalletId?: number
+}
+
+type IdParams = { id: string | number }
+
+/**
+ * Mutations của Financial Goal:
+ * create / update / delete (owner-scoped ở BE), cancel (+hoàn tiền), pause, resume.
  */
 export const useMutationGoal = () => {
-  // Tạo mục tiêu mới
   const mGoal_Create = useMutationPost<
-    IFinance_Goal, // Response type
-    Omit<IFinance_Goal, 'id' | 'created_at' | 'updated_at' | 'accountId'>, // Request body type
+    IFinance_Goal,
+    UpsertFinanceGoalDto,
     'financial-goal/create'
   >({
     endPoint: 'financial-goal/create',
-    queryKey: [goalKeys.list()],
+    queryKey: GOAL_INVALIDATE_KEYS,
   })
 
-  // Cập nhật mục tiêu hiện tại
   const mGoal_Update = useMutationPost<
-    IFinance_Goal, // Response type
-    Partial<
-      Omit<IFinance_Goal, 'id' | 'created_at' | 'updated_at' | 'accountId'>
-    >, // Request body type
+    IFinance_Goal,
+    Partial<UpsertFinanceGoalDto>,
     'financial-goal/update/:id',
-    { id: string | number } // Path params type
+    IdParams
   >({
     endPoint: 'financial-goal/update/:id',
-    queryKey: [goalKeys.list(), goalKeys.details()],
+    queryKey: GOAL_INVALIDATE_KEYS,
   })
 
-  // Xóa mục tiêu
   const mGoal_Delete = useMutationDelete<
-    void, // Response type
-    void, // Request body type (DELETE không cần body)
+    void,
+    void,
     'financial-goal/delete/:id',
-    { id: string | number } // Path params type
+    IdParams
   >({
     endPoint: 'financial-goal/delete/:id',
-    queryKey: [goalKeys.list(), goalKeys.details()],
+    queryKey: GOAL_INVALIDATE_KEYS,
   })
 
   const mGoal_Cancel = useMutationPatch<
     IFinance_Goal,
-    void,
+    CancelGoalDto,
     'financial-goal/:id/cancel',
-    { id: string | number }
+    IdParams
   >({
     endPoint: 'financial-goal/:id/cancel',
-    queryKey: [[goalKeys.list()], [goalKeys.details()]],
+    queryKey: GOAL_INVALIDATE_KEYS,
+  })
+
+  const mGoal_Pause = useMutationPatch<
+    IFinance_Goal,
+    void,
+    'financial-goal/:id/pause',
+    IdParams
+  >({
+    endPoint: 'financial-goal/:id/pause',
+    queryKey: GOAL_INVALIDATE_KEYS,
+  })
+
+  const mGoal_Resume = useMutationPatch<
+    IFinance_Goal,
+    void,
+    'financial-goal/:id/resume',
+    IdParams
+  >({
+    endPoint: 'financial-goal/:id/resume',
+    queryKey: GOAL_INVALIDATE_KEYS,
   })
 
   return {
@@ -62,5 +96,7 @@ export const useMutationGoal = () => {
     mGoal_Update,
     mGoal_Delete,
     mGoal_Cancel,
+    mGoal_Pause,
+    mGoal_Resume,
   }
 }

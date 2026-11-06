@@ -1,178 +1,132 @@
 import React, { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
-  Badge,
+  App,
   Button,
   Card,
   Col,
-  Descriptions,
+  Empty,
   Flex,
   FloatButton,
   Grid,
   Input,
-  Modal,
   Row,
+  Segmented,
   Select,
-  Space,
   Spin,
-  Tag,
   Typography,
-  message,
 } from 'antd'
-import {
-  CheckCircleOutlined,
-  FilterOutlined,
-  PlusOutlined,
-  SearchOutlined,
-} from '@ant-design/icons'
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons'
 import { GoalSummary } from './_components/GoalSummary'
 import { AddGoalModal } from './_components/AddGoalModal'
-import { GoalCard } from './_components/GoalCard' // Import GoalCard mới
+import { GoalCard } from './_components/GoalCard'
 import { GoalDetailModal } from './_components/GoalDetailModal'
+import { GoalMoneyModal } from './_components/GoalMoneyModal'
+import { daysToDeadline } from './goal.utils'
 import type { IFinance_Goal } from '@/shared/api/financial/goal/goal.type'
-import { convertCurrency } from '@/shared/utils/helper/format-money'
+import type { FINANCIAL_GOAL_TYPE } from '@/shared/api/financial/goal/goal.enum'
 import {
   FINANCIAL_GOAL_STATUS,
-  FINANCIAL_GOAL_TYPE,
+  FinancialGoalStatusHelper,
+  FinancialGoalTypeHelper,
 } from '@/shared/api/financial/goal/goal.enum'
 import { useGetFinance_Goal_List } from '@/shared/api/financial/goal/useGetFinance_Category_List'
+import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 import { useMutationGoal } from '@/shared/api/financial/goal/goal.mutation'
 
 const { Title, Text } = Typography
 const { useBreakpoint } = Grid
 
+type StatusFilter = 'all' | FINANCIAL_GOAL_STATUS
+
+const STATUS_ORDER: Array<FINANCIAL_GOAL_STATUS> = [
+  FINANCIAL_GOAL_STATUS.ACTIVE,
+  FINANCIAL_GOAL_STATUS.INACTIVE,
+  FINANCIAL_GOAL_STATUS.COMPLETED,
+  FINANCIAL_GOAL_STATUS.CANCELLED,
+]
+
+/**
+ * Đang thực hiện lên trước (hạn gần nhất trước, không hạn xếp sau),
+ * rồi tạm dừng → hoàn thành → đã hủy; cùng nhóm thì mới tạo trước.
+ */
+const compareGoals = (a: IFinance_Goal, b: IFinance_Goal) => {
+  const s = STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status)
+  if (s !== 0) return s
+  const da = daysToDeadline(a) ?? Infinity
+  const db = daysToDeadline(b) ?? Infinity
+  if (da !== db) return da - db
+  return String(b.createdAt).localeCompare(String(a.createdAt))
+}
+
 export function Goals() {
   const { t } = useTranslation('finance')
+  const { message, modal } = App.useApp()
   const screens = useBreakpoint()
   const isMobile = !screens.md
 
-  // 1. TanStack Query Hooks
   const { data: goalData, isLoading } = useGetFinance_Goal_List({})
   const goals: Array<IFinance_Goal> = goalData?.data || []
-  const [selectedGoalDetail, setSelectedGoalDetail] =
-    useState<IFinance_Goal | null>(null)
-
+  const { data: walletRes, isLoading: isLoadingWallets } =
+    useGetFinance_Wallet_List({})
   const { mGoal_Delete } = useMutationGoal()
 
-  // Filters state
+  // Bộ lọc
   const [search, setSearch] = useState('')
-  const [typeFilter, setTypeFilter] = useState<string>('all')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false)
+  const [typeFilter, setTypeFilter] = useState<FINANCIAL_GOAL_TYPE | 'all'>(
+    'all',
+  )
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
 
-  // Modals state
+  // Modal
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingGoal, setEditingGoal] = useState<IFinance_Goal | null>(null)
-  const [viewGoal, setViewGoal] = useState<IFinance_Goal | null>(null)
+  const [detailGoal, setDetailGoal] = useState<IFinance_Goal | null>(null)
+  const [contributeGoal, setContributeGoal] = useState<IFinance_Goal | null>(
+    null,
+  )
 
-  const activeFilterCount = useMemo(() => {
-    let count = 0
-    if (typeFilter !== 'all') count++
-    if (statusFilter !== 'all') count++
-    return count
-  }, [typeFilter, statusFilter])
-
-  const handleResetFilter = () => {
-    setTypeFilter('all')
-    setStatusFilter('all')
-  }
-
-  const handleDelete = (id: number) => {
-    mGoal_Delete.mutate(
-      {
-        pathParams: {
-          id,
-        },
-      },
-      {
-        onSuccess: () => {
-          message.success(t('common.delete'))
-        },
-        onError: () => {
-          message.error(t('goal.error'))
-        },
-      },
+  // Lọc theo tìm kiếm + loại trước, đếm theo trạng thái sau
+  const baseFiltered = useMemo(() => {
+    const keyword = search.trim().toLowerCase()
+    return goals.filter(
+      (g) =>
+        (typeFilter === 'all' || g.type === typeFilter) &&
+        (!keyword ||
+          `${g.name} ${g.description ?? ''}`.toLowerCase().includes(keyword)),
     )
+  }, [goals, search, typeFilter])
+
+  const visible = useMemo(
+    () =>
+      baseFiltered
+        .filter((g) => statusFilter === 'all' || g.status === statusFilter)
+        .sort(compareGoals),
+    [baseFiltered, statusFilter],
+  )
+
+  const countOf = (s: StatusFilter) =>
+    s === 'all'
+      ? baseFiltered.length
+      : baseFiltered.filter((g) => g.status === s).length
+
+  const openCreate = () => {
+    setEditingGoal(null)
+    setShowAddModal(true)
   }
 
-  const filteredGoals = useMemo(() => {
-    return goals.filter((item) => {
-      if (
-        search &&
-        ![item.name, item.description || '']
-          .join(' ')
-          .toLowerCase()
-          .includes(search.toLowerCase())
-      ) {
-        return false
-      }
-      if (typeFilter !== 'all' && item.type !== typeFilter) return false
-      if (statusFilter !== 'all' && item.status !== statusFilter) return false
-      return true
+  const confirmDelete = (goal: IFinance_Goal) =>
+    modal.confirm({
+      title: t('goal.deleteTitle'),
+      content: t('goal.deleteDescription'),
+      okText: t('common.delete'),
+      okButtonProps: { danger: true },
+      cancelText: t('common.cancel'),
+      onOk: async () => {
+        await mGoal_Delete.mutateAsync({ pathParams: { id: goal.id } })
+        message.success(t('goal.deleteSuccess'))
+      },
     })
-  }, [goals, search, typeFilter, statusFilter])
-
-  // Helper Tag Loại mục tiêu
-  const renderTypeTag = (type: FINANCIAL_GOAL_TYPE) => {
-    const map: Record<FINANCIAL_GOAL_TYPE, { color: string; label: string }> = {
-      [FINANCIAL_GOAL_TYPE.EMERGENCY_FUND]: {
-        color: 'red',
-        label: 'Quỹ khẩn cấp',
-      },
-      [FINANCIAL_GOAL_TYPE.SAVING]: {
-        color: 'gold',
-        label: 'Tiết kiệm',
-      },
-      [FINANCIAL_GOAL_TYPE.INVESTMENT]: { color: 'green', label: 'Đầu tư' },
-      [FINANCIAL_GOAL_TYPE.DEBT_PAYMENT]: { color: 'orange', label: 'Trả nợ' },
-      [FINANCIAL_GOAL_TYPE.OTHER]: { color: 'default', label: 'Khác' },
-    }
-    const target = map[type]
-    return <Tag color={target.color}>{target.label}</Tag>
-  }
-
-  // Helper Status Tag
-  const renderStatusTag = (status: FINANCIAL_GOAL_STATUS) => {
-    switch (status) {
-      case FINANCIAL_GOAL_STATUS.ACTIVE:
-        return <Tag color="processing">Đang thực hiện</Tag>
-      case FINANCIAL_GOAL_STATUS.COMPLETED:
-        return (
-          <Tag color="success" icon={<CheckCircleOutlined />}>
-            Hoàn thành
-          </Tag>
-        )
-      case FINANCIAL_GOAL_STATUS.CANCELLED:
-        return <Tag color="error">Đã hủy</Tag>
-      case FINANCIAL_GOAL_STATUS.INACTIVE:
-        return <Tag color="default">Không hoạt động</Tag>
-    }
-  }
-
-  // Tính toán Projection khớp với logic FinanceGoalService backend
-  const calculateProjection = (goal: IFinance_Goal) => {
-    const targetAmount = Number(goal.targetAmount)
-    const currentAmount = Number(goal.currentAmount)
-    const remainingAmount = Math.max(targetAmount - currentAmount, 0)
-    const monthlySavingRate = Number(goal.autoContributionAmount ?? 0)
-
-    const estimatedMonthsToComplete =
-      monthlySavingRate > 0
-        ? Math.ceil(remainingAmount / monthlySavingRate)
-        : null
-
-    const progressPercentage =
-      targetAmount > 0
-        ? Number(((currentAmount / targetAmount) * 100).toFixed(2))
-        : 0
-
-    return {
-      remainingAmount,
-      monthlySavingRate,
-      estimatedMonthsToComplete,
-      progressPercentage,
-    }
-  }
 
   if (isLoading) {
     return (
@@ -183,301 +137,133 @@ export function Goals() {
   }
 
   return (
-    <Space
-      vertical
-      size={isMobile ? 'small' : 'middle'}
+    <div
       style={{
-        width: '100%',
         padding: isMobile ? 12 : 24,
-        boxSizing: 'border-box',
+        maxWidth: 1400,
+        margin: '0 auto',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 16,
       }}
     >
       {/* Header */}
-      <Flex
-        vertical={isMobile}
-        justify="space-between"
-        align={isMobile ? 'stretch' : 'center'}
-        gap={12}
-      >
+      <Flex justify="space-between" align="flex-end" gap={12} wrap>
         <div>
-          <Title level={isMobile ? 4 : 3} style={{ margin: 0 }}>
+          <Title level={3} style={{ margin: 0 }}>
             {t('goal.title')}
           </Title>
-          <Text type="secondary" style={{ fontSize: 13 }}>
-            {t('goal.title')}
-          </Text>
+          <Text type="secondary">{t('goal.subtitle')}</Text>
         </div>
         {!isMobile && (
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => {
-              setEditingGoal(null)
-              setShowAddModal(true)
-            }}
-          >
+          <Button type="primary" icon={<PlusOutlined />} onClick={openCreate}>
             {t('goal.add')}
           </Button>
         )}
       </Flex>
 
-      {/* Summary Cards */}
       <GoalSummary goals={goals} />
 
-      {/* Toolbar */}
-      <Card size="small" styles={{ body: { padding: 12 } }}>
-        <Flex gap={10} align="center">
+      {/* Lọc: trạng thái + tìm kiếm + loại (một hàng) */}
+      <Flex justify="space-between" align="center" gap={12} wrap>
+        <div style={{ maxWidth: '100%', overflowX: 'auto' }}>
+          <Segmented<StatusFilter>
+            value={statusFilter}
+            onChange={setStatusFilter}
+            options={(['all', ...STATUS_ORDER] as Array<StatusFilter>).map(
+              (s) => ({
+                value: s,
+                label: `${
+                  s === 'all'
+                    ? t('goal.allStatuses')
+                    : FinancialGoalStatusHelper.getLabel(s)
+                } (${countOf(s)})`,
+              }),
+            )}
+          />
+        </div>
+        <Flex gap={8} wrap style={{ flex: isMobile ? '1 1 100%' : undefined }}>
           <Input
-            placeholder={t('goal.searchPlaceholder')}
+            allowClear
             prefix={<SearchOutlined />}
+            placeholder={t('goal.searchPlaceholder')}
+            aria-label={t('goal.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ flex: 1 }}
-            allowClear
+            style={{ width: isMobile ? '100%' : 260 }}
           />
-          <Badge count={activeFilterCount} color="#1677ff" offset={[-2, 2]}>
-            <Button
-              icon={<FilterOutlined />}
-              onClick={() => setIsFilterModalOpen(true)}
-            >
-              {!isMobile && 'Bộ lọc'}
-            </Button>
-          </Badge>
+          <Select
+            aria-label={t('goal.type')}
+            value={typeFilter}
+            onChange={setTypeFilter}
+            style={{ width: isMobile ? '100%' : 180 }}
+            options={[
+              { value: 'all', label: t('goal.allTypes') },
+              ...FinancialGoalTypeHelper.getOptions(),
+            ]}
+          />
         </Flex>
+      </Flex>
 
-        {activeFilterCount > 0 && (
-          <Flex wrap gap={6} style={{ marginTop: 10 }}>
-            <Text type="secondary" style={{ fontSize: 12, marginRight: 4 }}>
-              Đang lọc theo:
-            </Text>
-            {typeFilter !== 'all' && (
-              <Tag closable onClose={() => setTypeFilter('all')} color="blue">
-                Loại: {typeFilter}
-              </Tag>
+      {/* Danh sách */}
+      {visible.length === 0 ? (
+        <Card>
+          <Empty
+            description={
+              goals.length === 0 ? t('goal.empty') : t('goal.emptyFiltered')
+            }
+          >
+            {goals.length === 0 && (
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={openCreate}
+              >
+                {t('goal.add')}
+              </Button>
             )}
-            {statusFilter !== 'all' && (
-              <Tag closable onClose={() => setStatusFilter('all')} color="blue">
-                Trạng thái: {statusFilter}
-              </Tag>
-            )}
-            <Button
-              type="link"
-              size="small"
-              onClick={handleResetFilter}
-              style={{ padding: 0, fontSize: 12 }}
-            >
-              Xóa tất cả
-            </Button>
-          </Flex>
-        )}
-      </Card>
-
-      {/* Goal Cards Grid sử dụng GoalCard Component mới */}
-      <Row gutter={[16, 16]}>
-        {filteredGoals.map((goal) => (
-          <Col xs={24} sm={12} lg={8} key={goal.id}>
-            <GoalCard
-              goal={goal}
-              onEdit={(item) => {
-                setEditingGoal(item)
-                setShowAddModal(true)
-              }}
-              onDelete={(id) => handleDelete(Number(id))}
-              onView={(item) => setSelectedGoalDetail(item)} // Kích hoạt Modal Chi tiết + Lịch sử
-            />
-          </Col>
-        ))}
-      </Row>
+          </Empty>
+        </Card>
+      ) : (
+        <Row gutter={[16, 16]}>
+          {visible.map((goal) => (
+            <Col xs={24} sm={12} xl={8} key={goal.id}>
+              <GoalCard
+                goal={goal}
+                onView={setDetailGoal}
+                onEdit={(g) => {
+                  setEditingGoal(g)
+                  setShowAddModal(true)
+                }}
+                onDelete={confirmDelete}
+                onContribute={setContributeGoal}
+              />
+            </Col>
+          ))}
+        </Row>
+      )}
 
       <GoalDetailModal
-        goal={selectedGoalDetail}
-        onClose={() => setSelectedGoalDetail(null)}
+        goal={detailGoal}
+        onClose={() => setDetailGoal(null)}
+        onEdit={(g) => {
+          setDetailGoal(null)
+          setEditingGoal(g)
+          setShowAddModal(true)
+        }}
       />
-      {/* FILTER MODAL */}
-      <Modal
-        title={t('common.search')}
-        open={isFilterModalOpen}
-        onCancel={() => setIsFilterModalOpen(false)}
-        onOk={() => setIsFilterModalOpen(false)}
-        okText={t('common.save')}
-        cancelText={t('common.close')}
-        width={380}
-        centered
-      >
-        <Space vertical size="middle" style={{ width: '100%', marginTop: 16 }}>
-          <div>
-            <Text
-              strong
-              style={{ fontSize: 13, display: 'block', marginBottom: 6 }}
-            >
-              Phân loại mục tiêu
-            </Text>
-            <Select
-              value={typeFilter}
-              onChange={setTypeFilter}
-              style={{ width: '100%' }}
-              options={[
-                { value: 'all', label: 'Tất cả loại' },
-                {
-                  value: FINANCIAL_GOAL_TYPE.EMERGENCY_FUND,
-                  label: 'Quỹ khẩn cấp / Dự phòng rủi ro',
-                },
-                {
-                  value: FINANCIAL_GOAL_TYPE.SAVING,
-                  label:
-                    'Tiết kiệm / Tích lũy ngắn hạn / Trung hạn / Mục tiêu cụ thể',
-                },
-                {
-                  value: FINANCIAL_GOAL_TYPE.INVESTMENT,
-                  label: 'Đầu tư / Tích lũy dài hạn',
-                },
-                {
-                  value: FINANCIAL_GOAL_TYPE.DEBT_PAYMENT,
-                  label: 'Trả nợ / Khoản vay / Trả góp',
-                },
-                { value: FINANCIAL_GOAL_TYPE.OTHER, label: 'Khác' },
-              ]}
-            />
-          </div>
 
-          <div>
-            <Text
-              strong
-              style={{ fontSize: 13, display: 'block', marginBottom: 6 }}
-            >
-              Trạng thái
-            </Text>
-            <Select
-              value={statusFilter}
-              onChange={setStatusFilter}
-              style={{ width: '100%' }}
-              options={[
-                { value: 'all', label: 'Tất cả trạng thái' },
-                {
-                  value: FINANCIAL_GOAL_STATUS.ACTIVE,
-                  label: 'Đang thực hiện',
-                },
-                { value: FINANCIAL_GOAL_STATUS.COMPLETED, label: 'Hoàn thành' },
-                { value: FINANCIAL_GOAL_STATUS.CANCELLED, label: 'Đã hủy' },
-                {
-                  value: FINANCIAL_GOAL_STATUS.INACTIVE,
-                  label: 'Không hoạt động',
-                },
-              ]}
-            />
-          </div>
-        </Space>
-      </Modal>
+      {contributeGoal && (
+        <GoalMoneyModal
+          open
+          mode="contribute"
+          goal={contributeGoal}
+          wallets={walletRes?.data ?? []}
+          isLoadingWallets={isLoadingWallets}
+          onClose={() => setContributeGoal(null)}
+        />
+      )}
 
-      {/* VIEW DETAILS & PROJECTION MODAL */}
-      <Modal
-        title={t('goal.title')}
-        open={!!viewGoal}
-        onCancel={() => setViewGoal(null)}
-        footer={[
-          <Button key="close" onClick={() => setViewGoal(null)}>
-            Đóng
-          </Button>,
-        ]}
-        width={560}
-        centered
-      >
-        {viewGoal &&
-          (() => {
-            const proj = calculateProjection(viewGoal)
-
-            return (
-              <Space
-                vertical
-                style={{ width: '100%', marginTop: 12 }}
-                size="middle"
-              >
-                <Card
-                  size="small"
-                  style={{
-                    textAlign: 'center',
-                    backgroundColor: '#f6ffed',
-                    borderColor: '#b7eb8f',
-                  }}
-                >
-                  <Text type="secondary" style={{ fontSize: 12 }}>
-                    TIẾN ĐỘ HIỆN TẠI
-                  </Text>
-                  <Title level={2} style={{ margin: 0, color: '#52c41a' }}>
-                    {proj.progressPercentage}%
-                  </Title>
-                </Card>
-
-                {/* Thống kê Dự phóng (Projection) */}
-                <Card
-                  size="small"
-                  title={t('goal.projection', {
-                    defaultValue: 'Completion projection',
-                  })}
-                  style={{ backgroundColor: '#fafafa' }}
-                >
-                  <Descriptions column={1} size="small">
-                    <Descriptions.Item
-                      label={t('common.remaining', {
-                        defaultValue: 'Remaining',
-                      })}
-                    >
-                      <Text strong style={{ color: '#cf1322' }}>
-                        {convertCurrency(proj.remainingAmount)}
-                      </Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item label={t('goal.autoContribution')}>
-                      <Text strong>
-                        {proj.monthlySavingRate > 0
-                          ? convertCurrency(proj.monthlySavingRate)
-                          : 'Không thiết lập'}
-                      </Text>
-                    </Descriptions.Item>
-                    <Descriptions.Item
-                      label={t('goal.completionDate', {
-                        defaultValue: 'Estimated completion',
-                      })}
-                    >
-                      <Text strong style={{ color: '#1677ff' }}>
-                        {proj.estimatedMonthsToComplete !== null
-                          ? `${proj.estimatedMonthsToComplete} tháng`
-                          : 'Cần cài đặt mức trích hàng tháng'}
-                      </Text>
-                    </Descriptions.Item>
-                  </Descriptions>
-                </Card>
-
-                {/* Thông tin chi tiết Entity */}
-                <Descriptions column={2} bordered size="small">
-                  <Descriptions.Item label={t('goal.name')} span={2}>
-                    <Text strong>{viewGoal.name}</Text>
-                  </Descriptions.Item>
-                  <Descriptions.Item label={t('goal.type')}>
-                    {renderTypeTag(viewGoal.type)}
-                  </Descriptions.Item>
-                  <Descriptions.Item label={t('goal.status')}>
-                    {renderStatusTag(viewGoal.status)}
-                  </Descriptions.Item>
-                  <Descriptions.Item label="Khóa chuyển tiền">
-                    {viewGoal.isLocked ? 'Có' : 'Không'}
-                  </Descriptions.Item>
-                  <Descriptions.Item label={t('goal.contributionDay')}>
-                    {viewGoal.autoContributionDay
-                      ? `Ngày ${viewGoal.autoContributionDay}`
-                      : '-'}
-                  </Descriptions.Item>
-                  {viewGoal.description && (
-                    <Descriptions.Item label={t('goal.description')} span={2}>
-                      {viewGoal.description}
-                    </Descriptions.Item>
-                  )}
-                </Descriptions>
-              </Space>
-            )
-          })()}
-      </Modal>
-
-      {/* MODAL THÊM / SỬA */}
       {showAddModal && (
         <AddGoalModal
           open={showAddModal}
@@ -489,18 +275,15 @@ export function Goals() {
         />
       )}
 
-      {/* Floating Action Button (Mobile) */}
       {isMobile && (
         <FloatButton
           type="primary"
           icon={<PlusOutlined />}
-          onClick={() => {
-            setEditingGoal(null)
-            setShowAddModal(true)
-          }}
+          aria-label={t('goal.add')}
+          onClick={openCreate}
           style={{ right: 24, bottom: 24 }}
         />
       )}
-    </Space>
+    </div>
   )
 }

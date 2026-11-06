@@ -1,266 +1,71 @@
 import React from 'react'
-import { Card, Col, Flex, Progress, Row, Typography } from 'antd'
-import { ArrowDownLeft, ArrowUpRight, CheckCircle, Scale } from 'lucide-react'
-import type { IFinance_Debt } from '@/shared/api/financial/debt/debt.type'
-import {
-  FINANCIAL_DEBT_DIRECTION_ENUM,
-  FinancialDebtDirectionHelper,
-} from '@/shared/api/financial/debt/debt.enum'
+import { useTranslation } from 'react-i18next'
+import { Typography } from 'antd'
+import type { summarizeDebts } from '../debt.utils'
 import { convertCurrency } from '@/shared/utils/helper/format-money'
-import { useThemeMode } from '@/shared/provider/antd-theme.provider'
-import { getTokens } from '@/shared/common/design-token'
 
-const { Text, Title } = Typography
+const { Title, Text } = Typography
 
 interface DebtSummaryCardsProps {
-  debts: Array<IFinance_Debt>
+  summary: ReturnType<typeof summarizeDebts>
 }
 
 export const DebtSummaryCards: React.FC<DebtSummaryCardsProps> = ({
-  debts,
+  summary,
 }) => {
-  const { mode } = useThemeMode()
-  const { colors, background, radius } = getTokens(mode)
-
-  // Cho vay (Phải thu - INCOMING)
-  const incomingDebts = debts.filter(
-    (d) => d.direction === FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING,
-  )
-  const totalLentOriginal = incomingDebts.reduce(
-    (sum, d) => sum + Number(d.originalAmount || 0),
-    0,
-  )
-  const totalLentOutstanding = incomingDebts.reduce(
-    (sum, d) => sum + Number(d.outstandingAmount || 0),
-    0,
-  )
-  const lentPaid = totalLentOriginal - totalLentOutstanding
-
-  // Đi vay (Phải trả - OUTGOING)
-  const outgoingDebts = debts.filter(
-    (d) => d.direction === FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING,
-  )
-  const totalBorrowedOriginal = outgoingDebts.reduce(
-    (sum, d) => sum + Number(d.originalAmount || 0),
-    0,
-  )
-  const totalBorrowedOutstanding = outgoingDebts.reduce(
-    (sum, d) => sum + Number(d.outstandingAmount || 0),
-    0,
-  )
-  const borrowedPaid = totalBorrowedOriginal - totalBorrowedOutstanding
-
-  // Nợ ròng = Phải thu - Phải trả
-  const netOutstanding = totalLentOutstanding - totalBorrowedOutstanding
-
-  // Tỉ lệ thu/trả nợ tổng quan
-  const totalOriginal = totalLentOriginal + totalBorrowedOriginal
-  const totalPaid = lentPaid + borrowedPaid
-  const overallProgress =
-    totalOriginal > 0 ? Math.round((totalPaid / totalOriginal) * 100) : 0
+  const { t } = useTranslation('finance')
+  const { net, receivable, payable, paid, original, percent } = summary
 
   return (
-    <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-      {/* 1. Cho vay / Phải thu */}
-      <Col xs={24} sm={12} lg={6}>
-        <Card
-          size="small"
-          style={{
-            borderRadius: radius.lg,
-            border: `1px solid ${colors.success.soft}`,
-            background: `linear-gradient(135deg, ${background.base} 0%, ${colors.success[50]} 100%)`,
-            boxShadow: `0 2px 8px rgba(${colors.success.rgb}, 0.08)`,
-          }}
+    <section className="dp-summary" aria-label={t('debt.summaryLabel')}>
+      <div className="dp-card net">
+        <Text type="secondary">{t('debt.netTitle')}</Text>
+        <Title
+          level={3}
+          className={`dp-card-value dp-num ${net >= 0 ? 'pos' : 'neg'}`}
         >
-          <Flex
-            justify="space-between"
-            align="flex-start"
-            style={{ marginBottom: 8 }}
-          >
-            <div>
-              <Text type="secondary" style={{ fontSize: 12, fontWeight: 500 }}>
-                {FinancialDebtDirectionHelper.getLabel(
-                  FINANCIAL_DEBT_DIRECTION_ENUM.INCOMING,
-                ).toUpperCase()}
-              </Text>
-              <Title
-                level={4}
-                style={{ margin: '4px 0 0 0', color: '#15803d' }}
-              >
-                {convertCurrency(totalLentOutstanding)}
-              </Title>
-            </div>
-            <div
-              style={{
-                padding: 8,
-                borderRadius: 8,
-                backgroundColor: '#dcfce7',
-                color: '#16a34a',
-                display: 'flex',
-              }}
-            >
-              <ArrowUpRight size={18} />
-            </div>
-          </Flex>
-          <Text type="secondary" style={{ fontSize: 12 }}>
-            Đã thu:{' '}
-            <strong style={{ color: '#16a34a' }}>
-              {convertCurrency(lentPaid)}
-            </strong>{' '}
-            / Gốc: {convertCurrency(totalLentOriginal)}
-          </Text>
-        </Card>
-      </Col>
+          {net > 0 ? '+' : net < 0 ? '−' : ''}
+          {convertCurrency(Math.abs(net))}
+        </Title>
+        <Text type="secondary">{t('debt.netCaption')}</Text>
+        <div
+          className="dp-bar"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={percent}
+          aria-label={t('debt.netProgressLabel')}
+        >
+          <span style={{ width: `${Math.min(100, percent)}%` }} />
+        </div>
+        <Text type="secondary" className="dp-card-foot dp-num">
+          {t('debt.paidLine', {
+            paid: convertCurrency(paid),
+            original: convertCurrency(original),
+            percent,
+          })}
+        </Text>
+      </div>
 
-      {/* 2. Đi vay / Phải trả */}
-      <Col xs={24} sm={12} lg={6}>
-        <Card
-          size="small"
-          style={{
-            borderRadius: radius.lg,
-            border: `1px solid ${colors.error.soft}`,
-            background: `linear-gradient(135deg, ${background.base} 0%, ${colors.error[50]} 100%)`,
-            boxShadow: `0 2px 8px rgba(${colors.error.rgb}, 0.08)`,
-          }}
-        >
-          <Flex
-            justify="space-between"
-            align="flex-start"
-            style={{ marginBottom: 8 }}
-          >
-            <div>
-              <Text type="secondary" style={{ fontSize: 12, fontWeight: 500 }}>
-                {FinancialDebtDirectionHelper.getLabel(
-                  FINANCIAL_DEBT_DIRECTION_ENUM.OUTGOING,
-                ).toUpperCase()}
-              </Text>
-              <Title
-                level={4}
-                style={{ margin: '4px 0 0 0', color: '#be123c' }}
-              >
-                {convertCurrency(totalBorrowedOutstanding)}
-              </Title>
-            </div>
-            <div
-              style={{
-                padding: 8,
-                borderRadius: 8,
-                backgroundColor: '#ffe4e6',
-                color: '#e11d48',
-                display: 'flex',
-              }}
-            >
-              <ArrowDownLeft size={18} />
-            </div>
-          </Flex>
-          <Text type="secondary" style={{ fontSize: 12 }}>
-            Đã trả:{' '}
-            <strong style={{ color: '#e11d48' }}>
-              {convertCurrency(borrowedPaid)}
-            </strong>{' '}
-            / Gốc: {convertCurrency(totalBorrowedOriginal)}
-          </Text>
-        </Card>
-      </Col>
+      <div className="dp-card">
+        <Text type="secondary">{t('debt.lendTitle')}</Text>
+        <Title level={4} className="dp-card-value dp-num pos">
+          {convertCurrency(receivable)}
+        </Title>
+        <Text type="secondary">
+          {t('debt.lendCount', { count: summary.receivableCount })}
+        </Text>
+      </div>
 
-      {/* 3. Dư nợ ròng */}
-      <Col xs={24} sm={12} lg={6}>
-        <Card
-          size="small"
-          style={{
-            borderRadius: radius.lg,
-            border: `1px solid ${colors.neutral[300]}`,
-            background: `${background.base}`,
-            boxShadow: `0 2px 8px rgba(0,0,0,0.04)`,
-          }}
-        >
-          <Flex
-            justify="space-between"
-            align="flex-start"
-            style={{ marginBottom: 8 }}
-          >
-            <div>
-              <Text type="secondary" style={{ fontSize: 12, fontWeight: 500 }}>
-                DƯ NỢ RÒNG (CÂN BẰNG)
-              </Text>
-              <Title
-                level={4}
-                style={{
-                  margin: '4px 0 0 0',
-                  color: netOutstanding >= 0 ? '#16a34a' : '#dc2626',
-                }}
-              >
-                {netOutstanding >= 0 ? '+' : ''}
-                {convertCurrency(netOutstanding)}
-              </Title>
-            </div>
-            <div
-              style={{
-                padding: 8,
-                borderRadius: 8,
-                backgroundColor: '#f1f5f9',
-                color: '#475569',
-                display: 'flex',
-              }}
-            >
-              <Scale size={18} />
-            </div>
-          </Flex>
-          <Text type="secondary" style={{ fontSize: 12 }}>
-            {netOutstanding >= 0
-              ? 'Tiền phải thu lớn hơn nợ phải trả'
-              : 'Nợ phải trả lớn hơn tiền phải thu'}
-          </Text>
-        </Card>
-      </Col>
-
-      {/* 4. Tiến độ hoàn tất nợ */}
-      <Col xs={24} sm={12} lg={6}>
-        <Card
-          size="small"
-          style={{
-            borderRadius: radius.lg,
-            border: `1px solid ${colors.primary[300]}`,
-            background: `linear-gradient(135deg, ${background.base} 0%, ${colors.primary[50]} 100%)`,
-            boxShadow: `0 2px 8px rgba(${colors.primary.rgb}, 0.08)`,
-          }}
-        >
-          <Flex
-            justify="space-between"
-            align="flex-start"
-            style={{ marginBottom: 4 }}
-          >
-            <div>
-              <Text type="secondary" style={{ fontSize: 12, fontWeight: 500 }}>
-                TIẾN ĐỘ GIẢI QUYẾT NỢ
-              </Text>
-              <Title
-                level={4}
-                style={{ margin: '4px 0 0 0', color: '#0284c7' }}
-              >
-                {overallProgress}%
-              </Title>
-            </div>
-            <div
-              style={{
-                padding: 8,
-                borderRadius: 8,
-                backgroundColor: '#e0f2fe',
-                color: '#0284c7',
-                display: 'flex',
-              }}
-            >
-              <CheckCircle size={18} />
-            </div>
-          </Flex>
-          <Progress
-            percent={overallProgress}
-            showInfo={false}
-            strokeColor="#0284c7"
-            size="small"
-          />
-        </Card>
-      </Col>
-    </Row>
+      <div className="dp-card">
+        <Text type="secondary">{t('debt.borrowTitle')}</Text>
+        <Title level={4} className="dp-card-value dp-num neg">
+          {convertCurrency(payable)}
+        </Title>
+        <Text type="secondary">
+          {t('debt.borrowCount', { count: summary.payableCount })}
+        </Text>
+      </div>
+    </section>
   )
 }

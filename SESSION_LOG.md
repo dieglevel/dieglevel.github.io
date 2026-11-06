@@ -1,5 +1,19 @@
 # Current Session
 
+## 2026-11-07: Goal page visual refresh
+
+- New summary tiles, inline status/search/type filters with counts, sorted clickable cards with meter, quick "Góp tiền" and ⋯ menu; removed emoji and hard-coded font sizes in the goal form.
+- Detail modal: progress block + meter, action row (contribute / withdraw / pause / edit / cancel), 4 stat tiles (remaining, monthly, estimate, deadline + pace), history as a list with pending entries pinned on top.
+- Verification: `tsc`, scoped ESLint and `npm run build` pass. Not checked in a browser.
+
+## 2026-11-07: Financial goal overhaul
+
+- Goal detail modal rebuilt: data from the detail API (refreshes after actions), contribute / withdraw / confirm-pending via `GoalMoneyModal`, cancel + refund via `GoalCancelModal`, pause / resume, pending alert + badge, history with type / source / wallet.
+- Shared `src/shared/components/wallet-balance-switch/WalletBalanceSwitch.tsx` (replaces debt's `DebtWalletImpact`; debt modals migrated).
+- Form: no status field, default auto-contribution wallet, "Khóa rút tiền" explained; cards use `goal.utils` (same estimate rule as BE) and translated labels; dead modal in `index.tsx` and unused `GoalModal.tsx` removed; mutations invalidate goal, history, wallet and dashboard keys.
+- User guide: `docs/guides/muc-tieu-tai-chinh.md`.
+- Verification: `npm run build` passes; `npm run lint` only shows 6 pre-existing issues in untouched files. Not tested in a browser (backend dev server cannot start — see BE SESSION_LOG).
+
 ## 2026-11-02: Added category presentation views
 
 - Added switchable tree, card grid, remaining-budget, and split-detail views for the financial category page.
