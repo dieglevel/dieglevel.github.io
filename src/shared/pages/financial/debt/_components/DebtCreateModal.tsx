@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
+  Alert,
+  Checkbox,
   Col,
   DatePicker,
   Form,
@@ -14,7 +16,9 @@ import {
 } from 'antd'
 import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons'
 import dayjs from 'dayjs'
+import { findActiveDebtOfPerson } from '../debt.utils'
 import { DEBT_UI_CLASS } from './DebtThemeProvider'
+import type { IFinance_Debt } from '@/shared/api/financial/debt/debt.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
 import {
   WalletBalanceSwitch,
@@ -27,6 +31,7 @@ import {
   FinancialDebtTypeHelper,
 } from '@/shared/api/financial/debt/debt.enum'
 import { InputWithComma } from '@/shared/components/input/utils'
+import { convertCurrency } from '@/shared/utils/helper/format-money'
 
 const { Text } = Typography
 const DATE_FMT = 'YYYY-MM-DD'
@@ -43,16 +48,25 @@ const SectionTitle: React.FC<{ children: React.ReactNode }> = ({
   </Text>
 )
 
+/** Giá trị gửi lên khi tạo; có mergeIntoId = cộng vào khoản đang có */
+export interface DebtCreateSubmit {
+  mergeIntoId?: number
+  [key: string]: any
+}
+
 interface DebtCreateModalProps {
   open: boolean
+  /** Khoản hiện có — để gợi ý cộng dồn khi trùng người + chiều */
+  debts: Array<IFinance_Debt>
   isLoadingWallets: boolean
   wallets: Array<IFinance_Wallet>
   onClose: () => void
-  onSubmit: (values: any) => Promise<void>
+  onSubmit: (values: DebtCreateSubmit) => Promise<void>
 }
 
 export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
   open,
+  debts,
   isLoadingWallets,
   wallets,
   onClose,
@@ -65,6 +79,12 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
   const amount = Number(Form.useWatch('originalAmount', form) || 0)
   const updateWallet: boolean | undefined = Form.useWatch('updateWallet', form)
   const walletId: number | undefined = Form.useWatch('walletId', form)
+  const namePerson: string | undefined = Form.useWatch('namePerson', form)
+  const existingDebt = findActiveDebtOfPerson(
+    debts,
+    namePerson,
+    selectedDirection,
+  )
 
   useEffect(() => {
     if (open) {
@@ -74,6 +94,7 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
         type: FINANCIAL_DEBT_TYPE_ENUM.LOAN,
         startDate: dayjs(),
         updateWallet: true,
+        addToExisting: true,
       })
     }
   }, [open, form])
@@ -90,9 +111,15 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
   })
 
   const handleFinish = async (values: any) => {
-    const { updateWallet: withWallet, walletId: wid, ...rest } = values
+    const {
+      updateWallet: withWallet,
+      walletId: wid,
+      addToExisting: merge,
+      ...rest
+    } = values
     await onSubmit({
       ...rest,
+      mergeIntoId: existingDebt && merge ? existingDebt.id : undefined,
       startDate: values.startDate.format(DATE_FMT),
       dueDate: values.dueDate ? values.dueDate.format(DATE_FMT) : undefined,
       // Tắt "Cập nhật số dư ví" = chỉ ghi sổ → không gửi walletId
@@ -198,6 +225,24 @@ export const DebtCreateModal: React.FC<DebtCreateModalProps> = ({
             </Form.Item>
           </Col>
         </Row>
+
+        {existingDebt && (
+          <Alert
+            type="info"
+            showIcon
+            style={{ marginBottom: 16 }}
+            message={t('debtForms.existingDebtFound', {
+              name: existingDebt.namePerson,
+              debt: existingDebt.name,
+              amount: convertCurrency(Number(existingDebt.outstandingAmount)),
+            })}
+            description={
+              <Form.Item name="addToExisting" valuePropName="checked" noStyle>
+                <Checkbox>{t('debtForms.addToExisting')}</Checkbox>
+              </Form.Item>
+            }
+          />
+        )}
 
         {/* 3. Cập nhật số dư ví hay chỉ ghi sổ */}
         <WalletBalanceSwitch

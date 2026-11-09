@@ -21,6 +21,8 @@ export interface IFinance_Debt extends IBaseEntity {
   accountId: number
   account?: User
   startDate: string // 'YYYY-MM-DD'
+  /** Khoản đích khi status = MERGED */
+  mergedIntoId?: number | null
 }
 
 export interface IFinance_DebtHistory extends IBaseEntity {
@@ -48,5 +50,29 @@ export interface IFinance_DebtAdjust_Request {
 }
 
 export interface IFinance_DebtAction_Request {
+  note?: string
+}
+
+export interface IFinance_DebtIncrease_Request {
+  amount: number
+  /** Bỏ trống = chỉ ghi sổ, không thay đổi số dư ví */
+  walletId?: number
+  occurredAt?: string
+  note?: string
+}
+
+export interface IFinance_DebtMerge_Request {
+  targetId: number
+  sourceIds: Array<number>
+  note?: string
+}
+
+export interface IFinance_DebtPersonPayment_Request {
+  namePerson: string
+  direction: FINANCIAL_DEBT_DIRECTION_ENUM
+  amount: number
+  /** Bỏ trống = chỉ ghi sổ, không thay đổi số dư ví */
+  walletId?: number
+  occurredAt?: string
   note?: string
 }

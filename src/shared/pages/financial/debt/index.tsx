@@ -14,14 +14,21 @@ import { DebtPaymentModal } from './_components/DebtPaymentModal'
 import { DebtAdjustModal } from './_components/DebtAdjustModal'
 import { DebtHistoryModal } from './_components/DebtHistoryModal'
 import { DebtCorrectModal } from './_components/DebtCorrectModal'
-import { summarizeDebts } from './debt.utils'
+import { oldestDebt, summarizeDebts } from './debt.utils'
 import type { DebtPaymentSubmit } from './_components/DebtPaymentModal'
+import type { DebtCreateSubmit } from './_components/DebtCreateModal'
 import type { IFinance_Debt } from '@/shared/api/financial/debt/debt.type'
 import { useMutationFinanceDebt } from '@/shared/api/financial/debt/debt.mutation'
 import { useGetFinance_Wallet_List } from '@/shared/api/financial/wallet/useGetFinancial_Wallet_List'
 import { useGetFinance_Debt_List } from '@/shared/api/financial/debt/useGetFinance_Debt_List'
 
-type ModalKind = 'payment' | 'adjust' | 'correct' | 'history'
+type ModalKind =
+  | 'payment'
+  | 'increase'
+  | 'personPayment'
+  | 'adjust'
+  | 'correct'
+  | 'history'
 
 export const DebtManagementPage: React.FC = () => {
   const { t } = useTranslation('finance')
@@ -38,6 +45,9 @@ export const DebtManagementPage: React.FC = () => {
 
   const {
     mDebt_Create,
+    mDebt_Increase,
+    mDebt_Merge,
+    mDebt_PersonPayment,
     mDebt_Delete,
     mDebt_Payment,
     mDebt_Adjust,
@@ -48,6 +58,8 @@ export const DebtManagementPage: React.FC = () => {
 
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [selectedDebt, setSelectedDebt] = useState<IFinance_Debt | null>(null)
+  /** Các khoản cùng người + chiều khi thu / trả theo người */
+  const [personDebts, setPersonDebts] = useState<Array<IFinance_Debt>>([])
   const [openModal, setOpenModal] = useState<ModalKind | null>(null)
 
   const open = (kind: ModalKind) => (debt: IFinance_Debt) => {
@@ -57,14 +69,74 @@ export const DebtManagementPage: React.FC = () => {
   const close = () => setOpenModal(null)
   const selectedId = () => ({ id: String(selectedDebt?.id) })
 
+  /**
+   * Thu / trả theo người: modal thanh toán nhận một "khoản gộp" ảo
+   * (dư nợ = tổng, ngày bắt đầu = khoản cũ nhất); BE tự phân bổ FIFO.
+   */
+  const openPersonPayment = (list: Array<IFinance_Debt>) => {
+    const oldest = oldestDebt(list)
+    setPersonDebts(list)
+    setSelectedDebt({
+      ...oldest,
+      name: t('debt.allDebtsOfPerson', { count: list.length }),
+      outstandingAmount: list.reduce(
+        (s, d) => s + Number(d.outstandingAmount || 0),
+        0,
+      ),
+    })
+    setOpenModal('personPayment')
+  }
+
   // Handlers
-  const handleCreate = async (values: any) => {
-    await mDebt_Create.mutateAsync({ body: values })
+  const handleCreate = async ({ mergeIntoId, ...values }: DebtCreateSubmit) => {
+    if (mergeIntoId) {
+      // Trùng người + chiều → cộng vào khoản đang có
+      await mDebt_Increase.mutateAsync({
+        pathParams: { id: String(mergeIntoId) },
+        body: {
+          amount: values.originalAmount,
+          walletId: values.walletId,
+          occurredAt: values.startDate,
+          note: values.description?.trim() || values.name,
+        },
+      })
+    } else {
+      await mDebt_Create.mutateAsync({ body: values as any })
+    }
     setIsCreateOpen(false)
+  }
+
+  const handleMerge = async (
+    target: IFinance_Debt,
+    sources: Array<IFinance_Debt>,
+  ) => {
+    await mDebt_Merge.mutateAsync({
+      body: { targetId: target.id, sourceIds: sources.map((d) => d.id) },
+    })
+    message.success(t('debt.mergedToast', { name: target.name }))
   }
 
   const handlePayment = async (values: DebtPaymentSubmit) => {
     if (!selectedDebt) return
+    if (openModal === 'increase') {
+      await mDebt_Increase.mutateAsync({
+        pathParams: selectedId(),
+        body: values,
+      })
+      close()
+      return
+    }
+    if (openModal === 'personPayment') {
+      await mDebt_PersonPayment.mutateAsync({
+        body: {
+          ...values,
+          namePerson: personDebts[0].namePerson,
+          direction: selectedDebt.direction,
+        },
+      })
+      close()
+      return
+    }
     await mDebt_Payment.mutateAsync({
       pathParams: selectedId(),
       body: values,
@@ -129,6 +201,9 @@ export const DebtManagementPage: React.FC = () => {
             onOpenPayment={open('payment')}
             onOpenAdjust={open('adjust')}
             onOpenCorrect={open('correct')}
+            onOpenIncrease={open('increase')}
+            onOpenPersonPayment={openPersonPayment}
+            onMerge={handleMerge}
             onSettle={handleSettle}
             onCancel={handleCancel}
             onDelete={handleDelete}
@@ -137,6 +212,7 @@ export const DebtManagementPage: React.FC = () => {
 
         <DebtCreateModal
           open={isCreateOpen}
+          debts={debts}
           isLoadingWallets={isLoadingWallets}
           wallets={wallets}
           onClose={() => setIsCreateOpen(false)}
@@ -144,7 +220,13 @@ export const DebtManagementPage: React.FC = () => {
         />
 
         <DebtPaymentModal
-          open={openModal === 'payment'}
+          open={
+            openModal === 'payment' ||
+            openModal === 'increase' ||
+            openModal === 'personPayment'
+          }
+          mode={openModal === 'increase' ? 'increase' : 'payment'}
+          fifoHint={openModal === 'personPayment'}
           debt={selectedDebt}
           wallets={wallets}
           isLoadingWallets={isLoadingWallets}

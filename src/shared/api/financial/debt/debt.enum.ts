@@ -35,6 +35,7 @@ export enum FINANCIAL_DEBT_STATUS_ENUM {
   PAID_OFF = 'PAID_OFF', // Đã hoàn tất
   SETTLED = 'SETTLED', // Đã tất toán (thỏa thuận)
   CANCELLED = 'CANCELLED', // Đã hủy
+  MERGED = 'MERGED', // Đã gộp vào khoản khác (mergedIntoId)
 }
 
 class FinancialDebtStatusHelperImpl extends BaseEnumHelper<FINANCIAL_DEBT_STATUS_ENUM> {
@@ -47,6 +48,7 @@ class FinancialDebtStatusHelperImpl extends BaseEnumHelper<FINANCIAL_DEBT_STATUS
     [FINANCIAL_DEBT_STATUS_ENUM.PAID_OFF]: '#10b981', // Xanh lá
     [FINANCIAL_DEBT_STATUS_ENUM.SETTLED]: '#6b7280', // Xám
     [FINANCIAL_DEBT_STATUS_ENUM.CANCELLED]: '#ef4444', // Đỏ
+    [FINANCIAL_DEBT_STATUS_ENUM.MERGED]: '#a855f7', // Tím
   }
 
   protected readonly labelMap: Record<FINANCIAL_DEBT_STATUS_ENUM, string> = {
@@ -54,6 +56,7 @@ class FinancialDebtStatusHelperImpl extends BaseEnumHelper<FINANCIAL_DEBT_STATUS
     [FINANCIAL_DEBT_STATUS_ENUM.PAID_OFF]: 'enum.debt.status.paidOff',
     [FINANCIAL_DEBT_STATUS_ENUM.SETTLED]: 'enum.debt.status.settled',
     [FINANCIAL_DEBT_STATUS_ENUM.CANCELLED]: 'enum.debt.status.cancelled',
+    [FINANCIAL_DEBT_STATUS_ENUM.MERGED]: 'enum.debt.status.merged',
   }
 }
 
@@ -69,6 +72,10 @@ export enum FINANCIAL_DEBT_HISTORY_TYPE_ENUM {
   CORRECTED = 'CORRECTED',
   SETTLED = 'SETTLED',
   CANCELLED = 'CANCELLED',
+  INCREASED = 'INCREASED',
+  MERGED_IN = 'MERGED_IN',
+  MERGED_OUT = 'MERGED_OUT',
+  INTEREST = 'INTEREST', // Phần thu / trả vượt dư nợ
 }
 
 class FinancialDebtHistoryTypeHelperImpl extends BaseEnumHelper<FINANCIAL_DEBT_HISTORY_TYPE_ENUM> {
@@ -86,6 +93,10 @@ class FinancialDebtHistoryTypeHelperImpl extends BaseEnumHelper<FINANCIAL_DEBT_H
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.CORRECTED]: '#0ea5e9', // Xanh ngọc (Sửa số tiền gốc)
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.SETTLED]: '#6b7280', // Xám (Tất toán)
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.CANCELLED]: '#ef4444', // Đỏ (Đã hủy)
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.INCREASED]: '#f59e0b', // Cam (Vay / cho vay thêm)
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.MERGED_IN]: '#a855f7', // Tím (Nhận gộp)
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.MERGED_OUT]: '#a855f7', // Tím (Đã gộp đi)
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.INTEREST]: '#eab308', // Vàng (Tiền lãi)
   }
 
   protected readonly labelMap: Record<
@@ -99,6 +110,11 @@ class FinancialDebtHistoryTypeHelperImpl extends BaseEnumHelper<FINANCIAL_DEBT_H
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.CORRECTED]: 'enum.debt.history.corrected',
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.SETTLED]: 'enum.debt.history.settled',
     [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.CANCELLED]: 'enum.debt.history.cancelled',
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.INCREASED]: 'enum.debt.history.increased',
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.MERGED_IN]: 'enum.debt.history.mergedIn',
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.MERGED_OUT]:
+      'enum.debt.history.mergedOut',
+    [FINANCIAL_DEBT_HISTORY_TYPE_ENUM.INTEREST]: 'enum.debt.history.interest',
   }
 }
 

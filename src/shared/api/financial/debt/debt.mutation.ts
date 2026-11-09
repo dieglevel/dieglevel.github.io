@@ -5,7 +5,10 @@ import type {
   IFinance_Debt,
   IFinance_DebtAction_Request,
   IFinance_DebtAdjust_Request,
+  IFinance_DebtIncrease_Request,
+  IFinance_DebtMerge_Request,
   IFinance_DebtPayment_Request,
+  IFinance_DebtPersonPayment_Request,
 } from './debt.type'
 import {
   useMutationDelete,
@@ -98,8 +101,40 @@ export const useMutationFinanceDebt = () => {
     queryKey: DEBT_INVALIDATE_KEYS,
   })
 
+  const mDebt_Increase = useMutationPost<
+    void,
+    IFinance_DebtIncrease_Request,
+    'financial-debt/:id/increase',
+    { id: string }
+  >({
+    endPoint: 'financial-debt/:id/increase',
+    queryKey: DEBT_INVALIDATE_KEYS,
+  })
+
+  const mDebt_Merge = useMutationPost<
+    IFinance_Debt,
+    IFinance_DebtMerge_Request,
+    'financial-debt/merge'
+  >({
+    endPoint: 'financial-debt/merge',
+    queryKey: DEBT_INVALIDATE_KEYS,
+  })
+
+  /** Thu / trả theo người — BE phân bổ khoản cũ trước (FIFO) */
+  const mDebt_PersonPayment = useMutationPost<
+    Array<IFinance_Debt>,
+    IFinance_DebtPersonPayment_Request,
+    'financial-debt/person-payment'
+  >({
+    endPoint: 'financial-debt/person-payment',
+    queryKey: DEBT_INVALIDATE_KEYS,
+  })
+
   return {
     mDebt_Create,
+    mDebt_Increase,
+    mDebt_Merge,
+    mDebt_PersonPayment,
     mDebt_Update,
     mDebt_Delete,
     mDebt_Payment,

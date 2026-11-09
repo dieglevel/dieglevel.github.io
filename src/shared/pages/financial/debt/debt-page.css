@@ -439,6 +439,50 @@
   overflow-wrap: anywhere;
 }
 
+/* ---------- Nhóm theo người ---------- */
+.dp-person {
+  padding: 12px;
+  background: var(--d-card-2);
+  border: 1px solid var(--d-line);
+  border-radius: 14px;
+}
+.dp-person-head {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px 16px;
+  margin-bottom: 10px;
+}
+.dp-person-name.ant-typography {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dp-person-totals {
+  display: flex;
+  gap: 20px;
+}
+.dp-person-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  grid-column: 1 / -1;
+}
+.dp-person-actions:empty {
+  display: none;
+}
+@media (max-width: 767px) {
+  .dp-person-totals {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+  }
+  .dp-person-actions .ant-btn {
+    flex: 1;
+  }
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 1023px) {
   .dp-summary {

@@ -61,5 +61,12 @@
   "updateWallet": "Update wallet balance",
   "historyTitle": "History · {{name}}",
   "historyEmpty": "No changes yet",
-  "beforeAfter": "Before → after"
+  "beforeAfter": "Before → after",
+  "increaseLendTitle": "Lend more",
+  "increaseBorrowTitle": "Borrow more",
+  "outstandingAfterIncrease": "Outstanding after increase",
+  "fifoHint": "The amount pays the oldest debt first, then moves on to the next.",
+  "existingDebtFound": "{{name}} already has “{{debt}}” with {{amount}} outstanding.",
+  "addToExisting": "Add to the existing debt instead of creating a new one",
+  "excessAsInterest": "{{amount}} above the outstanding amount — the debt goes to 0 and the extra is recorded as interest."
 }

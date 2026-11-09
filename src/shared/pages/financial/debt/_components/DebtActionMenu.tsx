@@ -6,6 +6,7 @@ import {
   Eraser,
   MoreHorizontal,
   Pencil,
+  PlusCircle,
   Receipt,
   Trash2,
   XCircle,
@@ -21,6 +22,7 @@ export interface DebtActionHandlers {
   onOpenPayment: (debt: IFinance_Debt) => void
   onOpenAdjust: (debt: IFinance_Debt) => void
   onOpenCorrect: (debt: IFinance_Debt) => void
+  onOpenIncrease: (debt: IFinance_Debt) => void
   onSettle: (id: number) => Promise<void>
   onCancel: (id: number) => Promise<void>
   onDelete: (id: number) => Promise<void>
@@ -51,6 +53,7 @@ export const DebtActionMenu: React.FC<DebtActionMenuProps> = ({
   onOpenPayment,
   onOpenAdjust,
   onOpenCorrect,
+  onOpenIncrease,
   onSettle,
   onCancel,
   onDelete,
@@ -61,7 +64,8 @@ export const DebtActionMenu: React.FC<DebtActionMenuProps> = ({
   // BE: không hủy được khoản đã trả xong hoặc đã hủy
   const canCancel =
     debt.status !== FINANCIAL_DEBT_STATUS_ENUM.PAID_OFF &&
-    debt.status !== FINANCIAL_DEBT_STATUS_ENUM.CANCELLED
+    debt.status !== FINANCIAL_DEBT_STATUS_ENUM.CANCELLED &&
+    debt.status !== FINANCIAL_DEBT_STATUS_ENUM.MERGED
 
   const confirm = (
     title: string,
@@ -82,6 +86,23 @@ export const DebtActionMenu: React.FC<DebtActionMenuProps> = ({
 
   const items: MenuProps['items'] = []
 
+  // Vay / cho vay thêm: khoản đang nợ hoặc đã trả xong (BE mở lại khoản)
+  const canIncrease =
+    active || debt.status === FINANCIAL_DEBT_STATUS_ENUM.PAID_OFF
+  const increaseItem = {
+    key: 'increase',
+    icon: <PlusCircle size={16} />,
+    label: (
+      <Item
+        title={
+          receivable ? t('debt.menuIncreaseLend') : t('debt.menuIncreaseBorrow')
+        }
+        desc={t('debt.menuIncreaseDesc')}
+      />
+    ),
+    onClick: () => onOpenIncrease(debt),
+  }
+
   if (active) {
     items.push(
       {
@@ -95,6 +116,7 @@ export const DebtActionMenu: React.FC<DebtActionMenuProps> = ({
         ),
         onClick: () => onOpenPayment(debt),
       },
+      increaseItem,
       {
         key: 'adjust',
         icon: <Pencil size={16} />,
@@ -131,6 +153,10 @@ export const DebtActionMenu: React.FC<DebtActionMenuProps> = ({
       },
       { type: 'divider' },
     )
+  }
+
+  if (canIncrease && !active) {
+    items.push(increaseItem, { type: 'divider' })
   }
 
   if (canCancel) {

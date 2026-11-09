@@ -61,5 +61,12 @@
   "updateWallet": "Cập nhật số dư ví",
   "historyTitle": "Lịch sử · {{name}}",
   "historyEmpty": "Chưa có biến động nào",
-  "beforeAfter": "Trước → sau"
+  "beforeAfter": "Trước → sau",
+  "increaseLendTitle": "Cho vay thêm",
+  "increaseBorrowTitle": "Vay thêm",
+  "outstandingAfterIncrease": "Dư nợ sau khi cộng thêm",
+  "fifoHint": "Số tiền được trả vào khoản cũ nhất trước, dư thì chuyển sang khoản tiếp theo.",
+  "existingDebtFound": "{{name}} đang có khoản “{{debt}}” còn {{amount}}.",
+  "addToExisting": "Cộng vào khoản đang có thay vì tạo khoản mới",
+  "excessAsInterest": "Số tiền vượt dư nợ {{amount}} — khoản nợ về 0, phần dư được ghi là tiền lãi."
 }

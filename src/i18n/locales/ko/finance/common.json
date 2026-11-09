@@ -35,7 +35,8 @@
         "active": "미상환",
         "paidOff": "상환 완료",
         "settled": "정산 완료",
-        "cancelled": "취소됨"
+        "cancelled": "취소됨",
+        "merged": "병합됨"
       },
       "history": {
         "created": "부채 생성",
@@ -43,7 +44,11 @@
         "adjustment": "잔액 조정",
         "corrected": "원금 수정",
         "settled": "정산 완료",
-        "cancelled": "부채 취소"
+        "cancelled": "부채 취소",
+        "increased": "추가 차입 / 대여",
+        "mergedIn": "병합 수신",
+        "mergedOut": "다른 부채로 병합됨",
+        "interest": "이자 / 초과분"
       },
       "type": {
         "loan": "대출",

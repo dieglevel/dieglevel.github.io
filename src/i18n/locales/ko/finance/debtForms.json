@@ -61,5 +61,12 @@
   "updateWallet": "지갑 잔액 반영",
   "historyTitle": "내역 · {{name}}",
   "historyEmpty": "변동 내역이 없습니다",
-  "beforeAfter": "이전 → 이후"
+  "beforeAfter": "이전 → 이후",
+  "increaseLendTitle": "추가 대여",
+  "increaseBorrowTitle": "추가 차입",
+  "outstandingAfterIncrease": "추가 후 잔액",
+  "fifoHint": "가장 오래된 부채부터 상환하고, 남는 금액은 다음 부채로 넘어갑니다.",
+  "existingDebtFound": "{{name}}에게 이미 “{{debt}}”({{amount}} 남음)이 있습니다.",
+  "addToExisting": "새로 만들지 않고 기존 부채에 추가",
+  "excessAsInterest": "잔액보다 {{amount}} 많습니다 — 부채는 0이 되고 초과분은 이자로 기록됩니다."
 }

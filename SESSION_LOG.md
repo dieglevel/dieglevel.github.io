@@ -1,5 +1,13 @@
 # Current Session
 
+## 2026-11-09: Debt — gộp theo người
+
+- Active tab groups debts by person: people with ≥ 2 active debts get a card with "Họ nợ mình" / "Mình nợ họ" (+ net when both), "Thu/Trả theo người" (FIFO, `person-payment`) and "Gộp N khoản" (merge into the oldest).
+- New "Vay thêm / Cho vay thêm" action (`/:id/increase`) reusing `DebtPaymentModal` (`mode="increase"`); create form detects an active debt of the same person + direction and offers to add to it instead.
+- New status tab "Đã gộp" (`MERGED`), history types INCREASED / MERGED_IN / MERGED_OUT; summary excludes merged debts. i18n vi/en/ko.
+- Follow-up: payment modal no longer caps the amount; shows a warning that the excess is recorded as interest. New history type `INTEREST`.
+- Verification: `tsc`, scoped ESLint and `npm run build` pass. Not checked in a browser; needs BE migration `1794000007000` applied.
+
 ## 2026-11-07: Goal page visual refresh
 
 - New summary tiles, inline status/search/type filters with counts, sorted clickable cards with meter, quick "Góp tiền" and ⋯ menu; removed emoji and hard-coded font sizes in the goal form.

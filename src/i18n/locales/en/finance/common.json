@@ -42,7 +42,8 @@
         "active": "Outstanding",
         "paidOff": "Paid off",
         "settled": "Settled",
-        "cancelled": "Cancelled"
+        "cancelled": "Cancelled",
+        "merged": "Merged"
       },
       "history": {
         "created": "Debt created",
@@ -50,7 +51,11 @@
         "adjustment": "Balance adjustment",
         "corrected": "Original amount corrected",
         "settled": "Settled",
-        "cancelled": "Debt cancelled"
+        "cancelled": "Debt cancelled",
+        "increased": "Borrowed / lent more",
+        "mergedIn": "Merged in",
+        "mergedOut": "Merged into another debt",
+        "interest": "Interest / extra"
       },
       "type": {
         "loan": "Loan",

@@ -33,9 +33,18 @@ export interface DebtPaymentSubmit {
   note?: string
 }
 
+/**
+ * - payment: thu / trả nợ (mặc định)
+ * - increase: vay / cho vay thêm vào khoản (cộng dư nợ, chiều ví ngược lại)
+ */
+export type DebtPaymentMode = 'payment' | 'increase'
+
 interface DebtPaymentModalProps {
   open: boolean
   debt: IFinance_Debt | null
+  mode?: DebtPaymentMode
+  /** Thu / trả theo người: hiện gợi ý phân bổ khoản cũ trước */
+  fifoHint?: boolean
   wallets: Array<IFinance_Wallet>
   isLoadingWallets: boolean
   onClose: () => void
@@ -45,10 +54,13 @@ interface DebtPaymentModalProps {
 /**
  * Thu nợ (khoản cho vay) / Trả nợ (khoản đi vay) — POST /:id/payment.
  * Về 0 thì BE tự chuyển khoản nợ sang PAID_OFF.
+ * mode = 'increase': vay / cho vay thêm — POST /:id/increase.
  */
 export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
   open,
   debt,
+  mode = 'payment',
+  fifoHint = false,
   wallets,
   isLoadingWallets,
   onClose,
@@ -66,26 +78,52 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
     if (open && debt) {
       form.resetFields()
       form.setFieldsValue({
-        amount: Number(debt.outstandingAmount),
+        amount:
+          mode === 'increase' ? undefined : Number(debt.outstandingAmount),
         occurredAt: dayjs(),
         updateWallet: true,
       })
     }
-  }, [open, debt, form])
+  }, [open, debt, form, mode])
 
   if (!debt) return null
 
+  const increasing = mode === 'increase'
   const collecting = isReceivable(debt)
+  // Thu nợ / mình vay thêm → tiền vào ví; trả nợ / cho vay thêm → tiền ra ví
+  const isInflow = increasing ? !collecting : collecting
   const outstanding = Number(debt.outstandingAmount || 0)
-  const remaining = Math.max(0, round2(outstanding - amount))
-  const validAmount = amount > 0 && amount <= outstanding
+  const remaining = increasing
+    ? round2(outstanding + amount)
+    : Math.max(0, round2(outstanding - amount))
+  // Thu / trả vượt dư nợ: BE ghi phần dư là tiền lãi (INTEREST)
+  const excess = increasing ? 0 : Math.max(0, round2(amount - outstanding))
+  const validAmount = amount > 0
   const { insufficient } = getWalletImpact({
     wallets,
     updateWallet,
     walletId,
     amount,
-    isInflow: collecting,
+    isInflow,
   })
+
+  const title = increasing
+    ? collecting
+      ? t('debtForms.increaseLendTitle')
+      : t('debtForms.increaseBorrowTitle')
+    : collecting
+      ? t('debtForms.paymentCollect')
+      : t('debtForms.paymentPay')
+  const okText = increasing
+    ? t('debtForms.confirm')
+    : collecting
+      ? t('debtForms.confirmCollect')
+      : t('debtForms.confirmPay')
+  const previewLabel = increasing
+    ? t('debtForms.outstandingAfterIncrease')
+    : collecting
+      ? t('debtForms.remainingAfterCollect')
+      : t('debtForms.remainingAfterPay')
 
   const handleFinish = async (values: any) => {
     setSubmitting(true)
@@ -112,9 +150,7 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
       centered
       title={
         <div>
-          {collecting
-            ? t('debtForms.paymentCollect')
-            : t('debtForms.paymentPay')}
+          {title}
           <span className="pm-sub">
             {debt.name} · {debt.namePerson}
           </span>
@@ -131,9 +167,7 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
           disabled={insufficient}
           onClick={() => form.submit()}
         >
-          {collecting
-            ? t('debtForms.confirmCollect')
-            : t('debtForms.confirmPay')}
+          {okText}
         </Button>,
       ]}
     >
@@ -175,13 +209,6 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
                   min: 0.01,
                   message: t('debtForms.amountPositive'),
                 },
-                {
-                  type: 'number',
-                  max: outstanding,
-                  message: t('debtForms.amountMax', {
-                    max: convertCurrency(outstanding),
-                  }),
-                },
               ]}
             >
               <InputNumber
@@ -191,14 +218,16 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
                 {...InputWithComma}
               />
             </Form.Item>
-            <Button
-              onClick={() => {
-                form.setFieldsValue({ amount: outstanding })
-                form.validateFields(['amount', 'walletId']).catch(() => {})
-              }}
-            >
-              {collecting ? t('debtForms.collectAll') : t('debtForms.payAll')}
-            </Button>
+            {!increasing && (
+              <Button
+                onClick={() => {
+                  form.setFieldsValue({ amount: outstanding })
+                  form.validateFields(['amount', 'walletId']).catch(() => {})
+                }}
+              >
+                {collecting ? t('debtForms.collectAll') : t('debtForms.payAll')}
+              </Button>
+            )}
           </div>
         </Form.Item>
 
@@ -222,14 +251,12 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
         <WalletBalanceSwitch
           title={t('debtForms.updateWallet')}
           hintOff={t('debtForms.alertBookOnly')}
-          hintOn={
-            collecting ? t('debtForms.hintAdd') : t('debtForms.hintDeduct')
-          }
+          hintOn={isInflow ? t('debtForms.hintAdd') : t('debtForms.hintDeduct')}
           wallets={wallets}
           isLoadingWallets={isLoadingWallets}
           amount={amount}
           amountField="amount"
-          isInflow={collecting}
+          isInflow={isInflow}
         />
 
         <Form.Item name="note" label={t('debtForms.noteOptional')}>
@@ -241,17 +268,33 @@ export const DebtPaymentModal: React.FC<DebtPaymentModalProps> = ({
         </Form.Item>
 
         <div className="pm-preview" aria-live="polite">
-          <span>
-            {collecting
-              ? t('debtForms.remainingAfterCollect')
-              : t('debtForms.remainingAfterPay')}
-          </span>
+          <span>{previewLabel}</span>
           <Text strong className="dp-num">
             {convertCurrency(remaining)}
           </Text>
         </div>
 
-        {validAmount && remaining === 0 && (
+        {fifoHint && (
+          <Alert
+            type="info"
+            showIcon
+            style={{ marginTop: 12 }}
+            message={t('debtForms.fifoHint')}
+          />
+        )}
+
+        {excess > 0 && (
+          <Alert
+            type="warning"
+            showIcon
+            style={{ marginTop: 12 }}
+            message={t('debtForms.excessAsInterest', {
+              amount: convertCurrency(excess),
+            })}
+          />
+        )}
+
+        {!increasing && validAmount && remaining === 0 && (
           <Alert
             type="success"
             showIcon

@@ -72,10 +72,79 @@ export const paidInfo = (d: IFinance_Debt) => {
   return { original, outstanding, paid, percent }
 }
 
-export const summarizeDebts = (debts: Array<IFinance_Debt>) => {
+/** Chuẩn hóa tên người để nhóm (khớp BE normalizePersonName) */
+export const normalizePersonName = (name: string) =>
+  name.trim().replace(/\s+/g, ' ').toLowerCase()
+
+/** Khoản cũ nhất — đích khi gộp, cũng là khoản được trả trước (FIFO) */
+export const oldestDebt = (list: Array<IFinance_Debt>) =>
+  [...list].sort(
+    (a, b) => a.startDate.localeCompare(b.startDate) || a.id - b.id,
+  )[0]
+
+export interface DebtPersonGroup {
+  key: string
+  name: string
+  debts: Array<IFinance_Debt>
+  receivableDebts: Array<IFinance_Debt>
+  payableDebts: Array<IFinance_Debt>
+  receivable: number
+  payable: number
+}
+
+const sumOutstanding = (list: Array<IFinance_Debt>) =>
+  list.reduce((s, d) => s + Number(d.outstandingAmount || 0), 0)
+
+/**
+ * Nhóm khoản đang nợ theo người. Giữ nguyên thứ tự đầu vào
+ * (nhóm xếp theo khoản gấp nhất của người đó).
+ */
+export const groupDebtsByPerson = (
+  debts: Array<IFinance_Debt>,
+): Array<DebtPersonGroup> => {
+  const groups = new Map<string, Array<IFinance_Debt>>()
+  for (const d of debts) {
+    const key = normalizePersonName(d.namePerson)
+    groups.set(key, [...(groups.get(key) ?? []), d])
+  }
+  return [...groups.entries()].map(([key, list]) => {
+    const receivableDebts = list.filter(isReceivable)
+    const payableDebts = list.filter((d) => !isReceivable(d))
+    return {
+      key,
+      name: list[0].namePerson.trim(),
+      debts: list,
+      receivableDebts,
+      payableDebts,
+      receivable: sumOutstanding(receivableDebts),
+      payable: sumOutstanding(payableDebts),
+    }
+  })
+}
+
+/** Khoản đang nợ cùng người, cùng chiều — để gợi ý cộng dồn khi tạo mới */
+export const findActiveDebtOfPerson = (
+  debts: Array<IFinance_Debt>,
+  namePerson: string | undefined,
+  direction: FINANCIAL_DEBT_DIRECTION_ENUM | undefined,
+) => {
+  const key = normalizePersonName(namePerson ?? '')
+  if (!key || !direction) return undefined
+  const matches = debts.filter(
+    (d) =>
+      isActiveDebt(d) &&
+      d.direction === direction &&
+      normalizePersonName(d.namePerson) === key,
+  )
+  return matches.length ? oldestDebt(matches) : undefined
+}
+
+export const summarizeDebts = (allDebts: Array<IFinance_Debt>) => {
+  // Khoản đã gộp: số tiền đã nằm trong khoản đích
+  const debts = allDebts.filter(
+    (d) => d.status !== FINANCIAL_DEBT_STATUS_ENUM.MERGED,
+  )
   const active = debts.filter(isActiveDebt)
-  const sumOutstanding = (list: Array<IFinance_Debt>) =>
-    list.reduce((s, d) => s + Number(d.outstandingAmount || 0), 0)
 
   const receivableDebts = active.filter(isReceivable)
   const payableDebts = active.filter((d) => !isReceivable(d))

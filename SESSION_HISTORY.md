@@ -66,3 +66,13 @@ This file tracks completed development tasks, major architectural milestones, an
 - Form: no status field, default auto-contribution wallet, "Khóa rút tiền" explained; cards use `goal.utils` (same estimate rule as BE) and translated labels; dead modal in `index.tsx` and unused `GoalModal.tsx` removed; mutations invalidate goal, history, wallet and dashboard keys.
 - User guide: `docs/guides/muc-tieu-tai-chinh.md`.
 - Verification: `npm run build` passes; `npm run lint` only shows 6 pre-existing issues in untouched files. Not tested in a browser (backend dev server cannot start — see BE SESSION_LOG).
+
+---
+
+## 2026-11-09: Debt — gộp theo người
+
+- Active tab groups debts by person: people with ≥ 2 active debts get a card with "Họ nợ mình" / "Mình nợ họ" (+ net when both), "Thu/Trả theo người" (FIFO, `person-payment`) and "Gộp N khoản" (merge into the oldest).
+- New "Vay thêm / Cho vay thêm" action (`/:id/increase`) reusing `DebtPaymentModal` (`mode="increase"`); create form detects an active debt of the same person + direction and offers to add to it instead.
+- New status tab "Đã gộp" (`MERGED`), history types INCREASED / MERGED_IN / MERGED_OUT; summary excludes merged debts. i18n vi/en/ko.
+- Follow-up: payment modal no longer caps the amount; shows a warning that the excess is recorded as interest. New history type `INTEREST`.
+- Verification: `tsc`, scoped ESLint and `npm run build` pass. Not checked in a browser; needs BE migration `1794000007000` applied.

@@ -42,7 +42,8 @@
         "active": "Đang nợ",
         "paidOff": "Đã trả xong",
         "settled": "Đã tất toán",
-        "cancelled": "Đã hủy"
+        "cancelled": "Đã hủy",
+        "merged": "Đã gộp"
       },
       "history": {
         "created": "Tạo khoản nợ",
@@ -50,7 +51,11 @@
         "adjustment": "Điều chỉnh số dư",
         "corrected": "Sửa số tiền gốc",
         "settled": "Tất toán",
-        "cancelled": "Hủy khoản nợ"
+        "cancelled": "Hủy khoản nợ",
+        "increased": "Vay / cho vay thêm",
+        "mergedIn": "Nhận gộp",
+        "mergedOut": "Đã gộp sang khoản khác",
+        "interest": "Tiền lãi / phần dư"
       },
       "type": {
         "loan": "Khoản vay",

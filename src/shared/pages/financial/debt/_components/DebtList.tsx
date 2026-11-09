@@ -1,17 +1,21 @@
 import React, { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button, Input, Modal, Spin, Typography } from 'antd'
-import { Search } from 'lucide-react'
+import { Merge, Search } from 'lucide-react'
 import dayjs from 'dayjs'
 
 import {
   compareActiveDebts,
   compareClosedDebts,
   getDueState,
+  groupDebtsByPerson,
   isReceivable,
+  oldestDebt,
   paidInfo,
 } from '../debt.utils'
 import { DebtActionMenu } from './DebtActionMenu'
+import { DEBT_UI_CLASS } from './DebtThemeProvider'
+import type { DebtPersonGroup } from '../debt.utils'
 import type { DebtActionHandlers } from './DebtActionMenu'
 import type { IFinance_Debt } from '@/shared/api/financial/debt/debt.type'
 import {
@@ -30,18 +34,28 @@ const STATUS_TABS = [
   FINANCIAL_DEBT_STATUS_ENUM.PAID_OFF,
   FINANCIAL_DEBT_STATUS_ENUM.SETTLED,
   FINANCIAL_DEBT_STATUS_ENUM.CANCELLED,
+  FINANCIAL_DEBT_STATUS_ENUM.MERGED,
 ]
 
 interface DebtListProps extends DebtActionHandlers {
   debts: Array<IFinance_Debt>
   isLoading: boolean
   onOpenHistory: (debt: IFinance_Debt) => void
+  /** Thu / trả theo người (FIFO) cho các khoản cùng chiều */
+  onOpenPersonPayment: (debts: Array<IFinance_Debt>) => void
+  /** Gộp: khoản đầu tiên là đích, còn lại là nguồn */
+  onMerge: (
+    target: IFinance_Debt,
+    sources: Array<IFinance_Debt>,
+  ) => Promise<void>
 }
 
 export const DebtList: React.FC<DebtListProps> = ({
   debts,
   isLoading,
   onOpenHistory,
+  onOpenPersonPayment,
+  onMerge,
   ...handlers
 }) => {
   const { t } = useTranslation('finance')
@@ -180,6 +194,98 @@ export const DebtList: React.FC<DebtListProps> = ({
     )
   }
 
+  // ---------- Nhóm theo người (≥ 2 khoản đang nợ) ----------
+  const confirmMerge = (group: DebtPersonGroup, list: Array<IFinance_Debt>) => {
+    const target = oldestDebt(list)
+    const sources = list.filter((d) => d.id !== target.id)
+    modal.confirm({
+      title: t('debt.mergeConfirm', { count: list.length, name: group.name }),
+      content: t('debt.mergeDesc', { target: target.name }),
+      okText: t('debt.mergeOk'),
+      cancelText: t('debt.back'),
+      rootClassName: DEBT_UI_CLASS,
+      onOk: () => onMerge(target, sources),
+    })
+  }
+
+  const renderDirectionActions = (
+    group: DebtPersonGroup,
+    list: Array<IFinance_Debt>,
+    receivable: boolean,
+  ) =>
+    list.length >= 2 && (
+      <>
+        <Button onClick={() => onOpenPersonPayment(list)}>
+          {receivable ? t('debt.collectByPerson') : t('debt.payByPerson')}
+        </Button>
+        <Button
+          icon={<Merge size={16} aria-hidden />}
+          onClick={() => confirmMerge(group, list)}
+        >
+          {receivable
+            ? t('debt.mergeLend', { count: list.length })
+            : t('debt.mergeBorrow', { count: list.length })}
+        </Button>
+      </>
+    )
+
+  const renderPersonGroup = (group: DebtPersonGroup) => {
+    const hasBoth = group.receivable > 0 && group.payable > 0
+    const net = group.receivable - group.payable
+    return (
+      <li key={group.key} className="dp-person">
+        <div className="dp-person-head">
+          <span
+            className="dp-av"
+            style={{ '--c': 'var(--d-accent-text)' } as React.CSSProperties}
+            aria-hidden
+          >
+            {group.name.charAt(0).toUpperCase() || '?'}
+          </span>
+          <div className="dp-main">
+            <Text strong className="dp-person-name">
+              {group.name}
+            </Text>
+            <div className="dp-meta">
+              {t('debt.personDebtCount', { count: group.debts.length })}
+            </div>
+          </div>
+          <div className="dp-person-totals dp-num">
+            {group.receivable > 0 && (
+              <div className="dp-amt">
+                <Text type="secondary">{t('debt.personTheyOwe')}</Text>
+                <Text strong type="success">
+                  {convertCurrency(group.receivable)}
+                </Text>
+              </div>
+            )}
+            {group.payable > 0 && (
+              <div className="dp-amt">
+                <Text type="secondary">{t('debt.personIOwe')}</Text>
+                <Text strong type="danger">
+                  {convertCurrency(group.payable)}
+                </Text>
+              </div>
+            )}
+            {hasBoth && (
+              <div className="dp-amt">
+                <Text type="secondary">{t('debt.personNet')}</Text>
+                <Text strong type={net >= 0 ? 'success' : 'danger'}>
+                  {convertCurrency(net)}
+                </Text>
+              </div>
+            )}
+          </div>
+          <div className="dp-person-actions">
+            {renderDirectionActions(group, group.receivableDebts, true)}
+            {renderDirectionActions(group, group.payableDebts, false)}
+          </div>
+        </div>
+        <ul className="dp-list">{group.debts.map(renderRow)}</ul>
+      </li>
+    )
+  }
+
   // ---------- Hàng gọn (khoản đã đóng) ----------
   const renderCompact = (list: Array<IFinance_Debt>) => {
     const shown = expanded ? list : list.slice(0, COMPACT_LIMIT)
@@ -199,7 +305,12 @@ export const DebtList: React.FC<DebtListProps> = ({
                 >
                   {debt.name}
                 </button>
-                <span className="sub">{debt.namePerson}</span>
+                <span className="sub">
+                  {debt.namePerson}
+                  {debt.mergedIntoId
+                    ? ` · ${t('debt.mergedTag', { id: debt.mergedIntoId })}`
+                    : ''}
+                </span>
               </div>
               <span className="money dp-num">
                 {convertCurrency(Number(debt.originalAmount || 0))}
@@ -250,8 +361,7 @@ export const DebtList: React.FC<DebtListProps> = ({
       const active = byStatus(FINANCIAL_DEBT_STATUS_ENUM.ACTIVE).sort(
         compareActiveDebts,
       )
-      const toCollect = active.filter(isReceivable)
-      const toPay = active.filter((d) => !isReceivable(d))
+      const groups = groupDebtsByPerson(active)
       const recentClosed = searched
         .filter(
           (d) =>
@@ -267,14 +377,15 @@ export const DebtList: React.FC<DebtListProps> = ({
           ) : (
             <>
               {renderSection(
-                t('debt.sectionCollect'),
-                toCollect,
-                <ul className="dp-list">{toCollect.map(renderRow)}</ul>,
-              )}
-              {renderSection(
-                t('debt.sectionPay'),
-                toPay,
-                <ul className="dp-list">{toPay.map(renderRow)}</ul>,
+                t('debt.sectionByPerson'),
+                active,
+                <ul className="dp-list">
+                  {groups.map((g) =>
+                    g.debts.length === 1
+                      ? renderRow(g.debts[0])
+                      : renderPersonGroup(g),
+                  )}
+                </ul>,
               )}
             </>
           )}

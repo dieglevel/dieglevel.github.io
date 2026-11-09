@@ -35,7 +35,9 @@ src/
 
 ## Main Components
 - **`DebtManagementPage`** (`src/shared/pages/financial/debt/index.tsx`): Coordinates modals, active tabs, and queries.
-- **`DebtPaymentModal`**: Selects payment wallet, payment amount, and registers a repayment transaction.
+- **`DebtPaymentModal`**: Selects payment wallet and amount. `mode="increase"` = vay / cho vay thêm (`/:id/increase`); `fifoHint` = thu / trả theo người (page passes a virtual debt whose outstanding is the person's total).
+- **`DebtList`**: Active tab groups debts by person (`groupDebtsByPerson`); a person with ≥ 2 active debts gets a card with separate "Họ nợ mình" / "Mình nợ họ" totals (+ net), "Thu/Trả theo người" and "Gộp N khoản" (merge into the oldest debt). Status tab "Đã gộp" lists `MERGED` debts.
+- **`DebtCreateModal`**: When an active debt with the same person (normalized name) and direction exists, offers "Cộng vào khoản đang có" → calls `/:id/increase` instead of create.
 - **`DebtHistoryModal`**: Displays chronological timeline of every payment, adjustment, or settlement event.
 
 ## Business and Data Flows
@@ -46,7 +48,8 @@ src/
    - Selects wallet and specifies payment amount.
    - Calls `mDebt_Payment.mutateAsync`.
    - On success, reduces outstanding balance, updates wallet funds, and logs history.
-4. If a debt is settled by mutual agreement, `mDebt_Settle` sets status to `PAID`.
+4. If a debt is settled by mutual agreement, `mDebt_Settle` sets status to `SETTLED`.
+5. Gộp theo người: `mDebt_Increase`, `mDebt_Merge`, `mDebt_PersonPayment` (BE allocates FIFO by `startDate`). See BE `financial-debt.md`.
 
 ## Dependencies and Integrations
 - **Core**: `useThemeMode`, `getTokens`.
@@ -60,14 +63,16 @@ src/
 - To add payment reminder notifications, connect debt records with `financial-notification`.
 
 ## Constraints and Common Pitfalls
-- Payment amount must not exceed `outstandingAmount`.
+- Payment amount may exceed `outstandingAmount`; the modal warns that BE records the excess as interest (`INTEREST` history).
+- `summarizeDebts` excludes `MERGED` debts (their amounts already live in the target debt).
+- `normalizePersonName` in `debt.utils.ts` must match the BE version.
 
 ## Tests and Verification
 - Run `npm run build` to verify debt management components.
 
 ## Documentation Status
 - Status: Verified
-- Last Verified: 2026-10-19
+- Last Verified: 2026-11-09
 - Source Paths:
   - `src/shared/pages/financial/debt/index.tsx`
   - `src/shared/api/financial/debt/debt.mutation.ts`
