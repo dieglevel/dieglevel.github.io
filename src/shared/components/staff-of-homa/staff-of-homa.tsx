@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Float, OrbitControls, Sparkles } from '@react-three/drei'
 import { Canvas, useThree } from '@react-three/fiber'
@@ -74,9 +74,11 @@ export function StaffOfHoma() {
               position={modelPosition}
               rotation={screens.md ? [0, -Math.PI / 1, 0.2] : [0, 0, 0]}
             >
-              <Float speed={4} rotationIntensity={0.1} floatIntensity={0.5}>
-                <StaffModel />
-              </Float>
+              <Suspense fallback={null}>
+                <Float speed={4} rotationIntensity={0.1} floatIntensity={0.5}>
+                  <StaffModel />
+                </Float>
+              </Suspense>
               <Sparkles
                 count={screens.md ? 400 : 200} // Giảm hạt trên mobile để tăng FPS
                 scale={[7, 10, 10]}
