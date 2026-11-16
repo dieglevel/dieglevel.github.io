@@ -1,5 +1,13 @@
 # Current Session
 
+## 2026-11-16: Danh mục / Giao dịch theo chu kỳ
+
+- Category "Đã chi tháng này" was double counted: BE already rolls child `totalAmount` into the parent, but the page summed every node (budget too). Now sums root categories only (spent includes archived roots, budget excludes them).
+- Category cycle range: `setting` was read with `getState()` (non-reactive → fell back to day 1 before settings loaded), `.date(31)` overflowed short months, and ISO timestamps could shift a day on a UTC server. New `src/shared/utils/helper/cycle.ts` (`getCycleMonth`, `getCycleRange`, date-only strings); month picker = cycle that starts in that month.
+- Transaction page: list and Thu/Chi totals now filtered by `transactionDate` over the selected cycle (default current cycle), month picker in the toolbar shows the date range; page resets to 1 on change.
+- Also: `staff-of-homa` model → `staff.glb` (meshopt + webp, 9.5 MB → 597 KB, `--join false --flatten false` to keep mesh names); `useFrame` no longer traverses the scene; model wrapped in `Suspense`.
+- Verification: `tsc --noEmit`, scoped ESLint, Prettier pass. Not checked in a browser.
+
 ## 2026-11-09: Debt — gộp theo người
 
 - Active tab groups debts by person: people with ≥ 2 active debts get a card with "Họ nợ mình" / "Mình nợ họ" (+ net when both), "Thu/Trả theo người" (FIFO, `person-payment`) and "Gộp N khoản" (merge into the oldest).

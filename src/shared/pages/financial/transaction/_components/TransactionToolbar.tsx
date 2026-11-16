@@ -1,7 +1,8 @@
 import React from 'react'
-import { Badge, Button, Input, Select, Tag } from 'antd'
+import { Badge, Button, DatePicker, Input, Select, Tag } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { FilterOutlined, SearchOutlined } from '@ant-design/icons'
+import type { Dayjs } from 'dayjs'
 import type { FINANCIAL_TRANSACTION_TYPE } from '@/shared/api/financial/transaction/transaction.enum'
 
 interface SelectOption {
@@ -28,6 +29,11 @@ interface TransactionToolbarProps {
   onClearCat: () => void
   onClearStatus: () => void
   onResetAll: () => void
+  /** Tháng bắt đầu của kỳ chi tiêu đang xem */
+  cycleMonth: Dayjs
+  onCycleMonthChange: (month: Dayjs) => void
+  /** Nhãn khoảng ngày của kỳ, vd "10/11 – 09/12/2026" */
+  cycleLabel: string
 }
 
 /** Tab dạng pill + tìm kiếm + chọn ví + nút bộ lọc, kèm chip bộ lọc đang bật. */
@@ -50,6 +56,9 @@ export const TransactionToolbar: React.FC<TransactionToolbarProps> = ({
   onClearCat,
   onClearStatus,
   onResetAll,
+  cycleMonth,
+  onCycleMonthChange,
+  cycleLabel,
 }) => {
   const { t } = useTranslation('finance')
   const hasChips =
@@ -73,6 +82,16 @@ export const TransactionToolbar: React.FC<TransactionToolbarProps> = ({
         </div>
 
         <div className="tx-tools">
+          <DatePicker
+            picker="month"
+            value={cycleMonth}
+            allowClear={false}
+            format={() => cycleLabel}
+            onChange={(date) => {
+              if (date) onCycleMonthChange(date.startOf('month'))
+            }}
+            style={{ minWidth: 170 }}
+          />
           <Input
             placeholder={t('transaction.searchPlaceholder')}
             aria-label={t('transaction.searchPlaceholder')}

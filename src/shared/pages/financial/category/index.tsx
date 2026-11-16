@@ -12,14 +12,15 @@ import {
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 
-import dayjs from 'dayjs'
 import { useSettingStore } from '../_store/setting.store'
 import CategoryModal from './_components/CategoryModal'
 import CategoryTreeNode from './_components/CategoryTreeNode'
 import CategoryDetailModal from './_components/CategoryDetailModal'
 import CategoryViews from './_components/CategoryViews'
+import type dayjs from 'dayjs'
 import type { CategoryView } from './_components/CategoryViews'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
+import { getCycleMonth, getCycleRange } from '@/shared/utils/helper/cycle'
 import { useMutationFinanceCategory } from '@/shared/api/financial/category/category.mutation'
 import { useGetFinance_Category_List } from '@/shared/api/financial/category/useGetFinance_Category_List'
 import { useThemeMode } from '@/shared/provider/antd-theme.provider'
@@ -41,34 +42,27 @@ export default function Categories() {
   const { mode: themeMode } = useThemeMode()
   const { colors } = getTokens(themeMode)
 
-  const [selectDate, setSelectDate] = useState<dayjs.Dayjs>(dayjs())
-  const setting = useSettingStore.getState().setting
+  const cycleStartDate = useSettingStore(
+    (state) => state.setting?.cycleStartDate ?? 1,
+  )
+  // null = kỳ hiện tại; tự cập nhật khi setting tải xong
+  const [pickedMonth, setPickedMonth] = useState<dayjs.Dayjs | null>(null)
+  const selectDate = useMemo(
+    () => pickedMonth ?? getCycleMonth(cycleStartDate),
+    [pickedMonth, cycleStartDate],
+  )
 
-  const params = useMemo(() => {
-    const cycleDay = setting?.cycleStartDate || 1
-
-    const baseDate =
-      selectDate.date() < cycleDay
-        ? selectDate.subtract(1, 'month')
-        : selectDate
-
-    const start = baseDate.date(cycleDay).startOf('day')
-
-    const end = baseDate
-      .add(1, 'month')
-      .date(cycleDay)
-      .subtract(1, 'millisecond')
-
-    return {
-      startDate: start.toISOString(),
-      endDate: end.toISOString(),
-    }
-  }, [selectDate, setting?.cycleStartDate])
+  // Kỳ chi tiêu bắt đầu trong tháng đã chọn. Gửi ngày dạng YYYY-MM-DD
+  // để BE không lệch ngày theo timezone của server.
+  const params = useMemo(
+    () => getCycleRange(selectDate, cycleStartDate),
+    [selectDate, cycleStartDate],
+  )
 
   const { data: apiResponse, isPending } = useGetFinance_Category_List({
     queryParams: params,
   })
-  const selectedMonth = dayjs(params.startDate).format('YYYY-MM')
+  const selectedMonth = selectDate.format('YYYY-MM')
   const { data: budgetSummaryResponse } =
     useGetFinance_Category_Budget_Summary(selectedMonth)
   const budgetSummary = budgetSummaryResponse?.data
@@ -126,22 +120,17 @@ export default function Categories() {
 
   // 2. Tính tổng budget và total spent
   const { totalBudget, totalSpent } = useMemo(() => {
+    // Chỉ cộng danh mục gốc: BE đã gộp totalAmount của con vào cha,
+    // và hạn mức của con là phần phân bổ bên trong hạn mức cha.
     let budget = 0
     let spent = 0
 
-    const calculateTotal = (nodes: Array<ExtendedFinanceCategory>) => {
-      nodes.forEach((node) => {
-        if (!node.archived || node.id === 0) {
-          budget += node.monthlyBudget ?? 0
-          spent += node.totalAmount ?? 0
-        }
-        if (node.children && node.children.length > 0) {
-          calculateTotal(node.children)
-        }
-      })
-    }
+    categories.forEach((node) => {
+      // Tiền đã chi vẫn tính cả danh mục đã lưu trữ
+      spent += node.totalAmount ?? 0
+      if (!node.archived) budget += node.monthlyBudget ?? 0
+    })
 
-    calculateTotal(categories)
     return { totalBudget: budget, totalSpent: spent }
   }, [categories])
 
@@ -332,8 +321,9 @@ export default function Categories() {
               style={{ width: '180px' }}
               picker="month"
               value={selectDate}
+              allowClear={false}
               onChange={(date) => {
-                setSelectDate(date ?? dayjs())
+                setPickedMonth(date ? date.startOf('month') : null)
               }}
             />
           </Flex>

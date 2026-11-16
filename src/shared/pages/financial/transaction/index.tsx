@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { FloatButton, Grid } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { useRouter } from '@tanstack/react-router'
+import dayjs from 'dayjs'
+import { useSettingStore } from '../_store/setting.store'
 import { TransactionModal } from './_components/TransactionModal'
 import { TransactionDetail } from './_components/TransactionDetail'
 import { TransactionList, isUncategorized } from './_components/TransactionList'
@@ -14,9 +16,11 @@ import { TransactionUpsertDrawer } from './_components/TransactionUpsertDrawer'
 import type { TransactionUpsertTarget } from './_components/TransactionUpsertDrawer'
 import type { TablePaginationConfig, TabsProps } from 'antd'
 import './transaction-page.css'
-
+import type { Dayjs } from 'dayjs'
 import type { IFinance_Category } from '@/shared/api/financial/category/category.type'
 import type { IFinance_Wallet } from '@/shared/api/financial/wallet/wallet.type'
+import { getCycleMonth, getCycleRange } from '@/shared/utils/helper/cycle'
+
 import {
   FINANCIAL_TRANSACTION_TYPE,
   FinancialTransactionTypeHelper,
@@ -107,8 +111,27 @@ export function Transactions() {
       value as FINANCIAL_TRANSACTION_STATUS,
     )
 
+  // Kỳ chi tiêu (theo cycleStartDate): danh sách và tổng Thu/Chi đều theo kỳ
+  const cycleStartDate = useSettingStore(
+    (state) => state.setting?.cycleStartDate ?? 1,
+  )
+  const [pickedMonth, setPickedMonth] = useState<Dayjs | null>(null)
+  const cycleMonth = useMemo(
+    () => pickedMonth ?? getCycleMonth(cycleStartDate),
+    [pickedMonth, cycleStartDate],
+  )
+  const cycleRange = useMemo(
+    () => getCycleRange(cycleMonth, cycleStartDate),
+    [cycleMonth, cycleStartDate],
+  )
+  const cycleLabel = `${dayjs(cycleRange.startDate).format('DD/MM')} – ${dayjs(
+    cycleRange.endDate,
+  ).format('DD/MM/YYYY')}`
+
   const { data: dataTransaction, isFetching } = useGetFinance_Transaction_List({
     queryParams: {
+      fromDate: cycleRange.startDate,
+      toDate: cycleRange.endDate,
       page,
       limit: pageData.pageSize || 20,
       type: isType(activeTab) ? activeTab : undefined,
@@ -234,6 +257,12 @@ export function Transactions() {
         onClearCat={() => setCatFilter('all')}
         onClearStatus={() => setStatusFilter('all')}
         onResetAll={handleResetFilter}
+        cycleMonth={cycleMonth}
+        onCycleMonthChange={(month) => {
+          setPickedMonth(month)
+          setPage(1)
+        }}
+        cycleLabel={cycleLabel}
       />
 
       {/* 4. Transactions grouped by day */}
