@@ -23,6 +23,7 @@ import { Route as publicHashIdRouteImport } from './routes/(public)/hashId'
 import { Route as publicHanbiroTaskRouteImport } from './routes/(public)/hanbiroTask'
 import { Route as publicFeedbackRouteImport } from './routes/(public)/feedback'
 import { Route as publicDemoComponentRouteImport } from './routes/(public)/demoComponent'
+import { Route as publicBillToExcelRouteImport } from './routes/(public)/bill-to-excel'
 import { Route as protectedSystemInformationRouteImport } from './routes/(protected)/system-information'
 import { Route as publicemptyLayoutRouteRouteImport } from './routes/(public)/(empty-layout)/route'
 import { Route as protectedFinancialRouteRouteImport } from './routes/(protected)/financial/route'
@@ -110,6 +111,11 @@ const publicFeedbackRoute = publicFeedbackRouteImport.update({
 const publicDemoComponentRoute = publicDemoComponentRouteImport.update({
   id: '/demoComponent',
   path: '/demoComponent',
+  getParentRoute: () => publicRouteRoute,
+} as any)
+const publicBillToExcelRoute = publicBillToExcelRouteImport.update({
+  id: '/bill-to-excel',
+  path: '/bill-to-excel',
   getParentRoute: () => publicRouteRoute,
 } as any)
 const protectedSystemInformationRoute =
@@ -228,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/404': typeof R404Route
   '/financial': typeof protectedFinancialRouteRouteWithChildren
   '/system-information': typeof protectedSystemInformationRoute
+  '/bill-to-excel': typeof publicBillToExcelRoute
   '/demoComponent': typeof publicDemoComponentRoute
   '/feedback': typeof publicFeedbackRoute
   '/hanbiroTask': typeof publicHanbiroTaskRoute
@@ -260,6 +267,7 @@ export interface FileRoutesByTo {
   '/401': typeof R401Route
   '/404': typeof R404Route
   '/system-information': typeof protectedSystemInformationRoute
+  '/bill-to-excel': typeof publicBillToExcelRoute
   '/demoComponent': typeof publicDemoComponentRoute
   '/feedback': typeof publicFeedbackRoute
   '/hanbiroTask': typeof publicHanbiroTaskRoute
@@ -297,6 +305,7 @@ export interface FileRoutesById {
   '/(protected)/financial': typeof protectedFinancialRouteRouteWithChildren
   '/(public)/(empty-layout)': typeof publicemptyLayoutRouteRouteWithChildren
   '/(protected)/system-information': typeof protectedSystemInformationRoute
+  '/(public)/bill-to-excel': typeof publicBillToExcelRoute
   '/(public)/demoComponent': typeof publicDemoComponentRoute
   '/(public)/feedback': typeof publicFeedbackRoute
   '/(public)/hanbiroTask': typeof publicHanbiroTaskRoute
@@ -332,6 +341,7 @@ export interface FileRouteTypes {
     | '/404'
     | '/financial'
     | '/system-information'
+    | '/bill-to-excel'
     | '/demoComponent'
     | '/feedback'
     | '/hanbiroTask'
@@ -364,6 +374,7 @@ export interface FileRouteTypes {
     | '/401'
     | '/404'
     | '/system-information'
+    | '/bill-to-excel'
     | '/demoComponent'
     | '/feedback'
     | '/hanbiroTask'
@@ -400,6 +411,7 @@ export interface FileRouteTypes {
     | '/(protected)/financial'
     | '/(public)/(empty-layout)'
     | '/(protected)/system-information'
+    | '/(public)/bill-to-excel'
     | '/(public)/demoComponent'
     | '/(public)/feedback'
     | '/(public)/hanbiroTask'
@@ -534,6 +546,13 @@ declare module '@tanstack/react-router' {
       path: '/demoComponent'
       fullPath: '/demoComponent'
       preLoaderRoute: typeof publicDemoComponentRouteImport
+      parentRoute: typeof publicRouteRoute
+    }
+    '/(public)/bill-to-excel': {
+      id: '/(public)/bill-to-excel'
+      path: '/bill-to-excel'
+      fullPath: '/bill-to-excel'
+      preLoaderRoute: typeof publicBillToExcelRouteImport
       parentRoute: typeof publicRouteRoute
     }
     '/(protected)/system-information': {
@@ -752,6 +771,7 @@ const publicemptyLayoutRouteRouteWithChildren =
 
 interface publicRouteRouteChildren {
   publicemptyLayoutRouteRoute: typeof publicemptyLayoutRouteRouteWithChildren
+  publicBillToExcelRoute: typeof publicBillToExcelRoute
   publicDemoComponentRoute: typeof publicDemoComponentRoute
   publicFeedbackRoute: typeof publicFeedbackRoute
   publicHanbiroTaskRoute: typeof publicHanbiroTaskRoute
@@ -767,6 +787,7 @@ interface publicRouteRouteChildren {
 
 const publicRouteRouteChildren: publicRouteRouteChildren = {
   publicemptyLayoutRouteRoute: publicemptyLayoutRouteRouteWithChildren,
+  publicBillToExcelRoute: publicBillToExcelRoute,
   publicDemoComponentRoute: publicDemoComponentRoute,
   publicFeedbackRoute: publicFeedbackRoute,
   publicHanbiroTaskRoute: publicHanbiroTaskRoute,

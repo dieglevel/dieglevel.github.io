@@ -1,5 +1,15 @@
 # Current Session
 
+## 2026-11-20: /bill-to-excel — JSON hoá đơn → Excel
+
+- New public tool route `src/routes/(public)/bill-to-excel.tsx`, page `src/shared/pages/bill-to-excel/`: paste an order JSON (full response, `data`, or any array of objects with `productName`; tested with a BHX order) → editable table.
+- Line amount = `quantity × salePrice` (salePrice 0 = free item); matches the BHX `totalAmount`. Bill info shows order id, store, date, total, `listDiscount` (points), paid, saved.
+- Cells edit in place; number cells accept expressions (`145000/3`) or an operator applied to the current value (`/2`, `*3`, `-5000`). Editing SL/đơn giá recomputes thành tiền. Per-row and all-rows split 1 / 2 / 3 with a "Phần chia" column; hide rows (excluded from totals and copy); add row.
+- Copy to clipboard as TSV: pick columns, header row, total row, decimal separator (`,` default for Vietnamese Excel). Money rounded to đồng.
+- Split labels use `/2` `/3` because the theme font renders `÷` like `+`.
+- Menu: Tools → "Hoá đơn → Excel" (`menu.bill-to-excel` in vi/en/ko, `FileSpreadsheet` icon).
+- Verification: `tsc --noEmit`, scoped ESLint/Prettier, `bill.utils.test.ts` (5 tests) pass; `vite build` + headless Chromium via CDP: pasted the order JSON, total 145.946 matches the bill, `/2` edit, `/3` split and hide row work, no console errors. Clipboard copy itself not exercised in headless (TSV output covered by the unit test).
+
 ## 2026-11-16: Danh mục / Giao dịch theo chu kỳ
 
 - Category "Đã chi tháng này" was double counted: BE already rolls child `totalAmount` into the parent, but the page summed every node (budget too). Now sums root categories only (spent includes archived roots, budget excludes them).
