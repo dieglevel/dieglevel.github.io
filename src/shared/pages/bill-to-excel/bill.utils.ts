@@ -1,7 +1,16 @@
 export type SplitBy = 1 | 2 | 3
 
+export const MAIN_GROUP_ID = 'main'
+
+export interface BillGroup {
+  id: string
+  name: string
+}
+
 export interface BillRow {
   id: string
+  /** Bảng (nhóm tính riêng) chứa dòng này */
+  groupId: string
   name: string
   quantity: number
   /** Đơn vị hiển thị cạnh SL, vd "kg" */
@@ -46,6 +55,7 @@ const str = (v: unknown): string | undefined =>
 
 let idSeq = 0
 export const newRowId = () => `row-${Date.now().toString(36)}-${idSeq++}`
+export const newGroupId = () => `group-${Date.now().toString(36)}-${idSeq++}`
 
 /** Tìm mảng sản phẩm (object có productName) ở bất kỳ độ sâu nào */
 function findItemArrays(node: unknown, out: Array<Array<AnyRecord>>) {
@@ -69,6 +79,7 @@ function toRow(item: AnyRecord): BillRow {
 
   return {
     id: newRowId(),
+    groupId: MAIN_GROUP_ID,
     name: str(item.productName) ?? '',
     quantity,
     unit: unitMatch?.[0] ?? '',
@@ -270,4 +281,17 @@ export function buildTsv(rows: Array<BillRow>, opt: CopyOptions) {
   }
 
   return lines.join('\n')
+}
+
+/** Copy nhiều bảng: mỗi bảng có dòng tên bảng, cách nhau một dòng trống */
+export function buildGroupsTsv(
+  groups: Array<{ name: string; rows: Array<BillRow> }>,
+  opt: CopyOptions,
+) {
+  return groups
+    .filter((g) => g.rows.length)
+    .map(
+      (g) => `${g.name.replace(/[\t\r\n]+/g, ' ')}\n${buildTsv(g.rows, opt)}`,
+    )
+    .join('\n\n')
 }

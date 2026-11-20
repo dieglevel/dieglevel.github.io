@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { buildTsv, evaluateExpression, parseBillJson } from './bill.utils'
+import {
+  MAIN_GROUP_ID,
+  buildGroupsTsv,
+  buildTsv,
+  evaluateExpression,
+  parseBillJson,
+} from './bill.utils'
 
 describe('evaluateExpression', () => {
   it('tính biểu thức thường', () => {
@@ -53,6 +59,7 @@ describe('parseBillJson', () => {
     expect(rows[0].amount).toBe(0)
     expect(rows[1].amount).toBeCloseTo(3712.5)
     expect(rows[1].unit).toBe('kg')
+    expect(rows.every((r) => r.groupId === MAIN_GROUP_ID)).toBe(true)
     expect(info).toMatchObject({
       orderId: 'OV1',
       paid: 145000,
@@ -76,5 +83,23 @@ describe('parseBillJson', () => {
       'Hành tây\t0,198\t3713\t1856',
       'Tổng\t\t3713\t1856',
     ])
+  })
+
+  it('copy nhiều bảng, bỏ bảng rỗng', () => {
+    const { rows } = parseBillJson(sample)
+    const tsv = buildGroupsTsv(
+      [
+        { name: 'Chung', rows: [rows[0]] },
+        { name: 'Rỗng', rows: [] },
+        { name: 'Bảng 2', rows: [rows[1]] },
+      ],
+      {
+        columns: ['name', 'amount'],
+        header: false,
+        totalRow: false,
+        decimal: ',',
+      },
+    )
+    expect(tsv).toBe('Chung\nTúi\t0\n\nBảng 2\nHành tây\t3713')
   })
 })

@@ -1,5 +1,12 @@
 # Current Session
 
+## 2026-11-20: /bill-to-excel — kéo dòng sang bảng khác (dnd)
+
+- Added `@dnd-kit/core` ^6.3.1. Rows have `groupId`; page holds `groups` (default "Chung"). New `bill-table.tsx`: one group = droppable card with its own totals, "chia tất cả", Copy, editable name, delete (rows go back to the first table); each row has a drag handle.
+- Drop targets: any table card, a "Kéo dòng vào đây để tạo bảng mới" zone, and a floating dock at the bottom of the viewport (shown while dragging) with the other tables + "Bảng mới", so no scrolling is needed. Collision is pointer-based (`pointerWithin`, dock wins over the card underneath; keyboard drag falls back to `rectIntersection`) — the default overlay-rect check dropped onto the neighbouring dock chip.
+- Summary card lists totals per table + overall; "Copy tất cả bảng" writes each table's TSV preceded by its name, blank line between (`buildGroupsTsv`). Re-pasting JSON resets to one table.
+- Verification: `tsc --noEmit`, scoped ESLint/Prettier, 6 unit tests pass; headless Chromium (CDP mouse events) on the BHX order: dragged a row to the new-table zone and another onto the dock chip, totals 109.383 + 36.563 = 145.946, no console errors.
+
 ## 2026-11-20: /bill-to-excel — JSON hoá đơn → Excel
 
 - New public tool route `src/routes/(public)/bill-to-excel.tsx`, page `src/shared/pages/bill-to-excel/`: paste an order JSON (full response, `data`, or any array of objects with `productName`; tested with a BHX order) → editable table.
